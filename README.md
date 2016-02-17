@@ -8,3 +8,12 @@ The file `prototype3.xlsx` is the pretty proof of concept. The file is to be use
 
 ### `prototype3.xlsx` Usage
 Users start on the EnviroClasses worksheet and enter values in the colored cell.
+
+## TODO
+- fix blanks for pivot table:
+  - enter field for user to select "qualitative" or "quantitative" data to be measured in row
+- investigate defining geographic region described by fegs-dashboard data entered by user in an accessible way
+  - user-story: a user graphically draws a region described to the fegs-dashboard
+  - user-story: a user selects regions automatically detected in satellite images
+  - user-story: a user redraws part of a suggested region
+
