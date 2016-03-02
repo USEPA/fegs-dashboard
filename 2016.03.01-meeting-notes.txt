@@ -1,0 +1,7 @@
+- user can add beneficiaries (to beneficiary category?)
+
+- present list of possibly neglected beneficiaries
+
+- flowchart for function of tool
+
+- 
