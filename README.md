@@ -27,7 +27,11 @@ Future features:
   - frst users may have to type in attributes which each beneficiary values
 1. tool assign or allows assignment of each beneficiary to a set of environmental subclasses
 1. data from users can be analyzed to show correlation(IE tradeoff, no effect, synergy) between attributes
-1. report is generated which presents an average of beneficiary-satisfaction
+1. tool reports an average of beneficiary-satisfaction
+1. tool reports lowest scoring attributes and which beneficiaries are affected
+1. tool asks which beneficiaries need the most attention
+
+- getting input from users might qualify as "quality improvement" rather than as a "survey"
 
 ## TODO
 - feature: user can add dropdown items then automatically alphabetize the source list
