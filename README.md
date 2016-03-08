@@ -18,7 +18,7 @@ Future features:
 ## Development Notes
 
 ### 2016.03.03 walkthrough of tool with Kirsten using example use-cases:
-1. first users of tool possibly types in beneficiaries (if no preliminary list is found)
+1. first users of tool possibly type in beneficiaries (if no preliminary list is found)
 1. user defines each beneficiary as belonging to a specific beneficiary-category from the fegs-cs
   - user can define a new beneficiary-category
 1. user enters a measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
