@@ -24,7 +24,7 @@ Future features:
 1. user enters a measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
 1. tool provides a predicted set of attributes which are valued by a beneficiary
   - from predicted list of attributes, user can add or remove items
-  - frst users may have to type in attributes which each beneficiary's rating
+  - frst users may have to type in attributes with each beneficiary's rating
 1. tool assigns or allows assignment of each beneficiary to a set of environmental subclasses
 1. data from users can be analyzed to show correlation(IE tradeoff, no effect, synergy) between attributes
 1. tool reports an average of beneficiary-satisfaction
