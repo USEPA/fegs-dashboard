@@ -21,7 +21,7 @@ Future features:
 1. first users of tool possibly types in beneficiaries (if no preliminary list is found)
 1. user defines each beneficiary as belonging to a specific beneficiary-category from the fegs-cs
   - user can define a new beneficiary-category
-1. user enters a qualitative measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
+1. user enters a measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
 1. tool provides a predicted set of attributes which are valued by a beneficiary
   - from predicted list of attributes, user can add or remove items
   - frst users may have to type in attributes which each beneficiary's rating
