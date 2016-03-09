@@ -18,17 +18,17 @@ Future features:
 ## Development Notes
 
 ### 2016.03.03 walkthrough of tool with Kirsten using example use-cases:
-1. first users of tool possible type in all beneficiaries explicitly if no preliminary list is found
+1. first users of tool possibly type in beneficiaries (if no preliminary list is found)
 1. user defines each beneficiary as belonging to a specific beneficiary-category from the fegs-cs
   - user can define a new beneficiary-category
-1. user enters a qualitative measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
+1. user enters a measure of each beneficiary's satisfaction(beneficiary-satisfaction) for each attribute
 1. tool provides a predicted set of attributes which are valued by a beneficiary
   - from predicted list of attributes, user can add or remove items
-  - frst users may have to type in attributes which each beneficiary values
-1. tool assign or allows assignment of each beneficiary to a set of environmental subclasses
+  - frst users may have to type in attributes with each beneficiary's rating
+1. tool assigns or allows assignment of each beneficiary to a set of environmental subclasses
 1. data from users can be analyzed to show correlation(IE tradeoff, no effect, synergy) between attributes
 1. tool reports an average of beneficiary-satisfaction
-1. tool reports lowest scoring attributes and which beneficiaries are affected
+1. tool reports lowest scoring attributes and which beneficiaries are affected by this
 1. tool asks which beneficiaries need the most attention
 
 - getting input from users might qualify as "quality improvement" rather than as a "survey"
