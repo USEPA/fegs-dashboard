@@ -33,16 +33,32 @@ Future features:
 
 - getting input from users might qualify as "quality improvement" rather than as a "survey"
 
+## OLDTODO
+- go through this old TODO list, keeping only currently valid items:
+  - feature: user can add dropdown items then automatically alphabetize the source list
+  - feature: save a snapshot of the worksheet named Ratings to a worksheet whose name=date
+  - feature: create a wizard which steps users through data entry
+  - enter field for user to select "qualitative" or "quantitative" data to be measured in each column or even cell...
+  - investigate defining geographic region described by fegs-dashboard data entered by user in an accessible way
+    - user-story: a user gives a central lat-long point and a radius
+    - user-story: a user graphically draws a region described to the fegs-dashboard
+    - user-story: a user selects regions automatically detected in satellite images
+    - user-story: a user redraws part of a suggested region
+  - make wizard show user question for a beneficiary and have the user graphically enter data, E.G.:
+    - buttons representing "Good" or "Bad" and advancing the user to the next question for that beneficiary
+
 ## TODO
-- feature: user can add dropdown items then automatically alphabetize the source list
-- feature: save a snapshot of the worksheet named Ratings to a worksheet whose name=date
-- feature: create a wizard which steps users through data entry
-- enter field for user to select "qualitative" or "quantitative" data to be measured in each column or even cell...
-- investigate defining geographic region described by fegs-dashboard data entered by user in an accessible way
-  - user-story: a user gives a central lat-long point and a radius
-  - user-story: a user graphically draws a region described to the fegs-dashboard
-  - user-story: a user selects regions automatically detected in satellite images
-  - user-story: a user redraws part of a suggested region
 - make submit button work
-- make wizard show user question for a beneficiary and have the user graphically enter data, E.G.:
-  - buttons representing "Good" or "Bad" and advancing the user to the next question for that beneficiary
+- add items to beneficiaries list
+- add items to attributes list
+- add items to the list of known ratings
+  - if value not in preset list of ratings then prompt user to add rating to preset list
+  - a user only has to see the prompt once for each new entry; after the addition of
+    the rating the user can enter that rating without being prompted again
+  - add directly to source list
+- FEATURE: autocomplete in cmbRatings
+- FEATURE: graphical, interactive walkthrough: when user performs a milestone, visually direct the user to the next item with the appearance of an arrow to the next item
+- submit data as {KEY};<ATTR_LIST>:{<site>;<datetime>;<beneficiary>};<rating>;<explanation>;<attr1>;...;<attrN>[;]
+- FEATURE: clear the dash on submission or provide a dedicated control with confirmation
+- FEATURE: confirmations optional
+- FEATURE: embedded or linked video demonstration
