@@ -46,11 +46,11 @@ Future features:
     - user-story: a user redraws part of a suggested region
   - make wizard show user question for a beneficiary and have the user graphically enter data, E.G.:
     - buttons representing "Good" or "Bad" and advancing the user to the next question for that beneficiary
-
-## TODO
 - make submit button work
 - add items to beneficiaries list
 - add items to attributes list
+
+## TODO
 - add items to the list of known ratings
   - if value not in preset list of ratings then prompt user to add rating to preset list
   - a user only has to see the prompt once for each new entry; after the addition of
