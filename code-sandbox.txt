@@ -8,15 +8,17 @@ Dim kthIndex As Integer
 siteArray = Array("blue falls", "gorgeous gorge", "crazy canyon")
 ' --- algorithms --- '
 With dash
-For i = 0 to 10^4
-  Call subClearControls
-  .txtSite = siteArray(CInt(Rnd() * siteArray.ListCount - 1))
-  .cmbSelectBen = .lstBensSrc.List(CInt(Rnd() * (.lstBensSrc.ListCount - 1)))
-  .cmbRating = .cmbRating.List(CInt(Rnd() * (.cmbRating.ListCount - 1)))
-  .txtExpln = "This is generated sample-data for development of the fegs-dashboard."
-  For k = 0 to CInt(Rand * (.lstAttrsSrc.ListCount - 1))
-    ' moves kth-random-item to lstAttrsDest
-    kthIndex = Round(Rnd() * (.lstAttrsSrc.ListCount - 1))
-    .lstAttrsDest.AddItem 
-  Next k
-Next i
+  For i = 0 to 10^4
+    Call .subClearControls
+    .txtSite = siteArray(CInt(Rnd() * siteArray.ListCount - 1))
+    .cmbSelectBen = .lstBensSrc.List(CInt(Rnd() * (.lstBensSrc.ListCount - 1)))
+    .cmbRating = .cmbRating.List(CInt(Rnd() * (.cmbRating.ListCount - 1)))
+    .txtExpln = "This is automatically generated sample-data for development of the fegs-dashboard."
+    For k = 0 to CInt(Rand * (.lstAttrsSrc.ListCount - 1))
+      ' moves kth-random-item to lstAttrsDest
+      kthIndex = Round(Rnd() * (.lstAttrsSrc.ListCount - 1))
+      .lstAttrsDest.AddItem .lstAttrsSrc.List(kthIndex)
+    Next k
+    Call .subSubmit
+  Next i
+End With
