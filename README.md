@@ -1,8 +1,8 @@
 # fegs-dashboard
 ## SYNOPSIS
-open `fegs-dashboard.xlsm` and follow the instructions to save formatted ratings of all selected attributes in a line per selected beneficiary.
+Open `fegs-dashboard.xlsm` with Excel and follow the instructions to save formatted ratings of selected attributes each in a line with a single beneficiary.
 
 ## DATA
 Data is stored in the following schema, denoted in the syntax of <requirements> and [options]:
 
-```<site> <site> <timestamp> <beneficiary> <rating> <explanation> <attribute1> [attribute2…attributeN]```
+```<site> <timestamp> <beneficiary> <attribute> <rating> <explanation>```
