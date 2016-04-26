@@ -6,3 +6,5 @@
 - bug: add ben btn not adding ben to cmbSelectBen
 
 - feature: navigate to the top of the dash worksheet on open workbook (fegs-dashboard.xlsm)
+
+- feature: visually distinguish buttons as clickable
