@@ -7,4 +7,4 @@
 
 - feature: navigate to the top of the dash worksheet on open workbook (fegs-dashboard.xlsm)
 
-- feature: visually distinguish buttons as clickable
+- feature: btnNextBen_Click takes the user back to cmbSelectBen
