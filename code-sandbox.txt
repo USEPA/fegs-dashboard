@@ -1,45 +1,8 @@
-Sub subSubmit()
-  '- submit data as a column in the data worksheet with the following structure
-  '  {<KEY>};<ATTR_LIST>:{<site>;<timestamp>;<beneficiary>;}<rating>;<explanation>;...;<attrN>;...[;]
-  '- check and report to user if new rating value was entered?
-  '  - make option to silence reporting of new values
-  '- TODO: export data-saving functionality out of this sub to free engine of interface (per UNIX philosophy)
-  '- TODO: implement data-entry-validation to ensure all required fields are filled
-  ' --- declarations --- '
-  Dim iRow As Integer
-  Dim iBen As Integer
-  Dim strKey As String
-  Dim ws As Worksheet
-  Dim iAttr As Integer
-  Dim iColumn As Integer
-  Dim strSite As String
-  Dim timestamp As String
-  ' --- definitions --- '
-  Const constFirstDataColumn = 1
-  Const constFirstDataRow = 1
-  Set ws = data
-  If Trim(ws.Range("A2").Value) <> "" Then
-    iRow = ws.Cells(constFirstDataColumn, constFirstDataRow).End(xlDown).Row
-  Else
-    iRow = ws.Cells(constFirstDataColumn, constFirstDataRow).Row
-  End If
-  strSite = dash.txtSite
-  timestamp = Format(Now(), "yyyy.MM.ddAThh.mm.ss")
-  ' --- algorithms --- '
-  For iAttr = 0 To lstAttrsDest.ListCount - 1
-    iColumn = constFirstDataColumn
-    iRow = iRow + 1
-    data.Cells(iRow, iColumn) = strSite
-    iColumn = iColumn + 1
-    ws.Cells(iRow, iColumn) = timestamp
-    iColumn = iColumn + 1
-    ws.Cells(iRow, iColumn) = dash.cmbSelectBen
-    iColumn = iColumn + 1
-    ws.Cells(iRow, iColumn) = dash.cmbRating
-    iColumn = iColumn + 1
-    ws.Cells(iRow, iColumn) = dash.txtExpln
-    iColumn = iColumn + 1
-    ws.Cells(iRow, iColumn) = dash.lstAttrsDest.List(iAttr)
-  Next iAttr
-End Sub
+##TODO:
+- bug: err msg on submit
 
+- place dash buttons on bottom, stacked vertically with order "submit," "next ben," then "clear data on this worksheet(but keep submitted data)," then "export"
+
+- bug: add ben btn not adding ben to cmbSelectBen
+
+- feature: navigate to the top of the dash worksheet on open workbook (fegs-dashboard.xlsm)
