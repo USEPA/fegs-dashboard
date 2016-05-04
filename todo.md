@@ -1,7 +1,9 @@
 #TODO:
-- feature: nonuniform random data generation
+- feature: display list of attributes in step 5
+  - decide where to put attribute-list
+  - vba to underly  
 
-- feature: analyze data button writes pivot cache then shows tables, charts, and field list
+- feature: nonuniform random data generation
 
 - feature: export function exports data in xml format
 
@@ -19,3 +21,5 @@
 - feature: btnNextBen_Click takes the user back to cmbSelectBen
 
 - feature: step 5, rating, indicates which beneficiary and attributes are being rated
+
+- feature: analyze data button writes pivot cache then shows tables, charts, and field list
