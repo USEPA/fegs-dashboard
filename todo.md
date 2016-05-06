@@ -1,13 +1,44 @@
 #TODO:
-- feature: display list of attributes in step 5
-  - decide where to put attribute-list
-  - vba to underly  
+- move process-synopsis to a documentation file and flesh out the documentation using this as an outline
+
+- bug: lstAttrsSrc, the top attribute listbox, did not initialize with a scrollbar in the meeting
+  - try: run listbox-fixer-code on worksheet load
 
 - feature: nonuniform random data generation
 
 - feature: export function exports data in xml format
 
-- feature: video of pivot table manipulation
+- feature: videos covering the following points
+  1. enter data
+    - roadmap
+    - instructions
+    - sitename
+    - add known bens to list of beneficiaries at site
+    - add new beneficiaries
+    - select ben to rate
+    - add known attributes
+    - add new attribute
+    - consider prompted beneficiary and listed attributes
+    - rate attributes as the beneficiary
+    - explain rating
+    - sulbmit data to data worksheet
+    - rate the site as the next beneficiary
+    - clear data from the dash-worksheet
+  1. show data worksheet
+    - begin exactly where data-entry-video left off
+    - each rating gets a row for each attribute chosen
+    - each field gets a column
+    - delete data for a beneficiary
+  1. analyze data
+    - anlyze button
+    - interpretation of default layout
+    - field list
+    - show values as
+    - rearrange fields
+    - example considerations which motivate table-and visualization-layout
+      - drill down into data in default layout
+      - open new pivottable by activating a value-cell
+      - 
 
 #DONE:
 - bug: err msg on submit
@@ -23,3 +54,16 @@
 - feature: step 5, rating, indicates which beneficiary and attributes are being rated
 
 - feature: analyze data button writes pivot cache then shows tables, charts, and field list
+
+- feature: display list of attributes in step 5
+
+- bug: btnAddAttr broken
+
+- bug: cmbRating only lists 'good'
+
+- feature: whether infrastructure and access affect rating between cmbRating and txtExpln
+
+- feature: pivot table automatically shows values as percentages
+
+- feature: no fractional values on pivot chart
+
