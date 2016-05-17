@@ -1,6 +1,4 @@
-#TODO:
-- move process-synopsis to a documentation file and flesh out the documentation using this as an outline
-
+# TODO:
 - bug: lstAttrsSrc, the top attribute listbox, did not initialize with a scrollbar in the meeting
   - try: run listbox-fixer-code on worksheet load
 
@@ -40,7 +38,32 @@
       - open new pivottable by activating a value-cell
       - 
 
-#DONE:
+## Features to Explore
+- tabbed/paged format instead of scrolling through a worksheet
+
+- multiple rows and columns of natural features in data-entry
+
+- description of fegs terminology
+
+- tabbed/paged format instead of scrolling through a worksheet
+
+## Misc. Ideas
+- terminology of "uses" or "roles"
+
+- don't overcrowd by showing bens and their respective attrs all at once
+
+## Feature to Add ASAP
+- tree view in lists of fegs**
+
+# DONE:
+- convert add/remove to pill-buttons instead of arrow-buttons**
+
+- spread layout horizontally**
+
+- attibutes before infrastructure in ordering of data-entry-take out infrastructure completely**
+
+- move process-synopsis to a documentation file and flesh out the documentation using this as an outline
+
 - bug: err msg on submit
 
 - place dash buttons on bottom, stacked vertically with order "submit," "next ben," then "clear data on this worksheet(but keep submitted data)," then "export"
