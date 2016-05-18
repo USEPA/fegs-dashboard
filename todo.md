@@ -53,5 +53,21 @@
 - don't overcrowd by showing bens and their respective attrs all at once
 
 ## Feature to Add ASAP
-- tree view in lists of fegs**
+- tree view in lists of fegs
+
+- put add and remove between the side-by-side listboxes
+
+- change label of buttons that add new beneficiary and new attribute to "new"
+
+- delete colored sections bg
+
+- thicken colored border for each nembered step
+
+- embolden the word natural in instructions for step 3
+
+- cbInfrastructure.text = "Did infrastructure affect the rating?"
+
+- remove infrastructure-listbox-builder and its dependent code
+
+- enlarge instructions' text
 
