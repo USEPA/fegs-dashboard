@@ -55,11 +55,13 @@
 ## Feature to Add ASAP
 - tree view in lists of fegs
 
-- put add and remove between the side-by-side listboxes
+- remove instructions from step one
 
-- change label of buttons that add new beneficiary and new attribute to "new"
+- put add and remove between beneficiary listboxes and attribute listboxes
 
-- delete colored sections bg
+- change label of buttons to "new" where buttons add new beneficiary or attribute 
+
+- delete colored sections' bg
 
 - thicken colored border for each nembered step
 
@@ -67,7 +69,7 @@
 
 - cbInfrastructure.text = "Did infrastructure affect the rating?"
 
-- remove infrastructure-listbox-builder and its dependent code
+- remove lstInfrastructureListBuilder and its dependent code
 
 - enlarge instructions' text
 

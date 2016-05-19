@@ -1,4 +1,4 @@
-# Changelog listed by ascending date of implementation
+# Changelog with newer items lower
 - convert add/remove to pill-buttons instead of arrow-buttons**
 
 - spread layout horizontally**
@@ -17,6 +17,9 @@
 
 - feature: btnNextBen_Click takes the user back to cmbSelectBen
 
+- bug: lstAttrsSrc, the top attribute listbox, did not initialize with a scrollbar in the meeting
+  - try: run listbox-fixer-code on worksheet load
+
 - feature: step 5, rating, indicates which beneficiary and attributes are being rated
 
 - feature: analyze data button writes pivot cache then shows tables, charts, and field list
@@ -32,4 +35,22 @@
 - feature: pivot table automatically shows values as percentages
 
 - feature: no fractional values on pivot chart
+
+- remove instructions from step one
+
+- put add and remove between beneficiary listboxes and attribute listboxes
+
+- change label of buttons to "new" where buttons add new beneficiary or attribute 
+
+- delete colored sections' bg
+
+- thicken colored border for each nembered step
+
+- embolden the word natural in instructions for step 3
+
+- cbInfrastructure.text = "Did infrastructure affect the rating?"
+
+- remove lstInfrastructureListBuilder and its dependent code
+
+- enlarge instructions' text
 
