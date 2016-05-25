@@ -1,4 +1,9 @@
 # TODO:
+## Feature to Add ASAP
+- fix "rate as next beneficiary"
+- tree view in lists of fegs
+
+## Items to Address as Time Permits
 - bug: lstAttrsSrc, the top attribute listbox, did not initialize with a scrollbar in the meeting
   - try: run listbox-fixer-code on worksheet load
 
@@ -51,25 +56,4 @@
 - terminology of "uses" or "roles"
 
 - don't overcrowd by showing bens and their respective attrs all at once
-
-## Feature to Add ASAP
-- tree view in lists of fegs
-
-- remove instructions from step one
-
-- put add and remove between beneficiary listboxes and attribute listboxes
-
-- change label of buttons to "new" where buttons add new beneficiary or attribute 
-
-- delete colored sections' bg
-
-- thicken colored border for each nembered step
-
-- embolden the word natural in instructions for step 3
-
-- cbInfrastructure.text = "Did infrastructure affect the rating?"
-
-- remove lstInfrastructureListBuilder and its dependent code
-
-- enlarge instructions' text
 

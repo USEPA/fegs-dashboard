@@ -1,4 +1,4 @@
-# Changelog with newer items lower
+# Changelog with new items appended to end, eg $ echo "- blah" >> changelog.md
 - convert add/remove to pill-buttons instead of arrow-buttons**
 
 - spread layout horizontally**
@@ -53,4 +53,8 @@
 - remove lstInfrastructureListBuilder and its dependent code
 
 - enlarge instructions' text
+
+- 2016.05.24at14:55 reword and move textboxes and buttons for adding new bens/attrs under source lists 
+
+- 2016.05.24at17:14 reword instructions and visual edits 
 
