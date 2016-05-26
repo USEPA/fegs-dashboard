@@ -1,12 +1,12 @@
 # TODO:
 ## Feature to Add ASAP
-- fix "rate as next beneficiary"
+- fix button labeled "rate as next beneficiary"
 - tree view in lists of fegs
+- create a written user's manual
+- create a video user's manual
+- create a simple flowchart to diagram a roadmap of tool
 
 ## Items to Address as Time Permits
-- bug: lstAttrsSrc, the top attribute listbox, did not initialize with a scrollbar in the meeting
-  - try: run listbox-fixer-code on worksheet load
-
 - feature: nonuniform random data generation
 
 - feature: export function exports data in xml format
@@ -46,14 +46,7 @@
 ## Features to Explore
 - tabbed/paged format instead of scrolling through a worksheet
 
-- multiple rows and columns of natural features in data-entry
-
 - description of fegs terminology
 
-- tabbed/paged format instead of scrolling through a worksheet
-
 ## Misc. Ideas
-- terminology of "uses" or "roles"
-
-- don't overcrowd by showing bens and their respective attrs all at once
 
