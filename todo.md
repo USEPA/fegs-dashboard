@@ -1,8 +1,6 @@
 # TODO:
 ## Feature to Add ASAP
-- fix button labeled "rate as next beneficiary"
 - tree view in lists of fegs
-- create a written user's manual
 - create a video user's manual
 - create a simple flowchart to diagram a roadmap of tool
 

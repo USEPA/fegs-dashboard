@@ -58,3 +58,6 @@
 
 - 2016.05.24at17:14 reword instructions and visual edits 
 
+- fix button labeled "rate as next beneficiary"
+
+- create a written user's manual
