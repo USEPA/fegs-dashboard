@@ -1,8 +1,6 @@
 # TODO:
-## Feature to Add ASAP
-- tree view in lists of fegs
-- create a video user's manual
-- create a simple flowchart to diagram a roadmap of tool
+## Features to Add ASAP
+- check data-entries for more than about 250 chars (throws "type mismatch" if "analyze data"-button is used)
 
 ## Items to Address as Time Permits
 - feature: nonuniform random data generation
@@ -47,4 +45,11 @@
 - description of fegs terminology
 
 ## Misc. Ideas
+
+## Backburner
+- create a video user's manual
+  - create a simple flowchart to diagram a roadmap of tool
+
+- implement treeview
+  - I am taking Kirsten's suggestion: the payoff of implementing treeview does not seem to outweigh the time-cost of implementing it
 

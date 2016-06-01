@@ -61,3 +61,12 @@
 - fix button labeled "rate as next beneficiary"
 
 - create a written user's manual
+
+- strTxtRatingDefaultText = "Explain this rating."
+
+- 2016.05.26at20:21 change beneficiary: "Cafo Operator"|->"Concentrated Animal Feeding Operation Operator" 
+
+- 2016.05.26at20:25 reposition buttons and text-fields for adding new attrs and bens to increase visibility 
+
+- 2016.05.27at08:31 make-instructions-uniformly-large-and-prominent 
+
