@@ -1,6 +1,9 @@
 # TODO:
 ## Features to Add ASAP
-- check data-entries for more than about 250 chars (throws "type mismatch" if "analyze data"-button is used)
+- make help links to external documentation and videos on very specific topics throughout tool
+  - make topics to cover every peice of the process
+  - make a roadmap of the entire process for introduction and perspective
+  - use the topic-list below
 
 ## Items to Address as Time Permits
 - feature: nonuniform random data generation

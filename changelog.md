@@ -70,3 +70,5 @@
 
 - 2016.05.27at08:31 make-instructions-uniformly-large-and-prominent 
 
+- check data-entries for more than about 250 chars (throws "type mismatch" if "analyze data"-button is used)
+
