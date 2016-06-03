@@ -1,5 +1,9 @@
 # TODO:
 ## Features to Add ASAP
+- template sites
+- investigate a CMS-style framework for site-template-creation to use in later template creation by myself and possible maintainers of the fegs-tool
+  - the feature that will be visible to end-users is a template of a type of site such that beneficiaries and attributes are added automatically when a template is selected
+  - the framework mentioned is a tool to facilitate future creation of additional templates
 - make help links to external documentation and videos on very specific topics throughout tool
   - make topics to cover every peice of the process
   - make a roadmap of the entire process for introduction and perspective
