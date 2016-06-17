@@ -49,6 +49,12 @@ lbBenSrc.grid(row=1, column=0, rowspan=3)
 for ben in open("parameters/beneficiaries.txt","r"):
     lbBenSrc.insert(END, ben)
 
+sbBenSrc = Scrollbar(lbBenSrc)
+sbBenSrc.grid(row=1, column=1, rowspan=3)
+
+lbBenSrc.config(yscrollcommand=sbBenSrc.set)
+sbBenSrc.config(command=lbBenSrc.yview)
+
 btnBenAdd = Button(frameChooseBens, text=">> Add >>")
 btnBenAdd.grid(row=1, column=1, columnspan=2)
 
