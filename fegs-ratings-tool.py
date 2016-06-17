@@ -42,12 +42,17 @@ frameChooseBens.pack(fill=BOTH)
 nbMain.add(frameChooseBens, text="Choose Beneficiaries")
 
 txtBenInstructions = Label(frameChooseBens, text="Build a list of beneficiaries interested in the site. Here, a beneficiary is a role as which a person uses or appreciates the site.")
-txtBenInstructions.grid(row=0, column=0, columnspan=4)
+txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
-lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth)
+lbBenSrc = Listbox(frameChooseBens)
 lbBenSrc.grid(row=1, column=0, rowspan=3)
 for ben in open("parameters/beneficiaries.txt","r"):
     lbBenSrc.insert(END, ben)
+
+sbBenSrc = Scrollbar(frameChooseBens)
+sbBenSrc.grid(row=1, column=1)
+lbBenSrc.config(yscroll=sbBenSrc.set)
+sbBenSrc.config(command=lbBenSrc.yview)
 
 btnBenAdd = Button(frameChooseBens, text=">> Add >>")
 btnBenAdd.grid(row=1, column=1, columnspan=2)
