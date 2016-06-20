@@ -1,11 +1,12 @@
-# fegs-rating-tool: rate attributes (natural features)
-# for different classes of beneficiaries
+# FIXME: add tabbed bens i'face
+
+# fegs-rating-tool: rate attributes (natural features) for different classes of beneficiaries
 from tkinter import *
 from tkinter.ttk import *
 
-# parametr's
+# parametr's [= prarmetrizations]
 lbHeight = 16
-lbWidth = 64
+lbWidth = 48
 
 root = Tk()
 
@@ -17,6 +18,9 @@ root.protocol("WM_DELETE_WINDOW", master.quit)
 
 nbMain = Notebook(master, name='nbMain')
 nbMain.pack(fill=BOTH, padx=2, pady=3)
+
+# listbox and a vertical scrollbar in a pane
+#def createListboxFrame(baseName)
 
 ###########################
 # tab for naming the site #
@@ -44,33 +48,36 @@ nbMain.add(frameChooseBens, text="Choose Beneficiaries")
 txtBenInstructions = Label(frameChooseBens, text="Build a list of beneficiaries interested in the site. Here, a beneficiary is a role as which a person uses or appreciates the site.")
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
-lbBenSrc = Listbox(frameChooseBens)
+lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth)
 lbBenSrc.grid(row=1, column=0, rowspan=3)
 for ben in open("parameters/beneficiaries.txt","r"):
     lbBenSrc.insert(END, ben)
 
-sbBenSrc = Scrollbar(frameChooseBens)
-sbBenSrc.grid(row=1, column=1)
-lbBenSrc.config(yscroll=sbBenSrc.set)
-sbBenSrc.config(command=lbBenSrc.yview)
+sbBenSrc = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenSrc.yview)
+sbBenSrc.grid(row=1, column=1, rowspan=3, sticky=N+S)
+lbBenSrc.config(yscrollcommand=sbBenSrc.set)
 
 btnBenAdd = Button(frameChooseBens, text=">> Add >>")
-btnBenAdd.grid(row=1, column=1, columnspan=2)
-
-btnBenRm = Button(frameChooseBens, text="<< Remove <<")
-btnBenRm.grid(row=3, column=1, columnspan=2)
+btnBenAdd.grid(row=1, column=2, columnspan=2)
 
 txtNewBen = Entry(frameChooseBens, text="Don't see a beneficiary? Type it here and click >>")
-txtNewBen.grid(row=2, column=1) 
+txtNewBen.grid(row=2, column=2) 
 
 btnNewBen = Button(frameChooseBens, text=">>")
-btnNewBen.grid(row=2, column=2)
+btnNewBen.grid(row=2, column=3)
+
+btnBenRm = Button(frameChooseBens, text="<< Remove <<")
+btnBenRm.grid(row=3, column=2, columnspan=2)
 
 lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth)
-lbBenDest.grid(row=1, column=3, rowspan=3)
+lbBenDest.grid(row=1, column=4, rowspan=3)
+
+sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
+sbBenDest.grid(row=1, column=5, sticky=N+S)
+lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
-btnProcessBens.grid(row=4, column=1, columnspan=2)
+btnProcessBens.grid(row=4, column=2, columnspan=2)
 
 #################################################
 # tab for adding attributes to each beneficiary #
@@ -89,6 +96,10 @@ lbAttrSrc.grid(row=1, column=0, rowspan=3)
 for attr in open("parameters/attributes.txt", "r"):
     lbAttrSrc.insert(END, attr)
 
+sbAttrSrc = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrSrc.yview)
+sbAttrSrc.grid(row=1, column=5, sticky=N+S)
+lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
+
 # widgets between listboxes
 btnAttrAdd = Button(frameProcessBens, text=">> Add >>")
 btnAttrAdd.grid(row=1, column=1, columnspan=2)
@@ -105,6 +116,10 @@ lbAttrDest.grid(row=1, column=3, rowspan=3)
 # populate the attributes users select from
 for attr in open("parameters/attributes.txt", "r"):
     lbBenSrc.insert(END, attr)
+
+sbAttrDest = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrDest.yview)
+sbAttrDest.grid(row=1, column=5, sticky=N+S)
+lbAttrDest.config(yscrollcommand=sbAttrDest.set)
 
 btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.")
 btnRate.grid(row=9, column=1, columnspan=2)
