@@ -6,9 +6,10 @@ from tkinter.ttk import *
 
 # parametr's [= prarmetrizations]
 lbHeight = 16
-lbWidth = 48
+lbWidth = 32
 
 root = Tk()
+root.option_add("*Font", "courier 20")
 
 master = Frame(root, name='master')
 master.pack(fill=BOTH)
@@ -16,8 +17,8 @@ master.pack(fill=BOTH)
 root.title('FEGS Rating Tool')
 root.protocol("WM_DELETE_WINDOW", master.quit)
 
-nbMain = Notebook(master, name='nbMain')
-nbMain.pack(fill=BOTH, padx=2, pady=3)
+nb = Notebook(master, name='nb')
+nb.pack(fill=BOTH, padx=2, pady=3)
 
 # listbox and a vertical scrollbar in a pane
 #def createListboxFrame(baseName)
@@ -25,9 +26,9 @@ nbMain.pack(fill=BOTH, padx=2, pady=3)
 ###########################
 # tab for naming the site #
 ###########################
-frameSiteName = Frame(nbMain, name='frameSiteName')
+frameSiteName = Frame(nb, name='frameSiteName')
 frameSiteName.pack(fill=BOTH)
-nbMain.add(frameSiteName, text="Name the site")
+nb.add(frameSiteName, text="Name the site")
 
 lblSiteInstructions = Label(frameSiteName, text="Type the name of the site below.")
 lblSiteInstructions.grid(row=0)
@@ -35,15 +36,15 @@ lblSiteInstructions.grid(row=0)
 txtSiteName = Entry(frameSiteName, text="Type the site name here.", width=lbWidth)
 txtSiteName.grid(row=1)
 
-btnChooseBens = Button(frameSiteName, text="Move on to choose beneficiaries of the site.")
+btnChooseBens = Button(frameSiteName, text="Move on to choose beneficiaries of the site.", command=lambda: nb.select(frameChooseBens))
 btnChooseBens.grid(row=2)
 
 ##############################################
 # tab for choosing beneficiaries of the site #
 ##############################################
-frameChooseBens = Frame(nbMain, name='frameChooseBens')
+frameChooseBens = Frame(nb, name='frameChooseBens')
 frameChooseBens.pack(fill=BOTH)
-nbMain.add(frameChooseBens, text="Choose Beneficiaries")
+nb.add(frameChooseBens, text="Choose Beneficiaries")
 
 txtBenInstructions = Label(frameChooseBens, text="Build a list of beneficiaries interested in the site. Here, a beneficiary is a role as which a person uses or appreciates the site.")
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
@@ -82,9 +83,9 @@ btnProcessBens.grid(row=4, column=2, columnspan=2)
 #################################################
 # tab for adding attributes to each beneficiary #
 #################################################
-frameProcessBens = Frame(nbMain, name='frameProcessBens')
+frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
-nbMain.add(frameProcessBens, text="Process Beneficiaries")
+nb.add(frameProcessBens, text="Process Beneficiaries")
 
 lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affects each beneficiary's rating of the site.")
 lblAttrsInstructions.grid(row=0, column=0, columnspan=4)
@@ -127,15 +128,21 @@ btnRate.grid(row=9, column=1, columnspan=2)
 #########################
 # tab to submit ratings #
 #########################
-frameSubmit = Frame(nbMain, name="frameSubmit")
+frameSubmit = Frame(nb, name="frameSubmit")
 frameSubmit.pack(fill=BOTH)
-nbMain.add(frameSubmit, text="Submit Ratings")
+nb.add(frameSubmit, text="Submit Ratings")
 
 lblSubmitInstructions = Label(frameSubmit, text="Once all data is entered, submit the data to a file for later use.")
 lblSubmitInstructions.grid(row=0, column=0)
 
 btnSubmit = Button(frameSubmit, text="Submit")
 btnSubmit.grid(row=1, column=0)
+
+# next-tab-buttons' config
+#btnChooseBens.configure()
+#btnProcessBens.configure(command=nb.select(frameProcessBens))
+#btnRate.config(command=nb.select(frameSubmit))
+#btnSubmit.config(command=nb.select(frameSiteName))
 
 # don't put any code which should run before the GUI closes after mainloop
 root.mainloop()
