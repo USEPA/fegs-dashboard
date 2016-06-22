@@ -79,3 +79,5 @@
 - FEATURE: new buttons' functionality
 
 - FEATURE: rating combobox
+
+- FEATURE: explanation text-field
