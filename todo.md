@@ -1,4 +1,11 @@
 # TODO:
+## Implementation of Tool in Python
+- FEATURE: user-added parameters
+- FEATURE: explanation text-field
+- FEATURE: submit ratings to a file
+- FEATURE: save session
+- FEATURE: add tabbed bens i'face
+
 ## Features to Add ASAP
 - template sites
 - investigate a CMS-style framework for site-template-creation to use in later template creation by myself and possible maintainers of the fegs-tool

@@ -72,3 +72,10 @@
 
 - check data-entries for more than about 250 chars (throws "type mismatch" if "analyze data"-button is used)
 
+- ======== tool changed to python =============
+
+- FEATURE: add and remove buttons' functionality
+
+- FEATURE: new buttons' functionality
+
+- FEATURE: rating combobox

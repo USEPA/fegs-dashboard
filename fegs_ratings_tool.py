@@ -1,4 +1,24 @@
-# FIXME: add tabbed bens i'face
+''' This is a GUI tool to identify and rate attributes as a beneficiary under the final ecosystem goods and services(FEGS) model and FEGS categorization system(FEGS-CS).
+'''
+
+def moveBetweenLists(fromList, toList):
+    "move selected items between fromList and toList"
+    indices = list(fromList.curselection())
+    indices.sort(reverse=True)
+    for i in range(len(indices)):
+        index = indices.pop()-i
+        print(i, " of ", len(indices), ": index ", index)
+        toList.insert(END, fromList.get(index))
+        fromList.delete(index)
+
+def addToList(item, lst):
+    "casts item as str and adds it to the end of list)"
+    lst.insert(END, item)
+
+def lineListFromFilename(filename):
+    "returns a list of end-whitespace-stripped lines from filename"
+    lines = [line.rstrip('\n') for line in open(filename)]
+    return lines
 
 # fegs-rating-tool: rate attributes (natural features) for different classes of beneficiaries
 from tkinter import *
@@ -9,6 +29,10 @@ import datetime
 lbHeight = 16
 lbWidth = 32
 fontHeight = 10
+instructions_wrap_width = 60
+beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
+attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
+ratings = lineListFromFilename("parameters/ratings.txt")
 
 root = Tk()
 root.option_add("*Font", "courier " + str(fontHeight))
@@ -22,13 +46,6 @@ root.protocol("WM_DELETE_WINDOW", master.quit)
 nb = Notebook(master, name='nb')
 nb.pack(fill=BOTH, padx=2, pady=3)
 
-def moveBetweenLists(element, fromList, toList):
-    # move items between fromList and toList
-    items = fromList.curselection.value()
-    for item in items:
-        toList.insert(END, fromList(item))
-        fromList.delete(item)
-    
 ###########################
 # tab for naming the site #
 ###########################
@@ -42,7 +59,8 @@ lblSiteInstructions.grid(row=0)
 txtSiteName = Entry(frameSiteName, text="Type the site name here.", width=lbWidth)
 txtSiteName.grid(row=1)
 
-btnChooseBens = Button(frameSiteName, text="Move on to choose beneficiaries of the site.", command=lambda: nb.select(frameChooseBens))
+btnChooseBens = Button(frameSiteName, text="Move on to choose beneficiaries of the site.",\
+                       command=lambda: nb.select(frameChooseBens))
 btnChooseBens.grid(row=2)
 
 ##############################################
@@ -52,28 +70,35 @@ frameChooseBens = Frame(nb, name='frameChooseBens')
 frameChooseBens.pack(fill=BOTH)
 nb.add(frameChooseBens, text="Choose Beneficiaries")
 
-txtBenInstructions = Label(frameChooseBens, text="Build a list of beneficiaries interested in the site. Here, a beneficiary is a role as which a person uses or appreciates the site.")
+txtBenInstructions = Label(frameChooseBens,\
+                           text="Build a list of beneficiaries interested in the site."+\
+                           "Here, a beneficiary is a role as which a person uses or"+\
+                           "appreciates the site.",\
+                           )
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
 lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbBenSrc.grid(row=1, column=0, rowspan=3)
-for ben in open("parameters/beneficiaries.txt","r"):
-    lbBenSrc.insert(END, ben)
+for beneficiary in beneficiaries:
+    lbBenSrc.insert(END, beneficiary)
 
 sbBenSrc = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenSrc.yview)
 sbBenSrc.grid(row=1, column=1, rowspan=3, sticky=N+S)
 lbBenSrc.config(yscrollcommand=sbBenSrc.set)
 
-btnBenAdd = Button(frameChooseBens, text=">> Add >>")
+btnBenAdd = Button(frameChooseBens, text=">> Add >>", \
+                   command=lambda: moveBetweenLists(lbBenSrc, lbBenDest))
 btnBenAdd.grid(row=1, column=2, columnspan=2)
 
 txtNewBen = Entry(frameChooseBens, text="Don't see a beneficiary? Type it here and click >>")
 txtNewBen.grid(row=2, column=2) 
 
-btnNewBen = Button(frameChooseBens, text=">>")
+btnNewBen = Button(frameChooseBens, text=">>",\
+                   command=lambda: addToList(txtNewBen.get(), lbBenDest))
 btnNewBen.grid(row=2, column=3)
 
-btnBenRm = Button(frameChooseBens, text="<< Remove <<")
+btnBenRm = Button(frameChooseBens, text="<< Remove <<",\
+                  command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
 btnBenRm.grid(row=3, column=2, columnspan=2)
 
 lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
@@ -98,40 +123,43 @@ nbBens = Notebook(frameProcessBens, name="nbBens")
 lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affects each beneficiary's rating of the site.")
 lblAttrsInstructions.grid(row=0, column=0, columnspan=4)
 
-# source list of attributes
+# source listbox of attributes
 lbAttrSrc = Listbox(frameProcessBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbAttrSrc.grid(row=1, column=0, rowspan=3)
 # populate the attributes users select from
-for attr in open("parameters/attributes.txt", "r"):
-    lbAttrSrc.insert(END, attr)
+for attribute in attributes:
+    lbAttrSrc.insert(END, attribute)
 
 sbAttrSrc = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrSrc.yview)
 sbAttrSrc.grid(row=1, column=5, sticky=N+S)
 lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
 
 # widgets between listboxes
-btnAttrAdd = Button(frameProcessBens, text=">> Add >>")
+btnAttrAdd = Button(frameProcessBens, text=">> Add >>",\
+                    command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
 btnAttrAdd.grid(row=1, column=1, columnspan=2)
 txtNewAttr = Entry(frameProcessBens, text="Don't see a? Type it here and click >>")
 txtNewAttr.grid(row=2, column=1)
-btnNewAttr = Button(frameProcessBens, text=">>")
+btnNewAttr = Button(frameProcessBens, text=">>",\
+                    command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
 btnNewAttr.grid(row=2, column=2)
-btnAttrRm = Button(frameProcessBens, text="<< Remove <<")
+btnAttrRm = Button(frameProcessBens, text="<< Remove <<",\
+                    command=lambda: moveBetweenLists(lbAttrDest, lbAttrSrc))
 btnAttrRm.grid(row=3, column=1, columnspan=2)
 
-# destination list of attributes
+# destination listbox of attributes
 lbAttrDest = Listbox(frameProcessBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-lbAttrDest.grid(row=1, column=3, rowspan=3)
-# populate the attributes users select from
-for attr in open("parameters/attributes.txt", "r"):
-    lbBenSrc.insert(END, attr)
+lbAttrDest.grid(row=1, column=4, rowspan=3)
 
 sbAttrDest = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrDest.yview)
-sbAttrDest.grid(row=1, column=5, sticky=N+S)
+sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=N+S)
 lbAttrDest.config(yscrollcommand=sbAttrDest.set)
 
+cmbRatings = Combobox(frameProcessBens, values=ratings)
+cmbRatings.grid(row=9, column=0, columnspan=2)
+
 btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.", command=lambda: nb.select(frameSubmit))
-btnRate.grid(row=9, column=1, columnspan=2)
+btnRate.grid(row=9, column=2, columnspan=2)
 
 #########################
 # tab to submit ratings #
@@ -153,7 +181,7 @@ class Ratings_Session():
     "gives users a persistent session across closing the program"
     lstRatings = [] #FIXME: populate list with Fegs_Rating objects
     def __init__(self):
-        sessionCreationTime = str(datetime.datetime.now())
+        timeOfSessionCreation = str(datetime.datetime.now())
         site = txtSiteName
         i = 0
         lstRatings = []
