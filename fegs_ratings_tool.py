@@ -3,13 +3,15 @@
 # fegs-rating-tool: rate attributes (natural features) for different classes of beneficiaries
 from tkinter import *
 from tkinter.ttk import *
+import datetime
 
-# parametr's [= prarmetrizations]
+# parametr's [= parametrizations]
 lbHeight = 16
 lbWidth = 32
+fontHeight = 10
 
 root = Tk()
-root.option_add("*Font", "courier 20")
+root.option_add("*Font", "courier " + str(fontHeight))
 
 master = Frame(root, name='master')
 master.pack(fill=BOTH)
@@ -20,9 +22,13 @@ root.protocol("WM_DELETE_WINDOW", master.quit)
 nb = Notebook(master, name='nb')
 nb.pack(fill=BOTH, padx=2, pady=3)
 
-# listbox and a vertical scrollbar in a pane
-#def createListboxFrame(baseName)
-
+def moveBetweenLists(element, fromList, toList):
+    # move items between fromList and toList
+    items = fromList.curselection.value()
+    for item in items:
+        toList.insert(END, fromList(item))
+        fromList.delete(item)
+    
 ###########################
 # tab for naming the site #
 ###########################
@@ -49,7 +55,7 @@ nb.add(frameChooseBens, text="Choose Beneficiaries")
 txtBenInstructions = Label(frameChooseBens, text="Build a list of beneficiaries interested in the site. Here, a beneficiary is a role as which a person uses or appreciates the site.")
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
-lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth)
+lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbBenSrc.grid(row=1, column=0, rowspan=3)
 for ben in open("parameters/beneficiaries.txt","r"):
     lbBenSrc.insert(END, ben)
@@ -70,14 +76,14 @@ btnNewBen.grid(row=2, column=3)
 btnBenRm = Button(frameChooseBens, text="<< Remove <<")
 btnBenRm.grid(row=3, column=2, columnspan=2)
 
-lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth)
+lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbBenDest.grid(row=1, column=4, rowspan=3)
 
 sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, sticky=N+S)
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
-btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
+btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries", command=lambda: nb.select(frameProcessBens))
 btnProcessBens.grid(row=4, column=2, columnspan=2)
 
 #################################################
@@ -87,11 +93,13 @@ frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
 nb.add(frameProcessBens, text="Process Beneficiaries")
 
+nbBens = Notebook(frameProcessBens, name="nbBens")
+
 lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affects each beneficiary's rating of the site.")
 lblAttrsInstructions.grid(row=0, column=0, columnspan=4)
 
 # source list of attributes
-lbAttrSrc = Listbox(frameProcessBens, height=lbHeight, width=lbWidth)
+lbAttrSrc = Listbox(frameProcessBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbAttrSrc.grid(row=1, column=0, rowspan=3)
 # populate the attributes users select from
 for attr in open("parameters/attributes.txt", "r"):
@@ -112,7 +120,7 @@ btnAttrRm = Button(frameProcessBens, text="<< Remove <<")
 btnAttrRm.grid(row=3, column=1, columnspan=2)
 
 # destination list of attributes
-lbAttrDest = Listbox(frameProcessBens, height=lbHeight, width=lbWidth)
+lbAttrDest = Listbox(frameProcessBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbAttrDest.grid(row=1, column=3, rowspan=3)
 # populate the attributes users select from
 for attr in open("parameters/attributes.txt", "r"):
@@ -122,7 +130,7 @@ sbAttrDest = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrDest.yvi
 sbAttrDest.grid(row=1, column=5, sticky=N+S)
 lbAttrDest.config(yscrollcommand=sbAttrDest.set)
 
-btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.")
+btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.", command=lambda: nb.select(frameSubmit))
 btnRate.grid(row=9, column=1, columnspan=2)
 
 #########################
@@ -138,11 +146,28 @@ lblSubmitInstructions.grid(row=0, column=0)
 btnSubmit = Button(frameSubmit, text="Submit")
 btnSubmit.grid(row=1, column=0)
 
-# next-tab-buttons' config
-#btnChooseBens.configure()
-#btnProcessBens.configure(command=nb.select(frameProcessBens))
-#btnRate.config(command=nb.select(frameSubmit))
-#btnSubmit.config(command=nb.select(frameSiteName))
-
 # don't put any code which should run before the GUI closes after mainloop
 root.mainloop()
+
+class Ratings_Session():
+    "gives users a persistent session across closing the program"
+    lstRatings = [] #FIXME: populate list with Fegs_Rating objects
+    def __init__(self):
+        sessionCreationTime = str(datetime.datetime.now())
+        site = txtSiteName
+        i = 0
+        lstRatings = []
+        for ben in lstBenDest:
+            lstRatings[i] = {"timestamp":str(datetime.datetime.now()), "site":txtSiteName, \
+                             "beneficiary":ben, "attributes":[], "rating":cmbRating, \
+                             "explanation":txtExplanation}
+            i = i + 1
+
+class Fegs_Rating():
+    "globally stores a rating's info"
+    timestamp = 0 #FIXME: same as session timestamp
+    site = txtSiteName
+    beneficiary = "" #FIXME: grab the name from lstBenDest
+    attributes = []
+    explanation = ""
+    rating = ""
