@@ -1,6 +1,11 @@
 ''' This is a GUI tool to identify and rate attributes as a beneficiary under the final ecosystem goods and services(FEGS) model and FEGS categorization system(FEGS-CS).
 '''
 
+# imports
+from tkinter import *
+from tkinter.ttk import *
+import datetime
+
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
     indices = list(fromList.curselection())
@@ -20,15 +25,22 @@ def lineListFromFilename(filename):
     lines = [line.rstrip('\n') for line in open(filename)]
     return lines
 
-# fegs-rating-tool: rate attributes (natural features) for different classes of beneficiaries
-from tkinter import *
-from tkinter.ttk import *
-import datetime
+class Ratings_Session():
+    "gives users a persistent session across closing the program and allows global data-sharing"
+    timestamp = str(datetime.datetime.now())
+#   site = StringVar()
+#   lstBens = StringVar()
+#   ben = StringVar()
+#   lstAttrs = StringVar()
+#   rating = StringVar()
+#   explanation = StringVar()
+    def __init__(self):
+        lstRatings = []
 
 # parametr's [= parametrizations]
 lbHeight = 16
 lbWidth = 32
-fontHeight = 10
+fontHeight = 8
 instructions_wrap_width = 60
 beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
 attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
@@ -46,20 +58,23 @@ root.protocol("WM_DELETE_WINDOW", master.quit)
 nb = Notebook(master, name='nb')
 nb.pack(fill=BOTH, padx=2, pady=3)
 
+s = Ratings_Session()
+
 ###########################
 # tab for naming the site #
 ###########################
-frameSiteName = Frame(nb, name='frameSiteName')
-frameSiteName.pack(fill=BOTH)
-nb.add(frameSiteName, text="Name the site")
+frameSite = Frame(nb, name='frameSite')
+frameSite.pack(fill=BOTH)
+nb.add(frameSite, text="Name the site")
 
-lblSiteInstructions = Label(frameSiteName, text="Type the name of the site below.")
+lblSiteInstructions = Label(frameSite, text="Type the name of the site below.")
 lblSiteInstructions.grid(row=0)
 
-txtSiteName = Entry(frameSiteName, text="Type the site name here.", width=lbWidth)
-txtSiteName.grid(row=1)
+s.site = StringVar()
+txtSite = Entry(frameSite, textvariable=s.site, width=lbWidth)
+txtSite.grid(row=1)
 
-btnChooseBens = Button(frameSiteName, text="Move on to choose beneficiaries of the site.",\
+btnChooseBens = Button(frameSite, text="Move on to choose beneficiaries of the site.",\
                        command=lambda: nb.select(frameChooseBens))
 btnChooseBens.grid(row=2)
 
@@ -118,8 +133,6 @@ frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
 nb.add(frameProcessBens, text="Process Beneficiaries")
 
-nbBens = Notebook(frameProcessBens, name="nbBens")
-
 lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affects each beneficiary's rating of the site.")
 lblAttrsInstructions.grid(row=0, column=0, columnspan=6)
 
@@ -138,7 +151,7 @@ lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
 btnAttrAdd = Button(frameProcessBens, text=">> Add >>",\
                     command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
 btnAttrAdd.grid(row=1, column=2, columnspan=2)
-txtNewAttr = Entry(frameProcessBens, text="Don't see a? Type it here and click >>")
+txtNewAttr = Entry(frameProcessBens, text="Don't see an attribute? Type it here and click >>")
 txtNewAttr.grid(row=2, column=2)
 btnNewAttr = Button(frameProcessBens, text=">>",\
                     command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
@@ -155,14 +168,17 @@ sbAttrDest = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrDest.yvi
 sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
 lbAttrDest.config(yscrollcommand=sbAttrDest.set)
 
-cmbRatings = Combobox(frameProcessBens, values=ratings)
-cmbRatings.grid(row=9, column=0, columnspan=6)
+cmbRating = Combobox(frameProcessBens, values=ratings)
+cmbRating.grid(row=9, column=0, columnspan=6)
 
 txtExpln = Text(frameProcessBens, height=10, width=48)
 txtExpln.grid(row=10, column=0, columnspan=6)
 
 btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.", command=lambda: nb.select(frameSubmit))
 btnRate.grid(row=11, column=2, columnspan=2)
+
+cmbSelectBen = Combobox(frameProcessBens, values=lbBenDest.get(0, END))
+cmbSelectBen.grid(row=12, column=0, columnspan=6)
 
 #########################
 # tab to submit ratings #
@@ -179,26 +195,3 @@ btnSubmit.grid(row=1, column=0)
 
 # don't put any code which should run before the GUI closes after mainloop
 root.mainloop()
-
-class Ratings_Session():
-    "gives users a persistent session across closing the program"
-    lstRatings = [] #FIXME: populate list with Fegs_Rating objects
-    def __init__(self):
-        timeOfSessionCreation = str(datetime.datetime.now())
-        site = txtSiteName
-        i = 0
-        lstRatings = []
-        for ben in lstBenDest:
-            lstRatings[i] = {"timestamp":str(datetime.datetime.now()), "site":txtSiteName, \
-                             "beneficiary":ben, "attributes":[], "rating":cmbRating, \
-                             "explanation":txtExplanation}
-            i = i + 1
-
-class Fegs_Rating():
-    "globally stores a rating's info"
-    timestamp = 0 #FIXME: same as session timestamp
-    site = txtSiteName
-    beneficiary = "" #FIXME: grab the name from lstBenDest
-    attributes = []
-    explanation = ""
-    rating = ""

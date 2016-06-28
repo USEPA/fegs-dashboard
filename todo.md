@@ -1,9 +1,9 @@
 # TODO:
 ## Implementation of Tool in Python
+- FEATURE: add tabbed bens interface
 - FEATURE: root window scrollbar all contents always visible
 - FEATURE: submit ratings to a file
 - FEATURE: save session
-- FEATURE: add tabbed bens i'face
 - FEATURE: user-added parameters
 
 ## Features to Add ASAP
