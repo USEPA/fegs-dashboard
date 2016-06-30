@@ -4,7 +4,15 @@
 # imports
 from tkinter import *
 from tkinter.ttk import *
-import datetime
+from datetime import datetime
+
+def chooseBens():
+    "change tab to choose bens"
+    nb.select(frameChooseBens)
+
+def processBens():
+    "change tab to process bens"
+    nb.select(frameProcessBens)
 
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
@@ -12,9 +20,13 @@ def moveBetweenLists(fromList, toList):
     indices.sort(reverse=True)
     for i in range(len(indices)):
         index = indices.pop()-i
-        print(i, " of ", len(indices), ": index ", index)
         toList.insert(END, fromList.get(index))
         fromList.delete(index)
+
+def bensListMaker():
+    indices = list(lbAttrDest.get(0,END))
+    for i in range(len(indices)):
+        pass ########!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 def addToList(item, lst):
     "casts item as str and adds it to the end of list)"
@@ -22,25 +34,36 @@ def addToList(item, lst):
 
 def lineListFromFilename(filename):
     "returns a list of end-whitespace-stripped lines from filename"
+    # FIXME: unit test this fncn
     lines = [line.rstrip('\n') for line in open(filename)]
     return lines
 
+def bindExpln():
+    # FIXME: name should reflect that this doesn't bind, it simply retrieves
+    s.expln = txtExpln.get()
+
+def devCheck():
+    # FIXME: implement real debugging...maybe pdb
+    txtTest = Entry(frameDev, textvariable=s.site)
+    txtTest.pack()
+
 class Ratings_Session():
     "gives users a persistent session across closing the program and allows global data-sharing"
-    timestamp = str(datetime.datetime.now())
-#   site = StringVar()
-#   lstBens = StringVar()
-#   ben = StringVar()
-#   lstAttrs = StringVar()
-#   rating = StringVar()
-#   explanation = StringVar()
+    # FIXME: lookup notifiers in python
     def __init__(self):
+        self.timestamp = str(datetime.now())
+        self.site = StringVar()
+        self.lstBens = StringVar()
+        self.ben = StringVar()
+        self.lstAttrs = StringVar()
+        self.rating = StringVar()
+        self.explanation = StringVar()
         lstRatings = []
 
 # parametr's [= parametrizations]
 lbHeight = 16
 lbWidth = 32
-fontHeight = 8
+fontHeight = 10
 instructions_wrap_width = 60
 beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
 attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
@@ -75,7 +98,7 @@ txtSite = Entry(frameSite, textvariable=s.site, width=lbWidth)
 txtSite.grid(row=1)
 
 btnChooseBens = Button(frameSite, text="Move on to choose beneficiaries of the site.",\
-                       command=lambda: nb.select(frameChooseBens))
+                       command=chooseBens)
 btnChooseBens.grid(row=2)
 
 ##############################################
@@ -121,9 +144,9 @@ lbBenDest.grid(row=1, column=4, rowspan=3, sticky=E)
 
 sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, sticky=W+N+S)
-lbBenDest.config(yscrollcommand=sbBenDest.set)
+lbBenDest.config(yscrollcommand=sbBenDest.set, listvariable = s.lstBens)
 
-btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries", command=lambda: nb.select(frameProcessBens))
+btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries", command=processBens)
 btnProcessBens.grid(row=4, column=2, columnspan=2)
 
 #################################################
@@ -139,7 +162,7 @@ lblAttrsInstructions.grid(row=0, column=0, columnspan=6)
 # source listbox of attributes
 lbAttrSrc = Listbox(frameProcessBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
 lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
-# populate the attributes users select from
+# populate the attributes users select from FIXME
 for attribute in attributes:
     lbAttrSrc.insert(END, attribute)
 
@@ -166,18 +189,19 @@ lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
 
 sbAttrDest = Scrollbar(frameProcessBens, orient=VERTICAL, command=lbAttrDest.yview)
 sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
-lbAttrDest.config(yscrollcommand=sbAttrDest.set)
+lbAttrDest.config(yscrollcommand=sbAttrDest.set, listvariable=s.lstAttrs)
 
-cmbRating = Combobox(frameProcessBens, values=ratings)
+cmbRating = Combobox(frameProcessBens, values=ratings, textvariable=s.rating)
 cmbRating.grid(row=9, column=0, columnspan=6)
 
 txtExpln = Text(frameProcessBens, height=10, width=48)
+txtExpln.bind('<FocusOut>', bindExpln)
 txtExpln.grid(row=10, column=0, columnspan=6)
 
 btnRate = Button(frameProcessBens, text="Rate the site for the beneficiaries.", command=lambda: nb.select(frameSubmit))
 btnRate.grid(row=11, column=2, columnspan=2)
 
-cmbSelectBen = Combobox(frameProcessBens, values=lbBenDest.get(0, END))
+cmbSelectBen = Combobox(frameProcessBens, values=lbBenDest.get(0, END), textvariable=s.ben)
 cmbSelectBen.grid(row=12, column=0, columnspan=6)
 
 #########################
@@ -192,6 +216,12 @@ lblSubmitInstructions.grid(row=0, column=0)
 
 btnSubmit = Button(frameSubmit, text="Submit")
 btnSubmit.grid(row=1, column=0)
+
+frameDev = Frame(frameSubmit)
+frameDev.grid(row=2, column=0)
+
+btnDev = Button(frameDev, command=devCheck)
+btnDev.pack()
 
 # don't put any code which should run before the GUI closes after mainloop
 root.mainloop()
