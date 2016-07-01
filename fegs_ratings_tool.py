@@ -5,6 +5,7 @@ debug-workflow:
   2. open python interpreter
   3. >>>exec(open('relative/path/to/file.py').read())
 '''
+# TODO: bind btnProcessBens to fill lbAttrDest from lbBenDest
 # TODO: run benTabCreator() on load frameProcessBens
 # TODO: bind self.ben to currently selected ben's rating and its values(on benTab change?)
 # TODO: implement pickle.dump() of session's state for persistence
@@ -42,7 +43,7 @@ def mainScrape():
     "record list of bens and site to attributes of a Ratings_Session object"
     pass
 
-def benScrape():
+def benScrape(callingEvent):
     "record current ben's rating-info to attributes of a Ratings_Session object"
     pass
 
@@ -69,8 +70,7 @@ class Ratings_Session():
         #lbAttrDest.config(listvariable=self.lstAttrs)
         #cmbRating.config(textvariable=self.rating)
         # bind keyboard focus out to scraping the text from 1stChar.1stline to end-lastChar (\n)
-        txtExpln.bind('<FocusOut>', exec('''self.expln = txtExpln.get('0.1', 'end-1c')'''))
-
+        
 class Ben_Tab(Frame):
     def __init__(self, index, beneficiary):
         self = Frame(nbBens)
@@ -187,7 +187,8 @@ sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, sticky=W+N+S)
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
-btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries", command=lambda: nb.select(frameProcessBens))
+btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
+#btnProcessBens.config(command=lambda: for i in range(len(lbBenDest.get(0,END))): lbAttrDest.insert(lbBenDest.get(i)))#nb.select(frameProcessBens))
 btnProcessBens.grid(row=4, column=2, columnspan=2)
 
 #################################################
@@ -204,46 +205,43 @@ lblAttrsInstructions.grid(row=0)#, column=0, columnspan=6)
 nbBens = Notebook(frameProcessBens, name='nbBens')
 nbBens.grid(row=1)
 
-#------mockup of tab creation----------
-#class Ben_Tab(Frame)
-#    def __init__():
-#Frame(nbBens, name='testy')
-#testy.pack(fill=BOTH)
-#nbBens.add(testy, text='testy')
-## source listbox of attributes
-#lbAttrSrc = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-#lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
-#for attribute in attributes:
-#    lbAttrSrc.insert(END, attribute)
-#sbAttrSrc = Scrollbar(testy, orient=VERTICAL, command=lbAttrSrc.yview)
-#sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
-#lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
-## widgets between listboxes
-#btnAttrAdd = Button(testy, text=">> Add >>",\
-#                    command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
-#btnAttrAdd.grid(row=1, column=2, columnspan=2)
-#txtNewAttr = Entry(testy, text="Don't see an attribute? Type it here and click >>")
-#txtNewAttr.grid(row=2, column=2)
-#btnNewAttr = Button(testy, text=">>",\
-#                    command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
-#btnNewAttr.grid(row=2, column=3)
-#btnAttrRm = Button(testy, text="<< Remove <<",\
-#                   command=lambda: moveBetweenLists(lbAttrDest, lbAttrSrc))
-#btnAttrRm.grid(row=3, column=2, columnspan=2)
-## destination listbox of attributes
-#lbAttrDest = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-#lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
-#sbAttrDest = Scrollbar(testy, orient=VERTICAL, command=lbAttrDest.yview)
-#sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
-#lbAttrDest.config(yscrollcommand=sbAttrDest.set)
-#cmbRating = Combobox(testy, values=ratings)
-#cmbRating.grid(row=9, column=0, columnspan=6)
-#txtExpln = Text(testy, height=10, width=48)
-#txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
-#txtExpln.grid(row=10, column=0, columnspan=6)
-#btnRate = Button(testy, text="Rate the site for the beneficiaries.",\
-#                 command=lambda: nb.select(frameSubmit))
-#btnRate.grid(row=11, column=2, columnspan=2)
+testy = Frame(nbBens, name='testy')
+testy.pack(fill=BOTH)
+nbBens.add(testy, text='testy')
+# source listbox of attributes
+lbAttrSrc = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
+lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
+for attribute in attributes:
+    lbAttrSrc.insert(END, attribute)
+sbAttrSrc = Scrollbar(testy, orient=VERTICAL, command=lbAttrSrc.yview)
+sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
+lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
+# widgets between listboxes
+btnAttrAdd = Button(testy, text=">> Add >>",\
+                    command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
+btnAttrAdd.grid(row=1, column=2, columnspan=2)
+txtNewAttr = Entry(testy, text="Don't see an attribute? Type it here and click >>")
+txtNewAttr.grid(row=2, column=2)
+btnNewAttr = Button(testy, text=">>",\
+                    command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
+btnNewAttr.grid(row=2, column=3)
+btnAttrRm = Button(testy, text="<< Remove <<",\
+                   command=lambda: moveBetweenLists(lbAttrDest, lbAttrSrc))
+btnAttrRm.grid(row=3, column=2, columnspan=2)
+# destination listbox of attributes
+lbAttrDest = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
+lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
+sbAttrDest = Scrollbar(testy, orient=VERTICAL, command=lbAttrDest.yview)
+sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
+lbAttrDest.config(yscrollcommand=sbAttrDest.set)
+cmbRating = Combobox(testy, values=ratings)
+cmbRating.grid(row=9, column=0, columnspan=6)
+txtExpln = Text(testy, height=10, width=48)
+txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
+txtExpln.grid(row=10, column=0, columnspan=6)
+btnRate = Button(testy, text="Rate the site for the beneficiaries.",\
+                 command=lambda: nb.select(frameSubmit))
+btnRate.grid(row=11, column=2, columnspan=2)
 
 #########################
 ##tab to submit ratings##
@@ -263,4 +261,4 @@ nbBens.bind_all("<<NotebookTabChanged>>", benScrape)
 session = Ratings_Session()
 
 # don't put any code which should run before the GUI closes after mainloop
-#root.mainloop()
+root.mainloop()
