@@ -39,10 +39,6 @@ def scrapeExpln():
     "save explanation to a session-state-variable"
     session.expln = txtExpln.get('0.1', 'end-1c')
 
-def mainScrape():
-    "record list of bens and site to attributes of a Ratings_Session object"
-    pass
-
 def processBens():
     "copy items from lstBenDest to session.lbAttrDest"
     RESUME: implement session object to store ratings-info 
