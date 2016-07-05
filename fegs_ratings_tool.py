@@ -43,9 +43,10 @@ def mainScrape():
     "record list of bens and site to attributes of a Ratings_Session object"
     pass
 
-def benScrape(callingEvent):
-    "record current ben's rating-info to attributes of a Ratings_Session object"
-    pass
+def processBens():
+    "copy items from lstBenDest to session.lbAttrDest"
+    RESUME: implement session object to store ratings-info 
+    for i in range(len(lbBenDest.get(0, END))): session.lbAttrDest.insert(END, lbBenDest.get(i))
 
 def benTabCreator():
     # loop through chosen beneficiaries from chooseBens
@@ -188,7 +189,7 @@ sbBenDest.grid(row=1, column=5, sticky=W+N+S)
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
-#btnProcessBens.config(command=lambda: for i in range(len(lbBenDest.get(0,END))): lbAttrDest.insert(lbBenDest.get(i)))#nb.select(frameProcessBens))
+btnProcessBens.config(command=processBens)#nb.select(frameProcessBens))
 btnProcessBens.grid(row=4, column=2, columnspan=2)
 
 #################################################
@@ -256,9 +257,7 @@ lblSubmitInstructions.grid(row=0, column=0)
 btnSubmit = Button(frameSubmit, text="Submit")
 btnSubmit.grid(row=1, column=0)
 
-nb.bind_all("<<NotebookTabChanged>>", mainScrape)
-nbBens.bind_all("<<NotebookTabChanged>>", benScrape)
 session = Ratings_Session()
 
 # don't put any code which should run before the GUI closes after mainloop
-root.mainloop()
+#root.mainloop()
