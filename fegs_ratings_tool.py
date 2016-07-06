@@ -5,6 +5,7 @@ debug-workflow:
   2. open python interpreter
   3. >>>exec(open('relative/path/to/file.py').read())
 '''
+# TODO: create a session as a collection(a list) of Ben_Tabs
 # TODO: bind btnProcessBens to fill lbAttrDest from lbBenDest
 # TODO: run benTabCreator() on load frameProcessBens
 # TODO: bind self.ben to currently selected ben's rating and its values(on benTab change?)
@@ -41,7 +42,7 @@ def scrapeExpln():
 
 def processBens():
     "copy items from lstBenDest to session.lbAttrDest"
-    RESUME: implement session object to store ratings-info 
+    #RESUME: implement session object to store ratings-info 
     for i in range(len(lbBenDest.get(0, END))): session.lbAttrDest.insert(END, lbBenDest.get(i))
 
 def benTabCreator():
@@ -117,6 +118,9 @@ beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
 attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
 ratings = lineListFromFilename("parameters/ratings.txt")
 
+###############
+# tkinter GUI #
+###############
 root = Tk()
 root.option_add("*Font", "courier " + str(fontHeight))
 master = Frame(root, name='master')
@@ -254,6 +258,7 @@ btnSubmit = Button(frameSubmit, text="Submit")
 btnSubmit.grid(row=1, column=0)
 
 session = Ratings_Session()
+print(session.site.get())
 
 # don't put any code which should run before the GUI closes after mainloop
 #root.mainloop()
