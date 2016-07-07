@@ -9,24 +9,23 @@
   1. >>> ...
   2. >>> import pdb
   3. >>> ...
-  4. place breakpoints where desired
+  4. place pdb.set_trace() where breakpoints are desired
   5. run script
 '''
 
-# TODO: create a session as a collection(a list) of Ratings
-# TODO: bind btnProcessBens to fill lbAttrDest from lbBenDest
-# TODO: run benTabCreator() on load frameProcessBens
-# TODO: bind self.ben to currently selected ben's rating and its values(on benTab change?)
-# TODO: implement pickle.dump() of session's state for persistence
-# TODO: lookup notifiers in python
-# TODO: unit test this fncn
+#TODO implement saveRatings()
+#TODO realize visualization of ratings
+#TODO create data-analysis function
+#TODO implement pickle.dump() of session's state for persistence
+#TODO lookup notifiers in python
 
 # imports
 from tkinter import *
 from tkinter.ttk import *
 from datetime import datetime
-import pdb #DEV: standard debugger
+import pdb #NOTE python's standard debugger
 import sys
+import csv
 
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
@@ -53,9 +52,13 @@ def scrapeExpln():
 def processBens():
     "generate a tab for each ben in lbBenDest; show "
     #for i in range(len(lbBenDest.get(0, END))): session.lbAttrDest.insert(END, lbBenDest.get(i))
-    sys.stderr.write("about to run session.ratingGenerator()")
-    session.ratingGenerator()
+    sys.stderr.write("about to generate tabs")
+    pdb.set_trace()
+    nbBens = Ratings_Notebook(lbBenDest.size())
     nb.select(frameProcessBens)
+
+def saveRatings():
+    pass
 
 class Session():
     "persistent session across closing the program and allows global data-sharing"
@@ -66,57 +69,69 @@ class Session():
         txtSite.config(textvariable=self.site)
         self.bens = StringVar()
         lbBenDest.config(listvariable=self.bens)
-    def ratingGenerator(self):
-        "loop through chosen beneficiaries from frameChooseBens"
-        for index in range(len(self.bens.get())):
-            pdb.set_trace()
-            ben = str(self.bens.get(index))
-            self.ratings[index] = Rating(index, ben)
 
-class Rating(Frame):
-    "tracks site, ben, attributes, rating, and explanation"
-    def __init__(self, index, beneficiary, numTabs):
-        #FIXME:s/nbBens/self/; :s/self/bens[i]
-        self.bens = range(len(session.bens))
-        self = Notebook(frameProcessBens, name='nbBens')
+class Ratings_Notebook(Notebook):
+    "pass arg numTabs for dynamic size"
+    def __init__(self, numTabs):
+        self = Notebook(frameProcessBens)
         self.pack()
-        self.add(self.bens[i]#FIXME, text=beneficiary)
-        # source listbox of attributes
-        self.lbAttrSrc = Listbox(self, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-        self.lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
-        for attribute in attributes:
-            self.lbAttrSrc.insert(END, attribute)
-        self.sbAttrSrc = Scrollbar(self, orient=VERTICAL, command=lbAttrSrc.yview)
-        self.sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
-        self.lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
-        # widgets between listboxes
-        self.btnAttrAdd = Button(self, text=">> Add >>",\
-                                 command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
-        self.btnAttrAdd.grid(row=1, column=2, columnspan=2)
-        self.txtNewAttr = Entry(self, text="Don't see an attribute? Type it here and click >>")
-        self.txtNewAttr.grid(row=2, column=2)
-        self.btnNewAttr = Button(self, text=">>",\
-                                 command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
-        self.btnNewAttr.grid(row=2, column=3)
-        self.btnAttrRm = Button(self, text="<< Remove <<",\
-                                command=lambda: moveBetweenLists(lbAttrDest, lbAttrSrc))
-        self.btnAttrRm.grid(row=3, column=2, columnspan=2)
-        # destination listbox of attributes
-        self.lbAttrDest = Listbox(self, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-        self.lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
-        self.sbAttrDest = Scrollbar(self, orient=VERTICAL, command=lbAttrDest.yview)
-        self.sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
-        self.lbAttrDest.config(yscrollcommand=sbAttrDest.set)
-        self.cmbRating = Combobox(self, values=ratings)
-        self.cmbRating.grid(row=9, column=0, columnspan=6)
-        self.txtExpln = Text(self, height=10, width=48)
-        self.txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
-        self.txtExpln.grid(row=10, column=0, columnspan=6)
-        self.btnRate = Button(self, text="Rate the site for all these beneficiaries.",\
-                              command=lambda: nb.select(frameSubmit))
-        self.btnRate.grid(row=11, column=2, columnspan=2)
-        #lbAttrDest.config(listvariable=self.lstAttrs)
-        #cmbRating.config(textvariable=self.rating)
+        self.tabs = []
+        self.labels = []
+        for i in range(numTabs):
+            benName = lbBenDest.get(i)
+            self.tabs.append(Frame(self))
+            self.tabs[i].pack()
+            pdb.set_trace()
+            self.labels.append(Label(self.tabs[i], text=benName))
+            self.labels[i].grid(row=0, column=0, columnspan=6)
+            self.add(self.tabs[i], text=benName)
+            # source listbox of attributes
+            self.tabs[i].lbAttrSrc = Listbox(self.tabs[i], height=lbHeight,\
+                                             width=lbWidth, selectmode=EXTENDED)
+            self.tabs[i].lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
+            for attribute in attributes:
+                self.tabs[i].lbAttrSrc.insert(END, attribute)
+            self.tabs[i].sbAttrSrc = Scrollbar(self.tabs[i], orient=VERTICAL,\
+                                               command=self.tabs[i].lbAttrSrc.yview)
+            self.tabs[i].sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
+            self.tabs[i].lbAttrSrc.config(yscrollcommand=self.tabs[i].sbAttrSrc.set)
+            # widgets between listboxes
+            self.tabs[i].btnAttrAdd = Button(self.tabs[i], text=">> Add >>",\
+                                             command=lambda: moveBetweenLists(\
+                                             self.tabs[i].lbAttrSrc,\
+                                             self.tabs[i].lbAttrDest))
+            ###### prepend self.tabs[i]. to controls' names
+            self.tabs[i].btnAttrAdd.grid(row=1, column=2, columnspan=2)
+            self.tabs[i].txtNewAttr = Entry(self.tabs[i], text="Don't see an attribute? "+\
+                                                               "Type it here and click >>")
+            self.tabs[i].txtNewAttr.grid(row=2, column=2)
+            self.tabs[i].btnNewAttr = Button(self.tabs[i], text=">>",\
+                                             command=lambda: addToList(\
+                                             self.tabs[i].txtNewAttr.get(),\
+                                             self.tabs[i].lbAttrDest))
+            self.tabs[i].btnNewAttr.grid(row=2, column=3)
+            self.tabs[i].btnAttrRm = Button(self.tabs[i], text="<< Remove <<",\
+                                            command=lambda: moveBetweenLists(\
+                                            self.tabs[i].lbAttrDest,\
+                                            self.tabs[i].lbAttrSrc))
+            self.tabs[i].btnAttrRm.grid(row=3, column=2, columnspan=2)
+            # destination listbox of attributes
+            self.tabs[i].lbAttrDest = Listbox(self.tabs[i], height=lbHeight,\
+                                              width=lbWidth, selectmode=EXTENDED)
+            self.tabs[i].lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
+            self.tabs[i].sbAttrDest = Scrollbar(self.tabs[i], orient=VERTICAL,\
+                                                command=self.tabs[i].lbAttrDest.yview)
+            self.tabs[i].sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
+            self.tabs[i].lbAttrDest.config(yscrollcommand=self.tabs[i].sbAttrDest.set)
+            self.tabs[i].cmbRating = Combobox(self.tabs[i], values=ratings)
+            self.tabs[i].cmbRating.grid(row=9, column=0, columnspan=6)
+            self.tabs[i].txtExpln = Text(self.tabs[i], height=10, width=48)
+            self.tabs[i].txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
+            self.tabs[i].txtExpln.grid(row=10, column=0, columnspan=6)
+            self.tabs[i].btnRate = Button(self.tabs[i],\
+                                          text="Rate the site for the beneficiaries.",\
+                                          command=lambda: nb.select(frameSave))
+            self.tabs[i].btnRate.grid(row=11, column=2, columnspan=2)
 
 # parametr's [= parametrizations]
 lbHeight = 16
@@ -167,7 +182,7 @@ txtBenInstructions = Label(frameChooseBens,\
                            text="Build a list of beneficiaries interested in the site."+\
                            "Here, a beneficiary is a role as which a person uses or"+\
                            "appreciates the site.",\
-                           #wraplength=80 #FIXME: set wraplength for all labels(lbl.method)
+                           #wraplength=80 #FIXME set wraplength for all labels(lbl.method)
                            )
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
@@ -206,65 +221,27 @@ btnProcessBens.grid(row=4, column=2, columnspan=2)
 #################################################
 frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
-#frameProcessBens.bind("<Activate>", lambda: ratingGenerator())
+#frameProcessBens.bind("<Activate>", lambda: processBens())
 nb.add(frameProcessBens, text="Process Beneficiaries")
 
-lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affects each beneficiary's rating of the site.")
+lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affect each beneficiary's rating of the site.")
 lblAttrsInstructions.pack()
 
-nbBens = Notebook(frameProcessBens, name='nbBens')
-nbBens.pack()
+#NOTE the tabs for each rating are populated on press btnProcessBens
 
-#testy = Frame(nbBens, name='testy')
-#testy.pack(fill=BOTH)
-#nbBens.add(testy, text='testy')
-## source listbox of attributes
-#lbAttrSrc = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-#lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
-#for attribute in attributes:
-#    lbAttrSrc.insert(END, attribute)
-#sbAttrSrc = Scrollbar(testy, orient=VERTICAL, command=lbAttrSrc.yview)
-#sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
-#lbAttrSrc.config(yscrollcommand=sbAttrSrc.set)
-## widgets between listboxes
-#btnAttrAdd = Button(testy, text=">> Add >>",\
-#                    command=lambda: moveBetweenLists(lbAttrSrc, lbAttrDest))
-#btnAttrAdd.grid(row=1, column=2, columnspan=2)
-#txtNewAttr = Entry(testy, text="Don't see an attribute? Type it here and click >>")
-#txtNewAttr.grid(row=2, column=2)
-#btnNewAttr = Button(testy, text=">>",\
-#                    command=lambda: addToList(txtNewAttr.get(), lbAttrDest))
-#btnNewAttr.grid(row=2, column=3)
-#btnAttrRm = Button(testy, text="<< Remove <<",\
-#                   command=lambda: moveBetweenLists(lbAttrDest, lbAttrSrc))
-#btnAttrRm.grid(row=3, column=2, columnspan=2)
-## destination listbox of attributes
-#lbAttrDest = Listbox(testy, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-#lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
-#sbAttrDest = Scrollbar(testy, orient=VERTICAL, command=lbAttrDest.yview)
-#sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
-#lbAttrDest.config(yscrollcommand=sbAttrDest.set)
-#cmbRating = Combobox(testy, values=ratings)
-#cmbRating.grid(row=9, column=0, columnspan=6)
-#txtExpln = Text(testy, height=10, width=48)
-#txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
-#txtExpln.grid(row=10, column=0, columnspan=6)
-#btnRate = Button(testy, text="Rate the site for the beneficiaries.",\
-#                 command=lambda: nb.select(frameSubmit))
-#btnRate.grid(row=11, column=2, columnspan=2)
+#######################
+##tab to save ratings##
+#######################
+frameSave = Frame(nb, name="frameSave")
+frameSave.pack(fill=BOTH)
+nb.add(frameSave, text="Save Ratings")
 
-#########################
-##tab to submit ratings##
-#########################
-frameSubmit = Frame(nb, name="frameSubmit")
-frameSubmit.pack(fill=BOTH)
-nb.add(frameSubmit, text="Submit Ratings")
+lblSaveInstructions = Label(frameSave, text="Once all data is entered, save the data to a file for later use.")
+lblSaveInstructions.grid(row=0, column=0)
 
-lblSubmitInstructions = Label(frameSubmit, text="Once all data is entered, submit the data to a file for later use.")
-lblSubmitInstructions.grid(row=0, column=0)
-
-btnSubmit = Button(frameSubmit, text="Submit")
-btnSubmit.grid(row=1, column=0)
+btnSave = Button(frameSave, text="Save")
+btnSave.grid(row=1, column=0)
+btnSave.config(command=saveRatings())
 
 session = Session()
 print(session.site.get())
