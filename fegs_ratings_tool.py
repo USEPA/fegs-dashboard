@@ -14,6 +14,8 @@
 '''
 
 #TODO implement saveRatings()
+#- save list of bens with csv.writer(<csvfile>, lstBenDest.get().split("', '").strip("()'"))
+#- use a similar method for other items
 #TODO realize visualization of ratings
 #TODO create data-analysis function
 #TODO implement pickle.dump() of session's state for persistence
