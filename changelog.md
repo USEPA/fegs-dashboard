@@ -81,3 +81,13 @@
 - FEATURE: rating combobox
 
 - FEATURE: explanation text-field
+
+- FEATURE: add tabbed bens interface
+
+- TODO let users add attrs to beneficiaries
+
+  - Solution: lambda:callbackFncn(i) -> lambda i=i:callbackFncn(i)
+
+- nbBens |-> nbRatings
+
+- TODO prevent 2nd click of btnProcessBens from creating second set of tabs
