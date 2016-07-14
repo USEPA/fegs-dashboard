@@ -49,3 +49,7 @@ Session.vim
 # temporary
 .netrwhist
 *~
+
+## py2exe ##
+############
+dist/

@@ -1,10 +1,8 @@
 '''# GUI tool to identify and rate attributes per beneficiary under the final ecosystem goods and services(FEGS) model and FEGS categorization system(FEGS-CS) by Landers, Nahlik, et al
-
 ## naive debug-workflow:
   1. comment root.mainloop line at or near EOF
   2. open python interpreter
   3. >>> exec(open('relative/path/to/file.py').read())
-
 ## debugging with pdb:
   1. >>> ...
   2. >>> import pdb
@@ -57,9 +55,10 @@ def processBens():
     nbRatings.updatetabs()
 
 class Session():
-    "persistent session across closing the program and allows global data-sharing"
+    "centralize data and hide accessors"
     def __init__(self):
-        'statically bound attributes timestamp and site; create rating dict for each rating in nbRatings'
+        '''statically bound attributes timestamp and site;
+        create rating dict ior each rating in nbRatings'''
         self.timestamp = str(datetime.now())
         self.site = StringVar()
         txtSite.config(textvariable=self.site)
@@ -70,7 +69,8 @@ class Session():
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
-        for i in range(lbBenDest.size()):
+        pdb.set_trace()#BREAK
+        for i in range(nbRatings.tablist.__len__()):
             for attribute in nbRatings.tablist[i].lbAttrDest.get(0,END):
                 self.ratings.append({})
                 self.ratings[i]['site'] = txtSite.get()
@@ -79,13 +79,14 @@ class Session():
                 self.ratings[i]['attribute'] = attribute
                 self.ratings[i]['rating'] = nbRatings.tablist[i].cmbRating.get()
                 self.ratings[i]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
-        #pdb.set_trace()#----------------------BREAK--------------------------
         #with open('writer.csv', 'w', newline = '') as csvfile:
         #    writer = csv.writer(csvfile)
         #    csvheader = [key for i in range(lbBenDest.size()) for key in self.ratings[i].keys()]
         #    writer.writerow(csvheader)
         #FIXME bug using csv.DictWriter()
-        with open('dictwriter.csv', 'w') as csvfile:
+        formatstring = "%Y.%m.%dAT%H.%M.%S"
+        timestamp = datetime.now().strftime(formatstring)
+        with open('saved-ratings-'+timestamp+'.csv', 'w') as csvfile:
             fieldnames = ['site', 'timestamp', 'beneficiary', 'attribute', 'rating', 'explanation']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -110,12 +111,12 @@ class Ratings_Notebook(Notebook):
         "update tabs to reflect nbBenDest"
         self.cleartabs()
         for i in range(lbBenDest.size()):
-            benName = lbBenDest.get(i)
             self.tablist.append(Frame(self))
+            self.tablist[i].benName = lbBenDest.get(i)
             self.tablist[i].pack()
-            self.labels.append(Label(self.tablist[i], text=benName))
+            self.labels.append(Label(self.tablist[i], text=self.tablist[i].benName))
             self.labels[i].grid(row=0, column=0, columnspan=6)
-            self.add(self.tablist[i], text=benName)
+            self.add(self.tablist[i], text=self.tablist[i].benName)
             # source listbox of attributes
             self.tablist[i].lbAttrSrc = Listbox(self.tablist[i], height=lbHeight,\
                                              width=lbWidth, selectmode=EXTENDED)
@@ -165,11 +166,11 @@ class Ratings_Notebook(Notebook):
             self.tablist[i].btnRate.grid(row=6, column=2, columnspan=2)
         
 
-# parametr's [= parametrizations]
+# parametrizations
 lbHeight = 16
 lbWidth = 32
 fontHeight = 12
-instructions_wrap_width = 64
+wrapwidth = 64
 beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
 attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
 ratings = lineListFromFilename("parameters/ratings.txt")
