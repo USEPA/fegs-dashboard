@@ -70,15 +70,23 @@ class Session():
             del(self.ratings)
             self.ratings = []
         pdb.set_trace()#BREAK
-        for i in range(nbRatings.tablist.__len__()):
-            for attribute in nbRatings.tablist[i].lbAttrDest.get(0,END):
+        #for i in range(nbRatings.tablist.__len__()):
+        for i in list(range(len(nbRatings.tablist))):
+            print('#### i is now '+str(i)+' ####')
+            print('self.ratings:')
+            print(self.ratings)
+            print('Now looping through attributes.')
+            for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
+                attribute = nbRatings.tablist[i].lbAttrDest.get(j)
+                print('Attribute: '+str(attribute)+'...')
                 self.ratings.append({})
-                self.ratings[i]['site'] = txtSite.get()
-                self.ratings[i]['timestamp'] = str(datetime.now())
-                self.ratings[i]['beneficiary'] = lbBenDest.get(i)
-                self.ratings[i]['attribute'] = attribute
-                self.ratings[i]['rating'] = nbRatings.tablist[i].cmbRating.get()
-                self.ratings[i]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
+                dictnum = len(self.ratings)-1
+                self.ratings[dictnum]['site'] = txtSite.get()
+                self.ratings[dictnum]['timestamp'] = str(datetime.now())
+                self.ratings[dictnum]['beneficiary'] = lbBenDest.get(i)
+                self.ratings[dictnum]['attribute'] = attribute
+                self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
+                self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
         #with open('writer.csv', 'w', newline = '') as csvfile:
         #    writer = csv.writer(csvfile)
         #    csvheader = [key for i in range(lbBenDest.size()) for key in self.ratings[i].keys()]

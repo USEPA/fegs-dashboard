@@ -1,0 +1,15 @@
+site,timestamp,beneficiary,attribute,rating,explanation
+B Land,2016-07-14 19:03:28.669104,Electric And Other Energy ,Conductivity / Salinity,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.669104,Electric And Other Energy ,Fish,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.670104,Electric And Other Energy ,Genetic Diversity,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.670104,Electric And Other Energy ,Habitat Mosaic,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.670104,Electric And Other Energy ,Invertebrates (aquatic and terrestrial systems?),Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.671104,Electric And Other Energy ,Odor,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.671104,Electric And Other Energy ,Oxygen Level,Fair,"Blah, blah, and blah."
+B Land,2016-07-14 19:03:28.674105,Existence,Genetic Diversity,Good,Blahsome!
+B Land,2016-07-14 19:03:28.674105,Existence,Habitat Mosaic,Good,Blahsome!
+B Land,2016-07-14 19:03:28.674105,Existence,Invertebrates (aquatic and terrestrial systems?),Good,Blahsome!
+B Land,2016-07-14 19:03:28.674105,Existence,Odor,Good,Blahsome!
+B Land,2016-07-14 19:03:28.675105,Existence,Oxygen Level,Good,Blahsome!
+B Land,2016-07-14 19:03:28.675105,Existence,Pathogens & Parasites,Good,Blahsome!
+B Land,2016-07-14 19:03:28.675105,Existence,Seed Dispersal(?),Good,Blahsome!
