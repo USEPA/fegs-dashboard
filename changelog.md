@@ -1,4 +1,4 @@
-# Changelog with new items appended to end, eg $ echo "- blah" >> changelog.md
+# Changelog with new items appended to end, eg $ echo -e "\n- blah" >> changelog.md
 - convert add/remove to pill-buttons instead of arrow-buttons**
 
 - spread layout horizontally**
@@ -72,7 +72,7 @@
 
 - check data-entries for more than about 250 chars (throws "type mismatch" if "analyze data"-button is used)
 
-- ======== tool changed to python =============
+## ======== tool changed to python =============
 
 - FEATURE: add and remove buttons' functionality
 
@@ -91,3 +91,7 @@
 - nbBens |-> nbRatings
 
 - TODO prevent 2nd click of btnProcessBens from creating second set of tabs
+
+- TODO implement saveRatings()
+
+- TODO change order of ratings to Good, Fair, then Poor in descending order

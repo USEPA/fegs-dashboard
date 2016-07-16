@@ -1,8 +1,11 @@
 # fegs-dashboard
 ## SYNOPSIS
-Open `fegs-dashboard.xlsm` with Excel and follow the instructions to save ratings of each attribute per each beneficiary.
+### Use python to run the tool as `fegs_ratings_tool.py`.
+Use the following command within the directory containing `fegs_ratings_tool.py` on Windows, OSX, or Linux:
+`python fegs_ratings_tool.py`. The tool is incompatible with python 2.
+
+### Use python to build the tool as an executable named `fegs_ratings_tool.exe`.
+Use setup.py to create, use, and distribute a standalone executable named `fegs_ratings_tool.exe` within the automatically created `./dist/` directory.
 
 ## DATA
-Data are stored in a table with the following columns, columns described in the syntax `<column-name>`:
-
-```<site> <timestamp> <beneficiary> <attribute> <rating> <explanation>```
+Ratings can be saved as `.csv` files which are compatible with Excel.

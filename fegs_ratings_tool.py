@@ -11,12 +11,23 @@
   5. run script
 '''
 
-#TODO implement saveRatings()
-#TODO resolve FIXME near line 91
+#TODO display description widget for the currently active beneficiary in lbBenSrc or lbBenDest
+#TODO display description widget for the currently active attribute in lbAttrSrc or lbAttrDest
+#TODO read beneficiaries' descriptions from parameters/beneficiaries.csv
+#TODO read attributes' descriptions from parameters/attributes.csv
+#TODO move btnProcessBens from within nbRatings to below it
+#TODO output tabular report
+#TODO save dialog
+#TODO load saved ratings
 #TODO make master vertically and horizontally scrollable
 #TODO visualize ratings
 #TODO create data-analysis function
 #TODO set wraplength for all labels(lbl.<some_method>_all)
+#TODO error when focus leaves txtExpln
+#TODO feedback on save
+#TODO retain data on existing rating-tabs when tabs are added
+#TODO widgets dynamically fill available space
+#TODO should fields be added to a saved ratings' csv for descriptions of attribute and beneficiary?
 
 # imports
 from tkinter import *
@@ -54,6 +65,10 @@ def processBens():
     nb.select(frameProcessBens)
     nbRatings.updatetabs()
 
+def srcbenactivation(event):
+    sys.stdout.write("srcbenactivation() fired!")
+    bendescript.set(lbBenSrc.get('active'))
+
 class Session():
     "centralize data and hide accessors"
     def __init__(self):
@@ -69,16 +84,9 @@ class Session():
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
-        pdb.set_trace()#BREAK
-        #for i in range(nbRatings.tablist.__len__()):
         for i in list(range(len(nbRatings.tablist))):
-            print('#### i is now '+str(i)+' ####')
-            print('self.ratings:')
-            print(self.ratings)
-            print('Now looping through attributes.')
             for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
                 attribute = nbRatings.tablist[i].lbAttrDest.get(j)
-                print('Attribute: '+str(attribute)+'...')
                 self.ratings.append({})
                 dictnum = len(self.ratings)-1
                 self.ratings[dictnum]['site'] = txtSite.get()
@@ -87,11 +95,6 @@ class Session():
                 self.ratings[dictnum]['attribute'] = attribute
                 self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
                 self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
-        #with open('writer.csv', 'w', newline = '') as csvfile:
-        #    writer = csv.writer(csvfile)
-        #    csvheader = [key for i in range(lbBenDest.size()) for key in self.ratings[i].keys()]
-        #    writer.writerow(csvheader)
-        #FIXME bug using csv.DictWriter()
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
         with open('saved-ratings-'+timestamp+'.csv', 'w') as csvfile:
@@ -181,7 +184,9 @@ fontHeight = 12
 wrapwidth = 64
 beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
 attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
+#bens = [line for line
 ratings = lineListFromFilename("parameters/ratings.txt")
+#bendescript = StringVar()
 
 ###############
 # tkinter GUI #
@@ -253,9 +258,16 @@ sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, sticky=W+N+S)
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
+lblBenDescriptCaption = Label(frameChooseBens, text="Description of the selected beneficiary:")
+lblBenDescriptCaption.grid(row=4, column=0, columnspan=2)
+lblBenDescript = Label(frameChooseBens)
+lblBenDescript.grid(row=4, column=2, columnspan=2)
+lbBenSrc.bind('<FocusIn>', srcbenactivation)
+#lbBenSrc.bind(event, lambda: bendescript.set(lbBenSrc.get(lbBenSrc.curselection())))
+
 btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
 btnProcessBens.config(command=lambda: processBens())
-btnProcessBens.grid(row=4, column=2, columnspan=2)
+btnProcessBens.grid(row=5, column=2, columnspan=2)
 
 #################################################
 # tab for adding attributes to each beneficiary #
