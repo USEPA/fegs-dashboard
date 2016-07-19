@@ -187,9 +187,10 @@ class Ratings_Notebook(Notebook):
                     column=0,columnspan=2)
             self.tablist[i].cmbRating = Combobox(self.tablist[i], values=ratings)
             self.tablist[i].cmbRating.grid(row=5, column=2, columnspan=4)
-            self.tablist[i].txtExpln = Text(self.tablist[i], height=10, width=48)
+            self.tablist[i].txtExpln = Text(self.tablist[i], height=10, width=60)
+            self.tablist[i].lblexplncaption = Label(self.tablist[i],text='Type additional information.')
             self.tablist[i].txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
-            self.tablist[i].txtExpln.grid(row=6, column=0, columnspan=6)
+            self.tablist[i].txtExpln.grid(row=6, column=2, columnspan=6)
             self.tablist[i].btnRate = Button(self.tablist[i],\
                                           text="Rate the site for the beneficiaries.",\
                                           command=lambda: nb.select(frameSave))
@@ -225,13 +226,13 @@ frameSite = Frame(nb, name='frameSite')
 frameSite.pack(fill=BOTH)
 nb.add(frameSite, text="Name the site")
 
-lblSiteInstructions = Label(frameSite, text="Type the name of the site below.")
+lblSiteInstructions = Label(frameSite, text="Type the name of the site.")
 lblSiteInstructions.grid(row=0)
 
 txtSite = Entry(frameSite, width=lbWidth)
 txtSite.grid(row=1)
 
-btnChooseBens = Button(frameSite, text="Move on to choose beneficiaries of the site.",\
+btnChooseBens = Button(frameSite, text="Next",\
                        command=lambda: nb.select(frameChooseBens))
 btnChooseBens.grid(row=2)
 
@@ -240,14 +241,13 @@ btnChooseBens.grid(row=2)
 ##############################################
 frameChooseBens = Frame(nb, name='frameChooseBens')
 frameChooseBens.pack(fill=BOTH)
-nb.add(frameChooseBens, text="Choose Beneficiaries")
+nb.add(frameChooseBens, text="Beneficiaries")
 
+beninstructions = 'Create a list of people who directly '\
+        'experience, value, or benefit from natural '\
+        'features at the site.'
 txtBenInstructions = Label(frameChooseBens,\
-                           text="Build a list of beneficiaries interested in the site. "+\
-                           "Here, a beneficiary is a role as which a person uses or "+\
-                           "appreciates the site.",\
-                           #wraplength=80 
-                           )
+                           text=beninstructions)
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
 lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
@@ -276,7 +276,7 @@ sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, sticky=W+N+S)
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
-lblBenDescriptCaption = Label(frameChooseBens, text="Description of the selected beneficiary:")
+lblBenDescriptCaption = Label(frameChooseBens, text="Description of the underlined beneficiary:")
 lblBenDescriptCaption.grid(row=4, column=0, columnspan=2)
 lblBenDescript = Label(frameChooseBens, text="unset")
 lblBenDescript.grid(row=4, column=2, columnspan=2)
@@ -308,7 +308,7 @@ frameSave = Frame(nb, name="frameSave")
 frameSave.pack(fill=BOTH)
 nb.add(frameSave, text="Save Ratings")
 
-lblSaveInstructions = Label(frameSave, text="Once all data is entered, save the data to a file for later use.")
+lblSaveInstructions = Label(frameSave, text="Save these ratings to a file for later use.")
 lblSaveInstructions.grid(row=0, column=0)
 
 btnSave = Button(frameSave, text="Save")
