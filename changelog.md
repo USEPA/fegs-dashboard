@@ -99,3 +99,7 @@
 - TODO display description widget for the currently active beneficiary in lbBenSrc or lbBenDest
 
 - TODO read beneficiaries' descriptions from parameters/beneficiaries.csv
+
+- TODO display description widget for the currently active attribute in lbAttrSrc or lbAttrDest
+
+- TODO read attributes' descriptions from parameters/attributes.csv

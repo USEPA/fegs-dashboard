@@ -11,8 +11,6 @@
   5. run script
 '''
 
-#TODO display description widget for the currently active attribute in lbAttrSrc or lbAttrDest
-#TODO read attributes' descriptions from parameters/attributes.csv
 #TODO feedback on save
 #TODO save dialog
 #TODO output tabular report
@@ -66,10 +64,18 @@ def processBens():
     nbRatings.updatetabs()
 
 def benactivation(event):
-    "update descriptions of beneficiary when activated it's in listbox"
+    "update descriptions of beneficiary when it's activated in a listbox"
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = beneficiariesdict[event.widget.get(ACTIVE)]
     lblBenDescript.config(text=description)
+
+def attractivation(event):
+    "update descriptions of attribute when it's activated in a listbox"
+    pdb.set_trace()
+    parent = event.widget.master
+    parent.lblattrdescriptcaption.config(text=str(event.widget.get(ACTIVE))+":")
+    description = attributesdict[event.widget.get(ACTIVE)]
+    parent.lblattrdescript.config(text=description)
 
 class Session():
     "centralize data and hide accessors"
@@ -136,6 +142,7 @@ class Ratings_Notebook(Notebook):
             self.tablist[i].lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
             for attribute in attributes:
                 self.tablist[i].lbAttrSrc.insert(END, attribute)
+            self.tablist[i].lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
             self.tablist[i].sbAttrSrc = Scrollbar(self.tablist[i], orient=VERTICAL,\
                                                command=self.tablist[i].lbAttrSrc.yview)
             self.tablist[i].sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
@@ -163,20 +170,32 @@ class Ratings_Notebook(Notebook):
             self.tablist[i].lbAttrDest = Listbox(self.tablist[i], height=lbHeight,\
                                               width=lbWidth, selectmode=EXTENDED)
             self.tablist[i].lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
+            self.tablist[i].lbAttrDest.bind('<<ListboxSelect>>',attractivation)
             self.tablist[i].sbAttrDest = Scrollbar(self.tablist[i], orient=VERTICAL,\
                                                 command=self.tablist[i].lbAttrDest.yview)
             self.tablist[i].sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
             self.tablist[i].lbAttrDest.config(yscrollcommand=self.tablist[i].sbAttrDest.set)
+            # description of active attribute
+            self.tablist[i].lblattrdescriptcaption = Label(self.tablist[i],
+                    text="Attribute:")
+            self.tablist[i].lblattrdescriptcaption.grid(row=4,column=0,columnspan=2)
+            self.tablist[i].lblattrdescript = Label(self.tablist[i],
+                    text="description")
+            self.tablist[i].lblattrdescript.grid(row=4,column=2,columnspan=4)
             # combobox of rating-values; text area for explanation
+            self.tablist[i].cmbratingcaption = Label(self.tablist[i],
+                    text='Enter a rating: ')
+            self.tablist[i].cmbratingcaption.grid(row=5,
+                    column=0,columnspan=2)
             self.tablist[i].cmbRating = Combobox(self.tablist[i], values=ratings)
-            self.tablist[i].cmbRating.grid(row=4, column=0, columnspan=6)
+            self.tablist[i].cmbRating.grid(row=5, column=2, columnspan=4)
             self.tablist[i].txtExpln = Text(self.tablist[i], height=10, width=48)
             self.tablist[i].txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
-            self.tablist[i].txtExpln.grid(row=5, column=0, columnspan=6)
+            self.tablist[i].txtExpln.grid(row=6, column=0, columnspan=6)
             self.tablist[i].btnRate = Button(self.tablist[i],\
                                           text="Rate the site for the beneficiaries.",\
                                           command=lambda: nb.select(frameSave))
-            self.tablist[i].btnRate.grid(row=6, column=2, columnspan=2)
+            self.tablist[i].btnRate.grid(row=7, column=2, columnspan=2)
 
 # parametrizations
 lbHeight = 16
