@@ -103,3 +103,7 @@
 - TODO display description widget for the currently active attribute in lbAttrSrc or lbAttrDest
 
 - TODO read attributes' descriptions from parameters/attributes.csv
+
+- TODO feedback on save
+
+- TODO save dialog

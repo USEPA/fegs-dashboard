@@ -11,8 +11,6 @@
   5. run script
 '''
 
-#TODO feedback on save
-#TODO save dialog
 #TODO output tabular report
 #TODO update nbRatings on activate frameProcessBens
 #TODO load saved ratings
@@ -27,7 +25,9 @@
 
 # imports
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import *
+from tkinter.filedialog import asksaveasfilename
 from datetime import datetime
 import pdb #NOTE python's standard debugger
 import sys
@@ -43,32 +43,26 @@ def moveBetweenLists(fromList, toList):
         index = indices.pop()-i
         toList.insert(END, fromList.get(index))
         fromList.delete(index)
-
 def addToList(item, lst):
     "casts item as str and adds it to the end of list)"
     lst.insert(END, item)
-
 def lineListFromFilename(filename):
     "returns a list of end-whitespace-stripped lines from filename"
     lines = [line.rstrip('\n') for line in open(filename)]
     return lines
-
 def scrapeExpln():
     "save explanation to a session-state-variable on focus out"
     session.expln = txtExpln.get('0.1', 'end-1c')
-
 def processBens():
     "generate a tab for each ben in lbBenDest"
     sys.stdout.write("about to generate tabs")
     nb.select(frameProcessBens)
     nbRatings.updatetabs()
-
 def benactivation(event):
     "update descriptions of beneficiary when it's activated in a listbox"
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = beneficiariesdict[event.widget.get(ACTIVE)]
     lblBenDescript.config(text=description)
-
 def attractivation(event):
     "update descriptions of attribute when it's activated in a listbox"
     pdb.set_trace()
@@ -105,12 +99,16 @@ class Session():
                 self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
-        with open('saved-ratings-'+timestamp+'.csv', 'w') as csvfile:
-            fieldnames = ['site', 'timestamp', 'beneficiary', 'attribute', 'rating', 'explanation']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            for i in range(self.ratings.__len__()):
-                writer.writerow(self.ratings[i])
+        filename = asksaveasfilename(initialfile='saved-fegs-ratings-'+timestamp+'.csv')
+        if filename != None and filename != '':
+            with open(filename, 'w') as csvfile:
+                fieldnames = ['site', 'timestamp', 'beneficiary',
+                        'attribute', 'rating', 'explanation']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for i in range(self.ratings.__len__()):
+                    writer.writerow(self.ratings[i])
+            messagebox.showinfo("Saved", "The file was saved.")
 
 class Ratings_Notebook(Notebook):
     "check lbBenDest.size() for dynamic size"
