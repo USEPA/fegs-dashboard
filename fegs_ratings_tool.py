@@ -12,16 +12,20 @@
 '''
 
 #TODO output tabular report
+#TODO fix save ratings bug from commit INSERT TRUNK COMMIT WITH BROKEN SESSION.SAVERATINGS()
 #TODO update nbRatings on activate frameProcessBens
 #TODO load saved ratings
 #TODO make master vertically and horizontally scrollable
 #TODO visualize ratings
 #TODO set wraplength for all labels(try lbl.<some_method>_all)
-#TODO error when focus leaves txtExpln
 #TODO retain data on existing rating-tabs when tabs are added
 #TODO widgets dynamically fill available space
 #TODO create data-analysis function
-#TODO should fields be added to a saved ratings' csv for descriptions of attribute and beneficiary?
+#TODO tab change focus from within Text widgets
+#TODO enter key triggers default button on nb tab or nbRating tab
+#TODO investigate localization support
+#TODO clear txtNewBen and txtNewAttr after text retrieval
+#TODO sort lists after addition
 
 # imports
 from tkinter import *
@@ -55,7 +59,6 @@ def scrapeExpln():
     session.expln = txtExpln.get('0.1', 'end-1c')
 def processBens():
     "generate a tab for each ben in lbBenDest"
-    sys.stdout.write("about to generate tabs")
     nb.select(frameProcessBens)
     nbRatings.updatetabs()
 def benactivation(event):
@@ -65,7 +68,6 @@ def benactivation(event):
     lblBenDescript.config(text=description)
 def attractivation(event):
     "update descriptions of attribute when it's activated in a listbox"
-    pdb.set_trace()
     parent = event.widget.master
     parent.lblattrdescriptcaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = attributesdict[event.widget.get(ACTIVE)]
@@ -75,21 +77,26 @@ class Session():
     "centralize data and hide accessors"
     def __init__(self):
         '''statically bound attributes timestamp and site;
-        create rating dict ior each rating in nbRatings'''
+        create rating dict for each rating in nbRatings'''
         self.timestamp = str(datetime.now())
         self.site = StringVar()
         txtSite.config(textvariable=self.site)
         self.bens = StringVar()
         lbBenDest.config(listvariable=self.bens)
         self.ratings = []
-    def saveRatings(self):
+    def createdict(self):
+        pdb.set_trace()#-----------------BREAK-------------------------------------
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
+        # loop through ratings,attrs to build a dict
+        for i in list(range(len(nbRatings.tablist))):
+            for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
+                self.ratingsdict.items().__len__()
+        # loop through ratings,attrs to build a list
         for i in list(range(len(nbRatings.tablist))):
             for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
                 attribute = nbRatings.tablist[i].lbAttrDest.get(j)
-                self.ratings.append({})
                 dictnum = len(self.ratings)-1
                 self.ratings[dictnum]['site'] = txtSite.get()
                 self.ratings[dictnum]['timestamp'] = str(datetime.now())
@@ -97,11 +104,15 @@ class Session():
                 self.ratings[dictnum]['attribute'] = attribute
                 self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
                 self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
+    def viewratings(self):
+        self.createdict
+    def saveRatings(self):
+        self.createdict
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
         filename = asksaveasfilename(initialfile='saved-fegs-ratings-'+timestamp+'.csv')
         if filename != None and filename != '':
-            with open(filename, 'w') as csvfile:
+            with open(filename, 'w', newline='\r\n') as csvfile:
                 fieldnames = ['site', 'timestamp', 'beneficiary',
                         'attribute', 'rating', 'explanation']
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -189,7 +200,7 @@ class Ratings_Notebook(Notebook):
             self.tablist[i].cmbRating.grid(row=5, column=2, columnspan=4)
             self.tablist[i].txtExpln = Text(self.tablist[i], height=10, width=60)
             self.tablist[i].lblexplncaption = Label(self.tablist[i],text='Type additional information.')
-            self.tablist[i].txtExpln.bind('<FocusOut>', lambda: scrapeExpln())
+            self.tablist[i].txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
             self.tablist[i].txtExpln.grid(row=6, column=2, columnspan=6)
             self.tablist[i].btnRate = Button(self.tablist[i],\
                                           text="Rate the site for the beneficiaries.",\
@@ -214,7 +225,7 @@ root = Tk()
 root.option_add("*Font", "courier " + str(fontHeight))
 master = Frame(root, name='master')
 master.pack(fill=BOTH)
-root.title('FEGS Rating Tool')
+root.title('FEGS Ratings Tool')
 root.protocol("WM_DELETE_WINDOW", master.quit)
 nb = Notebook(master, name='nb')
 nb.pack(fill=BOTH, padx=2, pady=3)
@@ -313,7 +324,7 @@ lblSaveInstructions.grid(row=0, column=0)
 
 btnSave = Button(frameSave, text="Save")
 btnSave.grid(row=1, column=0)
-btnSave.config(command=lambda: session.saveRatings())
+btnSave.config(command=lambda: session.saveRatings)
 
 session = Session()
 
