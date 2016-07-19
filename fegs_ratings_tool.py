@@ -11,22 +11,20 @@
   5. run script
 '''
 
-#TODO display description widget for the currently active beneficiary in lbBenSrc or lbBenDest
 #TODO display description widget for the currently active attribute in lbAttrSrc or lbAttrDest
-#TODO read beneficiaries' descriptions from parameters/beneficiaries.csv
 #TODO read attributes' descriptions from parameters/attributes.csv
-#TODO move btnProcessBens from within nbRatings to below it
-#TODO output tabular report
+#TODO feedback on save
 #TODO save dialog
+#TODO output tabular report
+#TODO update nbRatings on activate frameProcessBens
 #TODO load saved ratings
 #TODO make master vertically and horizontally scrollable
 #TODO visualize ratings
-#TODO create data-analysis function
-#TODO set wraplength for all labels(lbl.<some_method>_all)
+#TODO set wraplength for all labels(try lbl.<some_method>_all)
 #TODO error when focus leaves txtExpln
-#TODO feedback on save
 #TODO retain data on existing rating-tabs when tabs are added
 #TODO widgets dynamically fill available space
+#TODO create data-analysis function
 #TODO should fields be added to a saved ratings' csv for descriptions of attribute and beneficiary?
 
 # imports
@@ -36,6 +34,8 @@ from datetime import datetime
 import pdb #NOTE python's standard debugger
 import sys
 import csv
+# import custom classes and functions
+from paramreader import paramreader
 
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
@@ -65,9 +65,11 @@ def processBens():
     nb.select(frameProcessBens)
     nbRatings.updatetabs()
 
-def srcbenactivation(event):
-    sys.stdout.write("srcbenactivation() fired!")
-    bendescript.set(lbBenSrc.get('active'))
+def benactivation(event):
+    "update descriptions of beneficiary when activated it's in listbox"
+    lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
+    description = beneficiariesdict[event.widget.get(ACTIVE)]
+    lblBenDescript.config(text=description)
 
 class Session():
     "centralize data and hide accessors"
@@ -175,18 +177,17 @@ class Ratings_Notebook(Notebook):
                                           text="Rate the site for the beneficiaries.",\
                                           command=lambda: nb.select(frameSave))
             self.tablist[i].btnRate.grid(row=6, column=2, columnspan=2)
-        
 
 # parametrizations
 lbHeight = 16
 lbWidth = 32
 fontHeight = 12
 wrapwidth = 64
-beneficiaries = sorted(lineListFromFilename("parameters/beneficiaries.txt"))
-attributes = sorted(lineListFromFilename("parameters/attributes.txt"))
-#bens = [line for line
+beneficiariesdict = paramreader('parameters/beneficiaries.csv')
+beneficiaries = sorted([beneficiary for beneficiary in beneficiariesdict.keys()])
+attributesdict = paramreader('parameters/attributes.csv')
+attributes = sorted([attribute for attribute in attributesdict.keys()])
 ratings = lineListFromFilename("parameters/ratings.txt")
-#bendescript = StringVar()
 
 ###############
 # tkinter GUI #
@@ -225,8 +226,8 @@ frameChooseBens.pack(fill=BOTH)
 nb.add(frameChooseBens, text="Choose Beneficiaries")
 
 txtBenInstructions = Label(frameChooseBens,\
-                           text="Build a list of beneficiaries interested in the site."+\
-                           "Here, a beneficiary is a role as which a person uses or"+\
+                           text="Build a list of beneficiaries interested in the site. "+\
+                           "Here, a beneficiary is a role as which a person uses or "+\
                            "appreciates the site.",\
                            #wraplength=80 
                            )
@@ -260,10 +261,10 @@ lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 lblBenDescriptCaption = Label(frameChooseBens, text="Description of the selected beneficiary:")
 lblBenDescriptCaption.grid(row=4, column=0, columnspan=2)
-lblBenDescript = Label(frameChooseBens)
+lblBenDescript = Label(frameChooseBens, text="unset")
 lblBenDescript.grid(row=4, column=2, columnspan=2)
-lbBenSrc.bind('<FocusIn>', srcbenactivation)
-#lbBenSrc.bind(event, lambda: bendescript.set(lbBenSrc.get(lbBenSrc.curselection())))
+lbBenSrc.bind('<<ListboxSelect>>', benactivation)
+lbBenDest.bind('<<ListboxSelect>>', benactivation)
 
 btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
 btnProcessBens.config(command=lambda: processBens())

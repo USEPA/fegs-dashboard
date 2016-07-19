@@ -95,3 +95,7 @@
 - TODO implement saveRatings()
 
 - TODO change order of ratings to Good, Fair, then Poor in descending order
+
+- TODO display description widget for the currently active beneficiary in lbBenSrc or lbBenDest
+
+- TODO read beneficiaries' descriptions from parameters/beneficiaries.csv
