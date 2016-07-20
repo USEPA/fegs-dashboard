@@ -12,9 +12,8 @@
 '''
 
 #TODO output tabular report
-#TODO fix save ratings bug from commit INSERT TRUNK COMMIT WITH BROKEN SESSION.SAVERATINGS()
+#TODO load saved session
 #TODO update nbRatings on activate frameProcessBens
-#TODO load saved ratings
 #TODO make master vertically and horizontally scrollable
 #TODO visualize ratings
 #TODO set wraplength for all labels(try lbl.<some_method>_all)
@@ -72,6 +71,10 @@ def attractivation(event):
     parent.lblattrdescriptcaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = attributesdict[event.widget.get(ACTIVE)]
     parent.lblattrdescript.config(text=description)
+def save():
+    "save ratings"
+    nbRatings.update()
+    #RESUME
 
 class Session():
     "centralize data and hide accessors"
@@ -85,15 +88,9 @@ class Session():
         lbBenDest.config(listvariable=self.bens)
         self.ratings = []
     def createdict(self):
-        pdb.set_trace()#-----------------BREAK-------------------------------------
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
-        # loop through ratings,attrs to build a dict
-        for i in list(range(len(nbRatings.tablist))):
-            for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
-                self.ratingsdict.items().__len__()
-        # loop through ratings,attrs to build a list
         for i in list(range(len(nbRatings.tablist))):
             for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
                 attribute = nbRatings.tablist[i].lbAttrDest.get(j)
@@ -105,9 +102,25 @@ class Session():
                 self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
                 self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
     def viewratings(self):
-        self.createdict
+        self.createdict()
     def saveRatings(self):
-        self.createdict
+        pdb.set_trace()#-----------------BREAK-------------------------------------
+        #self.createdict()
+        if len(self.ratings) != 0:
+            del(self.ratings)
+            self.ratings = []
+        dictnum = 0
+        for i in list(range(len(nbRatings.tablist))):
+            for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
+                self.ratings.append({})
+                attribute = nbRatings.tablist[i].lbAttrDest.get(j)
+                self.ratings[dictnum]['site'] = txtSite.get()
+                self.ratings[dictnum]['timestamp'] = str(datetime.now())
+                self.ratings[dictnum]['beneficiary'] = lbBenDest.get(i)
+                self.ratings[dictnum]['attribute'] = attribute
+                self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
+                self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
+                dictnum += 1
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
         filename = asksaveasfilename(initialfile='saved-fegs-ratings-'+timestamp+'.csv')
@@ -198,7 +211,8 @@ class Ratings_Notebook(Notebook):
                     column=0,columnspan=2)
             self.tablist[i].cmbRating = Combobox(self.tablist[i], values=ratings)
             self.tablist[i].cmbRating.grid(row=5, column=2, columnspan=4)
-            self.tablist[i].txtExpln = Text(self.tablist[i], height=10, width=60)
+            self.tablist[i].txtExpln = Text(self.tablist[i], height=10,
+                    width=60)
             self.tablist[i].lblexplncaption = Label(self.tablist[i],text='Type additional information.')
             self.tablist[i].txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
             self.tablist[i].txtExpln.grid(row=6, column=2, columnspan=6)
@@ -324,7 +338,7 @@ lblSaveInstructions.grid(row=0, column=0)
 
 btnSave = Button(frameSave, text="Save")
 btnSave.grid(row=1, column=0)
-btnSave.config(command=lambda: session.saveRatings)
+btnSave.config(command=lambda: session.saveRatings())
 
 session = Session()
 
