@@ -11,7 +11,6 @@
   5. run script
 '''
 
-#TODO output tabular report
 #TODO load saved session
 #TODO update nbRatings on activate frameProcessBens
 #TODO make master vertically and horizontally scrollable
@@ -71,28 +70,38 @@ def attractivation(event):
     parent.lblattrdescriptcaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = attributesdict[event.widget.get(ACTIVE)]
     parent.lblattrdescript.config(text=description)
-def save():
-    "save ratings"
-    nbRatings.update()
-    #RESUME
+def updateratingstree(event):
+    "update ratingstree to show ratings"
+    session.update()
+    row = 0
+    ratingstree.delete(*ratingstree.get_children())
+    for item in session.ratings:
+        values=[]
+        for field in session.fieldnames:
+            values.append(item[field])
+        values = tuple(values)
+        ratingstree.insert('',row,text='row '+str(row),values=values)
+        row += 1
 
 class Session():
-    "centralize data and hide accessors"
+    "centralize data; hide widgets' accessors"
     def __init__(self):
         '''statically bound attributes timestamp and site;
         create rating dict for each rating in nbRatings'''
+        self.fieldnames = ['site', 'timestamp', 'beneficiary',
+                'attribute', 'rating', 'explanation']
         self.timestamp = str(datetime.now())
         self.site = StringVar()
         txtSite.config(textvariable=self.site)
         self.bens = StringVar()
         lbBenDest.config(listvariable=self.bens)
         self.ratings = []
-    def createdict(self):
+    def update(self):
         if len(self.ratings) != 0:
-            del(self.ratings)
             self.ratings = []
         for i in list(range(len(nbRatings.tablist))):
             for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
+                self.ratings.append({})
                 attribute = nbRatings.tablist[i].lbAttrDest.get(j)
                 dictnum = len(self.ratings)-1
                 self.ratings[dictnum]['site'] = txtSite.get()
@@ -101,11 +110,8 @@ class Session():
                 self.ratings[dictnum]['attribute'] = attribute
                 self.ratings[dictnum]['rating'] = nbRatings.tablist[i].cmbRating.get()
                 self.ratings[dictnum]['explanation'] = nbRatings.tablist[i].txtExpln.get('0.1', 'end-1c')
-    def viewratings(self):
-        self.createdict()
     def saveRatings(self):
-        pdb.set_trace()#-----------------BREAK-------------------------------------
-        #self.createdict()
+        #self.update()
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
@@ -126,13 +132,15 @@ class Session():
         filename = asksaveasfilename(initialfile='saved-fegs-ratings-'+timestamp+'.csv')
         if filename != None and filename != '':
             with open(filename, 'w', newline='\r\n') as csvfile:
-                fieldnames = ['site', 'timestamp', 'beneficiary',
-                        'attribute', 'rating', 'explanation']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
                 writer.writeheader()
                 for i in range(self.ratings.__len__()):
                     writer.writerow(self.ratings[i])
             messagebox.showinfo("Saved", "The file was saved.")
+    def savesession():
+        "save ratings"
+        nbRatings.update()
+        #NOTE implement save session here
 
 class Ratings_Notebook(Notebook):
     "check lbBenDest.size() for dynamic size"
@@ -251,7 +259,8 @@ frameSite = Frame(nb, name='frameSite')
 frameSite.pack(fill=BOTH)
 nb.add(frameSite, text="Name the site")
 
-lblSiteInstructions = Label(frameSite, text="Type the name of the site.")
+lblSiteInstructions = Label(frameSite,
+        text="Type the name of the site.")
 lblSiteInstructions.grid(row=0)
 
 txtSite = Entry(frameSite, width=lbWidth)
@@ -334,13 +343,29 @@ frameSave.pack(fill=BOTH)
 nb.add(frameSave, text="Save Ratings")
 
 lblSaveInstructions = Label(frameSave, text="Save these ratings to a file for later use.")
-lblSaveInstructions.grid(row=0, column=0)
-
-btnSave = Button(frameSave, text="Save")
-btnSave.grid(row=1, column=0)
-btnSave.config(command=lambda: session.saveRatings())
+lblSaveInstructions.pack()
 
 session = Session()
 
-# don't put any code which should run before the GUI closes after mainloop
+# review ratings
+ratingstree = Treeview(frameSave)
+frameSave.bind('<Expose>', updateratingstree)
+ratingstree.pack()
+ratingstree['columns'] = session.fieldnames 
+for heading in session.fieldnames:
+    ratingstree.heading(heading, text=heading)
+
+btnSave = Button(frameSave, text="Save")
+btnSave.pack()
+btnSave.config(command=lambda: session.saveRatings())
+
+btndebug = Button(
+        frameSave,
+        text="Debug",
+        command =lambda: pdb.set_trace())
+btndebug.pack()
+
 root.mainloop()
+'''don't put any code which should run before the GUI
+closes after mainloop
+'''

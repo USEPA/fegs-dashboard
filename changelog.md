@@ -113,3 +113,5 @@
 - TODO error when focus leaves txtExpln
 
 - TODO fix error in save
+
+- TODO output tabular review of ratings on view frameSave
