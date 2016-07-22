@@ -115,3 +115,5 @@
 - TODO fix error in save
 
 - TODO output tabular review of ratings on view frameSave
+
+- TODO load saved session
