@@ -11,7 +11,7 @@
   5. run script
 '''
 
-#TODO add 'rate the site for the next beneficiary' button on frameProcessBens
+#TODO pack frame site's contents
 #TODO horizontal scrollbars on lbBenSrc, lbBenDest, lbAttrSrc, and lbAttrDest
 #TODO clear txtNewBen after insertion of new ben into lbBenDest
 #TODO clear txtNewAttr after insertion of new attr into lbAttrDest
@@ -212,6 +212,9 @@ class Ratings_Notebook(Notebook):
         self.pack()
         self.tablist = []
         self.labels = []
+    def selectnext(self):
+        if self.index('current') <= self.index('end'):
+            self.select(self.index('current')+1)
     def cleartabs(self):
         "clear all tabs from Ratings_Notebook object"
         numtabs = self.index('end')
@@ -283,7 +286,11 @@ class Ratings_Notebook(Notebook):
                     width=60)
             tabi.lblexplncaption = Label(tabi,text='Type additional information.')
             tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
-            tabi.txtExpln.grid(row=6, column=2, columnspan=6)
+            tabi.txtExpln.grid(row=6, column=2, columnspan=2)
+            tabi.btnnextben = Button(tabi,
+                    text='Process the Next Beneficiary',
+                    command=lambda: self.selectnext())
+            tabi.btnnextben.grid(row=6, column=0,columnspan=2)
             tabi.btnRate = Button(tabi,
                     text="Rate the site for the beneficiaries.",
                     command=lambda: nb.select(frameSave))

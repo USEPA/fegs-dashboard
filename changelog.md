@@ -119,3 +119,5 @@
 - TODO load saved session
 
 - TODO fix error in session.load() and dependencies
+
+- TODO add 'rate the site for the next beneficiary' button on frameProcessBens
