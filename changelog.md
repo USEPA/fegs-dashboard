@@ -117,3 +117,5 @@
 - TODO output tabular review of ratings on view frameSave
 
 - TODO load saved session
+
+- TODO fix error in session.load() and dependencies

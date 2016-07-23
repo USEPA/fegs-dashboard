@@ -11,18 +11,25 @@
   5. run script
 '''
 
-#TODO update nbRatings on activate frameProcessBens
-#TODO make master vertically and horizontally scrollable
+#TODO add 'rate the site for the next beneficiary' button on frameProcessBens
+#TODO horizontal scrollbars on lbBenSrc, lbBenDest, lbAttrSrc, and lbAttrDest
+#TODO clear txtNewBen after insertion of new ben into lbBenDest
+#TODO clear txtNewAttr after insertion of new attr into lbAttrDest
+#TODO make frame master vertically and horizontally scrollable
+#TODO facility for users to add a description with a new beneficiary
+#TODO facility for users to add a description with a new attribute
+#TODO make a separate csv for user-added beneficiaries
+#TODO make a separate csv for user-added attributes
 #TODO visualize ratings
 #TODO set wraplength for all labels(try lbl.<some_method>_all)
 #TODO retain data on existing rating-tabs when tabs are added
-#TODO widgets dynamically fill available space
 #TODO create data-analysis function
 #TODO tab change focus from within Text widgets
 #TODO enter key triggers default button on nb tab or nbRating tab
 #TODO investigate localization support
 #TODO clear txtNewBen and txtNewAttr after text retrieval
-#TODO sort lists after addition
+#TODO sort listboxes after addition
+#TODO update nbRatings on activate frameProcessBens
 
 # imports
 from tkinter import *
@@ -43,11 +50,11 @@ def moveBetweenLists(fromList, toList):
     indices.sort(reverse=True)
     for i in range(len(indices)):
         index = indices.pop()-i
-        toList.insert(END, fromList.get(index))
+        toList.insert('end', fromList.get(index))
         fromList.delete(index)
 def addToList(item, lst):
     "casts item as str and adds it to the end of list)"
-    lst.insert(END, item)
+    lst.insert('end', item)
 def lineListFromFilename(filename):
     "returns a list of end-whitespace-stripped lines from filename"
     lines = [line.rstrip('\n') for line in open(filename)]
@@ -57,8 +64,8 @@ def scrapeExpln():
     session.expln = txtExpln.get('0.1', 'end-1c')
 def processBens():
     "generate a tab for each ben in lbBenDest"
-    nb.select(frameProcessBens)
     nbRatings.updatetabs()
+    nb.select(frameProcessBens)
 def benactivation(event):
     "update descriptions of beneficiary when it's activated in a listbox"
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
@@ -106,8 +113,8 @@ class Session():
             del(self.ratings)
             self.ratings = []
         dictnum = 0
-        for i in list(range(len(nbRatings.tablist))):
-            for j in list(range(len(nbRatings.tablist[i].lbAttrDest.get(0,END)))):
+        for i in range(len(nbRatings.tablist)):
+            for j in range(nbRatings.tablist[i].lbAttrDest.size()):
                 self.ratings.append({})
                 tabi = nbRatings.tablist[i]
                 attribute = tabi.lbAttrDest.get(j)
@@ -137,39 +144,40 @@ class Session():
         for lbindex in range(lb.size()):
             output.append(lb.get(lbindex))
         return output
-    def lbload(self, inputlist, lb):
+    def loadlb(self, inputlist, lb):
         'load items into from inputlist into listbox lb'
         for i in range(lb.size()):
             lb.delete(i)
+        if len(list(inputlist)) == 0:
+            return
         for item in inputlist:
-            lb.insert('0', item)
+            lb.insert('end', item)
     def save(self):
-        "save info entered for loading later"
+        "save data entered for loading later"
         site = txtSite.get()
-        listbensrc = self.lblist(lbBenSrc)# get list
-        listbendest = self.lblist(lbBenDest)# get list
+        listbensrc = self.lblist(lbBenSrc)
+        listbendest = self.lblist(lbBenDest)
         ratingslist = []
-        for i in nbRatings.size():
+        for i in range(len(nbRatings.tablist)):
             ratingslist.append({})
-            for i in range(len(nbRatings.tablist)):
-                ratingi = ratingslist[i]
-                tabi = nbRatings.tablist[i]
-                listattrsrc = lblist(tabi.lbAttrSrc)
-                ratingi['listattrsrc'] = listattrsrc
-                listattrdest = lblist(tabi.lbAttrDest)
-                ratingi['listattrdest'] = listattrdest
-                rating = tabi.cmbRating.get()
-                ratingi['rating'] = rating
-                expln = tabi.txtExpln.get('0.1','end-1c')
-                ratingi['explanation'] = expln
+            ratingi = ratingslist[i]
+            tabi = nbRatings.tablist[i]
+            listattrsrc = self.lblist(tabi.lbAttrSrc)
+            ratingi['listattrsrc'] = listattrsrc
+            listattrdest = self.lblist(tabi.lbAttrDest)
+            ratingi['listattrdest'] = listattrdest
+            rating = tabi.cmbRating.get()
+            ratingi['rating'] = rating
+            expln = tabi.txtExpln.get('0.1','end-1c')
+            ratingi['explanation'] = expln
         with open('session.pickle','wb') as f:
             picklelist = [
                     site,
-                    lblist(lbBenSrc),
-                    lblist(lbBenDest),
+                    self.lblist(lbBenSrc),
+                    self.lblist(lbBenDest),
                     ratingslist ]
             pickle.dump(picklelist, f)
-            #REMOVED , pickle.HIGHEST_PROTOCOL
+            #REMOVED pickle.HIGHEST_PROTOCOL as arg 3 above
     def load(self):
         'load saved data-entry-session into tool'
         with open('session.pickle','rb') as f:
@@ -178,82 +186,83 @@ class Session():
                     listbensrc,
                     listbendest,
                     ratingslist ] =  pickle.load(f)
-        txtSite.insert(END, site)
-        self.lbload(listbensrc, lbBenSrc)
-        self.lbload(listbendest, lbBenDest)
+        txtSite.delete(0,'end')
+        txtSite.insert('end', site)
+        self.loadlb(listbensrc, lbBenSrc)
+        self.loadlb(listbendest, lbBenDest)
         nbRatings.updatetabs()
         for i in range(len(ratingslist)):
             tabi = nbRatings.tablist[i]
             ratingi = ratingslist[i]
-            self.lbload(ratingi['listattrsrc'], tabi.lbAttrSrc)
-            self.lbload(ratingi['listattrdest'], tabi.lbAttrDest)
-            rating = ratingi['rating']
-            tabi.cmbRating.set(rating)
-            expln = ratingi['explanation']
-            tabi.txtExpln.insert(END, expln)
+            if 'listattrsrc' in ratingi.keys():
+                self.loadlb(ratingi['listattrsrc'], tabi.lbAttrSrc)
+            if 'listattrdest' in ratingi.keys():
+                self.loadlb(ratingi['listattrdest'], tabi.lbAttrDest)
+            if 'rating' in ratingi.keys():
+                rating = ratingi['rating']
+                tabi.cmbRating.set(rating)
+            if 'explanation' in ratingi.keys():
+                expln = ratingi['explanation']
+                tabi.txtExpln.insert('end', expln)
 
 class Ratings_Notebook(Notebook):
     "check lbBenDest.size() for dynamic size"
     def __init__(self):
-        #self = Notebook(frameProcessBens)
         Notebook.__init__(self,frameProcessBens)
         self.pack()
         self.tablist = []
         self.labels = []
     def cleartabs(self):
-        "clear all tabs from notebook"
+        "clear all tabs from Ratings_Notebook object"
         numtabs = self.index('end')
         for i in range(numtabs):
             self.forget(self.tablist[i])
     def updatetabs(self):
-        "update nbRatings tabs to reflect lbBenDest"
+        "update tabs to reflect lbBenDest"
         self.cleartabs()
         for i in range(lbBenDest.size()):
             self.tablist.append(Frame(self))
             tabi = self.tablist[i]
-            tabi.benName = lbBenDest.get(i)
+            ben = lbBenDest.get(i)
             tabi.pack()
-            self.labels.append(Label(tabi, text=tabi.benName))
+            self.labels.append(Label(tabi, text=ben))
             self.labels[i].grid(row=0, column=0, columnspan=6)
-            self.add(tabi, text=tabi.benName)
+            self.add(tabi, text=ben)
             # source listbox of attributes
-            tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,\
-                                             width=lbWidth, selectmode=EXTENDED)
+            tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,
+                    width=lbWidth, selectmode=EXTENDED)
             tabi.lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
             for attribute in attributes:
-                tabi.lbAttrSrc.insert(END, attribute)
+                tabi.lbAttrSrc.insert('end', attribute)
             tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
-            tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,\
-                                               command=tabi.lbAttrSrc.yview)
+            tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,
+                    command=tabi.lbAttrSrc.yview)
             tabi.sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
             tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
             # widgets between listboxes
-            tabi.btnAttrAdd = Button(tabi, text=">> Add >>",\
-                                             command=lambda i=i: moveBetweenLists(\
-                                             tabi.lbAttrSrc,\
-                                             tabi.lbAttrDest))
+            tabi.btnAttrAdd = Button(tabi, text=">> Add >>",
+                    command=lambda tabi=tabi: moveBetweenLists(
+                        tabi.lbAttrSrc, tabi.lbAttrDest))
             tabi.btnAttrAdd.grid(row=1, column=2, columnspan=2)
             tabi.txtNewAttr = Entry(tabi,
-                    text="Don't see an attribute? "+\
+                    text="Don't see an attribute? "+
                     "Type it here and click >>")
             tabi.txtNewAttr.grid(row=2, column=2)
-            tabi.btnNewAttr = Button(tabi, text=">>",\
-                                             command=lambda i=i: addToList(\
-                                             tabi.txtNewAttr.get(),\
-                                             tabi.lbAttrDest))
+            tabi.btnNewAttr = Button(tabi, text=">>",
+                    command=lambda tabi=tabi: addToList(
+                        tabi.txtNewAttr.get(), tabi.lbAttrDest))
             tabi.btnNewAttr.grid(row=2, column=3)
-            tabi.btnAttrRm = Button(tabi, text="<< Remove <<",\
-                                            command=lambda i=i: moveBetweenLists(\
-                                            tabi.lbAttrDest,\
-                                            tabi.lbAttrSrc))
+            tabi.btnAttrRm = Button(tabi, text="<< Remove <<",
+                    command=lambda tabi=tabi: moveBetweenLists(
+                        tabi.lbAttrDest, tabi.lbAttrSrc))
             tabi.btnAttrRm.grid(row=3, column=2, columnspan=2)
             # destination listbox of attributes
-            tabi.lbAttrDest = Listbox(tabi, height=lbHeight,\
-                                              width=lbWidth, selectmode=EXTENDED)
+            tabi.lbAttrDest = Listbox(tabi, height=lbHeight,
+                    width=lbWidth, selectmode=EXTENDED)
             tabi.lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
             tabi.lbAttrDest.bind('<<ListboxSelect>>',attractivation)
-            tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,\
-                                                command=tabi.lbAttrDest.yview)
+            tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,
+                    command=tabi.lbAttrDest.yview)
             tabi.sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
             tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
             # description of active attribute
@@ -275,9 +284,9 @@ class Ratings_Notebook(Notebook):
             tabi.lblexplncaption = Label(tabi,text='Type additional information.')
             tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
             tabi.txtExpln.grid(row=6, column=2, columnspan=6)
-            tabi.btnRate = Button(tabi,\
-                                          text="Rate the site for the beneficiaries.",\
-                                          command=lambda: nb.select(frameSave))
+            tabi.btnRate = Button(tabi,
+                    text="Rate the site for the beneficiaries.",
+                    command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=7, column=2, columnspan=2)
 
 # parametrizations
@@ -347,11 +356,13 @@ txtBenInstructions = Label(frameChooseBens,\
                            text=beninstructions)
 txtBenInstructions.grid(row=0, column=0, columnspan=6)
 
-lbBenSrc = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
+lbBenSrc = Listbox(frameChooseBens, height=lbHeight,
+        width=lbWidth, selectmode=EXTENDED)
 lbBenSrc.grid(row=1, column=0, rowspan=3, sticky=E)
 for beneficiary in beneficiaries:
-    lbBenSrc.insert(END, beneficiary)
-sbBenSrc = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenSrc.yview)
+    lbBenSrc.insert('end', beneficiary)
+sbBenSrc = Scrollbar(frameChooseBens, orient=VERTICAL,
+        command=lbBenSrc.yview)
 sbBenSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
 lbBenSrc.config(yscrollcommand=sbBenSrc.set)
 
@@ -398,9 +409,9 @@ lblAttrsInstructions.pack()
 nbRatings = Ratings_Notebook()
 #NOTE the tabs for ratings are populated on press btnProcessBens
 
-#######################
-##tab to save ratings##
-#######################
+##################################
+# tab to review and save ratings #
+##################################
 frameSave = Frame(nb, name="frameSave")
 frameSave.pack(fill=BOTH)
 nb.add(frameSave, text="Save Ratings")
