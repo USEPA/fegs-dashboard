@@ -11,7 +11,6 @@
   5. run script
 '''
 
-#TODO remove addition of incorrect newlines if present in csv-parameter-generation-script
 #TODO provide feedback on save session
 #TODO pack frame site's contents
 #TODO horizontal scrollbars on lbBenSrc, lbBenDest, lbAttrSrc, and lbAttrDest

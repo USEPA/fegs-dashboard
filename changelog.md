@@ -125,3 +125,5 @@
 - TODO give openfilename() dialog for load session
 
 - TODO add 'rate the site for the next beneficiary' button on frameProcessBens
+
+- TODO remove addition of incorrect newlines if present in csv-parameter-generation-script

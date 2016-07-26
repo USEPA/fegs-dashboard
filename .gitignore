@@ -53,3 +53,7 @@ Session.vim
 ## py2exe ##
 ############
 dist/
+
+## wiki ##
+##########
+wiki/
