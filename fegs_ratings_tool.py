@@ -11,7 +11,6 @@
   5. run script
 '''
 
-#TODO give openfilename() dialog for load session
 #TODO provide feedback on save session
 #TODO remove addition of incorrect newlines if present in csv-parameter-generation-script
 #TODO add 'rate the site for the next beneficiary' button on frameProcessBens
@@ -186,7 +185,8 @@ class Session():
             #REMOVED pickle.HIGHEST_PROTOCOL as arg 3 above
     def load(self):
         'load saved data-entry-session into tool'
-        # RESUME IMPLEMENTING LOADER FNCNALITY filename = askopenfilename(filetypes=".pickle")
+        # RESUME IMPLEMENTING LOADER FNCNALITY
+        filename = askopenfilename(filetypes=[('pickled sessions', "*.pickle")])
         with open(filename,'rb') as f:
             [
                     site,
