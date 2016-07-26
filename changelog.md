@@ -119,3 +119,5 @@
 - TODO load saved session
 
 - TODO fix error in session.load() and dependencies
+
+- TODO give saveasfilename() dialog for save session

@@ -11,6 +11,9 @@
   5. run script
 '''
 
+#TODO give openfilename() dialog for load session
+#TODO provide feedback on save session
+#TODO remove addition of incorrect newlines if present in csv-parameter-generation-script
 #TODO add 'rate the site for the next beneficiary' button on frameProcessBens
 #TODO horizontal scrollbars on lbBenSrc, lbBenDest, lbAttrSrc, and lbAttrDest
 #TODO clear txtNewBen after insertion of new ben into lbBenDest
@@ -35,7 +38,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
-from tkinter.filedialog import asksaveasfilename
+from tkinter.filedialog import asksaveasfilename,askopenfilename
 from datetime import datetime
 import pdb #NOTE python's standard debugger
 import sys
@@ -170,7 +173,10 @@ class Session():
             ratingi['rating'] = rating
             expln = tabi.txtExpln.get('0.1','end-1c')
             ratingi['explanation'] = expln
-        with open('session.pickle','wb') as f:
+        formatstring = "%Y.%m.%dAT%H.%M.%S"
+        timestamp = datetime.now().strftime(formatstring)
+        filename = asksaveasfilename(initialfile='session-'+timestamp+'.pickle')
+        with open(filename,'wb') as f:
             picklelist = [
                     site,
                     self.lblist(lbBenSrc),
@@ -180,7 +186,8 @@ class Session():
             #REMOVED pickle.HIGHEST_PROTOCOL as arg 3 above
     def load(self):
         'load saved data-entry-session into tool'
-        with open('session.pickle','rb') as f:
+        # RESUME IMPLEMENTING LOADER FNCNALITY filename = askopenfilename(filetypes=".pickle")
+        with open(filename,'rb') as f:
             [
                     site,
                     listbensrc,
