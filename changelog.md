@@ -123,3 +123,5 @@
 - TODO give saveasfilename() dialog for save session
 
 - TODO give openfilename() dialog for load session
+
+- TODO add 'rate the site for the next beneficiary' button on frameProcessBens
