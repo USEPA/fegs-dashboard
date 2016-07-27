@@ -18,7 +18,7 @@
 #TODO facility for users to add a description with a new attribute
 #TODO make a separate csv for user-added beneficiaries
 #TODO make a separate csv for user-added attributes
-#TODO visualize ratings
+#TODO visualize ratings by providing something like a graph
 #TODO set wraplength for all labels(try lbl.<some_method>_all)
 #TODO retain data on existing rating-tabs when tabs are added
 #TODO create data-analysis function
