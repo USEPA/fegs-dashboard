@@ -11,9 +11,6 @@
   5. run script
 '''
 
-#TODO provide feedback on save session
-#TODO pack frame site's contents
-#TODO horizontal scrollbars on lbBenSrc, lbBenDest, lbAttrSrc, and lbAttrDest
 #TODO clear txtNewBen after insertion of new ben into lbBenDest
 #TODO clear txtNewAttr after insertion of new attr into lbAttrDest
 #TODO make frame master vertically and horizontally scrollable
@@ -31,6 +28,8 @@
 #TODO clear txtNewBen and txtNewAttr after text retrieval
 #TODO sort listboxes after addition
 #TODO update nbRatings on activate frameProcessBens
+#TODO provide feedback on save session
+#TODO horizontal scrollbars on listboxes
 
 # imports
 from tkinter import *
@@ -113,18 +112,19 @@ class Session():
         if len(self.ratings) != 0:
             del(self.ratings)
             self.ratings = []
+        fields = self.fieldnames
         dictnum = 0
         for i in range(len(nbRatings.tablist)):
             for j in range(nbRatings.tablist[i].lbAttrDest.size()):
                 self.ratings.append({})
                 tabi = nbRatings.tablist[i]
                 attribute = tabi.lbAttrDest.get(j)
-                self.ratings[dictnum]['site'] = txtSite.get()
-                self.ratings[dictnum]['timestamp'] = str(datetime.now())
-                self.ratings[dictnum]['beneficiary'] = lbBenDest.get(i)
-                self.ratings[dictnum]['attribute'] = attribute
-                self.ratings[dictnum]['rating'] = tabi.cmbRating.get()
-                self.ratings[dictnum]['explanation'] = tabi.txtExpln.get('0.1', 'end-1c')
+                self.ratings[dictnum][fields[0]] = txtSite.get()
+                self.ratings[dictnum][fields[1]] = lbBenDest.get(i)
+                self.ratings[dictnum][fields[2]] = attribute
+                self.ratings[dictnum][fields[3]] = tabi.cmbRating.get()
+                self.ratings[dictnum][fields[4]] = tabi.txtExpln.get('0.1', 'end-1c')
+                self.ratings[dictnum][fields[-1]] = str(datetime.now())
                 dictnum += 1
     def saveRatings(self):
         'save ratings to csv with fieldnames as header'
@@ -138,7 +138,7 @@ class Session():
                 writer.writeheader()
                 for i in range(len(self.ratings)):
                     writer.writerow(self.ratings[i])
-            messagebox.showinfo("Saved", "The file was saved.")
+            messagebox.showinfo("Saved", "The file of ratings was saved.")
     def lblist(self, lb):
         'list of items in lb between first and last'
         output = []
@@ -219,7 +219,8 @@ class Ratings_Notebook(Notebook):
         self.tablist = []
         self.labels = []
     def selectnext(self):
-        if self.index('current') <= self.index('end'):
+        'select next ben to rate if not on last ben'
+        if self.index('current') < self.index('end'):
             self.select(self.index('current')+1)
     def cleartabs(self):
         "clear all tabs from Ratings_Notebook object"
@@ -312,6 +313,9 @@ beneficiaries = sorted([beneficiary for beneficiary in beneficiariesdict.keys()]
 attributesdict = paramreader('parameters/attributes.csv')
 attributes = sorted([attribute for attribute in attributesdict.keys()])
 ratings = lineListFromFilename("parameters/ratings.txt")
+# CMS
+with open("parameters/describetool.txt") as s:
+    describetool = s.read()  
 
 ###############
 # tkinter GUI #
@@ -346,14 +350,21 @@ nb.add(frameSite, text="Name the site")
 
 lblSiteInstructions = Label(frameSite,
         text="Type the name of the site.")
-lblSiteInstructions.grid(row=0)
+lblSiteInstructions.pack()
 
 txtSite = Entry(frameSite, width=lbWidth)
-txtSite.grid(row=1)
+txtSite.pack()
 
-btnChooseBens = Button(frameSite, text="Next",\
-                       command=lambda: nb.select(frameChooseBens))
-btnChooseBens.grid(row=2)
+btnChooseBens = Button(frameSite, text="Next",
+        command=lambda: nb.select(frameChooseBens))
+btnChooseBens.pack()
+
+txtdescribetool = Text(frameSite)
+txtdescribetool.insert('end', describetool)
+txtdescribetool.config(state='disabled',
+        background='#dfd',
+        wrap=WORD)
+txtdescribetool.pack()
 
 ##############################################
 # tab for choosing beneficiaries of the site #

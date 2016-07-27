@@ -127,3 +127,5 @@
 - TODO add 'rate the site for the next beneficiary' button on frameProcessBens
 
 - TODO remove addition of incorrect newlines if present in csv-parameter-generation-script
+
+- TODO put description box in the first page of the tool
