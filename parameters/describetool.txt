@@ -1,1 +1,5 @@
-This is example text acting as a placeholder.
+WELCOME to the Beneficiary Assessment and Rating Tool (BART)
+ 
+ The natural environment provides many benefits to people, and BART can help managers and community leaders assess and report on the full scope of benefits at a particular site.
+  
+  Using BART is simple. First, identify the ways that people benefit from the natural environment by naming the types of people who experience and use that natural feature. Next, identify the things in the environment that different types of people value--such as fish in the water or a beautiful view. Finally, identify the general levels of satisfaction each type of beneficiary. BART takes this information and creates a report so that a manager or community leader can prioritize, alert others, gather data, and/or conduct further analysis.

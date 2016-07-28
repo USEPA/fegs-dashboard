@@ -42,7 +42,7 @@ import sys
 import csv
 import pickle
 # import custom classes and functions
-from paramreader import paramreader
+from paramreader import csvtodict,texttostring
 
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
@@ -123,7 +123,8 @@ class Session():
                 self.ratings[dictnum][fields[1]] = lbBenDest.get(i)
                 self.ratings[dictnum][fields[2]] = attribute
                 self.ratings[dictnum][fields[3]] = tabi.cmbRating.get()
-                self.ratings[dictnum][fields[4]] = tabi.txtExpln.get('0.1', 'end-1c')
+                self.ratings[dictnum][fields[4]] = tabi.txtExpln.get('0.1',
+                        'end-1c')
                 self.ratings[dictnum][fields[-1]] = str(datetime.now())
                 dictnum += 1
     def saveRatings(self):
@@ -308,14 +309,16 @@ lbHeight = 16
 lbWidth = 32
 fontHeight = 12
 wrapwidth = 64
-beneficiariesdict = paramreader('parameters/beneficiaries.csv')
+beneficiariesdict = csvtodict('parameters/beneficiaries.csv')
 beneficiaries = sorted([beneficiary for beneficiary in beneficiariesdict.keys()])
-attributesdict = paramreader('parameters/attributes.csv')
+attributesdict = csvtodict('parameters/attributes.csv')
 attributes = sorted([attribute for attribute in attributesdict.keys()])
 ratings = lineListFromFilename("parameters/ratings.txt")
 # CMS
-with open("parameters/describetool.txt") as s:
-    describetool = s.read()  
+tooltitle = 'FEGS Ratings Tool'
+describetool = texttostring('parameters/describetool.txt')
+beninstructions = texttostring('parameters/beninstructions.txt')
+attrsinstructions = texttostring('parameters/attrsinstructions.txt')
 
 ###############
 # tkinter GUI #
@@ -324,7 +327,7 @@ root = Tk()
 root.option_add("*Font", "courier " + str(fontHeight))
 master = Frame(root, name='master')
 master.pack(fill=BOTH)
-root.title('FEGS Ratings Tool')
+root.title(tooltitle)
 root.protocol("WM_DELETE_WINDOW", master.quit)
 nb = Notebook(master, name='nb')
 nb.pack(fill=BOTH, padx=2, pady=3)
@@ -348,6 +351,15 @@ frameSite = Frame(nb, name='frameSite')
 frameSite.pack(fill=BOTH)
 nb.add(frameSite, text="Name the site")
 
+txtdescribetool = Text(frameSite)
+#txtdescribetool.bind()#RESUME
+txtdescribetool.insert('end', describetool)
+txtdescribetool.config(state='disabled',
+        background='#dfd',
+        wrap='word',
+        height=14)
+txtdescribetool.pack()
+
 lblSiteInstructions = Label(frameSite,
         text="Type the name of the site.")
 lblSiteInstructions.pack()
@@ -359,13 +371,6 @@ btnChooseBens = Button(frameSite, text="Next",
         command=lambda: nb.select(frameChooseBens))
 btnChooseBens.pack()
 
-txtdescribetool = Text(frameSite)
-txtdescribetool.insert('end', describetool)
-txtdescribetool.config(state='disabled',
-        background='#dfd',
-        wrap=WORD)
-txtdescribetool.pack()
-
 ##############################################
 # tab for choosing beneficiaries of the site #
 ##############################################
@@ -373,12 +378,17 @@ frameChooseBens = Frame(nb, name='frameChooseBens')
 frameChooseBens.pack(fill=BOTH)
 nb.add(frameChooseBens, text="Beneficiaries")
 
-beninstructions = 'Create a list of people who directly '\
-        'experience, value, or benefit from natural '\
-        'features at the site.'
-txtBenInstructions = Label(frameChooseBens,\
-                           text=beninstructions)
-txtBenInstructions.grid(row=0, column=0, columnspan=6)
+txtBenInstructions = Text(frameChooseBens)
+txtBenInstructions.insert('end', beninstructions)
+txtBenInstructions.config(
+        state='disabled',
+        background='#dfd',
+        wrap='word',
+        height=2)
+txtBenInstructions.grid(
+        row=0,
+        column=0,
+        columnspan=6)
 
 lbBenSrc = Listbox(frameChooseBens, height=lbHeight,
         width=lbWidth, selectmode=EXTENDED)
@@ -427,8 +437,15 @@ frameProcessBens.pack(fill=BOTH)
 #frameProcessBens.bind("<Activate>", lambda: processBens())
 nb.add(frameProcessBens, text="Process Beneficiaries")
 
-lblAttrsInstructions = Label(frameProcessBens, text="Create a list of attributes that affect each beneficiary's rating of the site.")
-lblAttrsInstructions.pack()
+txtAttrsInstructions = Text(frameProcessBens)
+txtAttrsInstructions.insert('end', attrsinstructions)
+txtAttrsInstructions.config(
+        state='disabled',
+        background='#dfd',
+        wrap='word',
+        height=3)
+
+txtAttrsInstructions.pack()
 
 nbRatings = Ratings_Notebook()
 #NOTE the tabs for ratings are populated on press btnProcessBens

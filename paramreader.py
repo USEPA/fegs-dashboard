@@ -1,10 +1,22 @@
-def paramreader(paramfile):
+def csvtodict(paramfilename):
+    '''for each line in paramfilename:
+    read (name, description) into dict
+    beneficiary['<name>']->'<description>'
+    '''
     import csv
-    beneficiaries = {}
-    with open(paramfile, newline='\r\n') as csvfile:
-        '''read (name,description) into dict: beneficiary['<name>']->'<description>'
-        '''
+    params = {}
+    with open(paramfilename, newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
         for line in csvreader:
-            beneficiaries[line['name']] = line['description']
-    return beneficiaries
+            params[line['name']] = line['description']
+    return params
+
+def texttostring(paramfilename):
+    '''return all text in paramfilename as string
+    '''
+    import csv
+    outputstring = ''
+    with open(paramfilename, newline='') as paramfile:
+        for line in paramfile.read():
+            outputstring += line
+        return str(outputstring)
