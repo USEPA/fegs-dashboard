@@ -129,3 +129,5 @@
 - TODO remove addition of incorrect newlines if present in csv-parameter-generation-script
 
 - TODO put description box in the first page of the tool
+
+- change instructions to text widgets; update instructions' text
