@@ -131,3 +131,5 @@
 - TODO put description box in the first page of the tool
 
 - change instructions to text widgets; update instructions' text
+
+- add beninfo text widget

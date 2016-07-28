@@ -279,30 +279,30 @@ class Ratings_Notebook(Notebook):
             # description of active attribute
             tabi.lblattrdescriptcaption = Label(tabi,
                     text="Attribute:")
-            tabi.lblattrdescriptcaption.grid(row=4,column=0,columnspan=2)
+            tabi.lblattrdescriptcaption.grid(row=4,column=0,columnspan=6)
             tabi.lblattrdescript = Label(tabi,
                     text="description")
-            tabi.lblattrdescript.grid(row=4,column=2,columnspan=4)
+            tabi.lblattrdescript.grid(row=5,column=0,columnspan=6)
             # combobox of rating-values; text area for explanation
             tabi.cmbratingcaption = Label(tabi,
                     text='Enter a rating: ')
-            tabi.cmbratingcaption.grid(row=5,
-                    column=0,columnspan=2)
+            tabi.cmbratingcaption.grid(row=6,
+                    column=0,columnspan=6)
             tabi.cmbRating = Combobox(tabi, values=ratings)
-            tabi.cmbRating.grid(row=5, column=2, columnspan=4)
+            tabi.cmbRating.grid(row=7, column=0, columnspan=6)
             tabi.txtExpln = Text(tabi, height=10,
                     width=60)
             tabi.lblexplncaption = Label(tabi,text='Type additional information.')
             tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
-            tabi.txtExpln.grid(row=6, column=2, columnspan=2)
+            tabi.txtExpln.grid(row=8, column=0, columnspan=6)
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
-            tabi.btnnextben.grid(row=6, column=0,columnspan=2)
+            tabi.btnnextben.grid(row=9, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
                     text="Rate the site for the beneficiaries.",
                     command=lambda: nb.select(frameSave))
-            tabi.btnRate.grid(row=7, column=2, columnspan=2)
+            tabi.btnRate.grid(row=10, column=0, columnspan=6)
 
 # parametrizations
 lbHeight = 16
@@ -318,6 +318,7 @@ ratings = lineListFromFilename("parameters/ratings.txt")
 tooltitle = 'FEGS Ratings Tool'
 describetool = texttostring('parameters/describetool.txt')
 beninstructions = texttostring('parameters/beninstructions.txt')
+beninfo = texttostring('parameters/beninfo.txt')
 attrsinstructions = texttostring('parameters/attrsinstructions.txt')
 
 ###############
@@ -352,7 +353,7 @@ frameSite.pack(fill=BOTH)
 nb.add(frameSite, text="Name the site")
 
 txtdescribetool = Text(frameSite)
-#txtdescribetool.bind()#RESUME
+#txtdescribetool.bind()#RESUME making this text editable after freezing
 txtdescribetool.insert('end', describetool)
 txtdescribetool.config(state='disabled',
         background='#dfd',
@@ -375,17 +376,20 @@ btnChooseBens.pack()
 # tab for choosing beneficiaries of the site #
 ##############################################
 frameChooseBens = Frame(nb, name='frameChooseBens')
-frameChooseBens.pack(fill=BOTH)
+# frame placed in efforts to center frame
+#frameChooseBens.place(in_=nb, anchor='c', relx=.5, rely=.5)
+frameChooseBens.pack(fill='both')
+frameChooseBens.config(border='2')
 nb.add(frameChooseBens, text="Beneficiaries")
 
-txtBenInstructions = Text(frameChooseBens)
-txtBenInstructions.insert('end', beninstructions)
-txtBenInstructions.config(
+txtbeninstructions = Text(frameChooseBens)
+txtbeninstructions.insert('end', beninstructions)
+txtbeninstructions.config(
         state='disabled',
         background='#dfd',
         wrap='word',
         height=2)
-txtBenInstructions.grid(
+txtbeninstructions.grid(
         row=0,
         column=0,
         columnspan=6)
@@ -413,21 +417,32 @@ btnBenRm = Button(frameChooseBens, text="<< Remove <<",\
 btnBenRm.grid(row=3, column=2, columnspan=2)
 
 lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-lbBenDest.grid(row=1, column=4, rowspan=3, sticky=E)
+lbBenDest.grid(row=1, column=4, rowspan=3, sticky='e')
 sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
-sbBenDest.grid(row=1, column=5, sticky=W+N+S)
+sbBenDest.grid(row=1, column=5, rowspan=3, sticky='ens')
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 lblBenDescriptCaption = Label(frameChooseBens, text="Description of the underlined beneficiary:")
-lblBenDescriptCaption.grid(row=4, column=0, columnspan=2)
+lblBenDescriptCaption.grid(row=4, column=0, columnspan=6)
 lblBenDescript = Label(frameChooseBens, text="unset")
-lblBenDescript.grid(row=4, column=2, columnspan=2)
+lblBenDescript.grid(row=5, column=0, columnspan=6)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
 
+txtbeninfo = Text(frameChooseBens)
+txtbeninfo.insert('end', beninfo)
+txtbeninfo.config(
+        state='disabled',
+        background='#dfd',
+         wrap='word')
+txtbeninfo.grid(row=6, column=0, columnspan=5, sticky='e')
+sbbeninfo = Scrollbar(frameChooseBens, command=txtbeninfo.yview)
+sbbeninfo.grid(row=6, column=5, sticky='nws')
+txtbeninfo.config(yscrollcommand=sbbeninfo.set)
+
 btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
 btnProcessBens.config(command=lambda: processBens())
-btnProcessBens.grid(row=5, column=2, columnspan=2)
+btnProcessBens.grid(row=7, column=0, columnspan=6)
 
 #################################################
 # tab for adding attributes to each beneficiary #
@@ -480,7 +495,8 @@ btndebug = Button(
         command =lambda: pdb.set_trace())
 btndebug.pack()
 
-root.mainloop()
+if __name__ == '__main__':
+    root.mainloop()
 '''don't put any code which should run before the GUI
 closes after mainloop
 '''
