@@ -11,13 +11,21 @@
   5. run script
 '''
 
-#TODO clear txtNewBen after insertion of new ben into lbBenDest
-#TODO clear txtNewAttr after insertion of new attr into lbAttrDest
-#TODO make frame master vertically and horizontally scrollable
-#TODO facility for users to add a description with a new beneficiary
-#TODO facility for users to add a description with a new attribute
 #TODO make a separate csv for user-added beneficiaries
+#TODO load user-beneficiaries.csv
+#TODO sort lbBenSrc after loading both lists
+#TODO addToList checks *beneficiaries.csv for item
+#TODO addToList adds item to user-beneficiaries.csv
+#TODO clear txtNewBen after insertion of new ben into lbBenDest
+#TODO facility for users to add a description with a new beneficiary
 #TODO make a separate csv for user-added attributes
+#TODO make frame master vertically and horizontally scrollable
+#TODO facility for users to add a description with a new attribute
+#TODO clear txtNewAttr after insertion of new attr into lbAttrDest
+#TODO visual feedback for completed ratings:
+  #TODO validate data on leave rating tab
+  #TODO askyesno: "done with rating?"
+  #TODO rating-tab-color = green
 #TODO visualize ratings by providing something like a graph
 #TODO set wraplength for all labels(try lbl.<some_method>_all)
 #TODO retain data on existing rating-tabs when tabs are added
@@ -26,16 +34,14 @@
 #TODO enter key triggers default button on nb tab or nbRating tab
 #TODO investigate localization support
 #TODO clear txtNewBen and txtNewAttr after text retrieval
-#TODO sort listboxes after addition
 #TODO update nbRatings on activate frameProcessBens
-#TODO provide feedback on save session
 #TODO horizontal scrollbars on listboxes
 
 # imports
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
-from tkinter.filedialog import asksaveasfilename,askopenfilename
+from tkinter.filedialog import *
 from datetime import datetime
 import pdb #NOTE python's standard debugger
 import sys
@@ -52,9 +58,16 @@ def moveBetweenLists(fromList, toList):
         index = indices.pop()-i
         toList.insert('end', fromList.get(index))
         fromList.delete(index)
-def addToList(item, lst):
-    "casts item as str and adds it to the end of list)"
-    lst.insert('end', item)
+def addToList(item, listdest, listsrc):
+    '''casts item as str and adds it to the end of list if
+    not already in list
+    '''
+    for i in range(len(listsrc)):
+        if item == listsrc.get(i): 
+            
+    for i in range(len(listdest)):
+        if item == listdest.get(i): presence = True
+    lst.insert('end', str(item))
 def lineListFromFilename(filename):
     "returns a list of end-whitespace-stripped lines from filename"
     lines = [line.rstrip('\n') for line in open(filename)]
