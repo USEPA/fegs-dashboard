@@ -43,7 +43,7 @@ from tkinter import messagebox
 from tkinter.ttk import *
 from tkinter.filedialog import *
 from datetime import datetime
-import pdb #NOTE python's standard debugger
+import pdb # python's standard debugger
 import sys
 import csv
 import pickle
@@ -274,7 +274,9 @@ class Ratings_Notebook(Notebook):
             tabi.txtNewAttr.grid(row=2, column=2)
             tabi.btnNewAttr = Button(tabi, text=">>",
                     command=lambda tabi=tabi: addToList(
-                        tabi.txtNewAttr.get(), tabi.lbAttrDest))
+                        tabi.txtNewAttr.get(),
+                        tabi.lbAttrSrc,
+                        tabi.lbAttrDest))
             tabi.btnNewAttr.grid(row=2, column=3)
             tabi.btnAttrRm = Button(tabi, text="<< Remove <<",
                     command=lambda tabi=tabi: moveBetweenLists(
@@ -313,7 +315,7 @@ class Ratings_Notebook(Notebook):
                     command=lambda: self.selectnext())
             tabi.btnnextben.grid(row=9, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
-                    text="Rate the site for the beneficiaries.",
+                    text="Next",
                     command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=10, column=0, columnspan=6)
 
@@ -447,13 +449,14 @@ txtbeninfo.insert('end', beninfo)
 txtbeninfo.config(
         state='disabled',
         background='#dfd',
-         wrap='word')
+         wrap='word',
+         height=10)
 txtbeninfo.grid(row=6, column=0, columnspan=5, sticky='e')
 sbbeninfo = Scrollbar(frameChooseBens, command=txtbeninfo.yview)
 sbbeninfo.grid(row=6, column=5, sticky='nws')
 txtbeninfo.config(yscrollcommand=sbbeninfo.set)
 
-btnProcessBens = Button(frameChooseBens, text="Process Beneficiaries")
+btnProcessBens = Button(frameChooseBens, text="Next")
 btnProcessBens.config(command=lambda: processBens())
 btnProcessBens.grid(row=7, column=0, columnspan=6)
 
