@@ -133,3 +133,13 @@
 - change instructions to text widgets; update instructions' text
 
 - add beninfo text widget
+
+- TODO change lblattrdescript into txtattrdescript
+
+- TODO activation of a ben or attr clears description first
+
+- TODO implement attribute description in text-box
+
+- TODO grid beninfo sticky ew to horizontally fill its cells
+
+- TODO change lblBenDescript into txtBenDescript

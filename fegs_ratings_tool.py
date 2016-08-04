@@ -11,6 +11,7 @@
   5. run script
 '''
 
+#TODO make results treeview scrollable both directions
 #TODO make a separate csv for user-added beneficiaries
 #TODO load user-beneficiaries.csv
 #TODO sort lbBenSrc after loading both lists
@@ -58,16 +59,27 @@ def moveBetweenLists(fromList, toList):
         index = indices.pop()-i
         toList.insert('end', fromList.get(index))
         fromList.delete(index)
-def addToList(item, listdest, listsrc):
+def addToList(item, listsrc, listdest):
     '''casts item as str and adds it to the end of list if
     not already in list
     '''
-    for i in range(len(listsrc)):
+    for i in range(listsrc.index('end')):
         if item == listsrc.get(i): 
-            
-    for i in range(len(listdest)):
-        if item == listdest.get(i): presence = True
-    lst.insert('end', str(item))
+            print('The item is in the source list.')
+            return
+    for i in range(listdest.index('end')):
+        if item == listdest.get(i):
+            print('The item is in the destination list.')
+            return
+    listdest.insert('end', str(item))
+    # FIXME add item to user-attributes.csv or user-beneficiaries.csv
+    # additemtocsv(item, description, csv)
+    messagebox.showinfo('Added', 'This item was added:\n'+item)
+def additemtocsv(item, description, csvfilename):
+    # FIXME open csv for writing and add item, description to it
+    with open(csvfilename,'a') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow((item,description))
 def lineListFromFilename(filename):
     "returns a list of end-whitespace-stripped lines from filename"
     lines = [line.rstrip('\n') for line in open(filename)]
@@ -83,13 +95,20 @@ def benactivation(event):
     "update descriptions of beneficiary when it's activated in a listbox"
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = beneficiariesdict[event.widget.get(ACTIVE)]
-    lblBenDescript.config(text=description)
+    txtBenDescript.config(state=NORMAL)
+    txtBenDescript.delete(1.0, 'end')
+    txtBenDescript.insert('end', description)
+    txtBenDescript.config(state=DISABLED)
 def attractivation(event):
     "update descriptions of attribute when it's activated in a listbox"
     parent = event.widget.master
-    parent.lblattrdescriptcaption.config(text=str(event.widget.get(ACTIVE))+":")
+    parent.lblattrdescriptcaption.config(text=str(
+        event.widget.get(ACTIVE))+":")
     description = attributesdict[event.widget.get(ACTIVE)]
-    parent.lblattrdescript.config(text=description)
+    parent.txtattrdescript.config(state='normal')
+    parent.txtattrdescript.delete(1.0, 'end')
+    parent.txtattrdescript.insert('end', description)
+    parent.txtattrdescript.config(state='disabled')
 def updateratingstree(event):
     "update ratingstree to show ratings"
     session.update()
@@ -295,9 +314,13 @@ class Ratings_Notebook(Notebook):
             tabi.lblattrdescriptcaption = Label(tabi,
                     text="Attribute:")
             tabi.lblattrdescriptcaption.grid(row=4,column=0,columnspan=6)
-            tabi.lblattrdescript = Label(tabi,
-                    text="description")
-            tabi.lblattrdescript.grid(row=5,column=0,columnspan=6)
+            tabi.txtattrdescript = Text(tabi, name='txtattrdescript')
+            tabi.txtattrdescript.config(
+                    state='disabled',
+                    background='#dfd',
+                    wrap='word',
+                    height=3)
+            tabi.txtattrdescript.grid(row=5, column=0, columnspan=6)
             # combobox of rating-values; text area for explanation
             tabi.cmbratingcaption = Label(tabi,
                     text='Enter a rating: ')
@@ -425,7 +448,7 @@ btnBenAdd.grid(row=1, column=2, columnspan=2)
 txtNewBen = Entry(frameChooseBens, text="Don't see a beneficiary? Type it here and click >>")
 txtNewBen.grid(row=2, column=2) 
 btnNewBen = Button(frameChooseBens, text=">>",\
-                   command=lambda: addToList(txtNewBen.get(), lbBenDest))
+                   command=lambda: addToList(txtNewBen.get(), lbBenSrc, lbBenDest))
 btnNewBen.grid(row=2, column=3)
 btnBenRm = Button(frameChooseBens, text="<< Remove <<",\
                   command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
@@ -439,26 +462,33 @@ lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 lblBenDescriptCaption = Label(frameChooseBens, text="Description of the underlined beneficiary:")
 lblBenDescriptCaption.grid(row=4, column=0, columnspan=6)
-lblBenDescript = Label(frameChooseBens, text="unset")
-lblBenDescript.grid(row=5, column=0, columnspan=6)
+txtBenDescript = Text(frameChooseBens)
+txtBenDescript.config(
+        state='disabled',
+        background='#dfd',
+        wrap='word',
+        height=3)
+txtBenDescript.grid(row=5, column=0, columnspan=6)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
 
+lblbeninfocapt = Label(frameChooseBens, text='Explanation of page:')
+lblbeninfocapt.grid(row=6, column=0, columnspan=6)
 txtbeninfo = Text(frameChooseBens)
 txtbeninfo.insert('end', beninfo)
-txtbeninfo.config(
+txtbeninfo.config( 
         state='disabled',
         background='#dfd',
-         wrap='word',
-         height=10)
-txtbeninfo.grid(row=6, column=0, columnspan=5, sticky='e')
+        wrap='word',
+        height=10)
+txtbeninfo.grid(row=7, column=0, columnspan=5, sticky='ew')
 sbbeninfo = Scrollbar(frameChooseBens, command=txtbeninfo.yview)
-sbbeninfo.grid(row=6, column=5, sticky='nws')
+sbbeninfo.grid(row=7, column=5, sticky='nws')
 txtbeninfo.config(yscrollcommand=sbbeninfo.set)
 
 btnProcessBens = Button(frameChooseBens, text="Next")
 btnProcessBens.config(command=lambda: processBens())
-btnProcessBens.grid(row=7, column=0, columnspan=6)
+btnProcessBens.grid(row=8, column=0, columnspan=6)
 
 #################################################
 # tab for adding attributes to each beneficiary #
@@ -479,7 +509,7 @@ txtAttrsInstructions.config(
 txtAttrsInstructions.pack()
 
 nbRatings = Ratings_Notebook()
-#NOTE the tabs for ratings are populated on press btnProcessBens
+# tabs for ratings are populated on press btnProcessBens
 
 ##################################
 # tab to review and save ratings #
@@ -488,15 +518,28 @@ frameSave = Frame(nb, name="frameSave")
 frameSave.pack(fill=BOTH)
 nb.add(frameSave, text="Save Ratings")
 
-lblSaveInstructions = Label(frameSave, text="Save these ratings to a file for later use.")
+lblSaveInstructions = Label(
+        frameSave,
+        text="Save these ratings to a file for later use.")
 lblSaveInstructions.pack()
 
 session = Session()
 
 # review ratings
-ratingstree = Treeview(frameSave)
+framereview = Frame(frameSave)
+framereview.pack(fill='both', expand=1)
+ratingstreehsb = Scrollbar(framereview, orient='horizontal')
+ratingstreehsb.grid(row=1, column=0, sticky='new')
+ratingstreevsb = Scrollbar(framereview, orient='vertical')
+ratingstreevsb.grid(row=0, column=1, sticky='nsw')
+ratingstree = Treeview(framereview)
 frameSave.bind('<Expose>', updateratingstree)
-ratingstree.pack()
+ratingstree.grid(row=0, column=0, sticky='news')
+ratingstreehsb.config(command=ratingstree.xview)
+ratingstreevsb.config(command=ratingstree.yview)
+ratingstree.config(
+        xscrollcommand=ratingstreehsb.set,
+        yscrollcommand=ratingstreevsb.set)
 ratingstree['columns'] = session.fieldnames 
 for heading in session.fieldnames:
     ratingstree.heading(heading, text=heading)

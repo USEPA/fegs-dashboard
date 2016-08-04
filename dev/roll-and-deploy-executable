@@ -1,0 +1,7 @@
+#!/bin/bash
+pwd > ~/.pwd
+cd ~/fegs_ratings_tool
+eval 'python setup.py py2exe'
+cp -r dist /L/Public/kthom02/dist
+cd ~/.pwd
+rm ~/.pwd
