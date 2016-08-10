@@ -41,8 +41,8 @@
 # imports
 from tkinter import *
 from tkinter import messagebox
-from tkinter.ttk import *
 from tkinter.filedialog import *
+from tkinter.ttk import *
 from datetime import datetime
 import pdb # python's standard debugger
 import sys
@@ -274,78 +274,79 @@ class Ratings_Notebook(Notebook):
             # source listbox of attributes
             tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
-            tabi.lbAttrSrc.grid(row=1, column=0, rowspan=3, sticky=E)
+            tabi.lbAttrSrc.grid(row=1, column=0, rowspan=4, sticky=E)
             for attribute in attributes:
                 tabi.lbAttrSrc.insert('end', attribute)
             tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrSrc.yview)
-            tabi.sbAttrSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
+            tabi.sbAttrSrc.grid(row=1, column=1, rowspan=4, sticky=W+N+S)
             tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
             # widgets between listboxes
             tabi.btnAttrAdd = Button(tabi, text=">> Add >>",
                     command=lambda tabi=tabi: moveBetweenLists(
                         tabi.lbAttrSrc, tabi.lbAttrDest))
             tabi.btnAttrAdd.grid(row=1, column=2, columnspan=2)
-            tabi.txtNewAttr = Entry(tabi,
-                    text="Don't see an attribute? "+
-                    "Type it here and click >>")
-            tabi.txtNewAttr.grid(row=2, column=2)
+            tabi.lblnewattr = Label(tabi,
+                    text='Add a New Attribute')
+            tabi.lblnewattr.grid(row=2, column=2, columnspan=2, sticky='s')
+            tabi.txtNewAttr = Entry(tabi)
+            tabi.txtNewAttr.grid(row=3, column=2, sticky='n', ipady=4)
             tabi.btnNewAttr = Button(tabi, text=">>",
                     command=lambda tabi=tabi: addToList(
                         tabi.txtNewAttr.get(),
                         tabi.lbAttrSrc,
                         tabi.lbAttrDest))
-            tabi.btnNewAttr.grid(row=2, column=3)
+            tabi.btnNewAttr.grid(row=3, column=3, sticky='n')
             tabi.btnAttrRm = Button(tabi, text="<< Remove <<",
                     command=lambda tabi=tabi: moveBetweenLists(
                         tabi.lbAttrDest, tabi.lbAttrSrc))
-            tabi.btnAttrRm.grid(row=3, column=2, columnspan=2)
+            tabi.btnAttrRm.grid(row=4, column=2, columnspan=2)
             # destination listbox of attributes
             tabi.lbAttrDest = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
-            tabi.lbAttrDest.grid(row=1, column=4, rowspan=3, sticky=E)
+            tabi.lbAttrDest.grid(row=1, column=4, rowspan=4, sticky='e')
             tabi.lbAttrDest.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrDest.yview)
-            tabi.sbAttrDest.grid(row=1, column=5, rowspan=3, sticky=W+N+S)
+            tabi.sbAttrDest.grid(row=1, column=5, rowspan=4, sticky=W+N+S)
             tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
             # description of active attribute
             tabi.lblattrdescriptcaption = Label(tabi,
                     text="Attribute:")
-            tabi.lblattrdescriptcaption.grid(row=4,column=0,columnspan=6)
+            tabi.lblattrdescriptcaption.grid(row=5,column=0,columnspan=6)
             tabi.txtattrdescript = Text(tabi, name='txtattrdescript')
             tabi.txtattrdescript.config(
                     state='disabled',
                     background='#dfd',
                     wrap='word',
                     height=3)
-            tabi.txtattrdescript.grid(row=5, column=0, columnspan=6)
+            tabi.txtattrdescript.grid(row=6, column=0, columnspan=6)
             # combobox of rating-values; text area for explanation
             tabi.cmbratingcaption = Label(tabi,
                     text='Enter a rating: ')
-            tabi.cmbratingcaption.grid(row=6,
+            tabi.cmbratingcaption.grid(row=7,
                     column=0,columnspan=6)
             tabi.cmbRating = Combobox(tabi, values=ratings)
-            tabi.cmbRating.grid(row=7, column=0, columnspan=6)
+            tabi.cmbRating.grid(row=8, column=0, columnspan=6)
             tabi.txtExpln = Text(tabi, height=10,
                     width=60)
             tabi.lblexplncaption = Label(tabi,text='Type additional information.')
             tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
-            tabi.txtExpln.grid(row=8, column=0, columnspan=6)
+            tabi.txtExpln.grid(row=9, column=0, columnspan=6)
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
-            tabi.btnnextben.grid(row=9, column=0,columnspan=6)
+            tabi.btnnextben.grid(row=10, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
                     text="Next",
                     command=lambda: nb.select(frameSave))
-            tabi.btnRate.grid(row=10, column=0, columnspan=6)
+            tabi.btnRate.grid(row=11, column=0, columnspan=6)
 
 # parametrizations
 lbHeight = 16
 lbWidth = 32
-fontHeight = 12
+fontHeight = 10
 wrapwidth = 64
 beneficiariesdict = csvtodict('parameters/beneficiaries.csv')
 beneficiaries = sorted([beneficiary for beneficiary in beneficiariesdict.keys()])
@@ -434,46 +435,53 @@ txtbeninstructions.grid(
 
 lbBenSrc = Listbox(frameChooseBens, height=lbHeight,
         width=lbWidth, selectmode=EXTENDED)
-lbBenSrc.grid(row=1, column=0, rowspan=3, sticky=E)
+lbBenSrc.grid(row=1, column=0, rowspan=4, sticky='e')
 for beneficiary in beneficiaries:
     lbBenSrc.insert('end', beneficiary)
 sbBenSrc = Scrollbar(frameChooseBens, orient=VERTICAL,
         command=lbBenSrc.yview)
-sbBenSrc.grid(row=1, column=1, rowspan=3, sticky=W+N+S)
+sbBenSrc.grid(row=1, column=1, rowspan=4, sticky='wns')
 lbBenSrc.config(yscrollcommand=sbBenSrc.set)
 
-btnBenAdd = Button(frameChooseBens, text=">> Add >>", \
-                   command=lambda: moveBetweenLists(lbBenSrc, lbBenDest))
+btnBenAdd = Button(frameChooseBens, text=">> Add >>",
+        command=lambda: moveBetweenLists(
+            lbBenSrc,
+            lbBenDest))
 btnBenAdd.grid(row=1, column=2, columnspan=2)
-txtNewBen = Entry(frameChooseBens, text="Don't see a beneficiary? Type it here and click >>")
-txtNewBen.grid(row=2, column=2) 
-btnNewBen = Button(frameChooseBens, text=">>",\
-                   command=lambda: addToList(txtNewBen.get(), lbBenSrc, lbBenDest))
-btnNewBen.grid(row=2, column=3)
+lblnewben = Label(frameChooseBens, text='Add a New Beneficiary')
+lblnewben.grid(row=2, column=2, columnspan=2, sticky='s')
+txtNewBen = Entry(frameChooseBens)
+txtNewBen.grid(row=3, column=2, sticky='n', ipady='4') 
+btnNewBen = Button(frameChooseBens, text=">>",
+        command=lambda: addToList(
+            txtNewBen.get(),
+            lbBenSrc,
+            lbBenDest))
+btnNewBen.grid(row=3, column=3, sticky='n')
 btnBenRm = Button(frameChooseBens, text="<< Remove <<",\
                   command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
-btnBenRm.grid(row=3, column=2, columnspan=2)
+btnBenRm.grid(row=4, column=2, columnspan=2)
 
 lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
-lbBenDest.grid(row=1, column=4, rowspan=3, sticky='e')
+lbBenDest.grid(row=1, column=4, rowspan=4, sticky='e')
 sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
-sbBenDest.grid(row=1, column=5, rowspan=3, sticky='ens')
+sbBenDest.grid(row=1, column=5, rowspan=4, sticky='wns')
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
 lblBenDescriptCaption = Label(frameChooseBens, text="Description of the underlined beneficiary:")
-lblBenDescriptCaption.grid(row=4, column=0, columnspan=6)
+lblBenDescriptCaption.grid(row=5, column=0, columnspan=6)
 txtBenDescript = Text(frameChooseBens)
 txtBenDescript.config(
         state='disabled',
         background='#dfd',
         wrap='word',
         height=3)
-txtBenDescript.grid(row=5, column=0, columnspan=6)
+txtBenDescript.grid(row=6, column=0, columnspan=6)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
 
 lblbeninfocapt = Label(frameChooseBens, text='Explanation of page:')
-lblbeninfocapt.grid(row=6, column=0, columnspan=6)
+lblbeninfocapt.grid(row=7, column=0, columnspan=6)
 txtbeninfo = Text(frameChooseBens)
 txtbeninfo.insert('end', beninfo)
 txtbeninfo.config( 
@@ -481,14 +489,14 @@ txtbeninfo.config(
         background='#dfd',
         wrap='word',
         height=10)
-txtbeninfo.grid(row=7, column=0, columnspan=5, sticky='ew')
+txtbeninfo.grid(row=8, column=0, columnspan=5, sticky='ew')
 sbbeninfo = Scrollbar(frameChooseBens, command=txtbeninfo.yview)
-sbbeninfo.grid(row=7, column=5, sticky='nws')
+sbbeninfo.grid(row=8, column=5, sticky='nws')
 txtbeninfo.config(yscrollcommand=sbbeninfo.set)
 
 btnProcessBens = Button(frameChooseBens, text="Next")
 btnProcessBens.config(command=lambda: processBens())
-btnProcessBens.grid(row=8, column=0, columnspan=6)
+btnProcessBens.grid(row=9, column=0, columnspan=6)
 
 #################################################
 # tab for adding attributes to each beneficiary #

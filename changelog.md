@@ -143,3 +143,11 @@
 - TODO grid beninfo sticky ew to horizontally fill its cells
 
 - TODO change lblBenDescript into txtBenDescript
+
+- TODO label "add beneficiary"
+
+- TODO label "add attribute"
+
+- TODO Edit explanation page 1 (add word "for"  before "each type of beneficiary" ...my typo...)
+
+- fix ugly, old-style interface: `from tkinter.ttk import *` after last import from tkinter
