@@ -331,17 +331,19 @@ class Ratings_Notebook(Notebook):
             tabi.cmbRating.grid(row=8, column=0, columnspan=6)
             tabi.txtExpln = Text(tabi, height=10,
                     width=60)
-            tabi.lblexplncaption = Label(tabi,text='Type additional information.')
+            tabi.lblexplncaption = Label(tabi,
+                    text='Add an Explanation for this Rating')
+            tabi.lblexplncaption.grid(row=9, column=0, columnspan=6)
             tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
-            tabi.txtExpln.grid(row=9, column=0, columnspan=6)
+            tabi.txtExpln.grid(row=10, column=0, columnspan=6)
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
-            tabi.btnnextben.grid(row=10, column=0,columnspan=6)
+            tabi.btnnextben.grid(row=11, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
                     text="Next",
                     command=lambda: nb.select(frameSave))
-            tabi.btnRate.grid(row=11, column=0, columnspan=6)
+            tabi.btnRate.grid(row=12, column=0, columnspan=6)
 
 # parametrizations
 lbHeight = 16

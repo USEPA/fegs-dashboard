@@ -151,3 +151,5 @@
 - TODO Edit explanation page 1 (add word "for"  before "each type of beneficiary" ...my typo...)
 
 - fix ugly, old-style interface: `from tkinter.ttk import *` after last import from tkinter
+
+- add prompt for explanation of rating
