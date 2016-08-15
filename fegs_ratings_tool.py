@@ -147,27 +147,39 @@ class Session():
         fields = self.fieldnames
         dictnum = 0
         for i in range(len(nbRatings.tablist)):
-            for j in range(nbRatings.tablist[i].lbAttrDest.size()):
+            limit = nbRatings.tablist[i].lbAttrDest.size()
+            for j in range(limit):
                 self.ratings.append({})
                 tabi = nbRatings.tablist[i]
                 attribute = tabi.lbAttrDest.get(j)
-                self.ratings[dictnum][fields[0]] = txtSite.get()
-                self.ratings[dictnum][fields[1]] = lbBenDest.get(i)
-                self.ratings[dictnum][fields[2]] = attribute
-                self.ratings[dictnum][fields[3]] = tabi.cmbRating.get()
-                self.ratings[dictnum][fields[4]] = tabi.txtExpln.get('0.1',
-                        'end-1c')
-                self.ratings[dictnum][fields[-1]] = str(datetime.now())
+                self.ratings[dictnum][fields[0]] =\
+                        txtSite.get()
+                self.ratings[dictnum][fields[1]] =\
+                        lbBenDest.get(i)
+                self.ratings[dictnum][fields[2]] =\
+                        attribute
+                self.ratings[dictnum][fields[3]] =\
+                        tabi.cmbRating.get()
+                self.ratings[dictnum][fields[4]] =\
+                        tabi.txtExpln.get('0.1', 'end-1c')
+                self.ratings[dictnum][fields[-1]] =\
+                        str(datetime.now())
                 dictnum += 1
     def saveRatings(self):
         'save ratings to csv with fieldnames as header'
         self.update()
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
-        filename = asksaveasfilename(initialfile='saved-fegs-ratings-'+timestamp+'.csv')
+        initialfile = 'saved-fegs-ratings-'+timestamp+'.csv'
+        filename = asksaveasfilename(initialfile)
         if filename != None and filename != '':
-            with open(filename, 'w', newline='\r\n') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
+            with open(
+                    filename,
+                    'w',
+                    newline='\r\n') as csvfile:
+                writer = csv.DictWriter(
+                        csvfile,
+                        fieldnames=self.fieldnames)
                 writer.writeheader()
                 for i in range(len(self.ratings)):
                     writer.writerow(self.ratings[i])
@@ -206,7 +218,8 @@ class Session():
             ratingi['explanation'] = expln
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
-        filename = asksaveasfilename(initialfile='session-'+timestamp+'.pickle')
+        filename = asksaveasfilename(
+                initialfile='session-'+timestamp+'.pickle')
         with open(filename,'wb') as f:
             picklelist = [
                     site,
@@ -218,7 +231,9 @@ class Session():
     def load(self):
         'load saved data-entry-session into tool'
         # RESUME IMPLEMENTING LOADER FNCNALITY
-        filename = askopenfilename(filetypes=[('pickled sessions', "*.pickle")])
+        filename = askopenfilename(filetypes=[(
+            'pickled sessions',
+            "*.pickle")])
         with open(filename,'rb') as f:
             [
                     site,
@@ -315,13 +330,21 @@ class Ratings_Notebook(Notebook):
             tabi.lblattrdescriptcaption = Label(tabi,
                     text="Attribute:")
             tabi.lblattrdescriptcaption.grid(row=5,column=0,columnspan=6)
-            tabi.txtattrdescript = Text(tabi, name='txtattrdescript')
+            tabi.sbattrdescript = Scrollbar(
+                    tabi,
+                    name='sbattrdescript')
+            tabi.sbattrdescript.grid(row=6, column=5)
+            tabi.txtattrdescript = Text(
+                    tabi,
+                    name='txtattrdescript',
+                    yscrollcommand=sbattrdescript.set)
             tabi.txtattrdescript.config(
                     state='disabled',
                     background='#dfd',
                     wrap='word',
                     height=3)
-            tabi.txtattrdescript.grid(row=6, column=0, columnspan=6)
+            tabi.txtattrdescript.grid(row=6, column=0, columnspan=5)
+            tabi.sbattrdescript.config(command=tabi.txtattrdescript.yview)
             # combobox of rating-values; text area for explanation
             tabi.cmbratingcaption = Label(tabi,
                     text='Enter a rating: ')
@@ -470,19 +493,28 @@ sbBenDest = Scrollbar(frameChooseBens, orient=VERTICAL, command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, rowspan=4, sticky='wns')
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
-lblBenDescriptCaption = Label(frameChooseBens, text="Description of the underlined beneficiary:")
+lblBenDescriptCaption = Label(
+        frameChooseBens,
+        text="Description of the underlined beneficiary:")
 lblBenDescriptCaption.grid(row=5, column=0, columnspan=6)
-txtBenDescript = Text(frameChooseBens)
+sbbendescript = Scrollbar(frameChooseBens)
+sbbendescript.grid(row=6, column=5)
+txtBenDescript = Text(
+        frameChooseBens,
+        yscrollcommand=sbbendescript)
 txtBenDescript.config(
         state='disabled',
         background='#dfd',
         wrap='word',
         height=3)
-txtBenDescript.grid(row=6, column=0, columnspan=6)
+txtBenDescript.grid(row=6, column=0, columnspan=5, sticky=E)
+sbbendescript.config(command=txtBenDescript.yview)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
 
-lblbeninfocapt = Label(frameChooseBens, text='Explanation of page:')
+lblbeninfocapt = Label(
+        frameChooseBens,
+        text='Explanation of page:')
 lblbeninfocapt.grid(row=7, column=0, columnspan=6)
 txtbeninfo = Text(frameChooseBens)
 txtbeninfo.insert('end', beninfo)

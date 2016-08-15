@@ -153,3 +153,7 @@
 - fix ugly, old-style interface: `from tkinter.ttk import *` after last import from tkinter
 
 - add prompt for explanation of rating
+
+- make description of beneficiaries scrollable
+
+- make description of attributes scrollable
