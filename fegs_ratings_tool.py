@@ -290,13 +290,13 @@ class Ratings_Notebook(Notebook):
             tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
             tabi.lbAttrSrc.grid(row=1, column=0, rowspan=4, sticky=E)
-            for attribute in attributes:
-                tabi.lbAttrSrc.insert('end', attribute)
             tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrSrc.yview)
             tabi.sbAttrSrc.grid(row=1, column=1, rowspan=4, sticky=W+N+S)
             tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
+            for attribute in attributes:
+                tabi.lbAttrSrc.insert('end', attribute)
             # widgets between listboxes
             tabi.btnAttrAdd = Button(tabi, text=">> Add >>",
                     command=lambda tabi=tabi: moveBetweenLists(
@@ -337,7 +337,7 @@ class Ratings_Notebook(Notebook):
             tabi.txtattrdescript = Text(
                     tabi,
                     name='txtattrdescript',
-                    yscrollcommand=sbattrdescript.set)
+                    yscrollcommand=tabi.sbattrdescript.set)
             tabi.txtattrdescript.config(
                     state='disabled',
                     background='#dfd',
