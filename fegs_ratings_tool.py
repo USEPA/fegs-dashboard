@@ -12,6 +12,9 @@
 '''
 
 #TODO make results treeview scrollable both directions
+#TODO keep entire treeview visible
+  #TODO either constrain width to fit its parent
+  #TODO or make parent scrollable
 #TODO make a separate csv for user-added beneficiaries
 #TODO load user-beneficiaries.csv
 #TODO sort lbBenSrc after loading both lists
@@ -86,7 +89,7 @@ def lineListFromFilename(filename):
     return lines
 def scrapeExpln():
     "save explanation to a session-state-variable on focus out"
-    session.expln = txtExpln.get('0.1', 'end-1c')
+    session.expln = txtexpln.get('0.1', 'end-1c')
 def processBens():
     "generate a tab for each ben in lbBenDest"
     nbRatings.updatetabs()
@@ -95,10 +98,10 @@ def benactivation(event):
     "update descriptions of beneficiary when it's activated in a listbox"
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = beneficiariesdict[event.widget.get(ACTIVE)]
-    txtBenDescript.config(state=NORMAL)
-    txtBenDescript.delete(1.0, 'end')
-    txtBenDescript.insert('end', description)
-    txtBenDescript.config(state=DISABLED)
+    txtbendescript.config(state=NORMAL)
+    txtbendescript.delete(1.0, 'end')
+    txtbendescript.insert('end', description)
+    txtbendescript.config(state=DISABLED)
 def attractivation(event):
     "update descriptions of attribute when it's activated in a listbox"
     parent = event.widget.master
@@ -161,7 +164,7 @@ class Session():
                 self.ratings[dictnum][fields[3]] =\
                         tabi.cmbRating.get()
                 self.ratings[dictnum][fields[4]] =\
-                        tabi.txtExpln.get('0.1', 'end-1c')
+                        tabi.txtexpln.get('0.1', 'end-1c')
                 self.ratings[dictnum][fields[-1]] =\
                         str(datetime.now())
                 dictnum += 1
@@ -215,7 +218,7 @@ class Session():
             ratingi['listattrdest'] = listattrdest
             rating = tabi.cmbRating.get()
             ratingi['rating'] = rating
-            expln = tabi.txtExpln.get('0.1','end-1c')
+            expln = tabi.txtexpln.get('0.1','end-1c')
             ratingi['explanation'] = expln
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
@@ -258,7 +261,7 @@ class Session():
                 tabi.cmbRating.set(rating)
             if 'explanation' in ratingi.keys():
                 expln = ratingi['explanation']
-                tabi.txtExpln.insert('end', expln)
+                tabi.txtexpln.insert('end', expln)
 
 class Ratings_Notebook(Notebook):
     "check lbBenDest.size() for dynamic size"
@@ -353,13 +356,22 @@ class Ratings_Notebook(Notebook):
                     column=0,columnspan=6)
             tabi.cmbRating = Combobox(tabi, values=ratings)
             tabi.cmbRating.grid(row=8, column=0, columnspan=6)
-            tabi.txtExpln = Text(tabi, height=10,
-                    width=60)
             tabi.lblexplncaption = Label(tabi,
-                    text='Add an Explanation for this Rating')
+                    text='Add an Explanation for this rating:')
             tabi.lblexplncaption.grid(row=9, column=0, columnspan=6)
-            tabi.txtExpln.bind('<FocusOut>', lambda _: scrapeExpln)
-            tabi.txtExpln.grid(row=10, column=0, columnspan=6)
+            tabi.sbexpln = Scrollbar(tabi)
+            tabi.sbexpln.grid(row=10, column=5, sticky=N+S)
+            tabi.txtexpln = Text(tabi,
+                    height=10,
+                    width=60,
+                    yscrollcommand=tabi.sbexpln.set)
+            tabi.txtexpln.bind('<FocusOut>', lambda _: scrapeExpln)
+            tabi.sbexpln.config(command=tabi.txtexpln.yview)
+            tabi.txtexpln.grid(
+                    row=10,
+                    column=0,
+                    columnspan=5,
+                    sticky=E+W)
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
@@ -500,16 +512,20 @@ lblBenDescriptCaption = Label(
 lblBenDescriptCaption.grid(row=5, column=0, columnspan=6)
 sbbendescript = Scrollbar(frameChooseBens)
 sbbendescript.grid(row=6, column=5)
-txtBenDescript = Text(
+txtbendescript = Text(
         frameChooseBens,
         yscrollcommand=sbbendescript)
-txtBenDescript.config(
+txtbendescript.config(
         state='disabled',
         background='#dfd',
         wrap='word',
         height=3)
-txtBenDescript.grid(row=6, column=0, columnspan=5, sticky=E)
-sbbendescript.config(command=txtBenDescript.yview)
+txtbendescript.grid(
+        row=6,
+        column=0,
+        columnspan=5,
+        sticky=E+W)
+sbbendescript.config(command=txtbendescript.yview)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
 

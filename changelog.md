@@ -157,3 +157,7 @@
 - make description of beneficiaries scrollable
 
 - make description of attributes scrollable
+
+- expand txtbendescript to horizontally fill its parent
+
+- add scrollbar for txtexpln
