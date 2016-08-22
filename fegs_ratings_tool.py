@@ -168,10 +168,11 @@ class Session():
     def saveRatings(self):
         'save ratings to csv with fieldnames as header'
         self.update()
+        # create timestamp for the initially suggested filename
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
         initialfile = 'saved-fegs-ratings-'+timestamp+'.csv'
-        filename = asksaveasfilename(initialfile)
+        filename = asksaveasfilename(initialfile=initialfile)
         if filename != None and filename != '':
             with open(
                     filename,
