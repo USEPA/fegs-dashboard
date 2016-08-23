@@ -1,4 +1,5 @@
-'''# GUI tool to identify and rate attributes per beneficiary under the final ecosystem goods and services(FEGS) model and FEGS categorization system(FEGS-CS) by Landers, Nahlik, et al
+'''
+# GUI tool to identify and rate attributes per beneficiary under the final ecosystem goods and services(FEGS) model and FEGS categorization system(FEGS-CS) by Landers, Nahlik, et al
 ## naive debug-workflow:
   1. comment root.mainloop line at or near EOF
   2. open python interpreter
@@ -11,35 +12,74 @@
   5. run script
 '''
 
-#TODO make results treeview scrollable both directions
-#TODO keep entire treeview visible
-  #TODO either constrain width to fit its parent
-  #TODO or make parent scrollable
-#TODO make a separate csv for user-added beneficiaries
-#TODO load user-beneficiaries.csv
-#TODO sort lbBenSrc after loading both lists
-#TODO addToList checks *beneficiaries.csv for item
-#TODO addToList adds item to user-beneficiaries.csv
-#TODO clear txtNewBen after insertion of new ben into lbBenDest
-#TODO facility for users to add a description with a new beneficiary
-#TODO make a separate csv for user-added attributes
-#TODO make frame master vertically and horizontally scrollable
-#TODO facility for users to add a description with a new attribute
-#TODO clear txtNewAttr after insertion of new attr into lbAttrDest
-#TODO visual feedback for completed ratings:
-  #TODO validate data on leave rating tab
-  #TODO askyesno: "done with rating?"
-  #TODO rating-tab-color = green
-#TODO visualize ratings by providing something like a graph
-#TODO set wraplength for all labels(try lbl.<some_method>_all)
-#TODO retain data on existing rating-tabs when tabs are added
-#TODO create data-analysis function
-#TODO tab change focus from within Text widgets
-#TODO enter key triggers default button on nb tab or nbRating tab
-#TODO investigate localization support
-#TODO clear txtNewBen and txtNewAttr after text retrieval
-#TODO update nbRatings on activate frameProcessBens
-#TODO horizontal scrollbars on listboxes
+'''
+- PRIORITY
+  1. DONE FIX BUG: explanation field (tab 3) cuts off text 
+  2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
+  3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?")
+  4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
+'''
+
+''' TODO
+- make results treeview scrollable both directions
+
+-  keep entire treeview visible
+
+  -  either constrain width to fit its parent
+
+  -  or make parent scrollable
+
+-  make a separate csv for user-added beneficiaries
+
+-  load user-beneficiaries.csv
+
+-  sort lbBenSrc after loading both lists
+
+-  addToList checks *beneficiaries.csv for item
+
+-  addToList adds item to user-beneficiaries.csv
+
+-  clear txtNewBen after insertion of new ben into lbBenDest
+
+-  facility for users to add a description with a new beneficiary
+
+-  make a separate csv for user-added attributes
+
+-  make frame master vertically and horizontally scrollable
+
+-  facility for users to add a description with a new attribute
+
+-  clear txtNewAttr after insertion of new attr into lbAttrDest
+
+-  visual feedback for completed ratings:
+
+  -  validate data on leave rating tab
+
+  -  askyesno: "done with rating?"
+
+  -  rating-tab-color = green
+
+-  visualize ratings by providing something like a graph
+
+-  set wraplength for all labels(try lbl.<some_method>_all)
+
+-  retain data on existing rating-tabs when tabs are added
+
+-  create data-analysis function
+
+-  tab change focus from within Text widgets
+
+-  enter key triggers default button on nb tab or nbRating tab
+
+-  investigate localization support
+
+-  clear txtNewBen and txtNewAttr after text retrieval
+
+-  update nbRatings on activate frameProcessBens
+
+-  horizontal scrollbars on listboxes
+
+'''
 
 # imports
 from tkinter import *
@@ -350,9 +390,9 @@ class Ratings_Notebook(Notebook):
             tabi.txtattrdescript.grid(row=6, column=0, columnspan=5)
             tabi.sbattrdescript.config(command=tabi.txtattrdescript.yview)
             # combobox of rating-values; text area for explanation
-            tabi.cmbratingcaption = Label(tabi,
+            tabi.lblratingcaption = Label(tabi,
                     text='Enter a rating: ')
-            tabi.cmbratingcaption.grid(row=7,
+            tabi.lblratingcaption.grid(row=7,
                     column=0,columnspan=6)
             tabi.cmbRating = Combobox(tabi, values=ratings)
             tabi.cmbRating.grid(row=8, column=0, columnspan=6)
