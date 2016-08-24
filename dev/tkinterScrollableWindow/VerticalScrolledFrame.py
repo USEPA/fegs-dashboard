@@ -55,8 +55,8 @@ scframe.pack()
 
 lis = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 for i, x in enumerate(lis):
-    btn = tk.Button(scframe.interior, height=1, width=20, relief=tk.FLAT, 
-        bg="gray99", fg="purple3",
+    btn = tk.Button(scframe.interior, height=1, width=10,
+        bg="gray99", fg="green",
         font="Dosis", text='Button ' + lis[i],
         command=lambda i=i,x=x: openlink(i))
     btn.pack(padx=10, pady=5, side=tk.TOP)

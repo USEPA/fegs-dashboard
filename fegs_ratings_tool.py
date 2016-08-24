@@ -16,7 +16,11 @@
 - PRIORITY
   1. DONE FIX BUG: explanation field (tab 3) cuts off text 
   2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
+    - ############## TODO #################
   3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?")
+    - DONE move button and instructions to ben tab
+    - WIP load correct rating for ben within fncn updateben
+    - WIP store cmbRating's val in session.rating[<lbBenDest#>]
   4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
 '''
 
@@ -135,7 +139,8 @@ def processBens():
     nbRatings.updatetabs()
     nb.select(frameProcessBens)
 def benactivation(event):
-    "update descriptions of beneficiary when it's activated in a listbox"
+    '''update description and rating of beneficiary
+    when it's activated in a listbox'''
     lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
     description = beneficiariesdict[event.widget.get(ACTIVE)]
     txtbendescript.config(state=NORMAL)
@@ -202,7 +207,7 @@ class Session():
                 self.ratings[dictnum][fields[2]] =\
                         attribute
                 self.ratings[dictnum][fields[3]] =\
-                        tabi.cmbRating.get()
+                        cmbRating.get()
                 self.ratings[dictnum][fields[4]] =\
                         tabi.txtexpln.get('0.1', 'end-1c')
                 self.ratings[dictnum][fields[-1]] =\
@@ -256,7 +261,7 @@ class Session():
             ratingi['listattrsrc'] = listattrsrc
             listattrdest = self.lblist(tabi.lbAttrDest)
             ratingi['listattrdest'] = listattrdest
-            rating = tabi.cmbRating.get()
+            rating = cmbRating.get()
             ratingi['rating'] = rating
             expln = tabi.txtexpln.get('0.1','end-1c')
             ratingi['explanation'] = expln
@@ -298,7 +303,7 @@ class Session():
                 self.loadlb(ratingi['listattrdest'], tabi.lbAttrDest)
             if 'rating' in ratingi.keys():
                 rating = ratingi['rating']
-                tabi.cmbRating.set(rating)
+                cmbRating.set(rating)
             if 'explanation' in ratingi.keys():
                 expln = ratingi['explanation']
                 tabi.txtexpln.insert('end', expln)
@@ -328,7 +333,10 @@ class Ratings_Notebook(Notebook):
             ben = lbBenDest.get(i)
             tabi.pack()
             self.labels.append(Label(tabi, text=ben))
-            self.labels[i].grid(row=0, column=0, columnspan=6)
+            self.labels[i].grid(
+                    row=0,
+                    column=0,
+                    columnspan=6)
             self.add(tabi, text=ben)
             # source listbox of attributes
             tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,
@@ -337,7 +345,11 @@ class Ratings_Notebook(Notebook):
             tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrSrc.yview)
-            tabi.sbAttrSrc.grid(row=1, column=1, rowspan=4, sticky=W+N+S)
+            tabi.sbAttrSrc.grid(
+                    row=1,
+                    column=1,
+                    rowspan=4,
+                    sticky=W+N+S)
             tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
             for attribute in attributes:
                 tabi.lbAttrSrc.insert('end', attribute)
@@ -346,9 +358,14 @@ class Ratings_Notebook(Notebook):
                     command=lambda tabi=tabi: moveBetweenLists(
                         tabi.lbAttrSrc, tabi.lbAttrDest))
             tabi.btnAttrAdd.grid(row=1, column=2, columnspan=2)
-            tabi.lblnewattr = Label(tabi,
+            tabi.lblnewattr = Label(
+                    tabi,
                     text='Add a New Attribute')
-            tabi.lblnewattr.grid(row=2, column=2, columnspan=2, sticky='s')
+            tabi.lblnewattr.grid(
+                    row=2,
+                    column=2,
+                    columnspan=2,
+                    sticky='s')
             tabi.txtNewAttr = Entry(tabi)
             tabi.txtNewAttr.grid(row=3, column=2, sticky='n', ipady=4)
             tabi.btnNewAttr = Button(tabi, text=">>",
@@ -368,12 +385,19 @@ class Ratings_Notebook(Notebook):
             tabi.lbAttrDest.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrDest.yview)
-            tabi.sbAttrDest.grid(row=1, column=5, rowspan=4, sticky=W+N+S)
+            tabi.sbAttrDest.grid(
+                    row=1,
+                    column=5,
+                    rowspan=4,
+                    sticky=W+N+S)
             tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
             # description of active attribute
             tabi.lblattrdescriptcaption = Label(tabi,
                     text="Attribute:")
-            tabi.lblattrdescriptcaption.grid(row=5,column=0,columnspan=6)
+            tabi.lblattrdescriptcaption.grid(
+                    row=5,
+                    column=0,
+                    columnspan=6)
             tabi.sbattrdescript = Scrollbar(
                     tabi,
                     name='sbattrdescript')
@@ -387,18 +411,19 @@ class Ratings_Notebook(Notebook):
                     background='#dfd',
                     wrap='word',
                     height=3)
-            tabi.txtattrdescript.grid(row=6, column=0, columnspan=5)
-            tabi.sbattrdescript.config(command=tabi.txtattrdescript.yview)
-            # combobox of rating-values; text area for explanation
-            tabi.lblratingcaption = Label(tabi,
-                    text='Enter a rating: ')
-            tabi.lblratingcaption.grid(row=7,
-                    column=0,columnspan=6)
-            tabi.cmbRating = Combobox(tabi, values=ratings)
-            tabi.cmbRating.grid(row=8, column=0, columnspan=6)
-            tabi.lblexplncaption = Label(tabi,
-                    text='Add an Explanation for this rating:')
-            tabi.lblexplncaption.grid(row=9, column=0, columnspan=6)
+            tabi.txtattrdescript.grid(
+                    row=6,
+                    column=0,
+                    columnspan=5)
+            tabi.sbattrdescript.config(
+                    command=tabi.txtattrdescript.yview)
+            tabi.lblexplncaption = Label(
+                    tabi,
+                    text="Add an explanation for this beneficiary's rating:")
+            tabi.lblexplncaption.grid(
+                    row=9,
+                    column=0,
+                    columnspan=6)
             tabi.sbexpln = Scrollbar(tabi)
             tabi.sbexpln.grid(row=10, column=5, sticky=N+S)
             tabi.txtexpln = Text(tabi,
@@ -485,7 +510,9 @@ lblSiteInstructions.pack()
 txtSite = Entry(frameSite, width=lbWidth)
 txtSite.pack()
 
-btnChooseBens = Button(frameSite, text="Next",
+btnChooseBens = Button(
+        frameSite,
+        text="Next",
         command=lambda: nb.select(frameChooseBens))
 btnChooseBens.pack()
 
@@ -585,9 +612,21 @@ sbbeninfo = Scrollbar(frameChooseBens, command=txtbeninfo.yview)
 sbbeninfo.grid(row=8, column=5, sticky='nws')
 txtbeninfo.config(yscrollcommand=sbbeninfo.set)
 
+# combobox of rating-values; text area for explanation
+lblratingcaption = Label(
+        frameChooseBens,
+        text='Enter a rating: ')
+lblratingcaption.grid(row=9,
+        column=0,columnspan=6)
+cmbRating = Combobox(frameChooseBens, values=ratings)
+cmbRating.grid(
+        row=10,
+        column=0,
+        columnspan=6)
+
 btnProcessBens = Button(frameChooseBens, text="Next")
 btnProcessBens.config(command=lambda: processBens())
-btnProcessBens.grid(row=9, column=0, columnspan=6)
+btnProcessBens.grid(row=11, column=0, columnspan=6)
 
 #################################################
 # tab for adding attributes to each beneficiary #
