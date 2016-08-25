@@ -615,7 +615,7 @@ txtbeninfo.config(yscrollcommand=sbbeninfo.set)
 # combobox of rating-values; text area for explanation
 lblratingcaption = Label(
         frameChooseBens,
-        text='Enter a rating: ')
+        text='How satisfied, overall, is this beneficiary with the site?')
 lblratingcaption.grid(row=9,
         column=0,columnspan=6)
 cmbRating = Combobox(frameChooseBens, values=ratings)
@@ -633,7 +633,6 @@ btnProcessBens.grid(row=11, column=0, columnspan=6)
 #################################################
 frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
-#frameProcessBens.bind("<Activate>", lambda: processBens())
 nb.add(frameProcessBens, text="Process Beneficiaries")
 
 txtAttrsInstructions = Text(frameProcessBens)
@@ -647,7 +646,7 @@ txtAttrsInstructions.config(
 txtAttrsInstructions.pack()
 
 nbRatings = Ratings_Notebook()
-# tabs for ratings are populated on press btnProcessBens
+# tabs for ratings are populated on use btnProcessBens
 
 ##################################
 # tab to review and save ratings #

@@ -161,3 +161,7 @@
 - expand txtbendescript to horizontally fill its parent
 
 - add scrollbar for txtexpln
+
+- move rating combobox to frameChooseBens
+
+- change wording in instructions for rating
