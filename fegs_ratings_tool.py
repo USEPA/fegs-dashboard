@@ -519,12 +519,15 @@ btnChooseBens.pack()
 ##############################################
 # tab for choosing beneficiaries of the site #
 ##############################################
-frameChooseBens = Frame(nb, name='frameChooseBens')
-# frame placed in efforts to center frame
-#frameChooseBens.place(in_=nb, anchor='c', relx=.5, rely=.5)
-frameChooseBens.pack(fill='both')
-frameChooseBens.config(border='2')
-nb.add(frameChooseBens, text="Beneficiaries")
+framePackBens = Frame(nb, name='framePackBens')
+framePackBens.pack(fill='both')
+nb.add(framePackBens, text='Beneficiaries')
+
+frameChooseBens = Frame(
+        framePackBens,
+        name='frameChooseBens',
+        borderwidth=2)
+frameChooseBens.pack()
 
 txtbeninstructions = Text(frameChooseBens)
 txtbeninstructions.insert('end', beninstructions)
