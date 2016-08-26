@@ -16,22 +16,24 @@
 - PRIORITY
   1. DONE FIX BUG: explanation field (tab 3) cuts off text 
   2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
-    - ############## TODO #################
+    - TODO <----------------
   3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?")
     - DONE move button and instructions to ben tab
-    - WIP load correct rating for ben within fncn updateben
-    - WIP store cmbRating's val in session.rating[<lbBenDest#>]
+    - DONE session.benratings = {}
+    - DONE <<focusout>> => save rating to session.benratings["<ben>"]
+    - WIP ensure ratings are scraped from session.benratings /cmbRating
+    - WIP ensure ratings are loaded into session.benratings
+    - WIP update fncn updateben to load rating from session.benrating["<ben>"] 
   4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
+    - DONE update rating-instructions
 '''
 
 ''' TODO
 - make results treeview scrollable both directions
 
--  keep entire treeview visible
+- keep entire treeview visible
 
-  -  either constrain width to fit its parent
-
-  -  or make parent scrollable
+  - constrain width of results treeview
 
 -  make a separate csv for user-added beneficiaries
 
@@ -122,6 +124,15 @@ def addToList(item, listsrc, listdest):
     # FIXME add item to user-attributes.csv or user-beneficiaries.csv
     # additemtocsv(item, description, csv)
     messagebox.showinfo('Added', 'This item was added:\n'+item)
+def benratingsaver(event):
+    savebenrating()
+def savebenrating():
+    ben = str(lbBenDest.get(ACTIVE))
+    session.benratings[ben] = cmbRating.get()
+def loadbenrating(ben):
+    cmbRating.set() = session.benratings[ben]
+def benratinggetter(ben):
+    
 def additemtocsv(item, description, csvfilename):
     # FIXME open csv for writing and add item, description to it
     with open(csvfilename,'a') as csvfile:
@@ -148,7 +159,7 @@ def benactivation(event):
     txtbendescript.insert('end', description)
     txtbendescript.config(state=DISABLED)
 def attractivation(event):
-    "update descriptions of attribute when it's activated in a listbox"
+    "describe attribute when it's activated in a listbox"
     parent = event.widget.master
     parent.lblattrdescriptcaption.config(text=str(
         event.widget.get(ACTIVE))+":")
@@ -188,6 +199,7 @@ class Session():
         self.bens = StringVar()
         lbBenDest.config(listvariable=self.bens)
         self.ratings = []
+        self.benratings = {}
     def update(self):
         if len(self.ratings) != 0:
             del(self.ratings)
@@ -199,15 +211,16 @@ class Session():
             for j in range(limit):
                 self.ratings.append({})
                 tabi = nbRatings.tablist[i]
+                ben = lbBenDest.get(i)
                 attribute = tabi.lbAttrDest.get(j)
                 self.ratings[dictnum][fields[0]] =\
                         txtSite.get()
                 self.ratings[dictnum][fields[1]] =\
-                        lbBenDest.get(i)
+                        ben
                 self.ratings[dictnum][fields[2]] =\
                         attribute
                 self.ratings[dictnum][fields[3]] =\
-                        cmbRating.get()
+                        ratinggetter(ben)
                 self.ratings[dictnum][fields[4]] =\
                         tabi.txtexpln.get('0.1', 'end-1c')
                 self.ratings[dictnum][fields[-1]] =\
@@ -457,7 +470,7 @@ attributesdict = csvtodict('parameters/attributes.csv')
 attributes = sorted([attribute for attribute in attributesdict.keys()])
 ratings = lineListFromFilename("parameters/ratings.txt")
 # CMS
-tooltitle = 'FEGS Ratings Tool'
+tooltitle = 'BART: Beneficiary Assessment and Review Tool'
 describetool = texttostring('parameters/describetool.txt')
 beninstructions = texttostring('parameters/beninstructions.txt')
 beninfo = texttostring('parameters/beninfo.txt')
@@ -626,6 +639,7 @@ cmbRating.grid(
         row=10,
         column=0,
         columnspan=6)
+cmbRating.bind('<FocusOut>', benratingsaver)
 
 btnProcessBens = Button(frameChooseBens, text="Next")
 btnProcessBens.config(command=lambda: processBens())
