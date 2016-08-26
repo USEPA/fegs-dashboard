@@ -24,6 +24,7 @@
     - DONE ensure ratings are scraped from session.benratings /cmbRating
     - DONE ensure ratings are loaded into session.benratings
     - DONE update fncn updateben to load rating from session.benrating["<ben>"] 
+    - WIP save cmbRating.get() on typing-events to save custom ratings
   4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
     - DONE update rating-instructions
 '''
@@ -130,7 +131,7 @@ def savebenrating():
     ben = str(lbBenDest.get(ACTIVE))
     session.benratings[ben] = cmbRating.get()
 def loadbenrating(ben):
-    cmbRating.set() = session.benratings[ben]
+    cmbRating.set(session.benratings[ben])
 def benratinggetter(ben):
     pass
 def additemtocsv(item, description, csvfilename):
