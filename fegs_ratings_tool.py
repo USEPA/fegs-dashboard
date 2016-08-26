@@ -21,9 +21,9 @@
     - DONE move button and instructions to ben tab
     - DONE session.benratings = {}
     - DONE <<focusout>> => save rating to session.benratings["<ben>"]
-    - WIP ensure ratings are scraped from session.benratings /cmbRating
-    - WIP ensure ratings are loaded into session.benratings
-    - WIP update fncn updateben to load rating from session.benrating["<ben>"] 
+    - DONE ensure ratings are scraped from session.benratings /cmbRating
+    - DONE ensure ratings are loaded into session.benratings
+    - DONE update fncn updateben to load rating from session.benrating["<ben>"] 
   4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
     - DONE update rating-instructions
 '''
@@ -132,7 +132,7 @@ def savebenrating():
 def loadbenrating(ben):
     cmbRating.set() = session.benratings[ben]
 def benratinggetter(ben):
-    
+    pass
 def additemtocsv(item, description, csvfilename):
     # FIXME open csv for writing and add item, description to it
     with open(csvfilename,'a') as csvfile:
@@ -151,13 +151,15 @@ def processBens():
     nb.select(frameProcessBens)
 def benactivation(event):
     '''update description and rating of beneficiary
-    when it's activated in a listbox'''
-    lblBenDescriptCaption.config(text=str(event.widget.get(ACTIVE))+":")
-    description = beneficiariesdict[event.widget.get(ACTIVE)]
+    when it's activated in a listbox; load benrating'''
+    activeben = str(event.widget.get(ACTIVE))
+    lblBenDescriptCaption.config(text=activeben+":")
+    description = beneficiariesdict[activeben]
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
     txtbendescript.insert('end', description)
     txtbendescript.config(state=DISABLED)
+    session.benratings[activeben] = cmbRating.get()
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
@@ -274,7 +276,8 @@ class Session():
             ratingi['listattrsrc'] = listattrsrc
             listattrdest = self.lblist(tabi.lbAttrDest)
             ratingi['listattrdest'] = listattrdest
-            rating = cmbRating.get()
+            ben = str(lbBenDest.get(i))
+            rating = session.rating[ben]
             ratingi['rating'] = rating
             expln = tabi.txtexpln.get('0.1','end-1c')
             ratingi['explanation'] = expln
@@ -298,15 +301,16 @@ class Session():
             "*.pickle")])
         with open(filename,'rb') as f:
             [
-                    site,
-                    listbensrc,
-                    listbendest,
-                    ratingslist ] =  pickle.load(f)
+                site,
+                listbensrc,
+                listbendest,
+                ratingslist ] =  pickle.load(f)
         txtSite.delete(0,'end')
         txtSite.insert('end', site)
         self.loadlb(listbensrc, lbBenSrc)
         self.loadlb(listbendest, lbBenDest)
         nbRatings.updatetabs()
+        session = Session()
         for i in range(len(ratingslist)):
             tabi = nbRatings.tablist[i]
             ratingi = ratingslist[i]
@@ -314,9 +318,10 @@ class Session():
                 self.loadlb(ratingi['listattrsrc'], tabi.lbAttrSrc)
             if 'listattrdest' in ratingi.keys():
                 self.loadlb(ratingi['listattrdest'], tabi.lbAttrDest)
-            if 'rating' in ratingi.keys():
+            if  ratingi.has_key('rating'):
                 rating = ratingi['rating']
-                cmbRating.set(rating)
+                ben = lbBenDest[i]
+                session.ratings[ben] = rating
             if 'explanation' in ratingi.keys():
                 expln = ratingi['explanation']
                 tabi.txtexpln.insert('end', expln)
@@ -639,6 +644,7 @@ cmbRating.grid(
         row=10,
         column=0,
         columnspan=6)
+cmbRating.bind('<<ComboboxSelected>>', benratingsaver)
 cmbRating.bind('<FocusOut>', benratingsaver)
 
 btnProcessBens = Button(frameChooseBens, text="Next")
