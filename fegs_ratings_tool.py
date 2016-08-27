@@ -126,14 +126,13 @@ def addToList(item, listsrc, listdest):
     # additemtocsv(item, description, csv)
     messagebox.showinfo('Added', 'This item was added:\n'+item)
 def benratingsaver(event):
-    savebenrating()
-def savebenrating():
-    ben = str(lbBenDest.get(ACTIVE))
+    savebenrating(str(lbBenDest.get(ACTIVE)))
+def savebenrating(ben):
     session.benratings[ben] = cmbRating.get()
 def loadbenrating(ben):
     cmbRating.set(session.benratings[ben])
-def benratinggetter(ben):
-    pass
+def getbenrating(ben):
+    session.benratings[ben] = cmbRating.get()
 def additemtocsv(item, description, csvfilename):
     # FIXME open csv for writing and add item, description to it
     with open(csvfilename,'a') as csvfile:
@@ -155,12 +154,15 @@ def benactivation(event):
     when it's activated in a listbox; load benrating'''
     activeben = str(event.widget.get(ACTIVE))
     lblBenDescriptCaption.config(text=activeben+":")
-    description = beneficiariesdict[activeben]
+    if activeben in beneficiariesdict.keys():
+        description = beneficiariesdict[activeben]
+    else:
+        description = ''
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
     txtbendescript.insert('end', description)
+    cmbRating.set(session.benratings[activeben])
     txtbendescript.config(state=DISABLED)
-    session.benratings[activeben] = cmbRating.get()
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
@@ -209,6 +211,7 @@ class Session():
             self.ratings = []
         fields = self.fieldnames
         dictnum = 0
+        session.benratings = {}
         for i in range(len(nbRatings.tablist)):
             limit = nbRatings.tablist[i].lbAttrDest.size()
             for j in range(limit):
@@ -223,7 +226,7 @@ class Session():
                 self.ratings[dictnum][fields[2]] =\
                         attribute
                 self.ratings[dictnum][fields[3]] =\
-                        ratinggetter(ben)
+                        getbenrating(ben)
                 self.ratings[dictnum][fields[4]] =\
                         tabi.txtexpln.get('0.1', 'end-1c')
                 self.ratings[dictnum][fields[-1]] =\
@@ -277,6 +280,7 @@ class Session():
             ratingi['listattrsrc'] = listattrsrc
             listattrdest = self.lblist(tabi.lbAttrDest)
             ratingi['listattrdest'] = listattrdest
+            #db.set_trace()
             ben = str(lbBenDest.get(i))
             rating = session.rating[ben]
             ratingi['rating'] = rating
@@ -297,6 +301,7 @@ class Session():
     def load(self):
         'load saved data-entry-session into tool'
         # RESUME IMPLEMENTING LOADER FNCNALITY
+        session = Session()
         filename = askopenfilename(filetypes=[(
             'pickled sessions',
             "*.pickle")])
@@ -311,20 +316,20 @@ class Session():
         self.loadlb(listbensrc, lbBenSrc)
         self.loadlb(listbendest, lbBenDest)
         nbRatings.updatetabs()
-        session = Session()
-        for i in range(len(ratingslist)):
+        ratingsrange = range(len(ratingslist))
+        for i in ratingsrange:
             tabi = nbRatings.tablist[i]
-            ratingi = ratingslist[i]
-            if 'listattrsrc' in ratingi.keys():
-                self.loadlb(ratingi['listattrsrc'], tabi.lbAttrSrc)
-            if 'listattrdest' in ratingi.keys():
-                self.loadlb(ratingi['listattrdest'], tabi.lbAttrDest)
-            if  ratingi.has_key('rating'):
-                rating = ratingi['rating']
-                ben = lbBenDest[i]
-                session.ratings[ben] = rating
-            if 'explanation' in ratingi.keys():
-                expln = ratingi['explanation']
+            ratinginfo = ratingslist[i]
+            if 'listattrsrc' in ratinginfo.keys():
+                self.loadlb(ratinginfo['listattrsrc'], tabi.lbAttrSrc)
+            if 'listattrdest' in ratinginfo.keys():
+                self.loadlb(ratinginfo['listattrdest'], tabi.lbAttrDest)
+            if  'rating' in ratinginfo.keys():
+                beni = str(lbBenDest.get(i))
+                rating = ratinginfo['rating']
+                session.benratings[beni] = rating
+            if 'explanation' in ratinginfo.keys():
+                expln = ratinginfo['explanation']
                 tabi.txtexpln.insert('end', expln)
 
 class Ratings_Notebook(Notebook):
@@ -532,7 +537,7 @@ txtSite.pack()
 btnChooseBens = Button(
         frameSite,
         text="Next",
-        command=lambda: nb.select(frameChooseBens))
+        command=lambda: nb.select(framePackBens))
 btnChooseBens.pack()
 
 ##############################################
