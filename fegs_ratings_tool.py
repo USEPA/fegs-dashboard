@@ -10,9 +10,7 @@
   3. >>> ...
   4. place pdb.set_trace() where breakpoints are desired
   5. run script
-'''
-
-'''
+===========================================================
 - PRIORITY
   1. DONE FIX BUG: explanation field (tab 3) cuts off text 
   2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
@@ -27,9 +25,8 @@
     - WIP save cmbRating.get() on typing-events to save custom ratings
   4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
     - DONE update rating-instructions
-'''
-
-''' TODO
+===========================================================
+TODO
 - make results treeview scrollable both directions
 
 - keep entire treeview visible
@@ -85,6 +82,8 @@
 -  update nbRatings on activate frameProcessBens
 
 -  horizontal scrollbars on listboxes
+
+=======================DATA-STRUCTURE======================
 
 '''
 
