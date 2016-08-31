@@ -11,7 +11,6 @@
   4. place pdb.set_trace() where breakpoints are desired
   5. run script
 ===========================================================
-    - DONE update rating-instructions
 ===========================================================
 TODO
 - make results treeview scrollable both directions
@@ -70,7 +69,13 @@ TODO
 
 -  horizontal scrollbars on listboxes
 
-=======================DATA-STRUCTURE======================
+======================= PROMPT FOR FOCUS ======================
+1. Fix bug on beneficiary page--> DEFINITIONS for beneficiaries should pop up with one click
+2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
+3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?)
+  - DONE
+4. Change wording in Green boxes according to new draft. KW will email new wording on Friday, August 26.
+5. Update welcome page (see email with new, simplified welcome message). 
 
 '''
 
@@ -666,26 +671,27 @@ nbRatings = Ratings_Notebook()
 # tab to review and save ratings #
 ##################################
 frameSave = Frame(nb, name="frameSave")
+#frameSave.pack_propagate(0)
+frameSave.grid_propagate(0)
+frameSave.grid_columnconfigure(0, weight=1)
 frameSave.pack(fill=BOTH)
 nb.add(frameSave, text="Save Ratings")
 
 lblSaveInstructions = Label(
         frameSave,
         text="Save these ratings to a file for later use.")
-lblSaveInstructions.pack()
-
+lblSaveInstructions.grid(row=0, column=0, columnspan=2)
 session = Session()
 
 # review ratings
-framereview = Frame(frameSave)
-framereview.pack(fill='both', expand=1)
-ratingstreehsb = Scrollbar(framereview, orient='horizontal')
-ratingstreehsb.grid(row=1, column=0, sticky='new')
-ratingstreevsb = Scrollbar(framereview, orient='vertical')
-ratingstreevsb.grid(row=0, column=1, sticky='nsw')
-ratingstree = Treeview(framereview)
-frameSave.bind('<Expose>', updateratingstree)
+ratingstree = Treeview(frameSave)
+ratingstree.grid_propagate(0)
 ratingstree.grid(row=0, column=0, sticky='news')
+ratingstreevsb = Scrollbar(frameSave, orient='vertical')
+ratingstreevsb.grid(row=0, column=1, sticky='wns')
+ratingstreehsb = Scrollbar(frameSave, orient='horizontal')
+ratingstreehsb.grid(row=1, column=0, sticky='new')
+frameSave.bind('<Expose>', updateratingstree)
 ratingstreehsb.config(command=ratingstree.xview)
 ratingstreevsb.config(command=ratingstree.yview)
 ratingstree.config(
@@ -696,14 +702,14 @@ for heading in session.fieldnames:
     ratingstree.heading(heading, text=heading)
 
 btnSave = Button(frameSave, text="Save")
-btnSave.pack()
+btnSave.grid(row=2, column=0, columnspan=2)
 btnSave.config(command=lambda: session.saveRatings())
 
 btndebug = Button(
         frameSave,
         text="Debug",
         command =lambda: pdb.set_trace())
-btndebug.pack()
+btndebug.grid(row=3, column=0, columnspan=2)
 
 if __name__ == '__main__':
     root.mainloop()
