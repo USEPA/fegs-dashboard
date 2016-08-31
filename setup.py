@@ -18,4 +18,4 @@ for files in os.listdir('./parameters'):
         f2 = 'parameters', [f1]
         data_files.append(f2)
 
-setup(windows=['fegs_ratings_tool.py'], data_files=data_files)
+setup(windows=['bart.py'], data_files=data_files)
