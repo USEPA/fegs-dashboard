@@ -11,19 +11,6 @@
   4. place pdb.set_trace() where breakpoints are desired
   5. run script
 ===========================================================
-- PRIORITY
-  1. DONE FIX BUG: explanation field (tab 3) cuts off text 
-  2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
-    - TODO <----------------
-  3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?")
-    - DONE move button and instructions to ben tab
-    - DONE session.benratings = {}
-    - DONE <<focusout>> => save rating to session.benratings["<ben>"]
-    - DONE ensure ratings are scraped from session.benratings /cmbRating
-    - DONE ensure ratings are loaded into session.benratings
-    - DONE update fncn updateben to load rating from session.benrating["<ben>"] 
-    - WIP save cmbRating.get() on typing-events to save custom ratings
-  4. Change wording in Green boxes according to new draft. KW will email new wording on Wednesday, Aug 17th.
     - DONE update rating-instructions
 ===========================================================
 TODO
@@ -190,7 +177,7 @@ class Session():
     def __init__(self):
         'statically bound attributes timestamp and site'
         self.fieldnames = [
-                'site', 
+                'site',
                 'beneficiary',
                 'attribute',
                 'rating',
@@ -299,7 +286,6 @@ class Session():
             #REMOVED pickle.HIGHEST_PROTOCOL as arg 3 above
     def load(self):
         'load saved data-entry-session into tool'
-        # RESUME IMPLEMENTING LOADER FNCNALITY
         session = Session()
         filename = askopenfilename(filetypes=[(
             'pickled sessions',
@@ -343,7 +329,7 @@ class Ratings_Notebook(Notebook):
         if self.index('current') < self.index('end'):
             self.select(self.index('current')+1)
     def cleartabs(self):
-        "clear all tabs from Ratings_Notebook object"
+        "clear all tabs from object"
         numtabs = self.index('end')
         for i in range(numtabs):
             self.forget(self.tablist[i])
