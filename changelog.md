@@ -165,3 +165,8 @@
 - move rating combobox to frameChooseBens
 
 - change wording in instructions for rating
+
+- make results treeview scrollable both directions
+
+- keep entire treeview visible
+

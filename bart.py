@@ -13,11 +13,6 @@
 ===========================================================
 ===========================================================
 TODO
-- make results treeview scrollable both directions
-
-- keep entire treeview visible
-
-  - constrain width of results treeview
 
 -  make a separate csv for user-added beneficiaries
 
@@ -71,11 +66,16 @@ TODO
 
 ======================= PROMPT FOR FOCUS ======================
 1. Fix bug on beneficiary page--> DEFINITIONS for beneficiaries should pop up with one click
+  - DONE the problem is fixed on development machines
 2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
+  - WIP fix bug in session.save()
+  - WIP implement data-structure for beneficiary-ratings and attribute-ratings
 3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?)
   - DONE
 4. Change wording in Green boxes according to new draft. KW will email new wording on Friday, August 26.
+  - DONE
 5. Update welcome page (see email with new, simplified welcome message). 
+  - DONE
 
 '''
 
