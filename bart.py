@@ -24,8 +24,6 @@ TODO
 
 -  addToList adds item to user-beneficiaries.csv
 
--  clear txtNewBen after insertion of new ben into lbBenDest
-
 -  facility for users to add a description with a new beneficiary
 
 -  make a separate csv for user-added attributes
@@ -33,8 +31,6 @@ TODO
 -  make frame master vertically and horizontally scrollable
 
 -  facility for users to add a description with a new attribute
-
--  clear txtNewAttr after insertion of new attr into lbAttrDest
 
 -  visual feedback for completed ratings:
 
@@ -57,8 +53,6 @@ TODO
 -  enter key triggers default button on nb tab or nbRating tab
 
 -  investigate localization support
-
--  clear txtNewBen and txtNewAttr after text retrieval
 
 -  update nbRatings on activate frameProcessBens
 
@@ -116,6 +110,10 @@ def addToList(item, listsrc, listdest):
     # FIXME add item to user-attributes.csv or user-beneficiaries.csv
     # additemtocsv(item, description, csv)
     messagebox.showinfo('Added', 'This item was added:\n'+item)
+    if listsrc == lbBenSrc:
+        txtNewBen.delete(0, END)
+    if listsrc == lbAttrSrc:
+        txtNewAttr.delete(0, END)
 def benratingsaver(event):
     savebenrating(str(lbBenDest.get(ACTIVE)))
 def savebenrating(ben):
@@ -145,6 +143,7 @@ def benactivation(event):
     when it's activated in a listbox; load benrating'''
     activeben = str(event.widget.get(ACTIVE))
     lblBenDescriptCaption.config(text=activeben+":")
+    pdb.set_trace()
     if activeben in beneficiariesdict.keys():
         description = beneficiariesdict[activeben]
     else:
@@ -152,8 +151,9 @@ def benactivation(event):
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
     txtbendescript.insert('end', description)
-    cmbRating.set(session.benratings[activeben])
     txtbendescript.config(state=DISABLED)
+    if activeben in session.benratings.keys():
+        cmbRating.set(session.benratings[activeben])
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
