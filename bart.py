@@ -98,13 +98,17 @@ def addToList(item, listsrc, listdest):
     '''casts item as str and adds it to the end of list if
     not already in list
     '''
+    # validate item
+    if str(item).strip() == '': return
     for i in range(listsrc.index('end')):
         if item == listsrc.get(i): 
-            print('The item is in the source list.')
+            sys.stdout.write('The item was not added; '+
+                    item+' is in the source list.')
             return
     for i in range(listdest.index('end')):
         if item == listdest.get(i):
-            print('The item is in the destination list.')
+            sys.stdout.write('The item was not added; '+
+                    item+' is in the destination list.')
             return
     listdest.insert('end', str(item))
     # FIXME add item to user-attributes.csv or user-beneficiaries.csv
@@ -143,7 +147,7 @@ def benactivation(event):
     when it's activated in a listbox; load benrating'''
     activeben = str(event.widget.get(ACTIVE))
     lblBenDescriptCaption.config(text=activeben+":")
-    pdb.set_trace()
+    #pdb.set_trace()
     if activeben in beneficiariesdict.keys():
         description = beneficiariesdict[activeben]
     else:
@@ -185,7 +189,7 @@ class Session():
                 'site',
                 'beneficiary',
                 'attribute',
-                'rating',
+                'benrating',
                 'explanation',
                 'timestamp'
                 ]
@@ -211,7 +215,7 @@ class Session():
                 ben = lbBenDest.get(i)
                 attribute = tabi.lbAttrDest.get(j)
                 self.ratings[dictnum][fields[0]] =\
-                        txtSite.get()
+                        session.site.get()
                 self.ratings[dictnum][fields[1]] =\
                         ben
                 self.ratings[dictnum][fields[2]] =\
@@ -243,6 +247,8 @@ class Session():
                 for i in range(len(self.ratings)):
                     writer.writerow(self.ratings[i])
             messagebox.showinfo("Saved", "The file of ratings was saved.")
+        else:
+            messagebox.showinfo('Aborted', 'Saving failed.')
     def lblist(self, lb):
         'list of items in lb between first and last'
         output = []
@@ -259,7 +265,7 @@ class Session():
             lb.insert('end', item)
     def save(self):
         "save data entered for loading later"
-        site = txtSite.get()
+        site = self.site.get()
         listbensrc = self.lblist(lbBenSrc)
         listbendest = self.lblist(lbBenDest)
         ratingslist = []
@@ -271,10 +277,11 @@ class Session():
             ratingi['listattrsrc'] = listattrsrc
             listattrdest = self.lblist(tabi.lbAttrDest)
             ratingi['listattrdest'] = listattrdest
-            #db.set_trace()
-            ben = str(lbBenDest.get(i))
-            rating = session.rating[ben]
-            ratingi['rating'] = rating
+            #pdb.set_trace()
+            if ben in session.benratings.keys():
+                ben = str(lbBenDest.get(i))
+                benrating = session.benratings[ben]
+                ratingi['benrating'] = benrating
             expln = tabi.txtexpln.get('0.1','end-1c')
             ratingi['explanation'] = expln
         formatstring = "%Y.%m.%dAT%H.%M.%S"
@@ -288,21 +295,23 @@ class Session():
                     self.lblist(lbBenDest),
                     ratingslist ]
             pickle.dump(picklelist, f)
-            #REMOVED pickle.HIGHEST_PROTOCOL as arg 3 above
     def load(self):
         'load saved data-entry-session into tool'
         session = Session()
         filename = askopenfilename(filetypes=[(
-            'pickled sessions',
+            'saved sessions',
             "*.pickle")])
+        if filename in ('', None):
+            messagebox.showinfo('Failed',
+                    'No session was selected to load.')
         with open(filename,'rb') as f:
             [
                 site,
                 listbensrc,
                 listbendest,
                 ratingslist ] =  pickle.load(f)
-        txtSite.delete(0,'end')
-        txtSite.insert('end', site)
+        #pdb.set_trace()
+        session.site.set(site)
         self.loadlb(listbensrc, lbBenSrc)
         self.loadlb(listbendest, lbBenDest)
         nbRatings.updatetabs()
@@ -314,9 +323,9 @@ class Session():
                 self.loadlb(ratinginfo['listattrsrc'], tabi.lbAttrSrc)
             if 'listattrdest' in ratinginfo.keys():
                 self.loadlb(ratinginfo['listattrdest'], tabi.lbAttrDest)
-            if  'rating' in ratinginfo.keys():
+            if  'benrating' in ratinginfo.keys():
                 beni = str(lbBenDest.get(i))
-                rating = ratinginfo['rating']
+                rating = ratinginfo['benrating']
                 session.benratings[beni] = rating
             if 'explanation' in ratinginfo.keys():
                 expln = ratinginfo['explanation']
