@@ -170,7 +170,8 @@
 
 - keep entire treeview visible
 
--  clear txtNewBen after insertion of new ben into lbBenDest
+- clear txtNewBen after insertion of new ben into lbBenDest
 
--  clear txtNewAttr after insertion of new attr into lbAttrDest
+- clear txtNewAttr after insertion of new attr into lbAttrDest
 
+- beneficiary's descriptions update on single-click

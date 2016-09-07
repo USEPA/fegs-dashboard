@@ -8,7 +8,8 @@ def csvtodict(paramfilename):
     with open(paramfilename, newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
         for line in csvreader:
-            params[line['name']] = line['description']
+            name = str(line['name']).strip()
+            params[name] = line['description']
     return params
 
 def texttostring(paramfilename):

@@ -50,7 +50,7 @@ TODO
 
 -  tab change focus from within Text widgets
 
--  enter key triggers default button on nb tab or nbRating tab
+-  <return> key triggers default button on nb tab or nbRating tab
 
 -  investigate localization support
 
@@ -58,11 +58,17 @@ TODO
 
 -  horizontal scrollbars on listboxes
 
-======================= PROMPT FOR FOCUS ======================
+======================= PROMPT FOR FINDING FOCUS ======================
 1. Fix bug on beneficiary page--> DEFINITIONS for beneficiaries should pop up with one click
-  - find and fix bug
-    - DONE <<listbox>> doesn't contain info of active element
-    - find active element manually
+  - DONE find and fix bug on beneficiaries' listboxes
+    - bindtags solution:
+      - lbBenSrc.bind_class('latebensrctag', '<<ListboxSelected>>', benactivation)
+      - taglist = lbBenSrc.bindtags()+('latebensrctag',)
+      - lbBenSrc.bindtags(taglist)
+      - lbBenDest.bind_class('latebendesttag', '<<ListboxSelected>>', benactivation)
+      - taglist = lbBenDest.bindtags()+('latebendesttag',)
+      - lbBenDest.bindtags(taglist)
+  - FIXME !!!! fix attrs listboxes, too !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 2. Create good, fair, and poor destination-listboxes for attributes
   - make good,fair, and poor buttons that move to respective listboxes
   - use only one remove button
@@ -151,15 +157,19 @@ def processBens():
 def benactivation(event):
     '''update description and rating of beneficiary
     when it's activated in a listbox'''
-    #curselection = event.widget.curselection()
-    #if curselection.size() > 1: return
-    #activeben = str(event.widget.get(curselection))
-    activeben = str(event.widget.get(ACTIVE))
-    lblBenDescriptCaption.config(text=activeben+":")
-    if activeben in beneficiariesdict.keys():
-        description = beneficiariesdict[activeben]
+    curselection = event.widget.curselection()
+    if len(curselection) != 1:
+        activeben = str(event.widget.get(ACTIVE))
+        #lblBenDescriptCaption.config(text=activeben+":")
     else:
-        description = ''
+        activeben = str(event.widget.get(curselection[0]))
+        # find beneficiary's description
+        if activeben in beneficiariesdict.keys():
+            description = beneficiariesdict[activeben]
+        else:
+            description = ''
+    # OLD: activeben = str(event.widget.get(ACTIVE))
+    # insert description
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
     txtbendescript.insert('end', description)
@@ -170,11 +180,14 @@ def bendoubleclick(event):
     parent = event.widget.master
     curselection = str(event.widget.curselection()[0])
     ben = event.widget.get(ACTIVE)
-    description = beneficiariesdict[ben]
-    parent.txtbendescript.config(state='normal')
-    parent.txtbendescript.delete(1.0, 'end')
-    parent.txtbendescript.insert('end', description)
-    parent.txtbendescript.config(state='disabled')
+    if ben in beneficiariesdict.keys():
+        description = beneficiariesdict[ben]
+    else:
+        description = ''
+    txtbendescript.config(state='normal')
+    txtbendescript.delete(1.0, 'end')
+    txtbendescript.insert('end', description)
+    txtbendescript.config(state='disabled')
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
@@ -627,8 +640,8 @@ btnNewBen = Button(frameChooseBens, text=">>",
             lbBenSrc,
             lbBenDest))
 btnNewBen.grid(row=3, column=3, sticky='n')
-btnBenRm = Button(frameChooseBens, text="<< Remove <<",\
-                  command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
+btnBenRm = Button(frameChooseBens, text="<< Remove <<",
+        command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
 btnBenRm.grid(row=4, column=2, columnspan=2)
 
 lbBenDest = Listbox(frameChooseBens, height=lbHeight, width=lbWidth, selectmode=EXTENDED)
@@ -657,12 +670,18 @@ txtbendescript.grid(
         columnspan=5,
         sticky=E+W)
 sbbendescript.config(command=txtbendescript.yview)
+
+lbBenSrc.bind_class('latebensrctag', '<<ListboxSelected>>', benactivation)
+lbBenDest.bind_class('latebendesttag', '<<ListboxSelected>>', benactivation)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
+tagtuple = ('latebensrctag',)+lbBenSrc.bindtags()
+lbBenSrc.bindtags(tagtuple)
+tagtuple = ('latebendesttag',)+lbBenDest.bindtags()
+lbBenDest.bindtags(tagtuple)
+
 lbBenSrc.bind('<Double-Button-1>', bendoubleclick)
 lbBenDest.bind('<Double-Button-1>', bendoubleclick)
-taglisti = list(lbBenSrc.bindtags)
-lbBenSrc.bindtags(taglist)
 
 lblbeninfocapt = Label(
         frameChooseBens,
@@ -750,7 +769,8 @@ btndebug = Button(
 btndebug.grid(row=3, column=0, columnspan=2)
 
 if __name__ == '__main__':
-    #root.mainloop()
-'''don't put any code which should run before the GUI
-closes after mainloop
+    root.mainloop()
+'''
+    don't put any code which should run before the GUI
+    closes after mainloop
 '''
