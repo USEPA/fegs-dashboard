@@ -61,15 +61,18 @@ TODO
 ======================= PROMPT FOR FOCUS ======================
 1. Fix bug on beneficiary page--> DEFINITIONS for beneficiaries should pop up with one click
   - find and fix bug
-2. CREATE buttons for rating each attribute individually (as discussed at meeting: USE buttons good/fair/poor)
+    - DONE <<listbox>> doesn't contain info of active element
+    - find active element manually
+2. Create good, fair, and poor destination-listboxes for attributes
   - make good,fair, and poor buttons that move to respective listboxes
   - use only one remove button
-  - make listboxselect deselect other listboxes on page
-  - as there is only one listbox item selected on page, remove knows which item to remove
+  - make listboxselect deselect all other listboxes on page
+      - as there is only one listbox item selected on page, remove knows which item to remove
   - implement data-structure for beneficiary-ratings and attribute-ratings:
     - each data-row gets fields:
       - timestamp, site, ben, benrating, benexpln, attr, attrrating, attrexpln 
-3. CREATE overall rating on BENEFICIARY PAGE (move from attribute page. Should say, "How satisfied, overall, is this beneficiary with the site?)
+3. CREATE overall rating on ATTRIBUTE PAGE
+  - "How satisfied, overall, is this beneficiary with the site?
   - move rating above lblBenDescriptCaption
 4. Change wording in Green boxes according to new draft. KW will email new wording on Friday, August 26.
   - new draft?
@@ -147,7 +150,10 @@ def processBens():
     nb.select(frameProcessBens)
 def benactivation(event):
     '''update description and rating of beneficiary
-    when it's activated in a listbox; load benrating'''
+    when it's activated in a listbox'''
+    #curselection = event.widget.curselection()
+    #if curselection.size() > 1: return
+    #activeben = str(event.widget.get(curselection))
     activeben = str(event.widget.get(ACTIVE))
     lblBenDescriptCaption.config(text=activeben+":")
     if activeben in beneficiariesdict.keys():
@@ -160,12 +166,21 @@ def benactivation(event):
     txtbendescript.config(state=DISABLED)
     if activeben in session.benratings.keys():
         cmbRating.set(session.benratings[activeben])
+def bendoubleclick(event):
+    parent = event.widget.master
+    curselection = str(event.widget.curselection()[0])
+    ben = event.widget.get(ACTIVE)
+    description = beneficiariesdict[ben]
+    parent.txtbendescript.config(state='normal')
+    parent.txtbendescript.delete(1.0, 'end')
+    parent.txtbendescript.insert('end', description)
+    parent.txtbendescript.config(state='disabled')
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
-    parent.lblattrdescriptcaption.config(text=str(
-        event.widget.get(ACTIVE))+":")
-    description = attributesdict[event.widget.get(ACTIVE)]
+    attr = str(event.widget.get(ACTIVE)) 
+    parent.lblattrdescriptcaption.config(text=attr)
+    description = attributesdict[attr]
     parent.txtattrdescript.config(state='normal')
     parent.txtattrdescript.delete(1.0, 'end')
     parent.txtattrdescript.insert('end', description)
@@ -644,6 +659,10 @@ txtbendescript.grid(
 sbbendescript.config(command=txtbendescript.yview)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
 lbBenDest.bind('<<ListboxSelect>>', benactivation)
+lbBenSrc.bind('<Double-Button-1>', bendoubleclick)
+lbBenDest.bind('<Double-Button-1>', bendoubleclick)
+taglisti = list(lbBenSrc.bindtags)
+lbBenSrc.bindtags(taglist)
 
 lblbeninfocapt = Label(
         frameChooseBens,
@@ -731,7 +750,7 @@ btndebug = Button(
 btndebug.grid(row=3, column=0, columnspan=2)
 
 if __name__ == '__main__':
-    root.mainloop()
+    #root.mainloop()
 '''don't put any code which should run before the GUI
 closes after mainloop
 '''
