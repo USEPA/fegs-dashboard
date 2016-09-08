@@ -375,8 +375,10 @@ class Ratings_Notebook(Notebook):
         self.labels = []
     def selectnext(self):
         'select next ben to rate if not on last ben'
-        if self.index('current') < self.index('end'):
+        if self.index('current')+1 < self.index('end'):
             self.select(self.index('current')+1)
+        else:
+            self.select(0)
     def cleartabs(self):
         "clear all tabs from object"
         numtabs = self.index('end')
