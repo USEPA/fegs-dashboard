@@ -132,7 +132,7 @@ def addToList(textbox, listsrc, listdest):
     messagebox.showinfo('Added', 'This item was added:\n'+item)
     textbox.delete(0, END)
 def benratingsaver(event):
-    savebenrating(str(lbBenDest.get(ACTIVE)))
+    savebenrating(str(lbBenDest.get(ACTIVE)),event.widget.master.cmbRating.get)#
 def savebenrating(ben):
     session.benratings[ben] = cmbRating.get()
 def loadbenrating(ben):
@@ -160,7 +160,10 @@ def benactivation(event):
     curselection = event.widget.curselection()
     if len(curselection) != 1:
         activeben = str(event.widget.get(ACTIVE))
-        #lblBenDescriptCaption.config(text=activeben+":")
+        if activeben in beneficiariesdict.keys():
+            description = beneficiariesdict[activeben]
+        else:
+            description = ''
     else:
         activeben = str(event.widget.get(curselection[0]))
         # find beneficiary's description
@@ -168,7 +171,11 @@ def benactivation(event):
             description = beneficiariesdict[activeben]
         else:
             description = ''
-    # OLD: activeben = str(event.widget.get(ACTIVE))
+    activeben = str(event.widget.get(ACTIVE))
+    if activeben in beneficiariesdict.keys():
+       description = beneficiariesdict[activeben]
+    else:
+       description = ''
     # insert description
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
@@ -521,6 +528,15 @@ class Ratings_Notebook(Notebook):
                     text="Next",
                     command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=14, column=0, columnspan=6)
+            # update attribute's description
+            #lbBenSrc.bind('<<ListboxSelect>>', benactivation)
+            tabi.lbAttrDest.bind_class('lateattrsrctag', '<<ListboxSelected>>', attractivation)
+            tagtuple = ('lateattrsrctag',)+tabi.lbAttrSrc.bindtags()
+            tabi.lbAttrDest.bindtags(tagtuple)
+            #lbBenDest.bind('<<ListboxSelect>>', benactivation)
+            tabi.lbAttrDest.bind_class('lateattrdesttag', '<<ListboxSelected>>', attractivation)
+            tagtuple = ('lateattrdesttag',)+tabi.lbAttrDest.bindtags()
+            tabi.lbAttrDest.bindtags(tagtuple)
 
 # parametrizations
 lbHeight = 16
@@ -681,9 +697,6 @@ tagtuple = ('latebensrctag',)+lbBenSrc.bindtags()
 lbBenSrc.bindtags(tagtuple)
 tagtuple = ('latebendesttag',)+lbBenDest.bindtags()
 lbBenDest.bindtags(tagtuple)
-
-lbBenSrc.bind('<Double-Button-1>', bendoubleclick)
-lbBenDest.bind('<Double-Button-1>', bendoubleclick)
 
 lblbeninfocapt = Label(
         frameChooseBens,
