@@ -129,7 +129,7 @@ def addToList(textbox, listsrc, listdest):
     listdest.insert('end', str(item))
     # FIXME add to user-attributes.csv or user-beneficiaries.csv
     # additemtocsv(item, description, csv)
-    messagebox.showinfo('Added', 'This item was added:\n'+item)
+    messagebox.showinfo('Added '+item, item+' were added to the list.')
     textbox.delete(0, END)
 def benratingsaver(event):
     parent = event.widget.master
@@ -143,7 +143,6 @@ def loadbenrating(ben):
     cmbRating.set(session.benratings[ben])
 def getbenrating(ben):
     #FIXME
-    pdb.set_trace()
     index = session.benratings.index(ben)
     session.benratings[ben] = session.ratings(index)
 def additemtocsv(item, description, csvfilename):
@@ -400,10 +399,10 @@ class Ratings_Notebook(Notebook):
         "clear all tabs from object"
         numtabs = self.index('end')
         for i in range(numtabs):
-            self.forget(self.tablist[i])
+            tabi = self.tablist[i]
+            self.forget(tabi)
     def updatetabs(self):
         "update tabs to reflect lbBenDest"
-        pdb.set_trace()
         self.cleartabs()
         for i in range(lbBenDest.size()):
             self.tablist.append(Frame(self))
@@ -450,7 +449,7 @@ class Ratings_Notebook(Notebook):
                     row=4,
                     column=1,
                     rowspan=4,
-                    sticky=W+N+S)
+                    sticky='wns')
             tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
             for attribute in attributes:
                 tabi.lbAttrSrc.insert('end', attribute)
@@ -483,42 +482,15 @@ class Ratings_Notebook(Notebook):
             tabi.lbAttrDest = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
             tabi.lbAttrDest.grid(row=4, column=4, rowspan=4, sticky='e')
-            tabi.lbAttrDest.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrDest.yview)
             tabi.sbAttrDest.grid(
                     row=4,
                     column=5,
                     rowspan=4,
-                    sticky=W+N+S)
+                    sticky='wns')
             tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
-            ## description of active attribute
-            #tabi.lblattrdescriptcaption = Label(tabi,
-            #        text="Attribute:")
-            #tabi.lblattrdescriptcaption.grid(
-            #        row=8,
-            #        column=0,
-            #        columnspan=6)
-            #tabi.sbattrdescript = Scrollbar(
-            #        tabi,
-            #        name='sbattrdescript')
-            #tabi.sbattrdescript.grid(row=9, column=5)
-            #tabi.txtattrdescript = Text(
-            #        tabi,
-            #        name='txtattrdescript',
-            #        yscrollcommand=tabi.sbattrdescript.set)
-            #tabi.txtattrdescript.config(
-            #        state='disabled',
-            #        background='#dfd',
-            #        wrap='word',
-            #        height=3)
-            #tabi.txtattrdescript.grid(
-            #        row=9,
-            #        column=0,
-            #        columnspan=5)
-            #tabi.sbattrdescript.config(
-            #        command=tabi.txtattrdescript.yview)
-            # explanation of rating
+            # rating-comments from user
             tabi.lblexplncaption = Label(
                     tabi,
                     text="Comments:")
@@ -527,7 +499,7 @@ class Ratings_Notebook(Notebook):
                     column=0,
                     columnspan=6)
             tabi.sbexpln = Scrollbar(tabi)
-            tabi.sbexpln.grid(row=13, column=5, sticky=N+S)
+            tabi.sbexpln.grid(row=13, column=5, sticky='ns')
             tabi.txtexpln = Text(tabi,
                     height=10,
                     width=60,
@@ -538,7 +510,7 @@ class Ratings_Notebook(Notebook):
                     row=13,
                     column=0,
                     columnspan=5,
-                    sticky=E+W)
+                    sticky='ew')
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
@@ -547,19 +519,6 @@ class Ratings_Notebook(Notebook):
                     text="Next",
                     command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=15, column=0, columnspan=6)
-            ## update attribute's description
-            #tabi.lbAttrDest.bind_class('lateattrsrctag',
-            #        '<<ListboxSelected>>',
-            #        attractivation)
-            #tabi.lbAttrSrc.bind('<<ListboxSelect>>', attractivation)
-            #tagtuple = tabi.lbAttrSrc.bindtags()+('lateattrsrctag',)
-            #tabi.lbAttrSrc.bindtags(tagtuple)
-            #tabi.lbAttrDest.bind_class('lateattrdesttag',
-            #        '<<ListboxSelected>>',
-            #        attractivation)
-            #tabi.lbAttrDest.bind('<<ListboxSelect>>', attractivation)
-            #tagtuple = tabi.lbAttrDest.bindtags()+('lateattrdesttag',)
-            #tabi.lbAttrDest.bindtags(tagtuple)
 
 # parametrizations
 lbHeight = 16
@@ -709,7 +668,7 @@ txtbendescript.grid(
         row=6,
         column=0,
         columnspan=5,
-        sticky=E+W)
+        sticky='ew')
 sbbendescript.config(command=txtbendescript.yview)
 
 # describe ben on select in listbox
