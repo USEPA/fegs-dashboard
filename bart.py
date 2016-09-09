@@ -72,11 +72,12 @@ TODO
 2. Create good, fair, and poor destination-listboxes for attributes
   - make good,fair, and poor buttons that move to respective listboxes
   - use only one remove button
+  - track lbAttr* contents with session.lbAttr*
   - make listboxselect deselect all other listboxes on page
       - as there is only one listbox item selected on page, remove knows which item to remove
   - implement data-structure for beneficiary-ratings and attribute-ratings:
-    - each data-row gets fields:
-      - timestamp, site, ben, benrating, benexpln, attr, attrrating, attrexpln 
+    - each rating has fields:
+      - timestamp, site, ben, benrating, benexpln, attr, attrrating, expln 
 3. CREATE overall rating on ATTRIBUTE PAGE
   - "How satisfied, overall, is this beneficiary with the site?
   - move rating above lblBenDescriptCaption
@@ -403,78 +404,203 @@ class Ratings_Notebook(Notebook):
                     row=2,
                     column=0,
                     columnspan=6)
-            tabi.cmbRating.bind('<<ComboboxSelected>>', benratingsaver)
-            tabi.cmbRating.bind('<FocusOut>', benratingsaver)
+            tabi.cmbRating.bind(
+                    '<<ComboboxSelected>>',
+                    benratingsaver)
+            tabi.cmbRating.bind(
+                    '<FocusOut>',
+                    benratingsaver)
             self.add(tabi, text=ben)
             # instructions for rating attributes
             txtAttrsInstructions = Text(tabi)
-            txtAttrsInstructions.insert('end', attrsinstructions)
+            txtAttrsInstructions.insert(
+                    'end',
+                    attrsinstructions)
             txtAttrsInstructions.config(
                     state='disabled',
                     background='#dfd',
                     wrap='word',
                     height=3)
-            txtAttrsInstructions.grid(row=3, column=0, columnspan=6)
+            txtAttrsInstructions.grid(row=3,
+                    column=0,
+                    columnspan=6)
             # source listbox of attributes
-            tabi.lbAttrSrc = Listbox(tabi, height=lbheight,
-                    width=lbWidth, selectmode='extended')
-            tabi.lbAttrSrc.grid(row=4, column=0, rowspan=6, sticky='e')
-            tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
-            tabi.sbAttrSrc = Scrollbar(tabi, orient='vertical',
+            tabi.lbAttrSrc = Listbox(tabi,
+                    height=lbheight,
+                    width=lbWidth,
+                    selectmode='extended')
+            tabi.lbAttrSrc.grid(
+                    row=4,
+                    column=0,
+                    rowspan=6,
+                    sticky='e')
+            tabi.sbAttrSrc = Scrollbar(
+                    tabi,
+                    orient='vertical',
                     command=tabi.lbAttrSrc.yview)
             tabi.sbAttrSrc.grid(
                     row=4,
                     column=1,
                     rowspan=6,
                     sticky='wns')
-            tabi.lbAttrSrc.config(yscrollcommand=tabi.sbAttrSrc.set)
+            tabi.lbAttrSrc.config(
+                    yscrollcommand=tabi.sbAttrSrc.set)
             for attribute in attributes:
                 tabi.lbAttrSrc.insert('end', attribute)
-            # widgets between listboxes
-            tabi.btnAttrGood = Button(tabi, text=">> Good >>",
-                    command=lambda tabi=tabi: moveBetweenLists(
-                        tabi.lbAttrSrc, tabi.lbAttrDest))
-            tabi.btnAttrGood.grid(row=4, column=2, columnspan=2)
-            tabi.btnAttrFair = Button(tabi, text=">> Fair >>",
-                    command=lambda tabi=tabi: moveBetweenLists(
-                        tabi.lbAttrSrc, tabi.lbAttrDest))
-            tabi.btnAttrFair.grid(row=5, column=2, columnspan=2)
-            tabi.btnAttrPoor = Button(tabi, text=">> Poor >>",
-                    command=lambda tabi=tabi: moveBetweenLists(
-                        tabi.lbAttrSrc, tabi.lbAttrDest))
-            tabi.btnAttrPoor.grid(row=6, column=2, columnspan=2)
-            tabi.lblnewattr = Label(
+            #############################
+            # widgets between listboxes #
+            #############################
+            tabi.btnAttrGood = Button(
                     tabi,
-                    text='Add a New Attribute')
-            tabi.lblnewattr.grid(
-                    row=6,
+                    text=">> Good >>",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrSrc,
+                        tabi.lbAttrGood))
+            tabi.btnAttrGood.grid(
+                    row=5,
                     column=2,
-                    columnspan=2,
-                    sticky='s')
-            tabi.txtNewAttr = Entry(tabi)
-            tabi.txtNewAttr.grid(row=7, column=2, sticky='ns', ipady=4)
-            tabi.btnNewAttr = Button(tabi, text=">>",
-                    command=lambda tabi=tabi: addToList(
+                    columnspan=2)
+            tabi.btnAttrFair = Button(
+                    tabi,
+                    text=">> Fair >>",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrSrc,
+                        tabi.lbAttrFair))
+            tabi.btnAttrFair.grid(
+                    row=7,
+                    column=2,
+                    columnspan=2)
+            tabi.btnAttrPoor = Button(
+                    tabi,
+                    text=">> Poor >>",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrSrc,
+                        tabi.lbAttrPoor))
+            tabi.btnAttrPoor.grid(
+                    row=9,
+                    column=2,
+                    columnspan=2)
+            #tabi.lblnewattr = Label(
+            #        tabi,
+            #        text='Add a New Attribute')
+            #tabi.lblnewattr.grid(
+            #        row=7,
+            #        column=2,
+            #        columnspan=2,
+            #        sticky='s')
+            tabi.btnNewAttr = Button(
+                    tabi,
+                    text="<<",
+                    command=lambda tabi=tabi:
+                    addToList(
                         tabi.txtNewAttr,
                         tabi.lbAttrSrc,
                         tabi.lbAttrDest))
-            tabi.btnNewAttr.grid(row=7, column=3, sticky='ns')
-            tabi.btnAttrRm = Button(tabi, text="<< Remove <<",
-                    command=lambda tabi=tabi: moveBetweenLists(
-                        tabi.lbAttrDest, tabi.lbAttrSrc))
-            tabi.btnAttrRm.grid(row=7, column=2, columnspan=2)
-            # destination listbox of attributes
-            tabi.lbAttrDest = Listbox(tabi, height=lbheight,
-                    width=lbWidth, selectmode='extended')
-            tabi.lbAttrDest.grid(row=4, column=4, rowspan=4, sticky='e')
-            tabi.sbAttrDest = Scrollbar(tabi, orient='vertical',
-                    command=tabi.lbAttrDest.yview)
-            tabi.sbAttrDest.grid(
+            tabi.btnNewAttr.grid(
+                    row=6,
+                    column=2)
+            tabi.txtNewAttr = Entry(tabi)
+            tabi.txtNewAttr.insert(
+                        0,
+                        'Add a New Attribute')
+            tabi.txtNewAttr.grid(
+                    row=6,
+                    column=3)
+            tabi.btnAttrRm = Button(
+                    tabi,
+                    text="<< Remove <<",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrDest,
+                        tabi.lbAttrSrc))
+            tabi.btnAttrRm.grid(
+                    row=8,
+                    column=2,
+                    columnspan=2)
+            #######################################
+            # destination listboxes of attributes #
+            #######################################
+            tabi.lblgood = Label(
+                    tabi,
+                    text='Good Attributes:')
+            tabi.lblgood.grid(
                     row=4,
+                    column=4,
+                    columnspan=2)
+            tabi.lbAttrGood = Listbox(
+                    tabi,
+                    height=5,
+                    width=lbWidth,
+                    selectmode='extended')
+            tabi.lbAttrGood.grid(
+                    row=5,
+                    column=4,
+                    sticky='e')
+            tabi.sbAttrGood = Scrollbar(
+                    tabi,
+                    orient='vertical',
+                    command=tabi.lbAttrGood.yview)
+            tabi.sbAttrGood.grid(
+                    row=5,
                     column=5,
-                    rowspan=4,
                     sticky='wns')
-            tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
+            tabi.lbAttrGood.config(
+                    yscrollcommand=tabi.sbAttrGood.set)
+            tabi.lblfair = Label(
+                    tabi,
+                    text='Fair Attributes:')
+            tabi.lblfair.grid(
+                    row=6,
+                    column=4,
+                    columnspan=2)
+            tabi.lbAttrFair = Listbox(
+                    tabi,
+                    height=5,
+                    width=lbWidth,
+                    selectmode='extended')
+            tabi.lbAttrFair.grid(
+                    row=7,
+                    column=4,
+                    sticky='e')
+            tabi.sbAttrFair = Scrollbar(
+                    tabi,
+                    orient='vertical',
+                    command=tabi.lbAttrFair.yview)
+            tabi.sbAttrFair.grid(
+                    row=7,
+                    column=5,
+                    sticky='wns')
+            tabi.lbAttrFair.config(
+                    yscrollcommand=tabi.sbAttrFair.set)
+            tabi.lblpoor = Label(
+                    tabi,
+                    text='Poor Attributes:')
+            tabi.lblpoor.grid(
+                    row=8,
+                    column=4,
+                    columnspan=2)
+            tabi.lbAttrPoor = Listbox(
+                    tabi,
+                    height=5,
+                    width=lbWidth,
+                    selectmode='extended')
+            tabi.lbAttrPoor.grid(
+                    row=9,
+                    column=4,
+                    sticky='e')
+            tabi.sbAttrPoor = Scrollbar(
+                    tabi,
+                    orient='vertical',
+                    command=tabi.lbAttrPoor.yview)
+            tabi.sbAttrPoor.grid(
+                    row=9,
+                    column=5,
+                    sticky='wns')
+            tabi.lbAttrPoor.config(
+                    yscrollcommand=tabi.sbAttrPoor.set)
             # rating-comments from user
             tabi.lblexplncaption = Label(
                     tabi,
@@ -484,7 +610,10 @@ class Ratings_Notebook(Notebook):
                     column=0,
                     columnspan=6)
             tabi.sbexpln = Scrollbar(tabi)
-            tabi.sbexpln.grid(row=13, column=5, sticky='ns')
+            tabi.sbexpln.grid(
+                    row=13,
+                    column=5,
+                    sticky='ns')
             tabi.txtexpln = Text(tabi,
                     height=10,
                     width=60,
