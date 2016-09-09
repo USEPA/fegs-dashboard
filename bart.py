@@ -132,13 +132,20 @@ def addToList(textbox, listsrc, listdest):
     messagebox.showinfo('Added', 'This item was added:\n'+item)
     textbox.delete(0, END)
 def benratingsaver(event):
-    savebenrating(str(lbBenDest.get(ACTIVE)),event.widget.master.cmbRating.get)#
-def savebenrating(ben):
-    session.benratings[ben] = cmbRating.get()
+    parent = event.widget.master
+    i = nbRatings.index('current')
+    savebenrating(
+            ben=str(nbRatings.labels[i]['text']),
+            rating=parent.cmbRating.get())
+def savebenrating(ben, rating):
+    session.benratings[ben] = rating
 def loadbenrating(ben):
     cmbRating.set(session.benratings[ben])
 def getbenrating(ben):
-    session.benratings[ben] = cmbRating.get()
+    #FIXME
+    pdb.set_trace()
+    index = session.benratings.index(ben)
+    session.benratings[ben] = session.ratings(index)
 def additemtocsv(item, description, csvfilename):
     with open(csvfilename,'a') as csvfile:
         writer = csv.writer(csvfile)
@@ -160,22 +167,14 @@ def benactivation(event):
     curselection = event.widget.curselection()
     if len(curselection) != 1:
         activeben = str(event.widget.get(ACTIVE))
-        if activeben in beneficiariesdict.keys():
-            description = beneficiariesdict[activeben]
-        else:
-            description = ''
     else:
         activeben = str(event.widget.get(curselection[0]))
         # find beneficiary's description
-        if activeben in beneficiariesdict.keys():
-            description = beneficiariesdict[activeben]
-        else:
-            description = ''
-    activeben = str(event.widget.get(ACTIVE))
     if activeben in beneficiariesdict.keys():
-       description = beneficiariesdict[activeben]
+        description = beneficiariesdict[activeben]
     else:
-       description = ''
+        description = ''
+    lblBenDescriptCaption.config(text=activeben+":")
     # insert description
     txtbendescript.config(state=NORMAL)
     txtbendescript.delete(1.0, 'end')
@@ -186,7 +185,7 @@ def benactivation(event):
 def bendoubleclick(event):
     parent = event.widget.master
     curselection = str(event.widget.curselection()[0])
-    ben = event.widget.get(ACTIVE)
+    ben = event.widget.get(curselection)
     if ben in beneficiariesdict.keys():
         description = beneficiariesdict[ben]
     else:
@@ -198,9 +197,22 @@ def bendoubleclick(event):
 def attractivation(event):
     "describe attribute when it's activated in a listbox"
     parent = event.widget.master
-    attr = str(event.widget.get(ACTIVE)) 
-    parent.lblattrdescriptcaption.config(text=attr)
-    description = attributesdict[attr]
+    #attr = str(event.widget.get(ACTIVE)) 
+    #parent.lblattrdescriptcaption.config(text=attr)
+    #description = attributesdict[attr]
+    '''update description and rating of beneficiary
+    when it's activated in a listbox'''
+    curselection = event.widget.curselection()
+    if len(curselection) != 1:
+        activeattr = str(event.widget.get(ACTIVE))
+    else:
+        activeattr = str(event.widget.get(curselection[0]))
+    # find attr's description
+    if activeattr in attributesdict.keys():
+        description = attributesdict[activeattr]
+    # no description found => clear description
+    else:
+        description = ''
     parent.txtattrdescript.config(state='normal')
     parent.txtattrdescript.delete(1.0, 'end')
     parent.txtattrdescript.insert('end', description)
@@ -215,7 +227,11 @@ def updateratingstree(event):
         for field in session.fieldnames:
             values.append(item[field])
         values = tuple(values)
-        ratingstree.insert('',row,text='row '+str(row),values=values)
+        ratingstree.insert(
+                '',
+                row,
+                text='row '+str(row),
+                values=values)
         row += 1
 
 class Session():
@@ -226,7 +242,7 @@ class Session():
                 'site',
                 'beneficiary',
                 'attribute',
-                'benrating',
+                'rating',
                 'explanation',
                 'timestamp'
                 ]
@@ -314,9 +330,8 @@ class Session():
             ratingi['listattrsrc'] = listattrsrc
             listattrdest = self.lblist(tabi.lbAttrDest)
             ratingi['listattrdest'] = listattrdest
-            #pdb.set_trace()
+            ben = str(lbBenDest.get(i))
             if ben in session.benratings.keys():
-                ben = str(lbBenDest.get(i))
                 benrating = session.benratings[ben]
                 ratingi['benrating'] = benrating
             expln = tabi.txtexpln.get('0.1','end-1c')
@@ -334,12 +349,12 @@ class Session():
             pickle.dump(picklelist, f)
     def load(self):
         'load saved data-entry-session into tool'
-        session = Session()
+        session.__init__()
         filename = askopenfilename(filetypes=[(
             'saved sessions',
             "*.pickle")])
         if filename in ('', None):
-            messagebox.showinfo('Failed',
+            messagebox.showinfo('Aborted',
                     'No session was selected to load.')
         with open(filename,'rb') as f:
             [
@@ -347,13 +362,8 @@ class Session():
                 listbensrc,
                 listbendest,
                 ratingslist ] =  pickle.load(f)
-        #FIXME bug in load clears txtsite
-        #pdb.set_trace()
-        #messagebox.showinfo('Before','site-val: '+
-        #        session.site.get())
+        #FIXME bug in load clears txtSite
         session.site.set(site)
-        #messagebox.showinfo('After','site-val: '+
-        #        session.site.get())
         self.loadlb(listbensrc, lbBenSrc)
         self.loadlb(listbendest, lbBenDest)
         nbRatings.updatetabs()
@@ -393,6 +403,7 @@ class Ratings_Notebook(Notebook):
             self.forget(self.tablist[i])
     def updatetabs(self):
         "update tabs to reflect lbBenDest"
+        pdb.set_trace()
         self.cleartabs()
         for i in range(lbBenDest.size()):
             self.tablist.append(Frame(self))
@@ -404,32 +415,39 @@ class Ratings_Notebook(Notebook):
                     row=0,
                     column=0,
                     columnspan=6)
-            ##############FIXME BELOW#################################################################
-            # combobox of rating-values; text area for explanation
-            lblbenratingcaption = Label(
+            # combobox of rating-values
+            tabi.lblbenratingcaption = Label(
                     tabi,
                     text='How satisfied, overall, are '+
                     ben.lower()+' with the site?')
-            lblbenratingcaption.grid(row=1,
+            tabi.lblbenratingcaption.grid(row=1,
                     column=0,columnspan=6)
-            cmbRating = Combobox(tabi, values=ratings)
-            cmbRating.grid(
+            tabi.cmbRating = Combobox(tabi, values=ratings)
+            tabi.cmbRating.grid(
                     row=2,
                     column=0,
                     columnspan=6)
-            cmbRating.bind('<<ComboboxSelected>>', benratingsaver)
-            cmbRating.bind('<FocusOut>', benratingsaver)
-            ##############FIXME ABOVE#################################################################
+            tabi.cmbRating.bind('<<ComboboxSelected>>', benratingsaver)
+            tabi.cmbRating.bind('<FocusOut>', benratingsaver)
             self.add(tabi, text=ben)
+            # instructions for rating attributes
+            txtAttrsInstructions = Text(tabi)
+            txtAttrsInstructions.insert('end', attrsinstructions)
+            txtAttrsInstructions.config(
+                    state='disabled',
+                    background='#dfd',
+                    wrap='word',
+                    height=3)
+            txtAttrsInstructions.grid(row=3, column=0, columnspan=6)
             # source listbox of attributes
             tabi.lbAttrSrc = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
-            tabi.lbAttrSrc.grid(row=3, column=0, rowspan=4, sticky=E)
+            tabi.lbAttrSrc.grid(row=4, column=0, rowspan=4, sticky=E)
             tabi.lbAttrSrc.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrSrc = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrSrc.yview)
             tabi.sbAttrSrc.grid(
-                    row=3,
+                    row=4,
                     column=1,
                     rowspan=4,
                     sticky=W+N+S)
@@ -440,75 +458,76 @@ class Ratings_Notebook(Notebook):
             tabi.btnAttrAdd = Button(tabi, text=">> Add >>",
                     command=lambda tabi=tabi: moveBetweenLists(
                         tabi.lbAttrSrc, tabi.lbAttrDest))
-            tabi.btnAttrAdd.grid(row=3, column=2, columnspan=2)
+            tabi.btnAttrAdd.grid(row=4, column=2, columnspan=2)
             tabi.lblnewattr = Label(
                     tabi,
                     text='Add a New Attribute')
             tabi.lblnewattr.grid(
-                    row=4,
+                    row=5,
                     column=2,
                     columnspan=2,
                     sticky='s')
             tabi.txtNewAttr = Entry(tabi)
-            tabi.txtNewAttr.grid(row=5, column=2, sticky='n', ipady=4)
+            tabi.txtNewAttr.grid(row=6, column=2, sticky='n', ipady=4)
             tabi.btnNewAttr = Button(tabi, text=">>",
                     command=lambda tabi=tabi: addToList(
                         tabi.txtNewAttr,
                         tabi.lbAttrSrc,
                         tabi.lbAttrDest))
-            tabi.btnNewAttr.grid(row=5, column=3, sticky='n')
+            tabi.btnNewAttr.grid(row=6, column=3, sticky='n')
             tabi.btnAttrRm = Button(tabi, text="<< Remove <<",
                     command=lambda tabi=tabi: moveBetweenLists(
                         tabi.lbAttrDest, tabi.lbAttrSrc))
-            tabi.btnAttrRm.grid(row=6, column=2, columnspan=2)
+            tabi.btnAttrRm.grid(row=7, column=2, columnspan=2)
             # destination listbox of attributes
             tabi.lbAttrDest = Listbox(tabi, height=lbHeight,
                     width=lbWidth, selectmode=EXTENDED)
-            tabi.lbAttrDest.grid(row=3, column=4, rowspan=4, sticky='e')
+            tabi.lbAttrDest.grid(row=4, column=4, rowspan=4, sticky='e')
             tabi.lbAttrDest.bind('<<ListboxSelect>>',attractivation)
             tabi.sbAttrDest = Scrollbar(tabi, orient=VERTICAL,
                     command=tabi.lbAttrDest.yview)
             tabi.sbAttrDest.grid(
-                    row=3,
+                    row=4,
                     column=5,
                     rowspan=4,
                     sticky=W+N+S)
             tabi.lbAttrDest.config(yscrollcommand=tabi.sbAttrDest.set)
-            # description of active attribute
-            tabi.lblattrdescriptcaption = Label(tabi,
-                    text="Attribute:")
-            tabi.lblattrdescriptcaption.grid(
-                    row=7,
-                    column=0,
-                    columnspan=6)
-            tabi.sbattrdescript = Scrollbar(
-                    tabi,
-                    name='sbattrdescript')
-            tabi.sbattrdescript.grid(row=8, column=5)
-            tabi.txtattrdescript = Text(
-                    tabi,
-                    name='txtattrdescript',
-                    yscrollcommand=tabi.sbattrdescript.set)
-            tabi.txtattrdescript.config(
-                    state='disabled',
-                    background='#dfd',
-                    wrap='word',
-                    height=3)
-            tabi.txtattrdescript.grid(
-                    row=8,
-                    column=0,
-                    columnspan=5)
-            tabi.sbattrdescript.config(
-                    command=tabi.txtattrdescript.yview)
+            ## description of active attribute
+            #tabi.lblattrdescriptcaption = Label(tabi,
+            #        text="Attribute:")
+            #tabi.lblattrdescriptcaption.grid(
+            #        row=8,
+            #        column=0,
+            #        columnspan=6)
+            #tabi.sbattrdescript = Scrollbar(
+            #        tabi,
+            #        name='sbattrdescript')
+            #tabi.sbattrdescript.grid(row=9, column=5)
+            #tabi.txtattrdescript = Text(
+            #        tabi,
+            #        name='txtattrdescript',
+            #        yscrollcommand=tabi.sbattrdescript.set)
+            #tabi.txtattrdescript.config(
+            #        state='disabled',
+            #        background='#dfd',
+            #        wrap='word',
+            #        height=3)
+            #tabi.txtattrdescript.grid(
+            #        row=9,
+            #        column=0,
+            #        columnspan=5)
+            #tabi.sbattrdescript.config(
+            #        command=tabi.txtattrdescript.yview)
+            # explanation of rating
             tabi.lblexplncaption = Label(
                     tabi,
-                    text="Add an explanation for this beneficiary's rating:")
+                    text="Comments:")
             tabi.lblexplncaption.grid(
-                    row=11,
+                    row=12,
                     column=0,
                     columnspan=6)
             tabi.sbexpln = Scrollbar(tabi)
-            tabi.sbexpln.grid(row=12, column=5, sticky=N+S)
+            tabi.sbexpln.grid(row=13, column=5, sticky=N+S)
             tabi.txtexpln = Text(tabi,
                     height=10,
                     width=60,
@@ -516,27 +535,31 @@ class Ratings_Notebook(Notebook):
             tabi.txtexpln.bind('<FocusOut>', lambda _: scrapeExpln)
             tabi.sbexpln.config(command=tabi.txtexpln.yview)
             tabi.txtexpln.grid(
-                    row=12,
+                    row=13,
                     column=0,
                     columnspan=5,
                     sticky=E+W)
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
-            tabi.btnnextben.grid(row=13, column=0,columnspan=6)
+            tabi.btnnextben.grid(row=14, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
                     text="Next",
                     command=lambda: nb.select(frameSave))
-            tabi.btnRate.grid(row=14, column=0, columnspan=6)
-            # update attribute's description
-            #lbBenSrc.bind('<<ListboxSelect>>', benactivation)
-            tabi.lbAttrDest.bind_class('lateattrsrctag', '<<ListboxSelected>>', attractivation)
-            tagtuple = ('lateattrsrctag',)+tabi.lbAttrSrc.bindtags()
-            tabi.lbAttrDest.bindtags(tagtuple)
-            #lbBenDest.bind('<<ListboxSelect>>', benactivation)
-            tabi.lbAttrDest.bind_class('lateattrdesttag', '<<ListboxSelected>>', attractivation)
-            tagtuple = ('lateattrdesttag',)+tabi.lbAttrDest.bindtags()
-            tabi.lbAttrDest.bindtags(tagtuple)
+            tabi.btnRate.grid(row=15, column=0, columnspan=6)
+            ## update attribute's description
+            #tabi.lbAttrDest.bind_class('lateattrsrctag',
+            #        '<<ListboxSelected>>',
+            #        attractivation)
+            #tabi.lbAttrSrc.bind('<<ListboxSelect>>', attractivation)
+            #tagtuple = tabi.lbAttrSrc.bindtags()+('lateattrsrctag',)
+            #tabi.lbAttrSrc.bindtags(tagtuple)
+            #tabi.lbAttrDest.bind_class('lateattrdesttag',
+            #        '<<ListboxSelected>>',
+            #        attractivation)
+            #tabi.lbAttrDest.bind('<<ListboxSelect>>', attractivation)
+            #tagtuple = tabi.lbAttrDest.bindtags()+('lateattrdesttag',)
+            #tabi.lbAttrDest.bindtags(tagtuple)
 
 # parametrizations
 lbHeight = 16
@@ -689,14 +712,22 @@ txtbendescript.grid(
         sticky=E+W)
 sbbendescript.config(command=txtbendescript.yview)
 
-lbBenSrc.bind_class('latebensrctag', '<<ListboxSelected>>', benactivation)
-lbBenDest.bind_class('latebendesttag', '<<ListboxSelected>>', benactivation)
+# describe ben on select in listbox
+lbBenSrc.bind_class('latebensrctag',
+        '<<ListboxSelected>>',
+        benactivation)
 lbBenSrc.bind('<<ListboxSelect>>', benactivation)
-lbBenDest.bind('<<ListboxSelect>>', benactivation)
 tagtuple = ('latebensrctag',)+lbBenSrc.bindtags()
 lbBenSrc.bindtags(tagtuple)
+lbBenDest.bind_class('latebendesttag',
+        '<<ListboxSelected>>',
+        benactivation)
+lbBenDest.bind('<<ListboxSelect>>', benactivation)
 tagtuple = ('latebendesttag',)+lbBenDest.bindtags()
 lbBenDest.bindtags(tagtuple)
+
+lbBenSrc.bind('<Double-Button-1>', bendoubleclick)
+lbBenDest.bind('<Double-Button-1>', bendoubleclick)
 
 lblbeninfocapt = Label(
         frameChooseBens,
@@ -725,16 +756,6 @@ btnProcessBens.grid(row=11, column=0, columnspan=6)
 frameProcessBens = Frame(nb, name='frameProcessBens')
 frameProcessBens.pack(fill=BOTH)
 nb.add(frameProcessBens, text="Process Beneficiaries")
-
-txtAttrsInstructions = Text(frameProcessBens)
-txtAttrsInstructions.insert('end', attrsinstructions)
-txtAttrsInstructions.config(
-        state='disabled',
-        background='#dfd',
-        wrap='word',
-        height=3)
-
-txtAttrsInstructions.pack()
 
 nbRatings = Ratings_Notebook()
 # tabs for ratings are populated on use btnProcessBens
