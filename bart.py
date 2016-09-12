@@ -491,38 +491,9 @@ class Ratings_Notebook(Notebook):
             #        column=2,
             #        columnspan=2,
             #        sticky='s')
-            tabi.btnNewAttr = Button(
-                    tabi,
-                    text="<<",
-                    command=lambda tabi=tabi:
-                    addToList(
-                        tabi.txtNewAttr,
-                        tabi.lbAttrSrc,
-                        tabi.lbAttrDest))
-            tabi.btnNewAttr.grid(
-                    row=6,
-                    column=2)
-            tabi.txtNewAttr = Entry(tabi)
-            tabi.txtNewAttr.insert(
-                        0,
-                        'Add a New Attribute')
-            tabi.txtNewAttr.grid(
-                    row=6,
-                    column=3)
-            tabi.btnAttrRm = Button(
-                    tabi,
-                    text="<< Remove <<",
-                    command=lambda tabi=tabi:
-                    moveBetweenLists(
-                        tabi.lbAttrDest,
-                        tabi.lbAttrSrc))
-            tabi.btnAttrRm.grid(
-                    row=8,
-                    column=2,
-                    columnspan=2)
-            #######################################
-            # destination listboxes of attributes #
-            #######################################
+            ###############################################
+            # destination attr listboxes and their labels #
+            ###############################################
             tabi.lblgood = Label(
                     tabi,
                     text='Good Attributes:')
@@ -601,17 +572,51 @@ class Ratings_Notebook(Notebook):
                     sticky='wns')
             tabi.lbAttrPoor.config(
                     yscrollcommand=tabi.sbAttrPoor.set)
-            # rating-comments from user
+            ############################# 
+            # remove attr; add new attr #
+            ############################# 
+            tabi.btnNewAttr = Button(
+                    tabi,
+                    text="^^ Add ^^",
+                    command=lambda tabi=tabi:
+                    addToList(
+                        tabi.txtNewAttr,
+                        tabi.lbAttrSrc,
+                        tabi.lbAttrDest))
+            tabi.btnNewAttr.grid(
+                    row=10,
+                    column=0)
+            tabi.txtNewAttr = Entry(tabi)
+            tabi.txtNewAttr.insert(
+                        0,
+                        'Add a New Attribute')
+            tabi.txtNewAttr.grid(
+                    row=11,
+                    column=0)
+            tabi.btnAttrRm = Button(
+                    tabi,
+                    text="<< Remove <<",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrDest,
+                        tabi.lbAttrSrc))
+            tabi.btnAttrRm.grid(
+                    row=10,
+                    column=2,
+                    columnspan=2)
+            ################### 
+            # rating-comments #
+            ################### 
             tabi.lblexplncaption = Label(
                     tabi,
                     text="Comments:")
             tabi.lblexplncaption.grid(
-                    row=12,
+                    row=20,
                     column=0,
                     columnspan=6)
             tabi.sbexpln = Scrollbar(tabi)
             tabi.sbexpln.grid(
-                    row=13,
+                    row=20,
                     column=5,
                     sticky='ns')
             tabi.txtexpln = Text(tabi,
@@ -621,18 +626,18 @@ class Ratings_Notebook(Notebook):
             tabi.txtexpln.bind('<FocusOut>', lambda _: scrapeExpln)
             tabi.sbexpln.config(command=tabi.txtexpln.yview)
             tabi.txtexpln.grid(
-                    row=13,
+                    row=30,
                     column=0,
                     columnspan=5,
                     sticky='ew')
             tabi.btnnextben = Button(tabi,
                     text='Process the Next Beneficiary',
                     command=lambda: self.selectnext())
-            tabi.btnnextben.grid(row=14, column=0,columnspan=6)
+            tabi.btnnextben.grid(row=50, column=0,columnspan=6)
             tabi.btnRate = Button(tabi,
                     text="Next",
                     command=lambda: nb.select(frameSave))
-            tabi.btnRate.grid(row=15, column=0, columnspan=6)
+            tabi.btnRate.grid(row=60, column=0, columnspan=6)
 
 # parametrizations
 lbheight = 18
