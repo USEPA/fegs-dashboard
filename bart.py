@@ -70,10 +70,10 @@ TODO
       - lbBenDest.bindtags(taglist)
   - FIXME !!!! fix attrs listboxes, too !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 2. Create good, fair, and poor destination-listboxes for attributes
-  - make good,fair, and poor buttons that move to respective listboxes
-  - use only one remove button
-  - track lbAttr* contents with session.lbAttr*
-  - make listboxselect deselect all other listboxes on page
+  - DONE make good,fair, and poor buttons that move to respective listboxes
+  - DONE make a single attr-remove button
+  - track lbAttr* contents with session.tablist[i].lbAttr*
+  - DONE make listboxselect deselect all other listboxes on page
       - as there is only one listbox item selected on page, remove knows which item to remove
   - implement data-structure for beneficiary-ratings and attribute-ratings:
     - each rating has fields:
@@ -108,18 +108,19 @@ def moveBetweenLists(fromList, toList):
         index = indices.pop()-i
         toList.insert('end', fromList.get(index))
         fromList.delete(index)
-def addToList(textbox, listsrc, listdest):
+def addToList(textbox, listoflistboxes, listdest):
     '''add textbox's contents to the end of
-    list if not already in list'''
+    list if not already in listboxes given'''
     item = str(textbox.get()).strip()
     # validate item
     if item == '': return
-    for i in range(listsrc.index('end')):
-        if item == listsrc.get(i): 
-            messagebox.showinfo('Cancelled',
-                    'The item was not added: "'+
-                    item+'" already in the source list.')
-            return
+    for lb in listoflistboxes:
+        for i in range(lb.index('end')):
+            if item == lb.get(i): 
+                messagebox.showinfo('Cancelled',
+                        'The item was not added: "'+
+                        item+'" already in a list.')
+                return
     for i in range(listdest.index('end')):
         if item == listdest.get(i):
             messagebox.showinfo('Cancelled',
@@ -582,7 +583,7 @@ class Ratings_Notebook(Notebook):
                     addToList(
                         tabi.txtNewAttr,
                         tabi.lbAttrSrc,
-                        tabi.lbAttrDest))
+                        tabi.lbAttrSrc))
             tabi.btnNewAttr.grid(
                     row=10,
                     column=0)
