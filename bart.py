@@ -11,8 +11,8 @@
   4. place pdb.set_trace() where breakpoints are desired
   5. run script
 ===========================================================
-===========================================================
 TODO
+===========================================================
 
 -  make a separate csv for user-added beneficiaries
 
@@ -640,7 +640,7 @@ class Ratings_Notebook(Notebook):
                     command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=60, column=0, columnspan=6)
 
-# parametrizations
+# parametrizations #
 lbheight = 18
 lbWidth = 32
 fontHeight = 10
