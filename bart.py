@@ -59,32 +59,6 @@ TODO
 -  horizontal scrollbars on listboxes
 
 ======================= PROMPT FOR FINDING FOCUS ======================
-1. Fix bug on beneficiary page--> DEFINITIONS for beneficiaries should pop up with one click
-  - DONE find and fix bug on beneficiaries' listboxes
-    - bindtags solution:
-      - lbBenSrc.bind_class('latebensrctag', '<<ListboxSelected>>', benactivation)
-      - taglist = lbBenSrc.bindtags()+('latebensrctag',)
-      - lbBenSrc.bindtags(taglist)
-      - lbBenDest.bind_class('latebendesttag', '<<ListboxSelected>>', benactivation)
-      - taglist = lbBenDest.bindtags()+('latebendesttag',)
-      - lbBenDest.bindtags(taglist)
-  - FIXME !!!! fix attrs listboxes, too !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-2. Create good, fair, and poor destination-listboxes for attributes
-  - DONE make good,fair, and poor buttons that move to respective listboxes
-  - DONE make a single attr-remove button
-  - track lbAttr* contents with session.tablist[i].lbAttr*
-  - DONE make listboxselect deselect all other listboxes on page
-      - as there is only one listbox item selected on page, remove knows which item to remove
-  - implement data-structure for beneficiary-ratings and attribute-ratings:
-    - each rating has fields:
-      - timestamp, site, ben, benrating, benexpln, attr, attrrating, expln 
-3. CREATE overall rating on ATTRIBUTE PAGE
-  - "How satisfied, overall, is this beneficiary with the site?
-  - move rating above lblBenDescriptCaption
-4. Change wording in Green boxes according to new draft. KW will email new wording on Friday, August 26.
-  - new draft?
-5. Update welcome page (see email with new, simplified welcome message). 
-  - new message?
 '''
 
 # imports
@@ -110,7 +84,7 @@ def moveBetweenLists(fromList, toList):
         fromList.delete(index)
 def addToList(textbox, listoflistboxes, listdest):
     '''add textbox's contents to the end of
-    list if not already in listboxes given'''
+    list if not already in listboxes '''
     item = str(textbox.get()).strip()
     # validate item
     if item == '': return
@@ -125,13 +99,15 @@ def addToList(textbox, listoflistboxes, listdest):
         if item == listdest.get(i):
             messagebox.showinfo('Cancelled',
                     'The item was not added: "'+
-                    item+'" already in the destination list.')
+                    item+'" already in destination list.')
             return
     # insert item into listdest
     listdest.insert('end', str(item))
     # FIXME add to user-attributes.csv or user-beneficiaries.csv
     # additemtocsv(item, description, csv)
-    messagebox.showinfo('Added '+item, item+' were added to the list.')
+    messagebox.showinfo(
+            'Added '+item,
+            item+' were added to the list.')
     textbox.delete(0, 'end')
 def benratingsaver(event):
     parent = event.widget.master
@@ -140,7 +116,7 @@ def benratingsaver(event):
             ben=str(nbRatings.labels[i]['text']),
             rating=parent.cmbRating.get())
 def savebenrating(ben, rating):
-    session.benratings[ben] = rating
+    session.ratings[ben].rating = rating
 def loadbenrating(ben):
     cmbRating.set(session.benratings[ben])
 def getbenrating(ben):
@@ -165,25 +141,37 @@ def processBens():
 def benactivation(event):
     '''update description and rating of beneficiary
     when it's activated in a listbox'''
+    #######################################
+    # retrieve name of active beneficiary #
+    #######################################
     curselection = event.widget.curselection()
     if len(curselection) != 1:
         activeben = str(event.widget.get('active'))
     else:
         activeben = str(event.widget.get(curselection[0]))
-        # find beneficiary's description
+    ############################################
+    # known rating for activeben => set rating #
+    ############################################
+    if activeben in session.ratings.keys():
+        if 'rating' in session.ratings[activeben].keys():
+            cmbRating.set(session.ratings[activeben][rating])
+    ################################## 
+    # find beneficiary's description #
+    ################################## 
     if activeben in beneficiariesdict.keys():
         description = beneficiariesdict[activeben]
     else:
         description = ''
     lblBenDescriptCaption.config(text=activeben+":")
-    # insert description
+    ######################
+    # insert description #
+    ######################
     txtbendescript.config(state='normal')
     txtbendescript.delete(1.0, 'end')
     txtbendescript.insert('end', description)
     txtbendescript.config(state='disabled')
-    if activeben in session.benratings.keys():
-        cmbRating.set(session.benratings[activeben])
 def bendoubleclick(event):
+    'describe ben on double click'
     parent = event.widget.master
     curselection = str(event.widget.curselection()[0])
     ben = event.widget.get(curselection)
@@ -216,52 +204,46 @@ class Session():
     "centralize data; hide widgets' accessors"
     def __init__(self):
         'statically bound attributes timestamp and site'
-        self.fieldnames = [
-                'site',
-                'beneficiary',
-                'attribute',
-                'rating',
-                'explanation',
-                'timestamp'
-                ]
+        self.fieldnames = \
+        [
+            'Site',
+            'Beneficiary',
+            'Attribute',
+            "Beneficiary's Comprehensive Rating",
+            'Rating of Attribute',
+            'Explanation',
+            'Timestamp'
+        ]
         self.timestamp = str(datetime.now())
         self.site = StringVar()
         txtSite.config(textvariable=self.site)
         self.bens = StringVar()
         lbBenDest.config(listvariable=self.bens)
-        self.ratings = []
-        self.benratings = {}
+        self.ratings = {}
     def update(self):
         if len(self.ratings) != 0:
             del(self.ratings)
-            self.ratings = []
+            self.ratings = {}
+        listbensrc = lblist(lbBenSrc)
+        listbendest = lblist(lbBenDest)
         fields = self.fieldnames
-        dictnum = 0
-        session.benratings = {}
         for i in range(len(nbRatings.tablist)):
-            limit = nbRatings.tablist[i].lbAttrDest.index('end')+1
-            for j in range(limit):
-                self.ratings.append({})
-                tabi = nbRatings.tablist[i]
-                ben = lbBenDest.get(i)
-                attribute = tabi.lbAttrDest.get(j)
-                self.ratings[dictnum][fields[0]] =\
-                        session.site.get()
-                self.ratings[dictnum][fields[1]] =\
-                        ben
-                self.ratings[dictnum][fields[2]] =\
-                        attribute
-                self.ratings[dictnum][fields[3]] =\
-                        getbenrating(ben)
-                self.ratings[dictnum][fields[4]] =\
-                        tabi.txtexpln.get('0.1', 'end-1c')
-                self.ratings[dictnum][fields[-1]] =\
-                        str(datetime.now())
-                dictnum += 1
+            tabi = nbRatings.tablist[i]
+            ben = tabi.ben
+            ratings = self.ratings
+            ratings[ben] = {}
+            ratings[ben]['listattrsrc'] = lblist(tabi.lbAttrSrc)
+            ratings[ben]['listattrgood'] = lblist(tabi.lbAttrGood)
+            ratings[ben]['listattrfair'] = lblist(tabi.lbAttrFair)
+            ratings[ben]['listattrpoor'] = lblist(tabi.lbAttrPoor)
+            ratings[ben]['rating'] = tabi.cmbRating.get()
+            ratings[ben]['explanation'] = tabi.txtExpln.get('0.1', 'end-1c')
     def saveRatings(self):
         'save ratings to csv with fieldnames as header'
         self.update()
-        # create timestamp for the initially suggested filename
+        #############################################
+        # generate timestamp for suggested filename #
+        #############################################
         formatstring = "%Y.%m.%dAT%H.%M.%S"
         timestamp = datetime.now().strftime(formatstring)
         initialfile = 'saved-fegs-ratings-'+timestamp+'.csv'
@@ -387,6 +369,7 @@ class Ratings_Notebook(Notebook):
             self.tablist.append(Frame(self))
             tabi = self.tablist[i]
             ben = lbBenDest.get(i)
+            tabi.ben = ben
             tabi.pack()
             self.labels.append(Label(tabi, text=ben, font=(16)))
             self.labels[i].grid(
@@ -462,6 +445,18 @@ class Ratings_Notebook(Notebook):
                     row=5,
                     column=2,
                     columnspan=2)
+            tabi.btnAttrNotGood = Button(
+                    tabi,
+                    text="< < Not Good < <",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrGood,
+                        tabi.lbAttrSrc))
+            tabi.btnAttrNotGood.grid(
+                    row=6,
+                    column=2,
+                    columnspan=2,
+                    sticky='n')
             tabi.btnAttrFair = Button(
                     tabi,
                     text=">> Fair >>",
@@ -473,6 +468,18 @@ class Ratings_Notebook(Notebook):
                     row=7,
                     column=2,
                     columnspan=2)
+            tabi.btnAttrNotFair = Button(
+                    tabi,
+                    text="< < Not Fair < <",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrFair,
+                        tabi.lbAttrSrc))
+            tabi.btnAttrNotFair.grid(
+                    row=8,
+                    column=2,
+                    columnspan=2,
+                    sticky='n')
             tabi.btnAttrPoor = Button(
                     tabi,
                     text=">> Poor >>",
@@ -484,14 +491,18 @@ class Ratings_Notebook(Notebook):
                     row=9,
                     column=2,
                     columnspan=2)
-            #tabi.lblnewattr = Label(
-            #        tabi,
-            #        text='Add a New Attribute')
-            #tabi.lblnewattr.grid(
-            #        row=7,
-            #        column=2,
-            #        columnspan=2,
-            #        sticky='s')
+            tabi.btnAttrNotPoor = Button(
+                    tabi,
+                    text="< < Not Poor < <",
+                    command=lambda tabi=tabi:
+                    moveBetweenLists(
+                        tabi.lbAttrPoor,
+                        tabi.lbAttrSrc))
+            tabi.btnAttrNotPoor.grid(
+                    row=10,
+                    column=2,
+                    columnspan=2,
+                    sticky='n')
             ###############################################
             # destination attr listboxes and their labels #
             ###############################################
@@ -573,16 +584,21 @@ class Ratings_Notebook(Notebook):
                     sticky='wns')
             tabi.lbAttrPoor.config(
                     yscrollcommand=tabi.sbAttrPoor.set)
-            ############################# 
-            # remove attr; add new attr #
-            ############################# 
+            ################
+            # add new attr #
+            ################
             tabi.btnNewAttr = Button(
                     tabi,
                     text="^^ Add ^^",
                     command=lambda tabi=tabi:
                     addToList(
                         tabi.txtNewAttr,
-                        tabi.lbAttrSrc,
+                        [
+                            tabi.lbAttrSrc,
+                            tabi.lbAttrGood,
+                            tabi.lbAttrFair,
+                            tabi.lbAttrPoor
+                        ],
                         tabi.lbAttrSrc))
             tabi.btnNewAttr.grid(
                     row=10,
@@ -594,17 +610,6 @@ class Ratings_Notebook(Notebook):
             tabi.txtNewAttr.grid(
                     row=11,
                     column=0)
-            tabi.btnAttrRm = Button(
-                    tabi,
-                    text="<< Remove <<",
-                    command=lambda tabi=tabi:
-                    moveBetweenLists(
-                        tabi.lbAttrDest,
-                        tabi.lbAttrSrc))
-            tabi.btnAttrRm.grid(
-                    row=10,
-                    column=2,
-                    columnspan=2)
             ################### 
             # rating-comments #
             ################### 
@@ -640,7 +645,9 @@ class Ratings_Notebook(Notebook):
                     command=lambda: nb.select(frameSave))
             tabi.btnRate.grid(row=60, column=0, columnspan=6)
 
+#####################
 # parametrizations #
+#####################
 lbheight = 18
 lbWidth = 32
 fontHeight = 10
@@ -650,7 +657,6 @@ beneficiaries = sorted([beneficiary for beneficiary in beneficiariesdict.keys()]
 attributesdict = csvtodict('parameters/attributes.csv')
 attributes = sorted([attribute for attribute in attributesdict.keys()])
 ratings = lineListFromFilename("parameters/ratings.txt")
-# CMS
 tooltitle = 'BART: Beneficiary Assessment and Review Tool'
 describetool = texttostring('parameters/describetool.txt')
 beninstructions = texttostring('parameters/beninstructions.txt')
@@ -660,18 +666,28 @@ attrsinstructions = texttostring('parameters/attrsinstructions.txt')
 ###############
 # tkinter GUI #
 ###############
+# make the root Toplevel Frame
 root = Tk()
+# parametrized standard font-size 
 root.option_add("*Font", "courier " + str(fontHeight))
+# instantiate a frame with this general syntax:
+# <name> = <Class>(<parentwidget>[, **options])
+# metasyntax-key: <required> [optional], | is or
 master = Frame(root, name='master')
+# every visible widget needs a geometry-manager:
+# <name>.pack|grid|place([**options])
 master.pack(fill='both')
+# insert the tool's title
 root.title(tooltitle)
-root.protocol("WM_DELETE_WINDOW", master.quit)
+root.protocol("WM_DELETE_WINDOW", root.quit)
+# make a Notebook of tabs
 nb = Notebook(master, name='nb')
 nb.pack(fill='both', padx=2, pady=3)
 
 ###############################
 # globally accessible buttons #
 ###############################
+# these buttons appear outside every tab
 btnsave = Button(master,
         text='Save this session to continue these ratings later.',
         command=lambda: session.save())
@@ -757,7 +773,7 @@ txtNewBen.grid(row=3, column=2, sticky='n', ipady='4')
 btnNewBen = Button(frameChooseBens, text=">>",
         command=lambda: addToList(
             txtNewBen,
-            lbBenSrc,
+            [lbBenSrc],
             lbBenDest))
 btnNewBen.grid(row=3, column=3, sticky='n')
 btnBenRm = Button(frameChooseBens, text="<< Remove <<",
