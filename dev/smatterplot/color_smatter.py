@@ -22,9 +22,9 @@ dx = 20
 dy = 20
 # load attrs from attrs.csv
 # load bens from bens.csv
-# x = len(attrs)
+# x = np.array(len(attrs))
 x = np.random.random(size=N) * dx
-# y = len(bens)
+# y = np.array(len(bens))
 y = np.random.random(size=N) * dy
 # S = ((attr, ben) for attr in attrs for ben in bens((x, y) for x in a for y in b))
 # S[(attr, ben)][k] = <numratings>
