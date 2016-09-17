@@ -6,5 +6,5 @@ USER:
 - identifies a site
 - identifies who benefits from the natural resources at the site
 - identifies the natural features at the site that are important--such as fish or a beautiful view
-- rates the site for different types of venefivciaries of natural features
+- rates the site for different types of beneficiaries of natural features
 - create a report to share with others
