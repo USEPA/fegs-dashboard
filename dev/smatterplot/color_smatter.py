@@ -5,9 +5,12 @@ from bokeh.plotting import figure, show, output_file
 # circle(attr_i, ben_i) draws a circle at (attr_i, ben_i)
 # draw circles at each grid-point
 # load csv of attrs
+# - use csv.reader or pd.read_csv()
 # make plot-axis with attrs on it
 # load csv of bens
 # make plot-axis with bens on it
+# - bokeh.model.axes.Axis.CategoricalAxis is the class to use
+# - 
 # map rating-values: "Good"|->1, "Fair"|->0, "Poor"|->-1
 # load csv of ratings
 # R = set of all k ratings
