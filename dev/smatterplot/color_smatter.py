@@ -1,8 +1,48 @@
 import numpy as np
-import os
 import pandas as pd
+import os
+
 from bokeh.plotting import figure, show, output_file
 
+'''
+###########
+# imports #
+###########
+import pandas as pd
+from bokeh.plotting import figure, show, output_file
+####################
+# parametrizations #
+####################
+# WIP CONCATENATE LIST OF RATINGS-FILES@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+path = r'~/fegs-dashboard/ratings'
+all_files = glob.glob(os.path.join(path, "*.csv"))
+df = pd.concat(pd.read_csv(f) for f in all_files)
+#####################
+# load csv of attrs #
+#####################
+attrscsvfile = '~/fegs-dashboard/parameters/attributes.csv'
+attrsdf = pd.read_csv(attrcsvfile)
+attrs = list(df.name)
+####################
+# load csv of bens #
+####################
+benscsvfile = '~/fegs-dashboard/parameters/beneficiaries.csv'
+bensdf = pd.read_csv(benscsvfile)
+attrs = list(df.name)
+###########################################
+# make figure with attrs,bens on the axes #
+###########################################
+p = figure(x_range=attrs, y_range=bens)
+############################################################
+# map rating-values: {"Good"|->1, "Fair"|->0, "Poor"|->-1} #
+############################################################
+values = {"Good":1, "Fair":0, "Poor":-1}
+# kth_rating_value = values[ratings[k]]
+##################################################
+# load csv of ratings # R = set of all k ratings #
+##################################################
+ratingsdf = pd.read_csv(tooldir+'parameters/ratings.csv')
+'''
 
 # R_i = set of all k_i ratings of (ben_i, attr_i)
 # count the number of ratings, k_i, for plot-point p_i in space S = attrs x bens
@@ -10,10 +50,16 @@ from bokeh.plotting import figure, show, output_file
 # make a map [0,1] -> Saturation s.t. E(p_i) |-> <saturation> 
 # weight(p_i) = k_i/k is in [0,1] for all i<k
 # draw circles at each grid-point
-# - circle(attr(i), ben(j)) draws a circle at (attr_i, ben_j)
+# - circle(attr_i, ben_i) draws a circle at (attr_i, ben_i)
+# - scatter(xlist,
+#           ylist,
+#           radius=radii,
+#           fill_color=colors,
+#           line_color=linecolor
+#           fill_alpha:=(a in [0:1]),
 
 
-N = 240
+N = 40
 dx = 50
 dy = 50
 # load attrs from attrs.csv

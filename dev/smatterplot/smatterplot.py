@@ -1,11 +1,11 @@
-
 ###########
 # imports #
 ###########
+from bokeh.plotting import figure, show, output_file
+import pandas as pd
 import numpy as np
 import os
-import pandas as pd
-from bokeh.plotting import figure, show, output_file
+import glob
 ####################
 # parametrizations #
 ####################
@@ -15,15 +15,15 @@ all_files = glob.glob(myglob)
 #####################
 # load csv of attrs #
 #####################
-attrspath = r'~/fegs-dashboard/parameters/attributes.csv'
-attrsdf = pd.read_csv(attrcsvfile)
-attrs = list(df.name)
+attrsfilename = os.path.join(r'~', 'fegs-dashboard', 'parameters', 'attributes.csv')
+attrsdf = pd.read_csv(attrsfilename)
+attrs = list(attrsdf.name)
 ####################
 # load csv of bens #
 ####################
 benspath = r'~/fegs-dashboard/parameters/beneficiaries.csv'
-bensdf = pd.read_csv(benscsvfile)
-bens = list(df.name)
+bensdf = pd.read_csv(benspath)
+bens = list(bensdf.name)
 ###########################################
 # make figure with attrs,bens on the axes #
 ###########################################
@@ -41,7 +41,8 @@ goupedratings = ratingsdf.groupby(['Attribute', 'Beneficiary'])
 ########
 # plot #
 ########
-xlist = list(df.groupby(
+xlist = list(df.groupby('Attribute'))
+ylist = list(df.groubby('Beneficiary'))
 scatter(xlist=attrs,
         ylist=bens,
         radius=10,#radius=f(weight(p))
