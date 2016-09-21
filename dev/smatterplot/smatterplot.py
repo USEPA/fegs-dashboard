@@ -1,4 +1,3 @@
-
 ###########
 # imports #
 ###########
@@ -48,3 +47,11 @@ scatter(xlist=attrs,
         #fill_color=,
         line_color=None,
         fill_alpha=0.5)
+
+# R_i = set of all k_i ratings of (ben_i, attr_i)
+# count the number of ratings, k_i, for plot-point p_i in space S = attrs x bens
+# calculate E(p_i) = SUM_j(r_j)/k
+# make a map [0,1] -> Saturation s.t. E(p_i) |-> <saturation> 
+# weight(p_i) = k_i/k is in [0,1] for all i<k
+# draw circles at each grid-point
+# - circle(attr(i), ben(j)) draws a circle at (attr_i, ben_j)
