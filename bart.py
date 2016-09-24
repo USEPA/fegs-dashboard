@@ -118,6 +118,7 @@ import csv
 import pickle
 # import custom classes and functions
 from paramreader import csvtodict,texttostring
+from smatterplot import smatterplot
 
 def moveBetweenLists(fromList, toList):
     "move selected items between fromList and toList"
@@ -248,6 +249,13 @@ def updateratingstree(event):
                 text='rating '+str(ratingnumber),
                 values=values)
         ratingnumber += 1
+def plotratings():
+    'plot current ratings'
+    # define temp filename to save ratings
+    ratingsfilename = os.path.join('tmp', 'plottedratings.csv')
+    session.saveratings(ratingsfilename)
+    smatterplot(ratingsfilename)
+    #FIXME FINISH CALL TO smatterplot.py
 
 class Session():
     "centralize data; hide widgets' accessors"
@@ -314,9 +322,10 @@ class Session():
             for attr in attrs:
                 self.ratingslist.append(
                         self.scrape(attr,ben))
-    def saveRatings(self):
-        'save ratings to csv with fieldnames as header'
-        self.update()
+    def getratingsfilename(self):
+        '''return filename 
+        suggest a filename and let user choose a filename
+        '''
         #############################################
         # generate timestamp for suggested filename #
         #############################################
@@ -324,6 +333,8 @@ class Session():
         timestamp = datetime.now().strftime(formatstring)
         initialfile = 'saved-fegs-ratings-'+timestamp+'.csv'
         filename = asksaveasfilename(initialfile=initialfile)
+        return filename
+    def saveratings(self, filename):
         if filename != None and filename != '':
             with open(
                     filename,
@@ -335,9 +346,17 @@ class Session():
                 writer.writeheader()
                 for i in range(len(self.ratingslist)):
                     writer.writerow(self.ratingslist[i])
-            messagebox.showinfo("Saved", "The file of ratings was saved.")
+            messagebox.showinfo(
+                    "Saved",
+                    "The file of ratings was saved as "+
+                    filename+' .')
         else:
             messagebox.showinfo('Aborted', 'Saving failed.')
+    def saveratingscallback(self):
+        'save ratings to csv with fieldnames as header'
+        self.update()
+        ratingsfilename = self.getratingsfilename()
+        self.saveratings(ratingsfilename)
     def lblist(self, lb):
         'list of items in lb between first and last'
         output = []
@@ -867,12 +886,20 @@ btnNewBen = Button(frameChooseBens, text=">>",
             lbBenDest))
 btnNewBen.grid(row=3, column=3, sticky='n')
 btnBenRm = Button(frameChooseBens, text="<< Remove <<",
-        command=lambda: moveBetweenLists(lbBenDest, lbBenSrc))
+        command=lambda: moveBetweenLists(
+            bBenDest,
+            lbBenSrc))
 btnBenRm.grid(row=4, column=2, columnspan=2)
 
-lbBenDest = Listbox(frameChooseBens, height=lbheight, width=lbWidth, selectmode='extended')
+lbBenDest = Listbox(
+        frameChooseBens,
+        height=lbheight,
+        width=lbWidth,
+        selectmode='extended')
 lbBenDest.grid(row=1, column=4, rowspan=4, sticky='e')
-sbBenDest = Scrollbar(frameChooseBens, orient='vertical', command=lbBenDest.yview)
+sbBenDest = Scrollbar(frameChooseBens,
+        orient='vertical',
+        command=lbBenDest.yview)
 sbBenDest.grid(row=1, column=5, rowspan=4, sticky='wns')
 lbBenDest.config(yscrollcommand=sbBenDest.set)
 
@@ -981,13 +1008,19 @@ for heading in session.fieldnames:
 
 btnSave = Button(frameSave, text="Save Ratings to a File")
 btnSave.grid(row=2, column=0, columnspan=2)
-btnSave.config(command=lambda: session.saveRatings())
+btnSave.config(command=lambda: session.saveratingscallback())
 
 btndebug = Button(
         frameSave,
         text="Debug",
-        command =lambda: pdb.set_trace())
-btndebug.grid(row=3, column=0, columnspan=2)
+        command=lambda: pdb.set_trace())
+#btndebug.grid(row=3, column=0, columnspan=2)
+
+btnplot = Button(
+        frameSave,
+        text="Plot",
+        command=plotratings)
+btnplot.grid(row=10, column=0, columnspan=2)
 
 if __name__ == '__main__':
     root.mainloop()
