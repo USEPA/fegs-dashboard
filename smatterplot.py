@@ -60,11 +60,11 @@ def smatterplot(filename=None):
     p = figure(x_range=minattrs, y_range=minbens)
     # tilt labels so they can be read
     p.xaxis.major_label_orientation = np.pi/4
-    #for (attr, ben) in zip(minattrs,minbens):
-    #    print(groupedratings[attr,ben].agg('mean')
     # make a circle for each rating-point (attr,ben)
-    p.circle(
+    circles = p.circle(
+            # iterable of x-values
             x=attrsvals,
+            # iterable of x-values
             y=bensvals,
             radius=.5,
             #radius=f(weight(p)),
