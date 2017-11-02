@@ -4,17 +4,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FEGS Scoping Tool</title>
+
     <style>
-      .legend {
-        width: 20px;
-        height: 20px;
-        margin: 5px;
-        border: 1px solid rgba(0, 0, 0, .2);
-        display: inline-block;
-      }
-      label {
-        display: block;
-      }
       .magnitude { background: #4f81bd; }
       .influence { background: #c0504d; }
       .interest { background: #9bbb59; }
@@ -24,31 +15,142 @@
       .rights { background: #2c4d75; }
       .fairness { background: #772c2a; }
       .representation { background: #5f7530; }
+      .legend {
+        width: 20px;
+        height: 20px;
+        border: 1px solid rgba(0, 0, 0, .2);
+        display: inline-block;
+      }
+      input {
+        max-width: 4em;
+      }
+      .weighting {
+        margin: 1em 0;
+        min-width: 300px;
+      }
+      [data-th='Color'] {
+        margin-top: 1em;
+      }
+      .weighting th {
+        position: absolute;
+        left: -10000px;
+      }
+      .weighting td {
+        display: block;
+      }
+      .weighting td:first-child {
+        padding-top: .1em;
+      }
+      .weighting td:last-child {
+        padding-bottom: .1em;
+      }
+      .weighting td:before {
+        content: attr(data-th) ": ";
+        font-weight: bold;
+        display: inline;
+      }
+      @media (min-width: 600px) {
+        .weighting td:before {
+          display: none;
+        }
+      }
+      .weighting th, .weighting td {
+        text-align: left;
+      }
+      @media (min-width: 600px) {
+        .weighting th, .weighting td {
+          display: table-cell;
+        }
+        .weighting th:first-child, .weighting td:first-child {
+          padding-left: 0;
+        }
+        .weighting th:last-child, .weighting td:last-child {
+          padding-right: 0;
+        }
+        [data-th='Color'] {
+          margin-top: none;
+        }
+        .weighting th {
+          position: unset;
+          left: auto;
+        }
+      }
+
+      .weighting th, .weighting td:before {
+        color: #555;
+      }
     </style>
+
   </head>
   <body>
     <h1>FEGS Scoping Tool</h1>
 
-    <h2>STEP 1: WEIGHTING</h2>
-    <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other critera relative to that most valued criterion.</p>
-    <div id="pie"></div>
-    <div class="weighting">
-      <label><div class="legend magnitude"></div>Magnitude/Probability of impact <input type="number" value="1"/></label>
-      <label><div class="legend influence"></div>Level of influence <input type="number" value="1"/></label>
-      <label><div class="legend interest"></div>Level of interest <input type="number" value="1"/></label>
-      <label><div class="legend urgency"></div>Urgency/ Temporal immediacy <input type="number" value="1"/></label>
-      <label><div class="legend proximity"></div>Proximity <input type="number" value="1"/></label>
-      <label><div class="legend economic-interest"></div>Economic interest <input type="number" value="1"/></label>
-      <label><div class="legend rights"></div>Rights <input type="number" value="1"/></label>
-      <label><div class="legend fairness"></div>Fairness <input type="number" value="1"/></label>
-      <label><div class="legend representation"></div>Underrepresented/Underserved representation <input type="number" value="1"/></label>
+    <div id="section-weighting"
+      <h2>STEP 1: WEIGHTING</h2>
+      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other critera relative to that most valued criterion.</p>
+      <div id="pie"></div>
+      <table class="weighting">
+        <thead>
+          <tr>
+            <th>Color</th>
+            <th>Label</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-th="Color"><span class="legend magnitude"></div></td>
+            <td data-th="Label">Magnitude/Probability of impact</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend influence"></div></td>
+            <td data-th="Label">Level of influence</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend interest"></div></td>
+            <td data-th="Label">Level of interest</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend urgency"></div></td>
+            <td data-th="Label">Urgency/ Temporal immediacy</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend proximity"></div></td>
+            <td data-th="Label">Proximity</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend economic-interest"></div></td>
+            <td data-th="Label">Economic interest</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend rights"></div></td>
+            <td data-th="Label">Rights</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend fairness"></div></td>
+            <td data-th="Label">Fairness</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+          <tr>
+            <td data-th="Color"><span class="legend representation"></div></td>
+            <td data-th="Label">Underrepresented/Underserved representation</td>
+            <td data-th="Value"><input type="number" value="1"/></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div id="stakeholders-section">
+    <div id="section-stakeholders">
       <h2>Stakeholders</h2>
       <div id="stakeholder-prioritization">
         <h3>Stakeholder Prioritization</h3>
-        
       </div>
     </div>
 
