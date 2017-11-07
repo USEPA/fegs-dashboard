@@ -598,7 +598,7 @@
         var stakeholderGroup = document.getElementById('stakeholder-group').value;
         var magnitudeProbabilityScore = Number.parseInt(getCheckedValueByName('magnitude-probability-score'));
         var magnitudeImpactScore = Number.parseInt(getCheckedValueByName('magnitude-impact-score'));
-        var influenceInterest = getCheckedValueByName('influence-score');
+        var influenceScore = getCheckedValueByName('influence-score');
         var levelOfInterestScore = getCheckedValueByName('level-of-interest-score');
         var urgencyScore = getCheckedValueByName('urgency-score');
         var proximityScore = getCheckedValueByName('proximity-score');
@@ -607,16 +607,14 @@
         var fairnessScore = getCheckedValueByName('fairness-score');
         var representationScore = getCheckedValueByName('representation-score');
 
-        var totalMagnitude;
+        var totalMagnitudeScore = 0;
         if (magnitudeProbabilityScore !== 0 && magnitudeImpactScore !== 0) {
-          totalMagnitude = magnitudeProbabilityScore + magnitudeImpactScore - 20;
-        } else {
-          totalMagnitude = 0;
+          totalMagnitudeScore = magnitudeProbabilityScore + magnitudeImpactScore - 20;
         }
 
         rowData.push(stakeholderGroup);
-        rowData.push(totalMagnitude);
-        rowData.push(influenceInterest);
+        rowData.push(totalMagnitudeScore);
+        rowData.push(influenceScore);
         rowData.push(levelOfInterestScore);
         rowData.push(urgencyScore);
         rowData.push(proximityScore);
