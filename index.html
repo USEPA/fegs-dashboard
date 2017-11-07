@@ -189,16 +189,16 @@
               <h4>Magnitude/Probability of impact</h4>
               <div>
                 <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted?</p>
-                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-01" value="100"/>High.</label>
-                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-02" value="75"/>Moderate.</label>
-                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-03" value="50"/>Low.</label>
+                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-01" value="60"/>High.</label>
+                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-02" value="40"/>Moderate.</label>
+                <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-03" value="20"/>Low.</label>
                 <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-04" value="0"/>None.</label>
               </div>
               <div>
                 <p>What is the magnitude of the impact?</p>
-                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-01" value="100"/>Significant.</label>
-                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-02" value="75"/>Moderate.</label>
-                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-03" value="50"/>Minimal.</label>
+                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-01" value="60"/>Significant.</label>
+                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-02" value="40"/>Moderate.</label>
+                <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-03" value="20"/>Minimal.</label>
                 <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-04" value="0"/>None.</label>
               </div>
             </label>
@@ -597,8 +597,8 @@
         var rowData = [];
 
         var stakeholderGroup = document.getElementById('stakeholder-group').value;
-        var magnitudeProbabilityScore = getCheckedValueByName('magnitude-probability-score');
-        var magnitudeImpactScore = getCheckedValueByName('magnitude-impact-score');
+        var magnitudeProbabilityScore = Number.parseInt(getCheckedValueByName('magnitude-probability-score'));
+        var magnitudeImpactScore = Number.parseInt(getCheckedValueByName('magnitude-impact-score'));
         var influenceInterest = getCheckedValueByName('influence-score');
         var levelOfInterestScore = getCheckedValueByName('level-of-interest-score');
         var urgencyScore = getCheckedValueByName('urgency-score');
@@ -608,8 +608,15 @@
         var fairnessScore = getCheckedValueByName('fairness-score');
         var representationScore = getCheckedValueByName('representation-score');
 
+        var totalMagnitude;
+        if (magnitudeProbabilityScore !== 0 && magnitudeImpactScore !== 0) {
+          totalMagnitude = magnitudeProbabilityScore + magnitudeImpactScore - 20;
+        } else {
+          totalMagnitude = 0;
+        }
+
         rowData.push(stakeholderGroup);
-        rowData.push(magnitudeProbabilityScore + magnitudeImpactScore); // calculate real value
+        rowData.push(totalMagnitude);
         rowData.push(influenceInterest);
         rowData.push(levelOfInterestScore);
         rowData.push(urgencyScore);
