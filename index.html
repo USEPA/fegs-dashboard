@@ -180,7 +180,8 @@
           <tbody>
           </tbody>
         </table>
-        <div id="add-stakeholder">
+        <button id="show-stakeholder-button" onclick="showAddStakeholder();">Add a new stakeholder group</button>
+        <div id="add-stakeholder" hidden>
           <div>
             <label>Stakeholder group <input type="text" id="stakeholder-group"/></label>
           </div>
@@ -262,8 +263,9 @@
             <label><input type="radio" name="representation-score" id="representation-score-01" value="100"/>Yes.</label>
             <label><input type="radio" name="representation-score" id="representation-score-02" value="0"/>No.</label>
           </div>
-        </div>
-        <button onclick="addStakeholder();">Add Stakeholder Group</button>        
+          <button onclick="addStakeholder();">Add this stakeholder</button>
+          <button onclick="cancelAddStakeholder();">Cancel</button>
+        </div>   
       </div>
     </div>
 
@@ -1611,6 +1613,34 @@
           var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
           var newText = document.createTextNode(rowData[i]); // Append a text node to the cell
           newCell.appendChild(newText);
+        }
+      }
+      function toggleVisibility(id) {
+        var element = document.getElementById(id);
+        if (element.style.display === "none" || element.style.display === '') {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+      }
+      function showAddStakeholder() {
+        toggleVisibility('add-stakeholder');
+      }
+      function cancelAddStakeholder(){
+        cancel('add-stakeholder');
+      }
+      function cancel(id) {
+        clear(id);
+        toggleVisibility(id);
+      }
+      function clear(id) {
+        var radio = document.getElementById(id).querySelectorAll('[type="radio"]');
+        var text = document.getElementById(id).querySelectorAll('[type="text"]');
+        for (var i = 0, length = text.length; i < length; i++) {
+          text[i].value = '';
+        }
+        for (var i = 0, length = radio.length; i < length; i++) {
+          radio[i].checked = false;
         }
       }
     </script>
