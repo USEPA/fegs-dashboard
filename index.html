@@ -93,6 +93,32 @@
       }
 
       .dark { background: #D9D9D9; }
+
+      .light-gray {
+        background-color: #d6d7d9;
+        border-radius: 3px;
+        padding: .1em 1em 1em 1em;
+        margin-bottom: .4em;
+      }
+
+      #stakeholders td, #stakeholders th {
+        border: 1px solid #d6d7d9;
+        padding: 8px;
+      }
+      #stakeholders tr:nth-child(even){
+        background-color: #f1f1f1;
+      }
+      #stakeholders th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #0071bc;
+        color: white;
+      }
+      #stakeholders {
+        border-collapse: collapse;
+        width: 100%;
+      }
     </style>
 
   </head>
@@ -100,7 +126,7 @@
     <h1>FEGS Scoping Tool</h1>
 
     <div id="section-weighting">
-      <h2>STEP 1: WEIGHTING</h2>
+      <h2>Weighting</h2>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other critera relative to that most valued criterion.</p>
       <div id="pie"></div>
       <table class="weighting">
@@ -168,6 +194,7 @@
         <table id="stakeholders">
           <thead>
             <tr>
+              <th></th>
               <th>Stakeholder group</th>
               <th>Magnitude/Probability of impact</th>
               <th>Level of influence</th>
@@ -185,20 +212,21 @@
         </table>
         <button id="show-stakeholder-button" onclick="showAddStakeholder();">Add a new stakeholder group</button>
         <div id="add-stakeholder" hidden>
-          <div>
-            <label>Stakeholder group <input type="text" id="stakeholder-group"/></label>
+          <h2>Add a new stakeholder</h2>
+          <div class="light-gray">
+            <label>Stakeholder group name <input type="text" id="stakeholder-group"/></label>
           </div>
           <div>
             <h4>Magnitude/Probability of impact</h4>
-            <div>
-              <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted?</p>
+            <div class="light-gray">
+              <p>1. If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted?</p>
               <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-01" value="60"/>High.</label>
               <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-02" value="40"/>Moderate.</label>
               <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-03" value="20"/>Low.</label>
               <label><input type="radio" name="magnitude-probability-score" id="magnitude-probability-score-04" value="0"/>None.</label>
             </div>
-            <div>
-              <p>What is the magnitude of the impact?</p>
+            <div class="light-gray">
+              <p>2. What is the magnitude of the impact?</p>
               <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-01" value="60"/>Significant.</label>
               <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-02" value="40"/>Moderate.</label>
               <label><input type="radio" name="magnitude-impact-score" id="magnitude-impact-score-03" value="20"/>Minimal.</label>
@@ -207,64 +235,80 @@
           </div>
           <div>
             <h4>Level of influence</h4>
-              <p>Does this stakeholder group have any formal or informal influence over the decision making process?</p>
-            <label><input type="radio" name="influence-score" id="influence-score-01" value="100"/>This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</label>
-            <label><input type="radio" name="influence-score" id="influence-score-02" value="50"/>This group has informal influence over the decision-making process.</label>
-            <label><input type="radio" name="influence-score" id="influence-score-03" value="0"/>This group has no influence over the decision-making process.</label>
+            <div class="light-gray">  
+              <p>3. Does this stakeholder group have any formal or informal influence over the decision making process?</p>
+              <label><input type="radio" name="influence-score" id="influence-score-01" value="100"/>This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</label>
+              <label><input type="radio" name="influence-score" id="influence-score-02" value="50"/>This group has informal influence over the decision-making process.</label>
+              <label><input type="radio" name="influence-score" id="influence-score-03" value="0"/>This group has no influence over the decision-making process.</label>
+            </div>
           </div>
           <div>
             <h4>Level of interest</h4>
-            <p>What is this stakeholder group's level of interest in this decision/action?</p>
-            <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-01" value="100"/>High.</label>
-            <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-02" value="75"/>Moderate.</label>
-            <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-03" value="50"/>Low.</label>
-            <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-04" value="0"/>None.</label>
+            <div class="light-gray">  
+              <p>4. What is this stakeholder group's level of interest in this decision/action?</p>
+              <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-01" value="100"/>High.</label>
+              <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-02" value="75"/>Moderate.</label>
+              <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-03" value="50"/>Low.</label>
+              <label><input type="radio" name="level-of-interest-score" id="level-of-interest-score-04" value="0"/>None.</label>
+            </div>
           </div>
           <div>
             <h4>Urgency/Temporal immediacy</h4>
-            <p>Does this stakeholder group want an immediate decision/action on this issue?</p>
-            <label><input type="radio" name="urgency-score" id="urgency-score-01" value="100"/>Yes, even if other actions/decisions must be postponed.</label>
-            <label><input type="radio" name="urgency-score" id="urgency-score-02" value="80"/>Yes, as long as it does not delay current commitments.</label>
-            <label><input type="radio" name="urgency-score" id="urgency-score-03" value="60"/>They would like to see action/a decision within a relatively short timeframe.</label>
-            <label><input type="radio" name="urgency-score" id="urgency-score-04" value="40"/>They would like to see action/a decision within a medium range timeframe.</label>
-            <label><input type="radio" name="urgency-score" id="urgency-score-05" value="20"/>They would like to see action/a decision made, but have no timeframe for it.</label>
-            <label><input type="radio" name="urgency-score" id="urgency-score-06" value="0"/>They do not care when an action/decision takes place.</label>
+            <div class="light-gray">
+              <p>5. Does this stakeholder group want an immediate decision/action on this issue?</p>
+              <label><input type="radio" name="urgency-score" id="urgency-score-01" value="100"/>Yes, even if other actions/decisions must be postponed.</label>
+              <label><input type="radio" name="urgency-score" id="urgency-score-02" value="80"/>Yes, as long as it does not delay current commitments.</label>
+              <label><input type="radio" name="urgency-score" id="urgency-score-03" value="60"/>They would like to see action/a decision within a relatively short timeframe.</label>
+              <label><input type="radio" name="urgency-score" id="urgency-score-04" value="40"/>They would like to see action/a decision within a medium range timeframe.</label>
+              <label><input type="radio" name="urgency-score" id="urgency-score-05" value="20"/>They would like to see action/a decision made, but have no timeframe for it.</label>
+              <label><input type="radio" name="urgency-score" id="urgency-score-06" value="0"/>They do not care when an action/decision takes place.</label>
+            </div>
           </div>
           <div>
             <h4>Proximity</h4>
-            <p>How frequently does this stakeholder group come into contact with the area subject to this decision?</p>
-            <label><input type="radio" name="proximity-score" id="proximity-score-01" value="100"/>They are constantly in direct contact with the area.</label>
-            <label><input type="radio" name="proximity-score" id="proximity-score-02" value="75"/>They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</label>
-            <label><input type="radio" name="proximity-score" id="proximity-score-03" value="50"/>They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</label>
-            <label><input type="radio" name="proximity-score" id="proximity-score-04" value="25"/>They are infrequently in contact with areas adjacent to the area.</label>
-            <label><input type="radio" name="proximity-score" id="proximity-score-05" value="10"/>They interact with this area from a distance.</label>
-            <label><input type="radio" name="proximity-score" id="proximity-score-06" value="0"/>They are never in contact with the area.</label>
+            <div class="light-gray">  
+              <p>6. How frequently does this stakeholder group come into contact with the area subject to this decision?</p>
+              <label><input type="radio" name="proximity-score" id="proximity-score-01" value="100"/>They are constantly in direct contact with the area.</label>
+              <label><input type="radio" name="proximity-score" id="proximity-score-02" value="75"/>They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</label>
+              <label><input type="radio" name="proximity-score" id="proximity-score-03" value="50"/>They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</label>
+              <label><input type="radio" name="proximity-score" id="proximity-score-04" value="25"/>They are infrequently in contact with areas adjacent to the area.</label>
+              <label><input type="radio" name="proximity-score" id="proximity-score-05" value="10"/>They interact with this area from a distance.</label>
+              <label><input type="radio" name="proximity-score" id="proximity-score-06" value="0"/>They are never in contact with the area.</label>
+            </div>
           </div>
           <div>
             <h4>Economic interest</h4>
-            <p>Does this stakeholder group have an economic interest in the outcome of this decision?</p>
-            <label><input type="radio" name="economic-magnitude-impact-score" id="economic-magnitude-impact-score-01" value="100"/>Yes.</label>
-            <label><input type="radio" name="economic-magnitude-impact-score" id="economic-magnitude-impact-score-02" value="0"/>No.</label>
+            <div class="light-gray">
+              <p>7. Does this stakeholder group have an economic interest in the outcome of this decision?</p>
+              <label><input type="radio" name="economic-magnitude-impact-score" id="economic-magnitude-impact-score-01" value="100"/>Yes.</label>
+              <label><input type="radio" name="economic-magnitude-impact-score" id="economic-magnitude-impact-score-02" value="0"/>No.</label>
+            </div>
           </div>
           <div>
             <h4>Rights</h4>
-            <p>Does this stakholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
-            <label><input type="radio" name="rights-score" id="rights-score-01" value="100"/>Yes, all 3.</label>
-            <label><input type="radio" name="rights-score" id="rights-score-02" value="60"/>Yes, 2 of the 3.</label>
-            <label><input type="radio" name="rights-score" id="rights-score-03" value="20"/>Yes, 1 of the 3.</label>
-            <label><input type="radio" name="rights-score" id="rights-score-04" value="0"/>No.</label>
+            <div class="light-gray">  
+              <p>8. Does this stakholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
+              <label><input type="radio" name="rights-score" id="rights-score-01" value="100"/>Yes, all 3.</label>
+              <label><input type="radio" name="rights-score" id="rights-score-02" value="60"/>Yes, 2 of the 3.</label>
+              <label><input type="radio" name="rights-score" id="rights-score-03" value="20"/>Yes, 1 of the 3.</label>
+              <label><input type="radio" name="rights-score" id="rights-score-04" value="0"/>No.</label>
+            </div>
           </div>
           <div>
             <h4>Fairness</h4>
-            <p>If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
-            <label><input type="radio" name="fairness-score" id="fairness-score-01" value="100"/>Yes.</label>
-            <label><input type="radio" name="fairness-score" id="fairness-score-02" value="0"/>No.</label>
+            <div class="light-gray">  
+              <p>9. If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?
+              <label><input type="radio" name="fairness-score" id="fairness-score-01" value="100"/>Yes.</label>
+              <label><input type="radio" name="fairness-score" id="fairness-score-02" value="0"/>No.</label></p>
+            </div>
           </div>
           <div>
             <h4>Underrepresented/Underserved representation</h4>
-            <p>Does this stakeholder group represent underserved or underrepresented groups?</p>
-            <label><input type="radio" name="representation-score" id="representation-score-01" value="100"/>Yes.</label>
-            <label><input type="radio" name="representation-score" id="representation-score-02" value="0"/>No.</label>
+            <div class="light-gray">
+              <p>10. Does this stakeholder group represent underserved or underrepresented groups?</p>
+              <label><input type="radio" name="representation-score" id="representation-score-01" value="100"/>Yes.</label>
+              <label><input type="radio" name="representation-score" id="representation-score-02" value="0"/>No.</label>
+            </div>
           </div>
           <button onclick="addStakeholder();">Add this stakeholder</button>
           <button onclick="cancelAddStakeholder();">Cancel</button>
@@ -1611,6 +1655,23 @@
       function addRow(tableID, rowData) {
         var tableRef = document.getElementById(tableID); // Get a reference to the table
         var newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
+
+        var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
+        var editButton = document.createElement("button");
+        editButton.innerHTML = "Edit";
+        newCell.appendChild(editButton);
+
+        var removeButton = document.createElement("button");
+        removeButton.innerHTML = "Remove";
+        newCell.appendChild(removeButton);
+
+        removeButton.addEventListener ("click", function() {
+          console.log("remove");
+        });
+
+        editButton.addEventListener ("click", function() {
+          console.log("edit");
+        });
 
         for (var i = 0, length = rowData.length; i < length; i++) {
           var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
