@@ -9,6 +9,9 @@
       * {
         font-family: arial, sans-serif;
       }
+      [aria-hidden="true"] {
+        display: none;
+      }
       .magnitude { background: #4f81bd; }
       .influence { background: #c0504d; }
       .interest { background: #9bbb59; }
@@ -1782,21 +1785,41 @@
         var tableRef = document.getElementById(tableID); // Get a reference to the table
         var newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
 
-        var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
-        var editButton = document.createElement("button");
-        editButton.innerHTML = "Edit";
-        newCell.appendChild(editButton);
+        var editButton = createButton('Edit', 'edit-button'); // Create Buttons
+        var saveButton = createButton('Save', 'save-button');
+        saveButton.setAttribute("aria-hidden", "true");
+        var removeButton = createButton('Remove', 'remove-button');
 
-        var removeButton = document.createElement("button");
-        removeButton.innerHTML = "Remove";
+        var newCell = newRow.insertCell(); // Insert a cell in the row to hold the buttons
+        newCell.appendChild(editButton);
+        newCell.appendChild(saveButton);
         newCell.appendChild(removeButton);
 
-        removeButton.addEventListener ("click", function() {
-          console.log("remove");
+        removeButton.addEventListener ("click", function() { // create listoners for the buttons
+          this.parentNode.parentNode.remove();
         });
 
         editButton.addEventListener ("click", function() {
-          console.log("edit");
+          this.setAttribute("aria-hidden", "true");
+          var row = this.parentNode.parentNode;
+          row.getElementsByClassName('save-button')[0].removeAttribute('aria-hidden');
+          var cells = row.cells;
+          for (var i = 1, length = cells.length; i < length; i++) {
+            var cell = cells[i];
+            var text = cell.innerHTML;
+            cell.innerHTML = '<input type="text" value="' + text + '"/>';
+          }
+        });
+
+        saveButton.addEventListener ("click", function() {
+          this.setAttribute("aria-hidden", "true");
+          var row = this.parentNode.parentNode;
+          row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden');
+          var cells = row.cells;
+          for (var i = 1, length = cells.length; i < length; i++) {
+            var cell = cells[i];
+            cell.innerHTML = cell.firstElementChild.value;
+          }
         });
 
         for (var i = 0, length = rowData.length; i < length; i++) {
@@ -1804,6 +1827,18 @@
           var newText = document.createTextNode(rowData[i]); // Append a text node to the cell
           newCell.appendChild(newText);
         }
+      }
+
+      /**
+       * Creates an HTML button element with the text and class specified.
+       * @function
+       * @param {string} text - The text to be displayed on the button.
+       * @param {string} className - The class to assign to the button.
+       * @return {Element} - The HTML button element.
+       */
+      function createButton (text, className) {
+        var button = document.createElement("button");
+        return button;
       }
 
       /**
