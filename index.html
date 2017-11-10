@@ -1838,6 +1838,8 @@
        */
       function createButton (text, className) {
         var button = document.createElement("button");
+        button.innerHTML = text;
+        button.className = className;
         return button;
       }
 
