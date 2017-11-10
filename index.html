@@ -1698,6 +1698,11 @@
       }
       */
 
+      /**
+       * Get the data for the global weights and return them in a JSON object.
+       * @function
+       * @return {object} - A JSON object containing the criteria and their weights. 
+       */
       function getJSON() {
           var json = [];
           d3.selectAll('.weighting input').each(function() {
@@ -1713,6 +1718,12 @@
         addRow('stakeholders', rowData); // table name and array of values to insert
       }
 
+      /**
+       * Gets the checked value of a specified name of ratio inputs.
+       * @function
+       * @param {string} name - The name of the radio buttons.
+       * @return {string} - The value associated with the checked radio button.
+       */
       function getCheckedValueByName(name) {
         var elements = document.getElementsByName(name);
         for (var i = 0, length = elements.length; i < length; i++) {
@@ -1722,6 +1733,11 @@
         }
       }
 
+      /**
+       * Gets the data from the inputs and returns them.
+       * @function
+       * @return {array} - An array containing the values speficied by the user.
+       */
       function getRowData() {
         var rowData = [];
 
@@ -1756,6 +1772,12 @@
         return rowData;
       }
 
+      /**
+       * Adds a row containing the specified data to the table, with appropriote listeners.
+       * @function
+       * @param {string} tableID - The ID of the table element.
+       * @param {array} rowData - An array containing the data to display in the table.
+       */
       function addRow(tableID, rowData) {
         var tableRef = document.getElementById(tableID); // Get a reference to the table
         var newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
@@ -1783,6 +1805,12 @@
           newCell.appendChild(newText);
         }
       }
+
+      /**
+       * Toggles the visibility of the spefied element.
+       * @function
+       * @param {string} id - The ID of the element to toggle visiibility.
+       */
       function toggleVisibility(id) {
         var element = document.getElementById(id);
         if (element.style.display === "none" || element.style.display === '') {
@@ -1791,16 +1819,38 @@
             element.style.display = "none";
         }
       }
+
+      /**
+       * Shows the add Stakeholder div.
+       * @function
+       */
       function showAddStakeholder() {
         toggleVisibility('add-stakeholder');
       }
+
+      /**
+       * Cancels the add stakeholder action
+       * @function
+       */
       function cancelAddStakeholder(){
         cancel('add-stakeholder');
       }
+
+      /**
+       * Clears the inputs and hides the element.
+       * @function
+       * @param {string} id - The ID of the element to hide and containing the inputs to clear.
+       */
       function cancel(id) {
         clear(id);
         toggleVisibility(id);
       }
+
+      /**
+       * Clears radio or text inputs in a specified element.
+       * @function
+       * @param {string} id - The ID of the element containing the inputs to clear.
+       */
       function clear(id) {
         var radio = document.getElementById(id).querySelectorAll('[type="radio"]');
         var text = document.getElementById(id).querySelectorAll('[type="text"]');
