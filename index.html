@@ -1782,7 +1782,7 @@
        * @param {array} rowData - An array containing the data to display in the table.
        */
       function addRow(tableID, rowData) {
-        var tableRef = document.getElementById(tableID); // Get a reference to the table
+        var tableRef = document.getElementById(tableID).getElementsByTagName('tbody')[0]; // Get a reference to the table
         var newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
 
         var editButton = createButton('Edit', 'edit-button'); // Create Buttons
