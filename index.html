@@ -1534,8 +1534,41 @@
        *  @method add for adding more stakeholders' criteria-weights.
       */
       var StakeholderWeights = function(stakeholders, weightsArray) {
+        this.id = 0;
         this.add = function(stakeholder, weights) {
-          this[stakeholder] = new Weights(weights);
+          this[this.id] = {
+            stakeholder: stakeholder,
+            weights: new Weights(weights) 
+          };
+          this.id++;
+        };
+        this.remove = function(stakeholder) {
+          for (var i = 0; i <= this.id; i++) {
+            if(this.hasOwnProperty(i) && +this[i].stakeholder === +stakeholder) {
+              delete this[i];   
+            }
+          }
+        };
+        this.update = function(id, stakeholder, weights) {
+          if (this.hasOwnProperty(id)) {
+            for (var weight in weights) {
+              if (weights.hasOwnProperty(weight) && this[id]['weights'].hasOwnProperty(weight) && this[id]['weights'][weight] !== weights[weight]) {
+                this[id]['weights'][weight] = weights[weight];
+              }
+            }
+            if (this[id].stakeholder !== stakeholder) {
+              this[id].stakeholder = stakeholder;
+            }
+          }
+        };
+        this.getStakeholderId = function(stakeholder) {
+          for (var i = 0; i < this.id; i++) {
+            if (this.hasOwnProperty(i)) {
+              if (this[i].stakeholder === stakeholder) {
+                return i;
+              }
+            }
+          }
         };
         if (typeof(stakeholders) !== 'undefined') {
           for (var i = 0; i < stakeholders.length; i++) {
@@ -1587,7 +1620,9 @@
       };
 
       var globalWeights = new Weights();
+      var stakeholderWeights = new StakeholderWeights();
       var criteria = ["magnitude", "influence", "interest", "urgency", "proximity", "economic-interest", "rights", "fairness", "representation"];
+      var criteriaObjectFormat = ["magnitude", "influence", "interest", "urgency", "proximity", "economicInterest", "rights", "fairness", "representation"];
 
       var data = getJSON(); // Get the data from the inputs
       var width = 400;
@@ -1723,7 +1758,29 @@
        */
       function addStakeholder() {
         var rowData = getRowData();
+        var weights = formatRowData(rowData);
+        stakeholderWeights.add(rowData[0], weights);
         addRow('stakeholders', rowData); // table name and array of values to insert
+      }
+
+      /**
+       * Formats the row data so that it can be used with the StakeholderWeights functionality.
+       * @function
+       * @param {array} rowData - An array containing the data to display in the table.
+       * @return {object} - An object holding the formatted row data.
+       */
+      function formatRowData(rowData) {
+        var weights = {};
+        weights[criteriaObjectFormat[0]] = rowData[1];
+        weights[criteriaObjectFormat[1]] = rowData[2];
+        weights[criteriaObjectFormat[2]] = rowData[3];
+        weights[criteriaObjectFormat[3]] = rowData[4];
+        weights[criteriaObjectFormat[4]] = rowData[5];
+        weights[criteriaObjectFormat[5]] = rowData[6];
+        weights[criteriaObjectFormat[6]] = rowData[7];
+        weights[criteriaObjectFormat[7]] = rowData[8];
+        weights[criteriaObjectFormat[8]] = rowData[9];
+        return weights;
       }
 
       /**
@@ -1763,7 +1820,7 @@
 
         var totalMagnitudeScore = 0;
         if (magnitudeProbabilityScore !== 0 && magnitudeImpactScore !== 0) {
-          totalMagnitudeScore = magnitudeProbabilityScore + magnitudeImpactScore - 20;
+          totalMagnitudeScore = magnitudeProbabilityScore + magnitudeImpactScore - 20 + '';
         }
 
         rowData.push(stakeholderGroup);
@@ -1789,6 +1846,11 @@
       function addRow(tableID, rowData) {
         var tableRef = document.getElementById(tableID); // Get a reference to the table
         var newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
+        var stakeholderId = stakeholderWeights.getStakeholderId(rowData[0]);
+
+        var a = document.createAttribute('data-stakeholder-id');
+        a.value = stakeholderId;
+        newRow.setAttributeNode(a);
 
         var editButton = createButton('Edit', 'edit-button'); // Create Buttons
         var saveButton = createButton('Save', 'save-button');
@@ -1800,31 +1862,36 @@
         newCell.appendChild(saveButton);
         newCell.appendChild(removeButton);
 
-        removeButton.addEventListener ("click", function() { // create listoners for the buttons
+        removeButton.addEventListener ("click", function() { // create listeners for the buttons
+          stakeholderWeights.remove(this.parentNode.nextSibling.innerHTML);
           this.parentNode.parentNode.remove();
         });
 
         editButton.addEventListener ("click", function() {
-          this.setAttribute("aria-hidden", "true");
+          this.setAttribute("aria-hidden", "true"); // hide the edit button
           var row = this.parentNode.parentNode;
-          row.getElementsByClassName('save-button')[0].removeAttribute('aria-hidden');
+          row.getElementsByClassName('save-button')[0].removeAttribute('aria-hidden'); // show the save button
           var cells = row.cells;
           for (var i = 1, length = cells.length; i < length; i++) {
             var cell = cells[i];
             var text = cell.innerHTML;
-            cell.innerHTML = '<input type="text" value="' + text + '"/>';
+            cell.innerHTML = '<input type="text" value="' + text + '"/>'; // create an input with the cell value
           }
         });
 
         saveButton.addEventListener ("click", function() {
-          this.setAttribute("aria-hidden", "true");
+          this.setAttribute("aria-hidden", "true"); // hide the save button
           var row = this.parentNode.parentNode;
-          row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden');
+          row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
           var cells = row.cells;
+          rowData = [];
           for (var i = 1, length = cells.length; i < length; i++) {
             var cell = cells[i];
-            cell.innerHTML = cell.firstElementChild.value;
+            rowData.push(cell.firstElementChild.value);
+            cell.innerHTML = cell.firstElementChild.value; // set the value of the cell to the value of the child input of the cell
           }
+          var weights = formatRowData(rowData);
+          stakeholderWeights.update(row.getAttribute('data-stakeholder-id'), rowData[0], weights);
         });
 
         for (var i = 0, length = rowData.length; i < length; i++) {
