@@ -212,10 +212,12 @@
           </thead>
           <tbody>
           </tbody>
-        </table>
-        <button id="show-stakeholder-button" onclick="showAddStakeholder();">Add a new stakeholder group</button>
-        <br /><!-- clear right -->
-        <div id="add-stakeholder" hidden>
+          <tfoot>
+            <tr>
+              <td><button id="show-stakeholder-button" onclick="showAddStakeholder();">Add a new stakeholder group</button></td>
+            </tr>
+          </tfoot>
+        </table>        
           <h2>Add a new stakeholder</h2>
           <div class="light-gray">
             <label>Stakeholder group name <input type="text" id="stakeholder-group"/></label>
