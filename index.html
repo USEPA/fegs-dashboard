@@ -1873,6 +1873,11 @@
         removeButton.addEventListener ("click", function() { // create listeners for the buttons
           stakeholderWeights.remove(this.parentNode.nextSibling.innerHTML);
           this.parentNode.parentNode.remove();
+          initStackedBarChart.draw({
+            data: getStakeholderPrioritizationsFromTable(),
+            key: criteria,
+            element: 'stakeholder-prioritization'
+          });
         });
 
         editButton.addEventListener ("click", function() {
@@ -1900,6 +1905,11 @@
           }
           var weights = formatRowData(rowData);
           stakeholderWeights.update(row.getAttribute('data-stakeholder-id'), rowData[0], weights);
+          initStackedBarChart.draw({
+            data: getStakeholderPrioritizationsFromTable(),
+            key: criteria,
+            element: 'stakeholder-prioritization'
+          });
         });
 
         for (var i = 0, length = rowData.length; i < length; i++) {
@@ -1998,6 +2008,9 @@ var initStackedBarChart = {
 
     container.selectAll('svg').remove();
 
+    if (data.length === 0) {
+      return; // if there's no data to display don't display anything!
+    }
     var svg = container.append("svg")
                    .attr("width", width + margin.left + margin.right)
                    .attr("height", height + margin.top+10 + margin.bottom+10)
@@ -2054,21 +2067,21 @@ var stakeholderPrioritizationData = [
 
 var getStakeholderPrioritizationsFromTable = function() {
   var table = document.getElementById('stakeholders');
-  // get all rows of body
-  var tbody = table.getElementsByTagName('tbody')[0];
+  var tbody = table.getElementsByTagName('tbody')[0]; // get all rows of body
   var rows = tbody.getElementsByTagName('tr');
-  cellsPerRow = rows[0].getElementsByTagName('td').length;
   var data = [];
-  for (var i = 0; i < rows.length; i++) {
-    data[i] = {};
-    cells = rows[i].getElementsByTagName('td');
-    data[i]['stakeholder'] = cells[1].innerText;
-    for (var j = 2; j < cellsPerRow; j++) {
-      data[i][criteria[j - 2]] = cells[j].innerText;
+  if (rows.length > 0) {
+    cellsPerRow = rows[0].getElementsByTagName('td').length;
+    for (var i = 0; i < rows.length; i++) {
+      data[i] = {};
+      cells = rows[i].getElementsByTagName('td');
+      data[i]['stakeholder'] = cells[1].innerText;
+      for (var j = 2; j < cellsPerRow; j++) {
+        data[i][criteria[j - 2]] = cells[j].innerText;
+      }
     }
   }
-  // return data as array of objects with criteria as keys
-  return data
+  return data; // return data as array of objects with criteria as keys
 };
 
     </script>
