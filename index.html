@@ -2172,6 +2172,63 @@
             accessPoint = value;
           }
         };
+
+        /**
+         * sum percentageOfStakeholder for all specified beneficiaries
+         * @param {Array.<string>} stakeholderNames - names of
+         *  stakeholders over whom to sum
+         * @param {Array.<string>} beneficiariesArray - names of
+         *  beneficiaries over whom to sum
+         */
+        this.sumBeneficiaryPercentages = function(stakeholderNames, beneficiaryNames) {
+          if (typeof(stakeholderNames) === 'undefined') {
+            stakeholderNames = Object.keys(this.stakeholders);
+          }
+          if (typeof(beneficiaryNames) === 'undefined') {
+            beneficiaryNames = Object.keys(this.beneficiaries);
+          }
+          sum = 0;
+          for (var i = 0; i < stakeholder; i++) {
+            for (var j = 0; j < beneficiaryNames.length; j++) {
+              sum += +this.stakeholders[stakeholderNames[i]]
+                          .beneficiaries[beneficiaryNames[j]]
+                          .percentageOfStakeholder;
+            }
+          }
+        };
+
+        /**
+         * sum percentageOfBeneficiary for all specified attributes
+         * @param {Array.<string>} stakeholderNames - names of
+         *  stakeholders over whom to sum
+         * @param {Array.<string>} beneficiariesArray - names of
+         *  beneficiaries over whom to sum
+         * @param {Array.<string>} attributesArray - names of
+         *  attributes over whom to sum
+         */
+        this.sumAttributePercentages = function(stakeholderNames, beneficiaryNames, attributeNames) {
+          if (typeof(stakeholderNames) === 'undefined') {
+            stakeholderNames = Object.keys(this.stakeholders);
+          }
+          if (typeof(beneficiaryNames) === 'undefined') {
+            beneficiaryNames = Object.keys(this.beneficiaries);
+          }
+          if (typeof(attributeNames) === 'undefined') {
+            attributeNames = Object.keys(this.attributes);
+          }
+          sum = 0;
+          for (var i = 0; i < stakeholder; i++) {
+            for (var j = 0; j < beneficiaryNames.length; j++) {
+              for (var k = 0; k < attributeNames.length; k++) {
+                sum += +this.stakeholders[stakeholderNames[i]]
+                            .beneficiaries[beneficiaryNames[j]]
+                            .attributes[attributeNames[k]]
+                            .percentageOfBeneficiary;
+              }
+            }
+          }
+        };
+
       }
 
       var fegsAttributes = [
