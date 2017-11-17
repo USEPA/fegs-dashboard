@@ -2136,12 +2136,53 @@
         };
 
         /**
-         * remove removement from object
-         * @param {any} removement - property of object to delete
+         * remove stakeholders named in an array
+         * @param {Array.<string>} stakeholdersArray - names of
+         *  stakeholders to be removed
          */
-        this.remove = function(removement) {
-          delete removement;
-        }
+        this.removeStakeholders = function(stakeholdersArray) {
+          for (var i = 0; i < stakeholdersArray.length; i++) {
+            delete this.stakeholders[stakeholdersArray[i]];
+          }
+        };
+
+        /**
+         * remove beneficiaries named in an object of arrays
+         * @param {Object.<string,Array.<string>>} beneficiariesObject -
+         *  beneficiaries to be removed specified as an object like
+         *  {stakeholderName: [beneficiaryName]}
+         */
+        this.removeBeneficiaries = function(beneficiariesObject) {
+          var stakeholdersArray = Object.keys(beneficiariesObject);
+          for (var i = 0; i < stakeholdersArray.length; i++) {
+            var beneficiariesArray = beneficiariesObject[stakeholdersArray[i]];
+            for (var j = 0; j < beneficiariesArray.length; j++) {
+              delete this.stakeholders[stakeholdersArray[i]]
+                         .beneficiaries[beneficiariesArray[j]];
+            }
+          }
+        };
+
+        /**
+         * remove attributes named in an object of objects of arrays
+         * @param {Object.<string,Object.<string,Array.<string>>>} attributesArray -
+         *  attributes to be removed specified like
+         *  {stakeholderName: {beneficiaryName: [attributeName]
+         */
+        this.removeAttributes = function(attributesObject) {
+          var stakeholdersArray = Object.keys(attributesObject);
+          for (var i = 0; i < stakeholdersArray.length; i++) {
+            var beneficiariesArray = Object.keys(attributesObject[stakeholdersArray[i]]);
+            for (var j = 0; j < beneficiariesArray.length; j++) {
+              var attributesArray = attributesObject[stakeholdersArray[i]][beneficiariesArray[j]];
+              for (var k = 0; k < attributesArray.length; k++) {
+                delete this.stakeholders[stakeholdersArray[i]]
+                           .beneficiaries[beneficiariesArray[j]]
+                           .attributes[attributesArray[k]];
+              }
+            }
+          }
+        };
 
         /**
          * add value to propertyChain, possibly override current value
