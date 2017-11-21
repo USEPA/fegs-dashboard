@@ -104,21 +104,21 @@
         margin-bottom: .4em;
       }
 
-      #stakeholders td, #stakeholders th {
+      #table-stakeholders td, #table-stakeholders th {
         border: 1px solid #d6d7d9;
         padding: 8px;
       }
-      #stakeholders tr:nth-child(even){
+      #table-stakeholders tr:nth-child(even){
         background-color: #f1f1f1;
       }
-      #stakeholders th {
+      #table-stakeholders th {
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: left;
         background-color: #0071bc;
         color: white;
       }
-      #stakeholders {
+      #table-stakeholders {
         border-collapse: collapse;
         width: 100%;
       }
@@ -132,6 +132,7 @@
       <h2>Weighting</h2>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
+
       <table class="weighting">
         <thead>
           <tr>
@@ -188,13 +189,15 @@
           </tr>
         </tbody>
       </table>
+
     </div>
 
     <div id="section-stakeholders">
       <h2>Stakeholders</h2>
       <div id="stakeholder-prioritization">
         <h3>Stakeholder Prioritization</h3>
-        <table id="stakeholders">
+
+        <table id="table-stakeholders">
           <thead>
             <tr>
               <th></th>
@@ -218,6 +221,7 @@
             </tr>
           </tfoot>
         </table>
+
         <div id="add-stakeholder" hidden>    
           <h2>Add a new stakeholder</h2>
           <div class="light-gray">
@@ -324,7 +328,8 @@
 
     <div id="section-beneficiary-definitions">
       <h2>Beneficiary Definitions</h2>
-      <table>
+
+      <table id="table-beneficiary-definitions">
         <tr class="agricultural"><th rowspan="7">Agricultural</th><th>Irrigators</th><td>Irrigator, irrigation, watering</td></tr>
         <tr class="agricultural"><th>CAFO Operators</th><td>CAFO; feeding operations or feed lots for livestock (cattle, hogs, or poultry), livestock production</td></tr>
         <tr class="agricultural"><th>Livestock grazers</th><td>Ranches or grazing for livestock (cattle, hogs, or poultry), cattle range</td></tr>
@@ -363,58 +368,64 @@
         <tr class="nonuse"><th rowspan="2">Non-Use</th><th>People who care (existence)</th><td>Caring, concern, conservation, or appreciation by the community (citizens, stakeholders, people, residents, anyone, everyone, children, families); Existence value; History; Culture </td></tr>
         <tr class="nonuse"><th>People who care (option, bequest)</th><td>Bequest, option, legacy, or heritage value; future or next generation (grandchildren)</td></tr>
       </table>
+
     </div>
 
     <div id="section-beneficiaries">
       <h2>Beneficiaries</h2>
-      <table>
+
+      <table id="table-beneficiaries">
         <thead>
-          <tr><th></th><th></th><th>Group 1</th></tr></thead><tbody>
-          <tr><th class="agricultural" rowspan="7">Agricultural</th><th class="agricultural">Irrigators</th><td></td></tr>
-          <tr><th class="agricultural">CAFO Operators</th><td></td></tr>
-          <tr><th class="agricultural">Livestock grazers</th><td></td></tr>
-          <tr><th class="agricultural">Agricultural processors</th><td></td></tr>
-          <tr><th class="agricultural">Aquaculturalists</th><td></td></tr>
-          <tr><th class="agricultural">Farmers</th><td></td></tr>
-          <tr><th class="agricultural">Foresters</th><td></td></tr>
-          <tr><th class="commercial" rowspan="8">Commercial/Industrial</th><th class="commercial">Food extractors</th><td></td></tr>
-          <tr><th class="commercial">Timber/Fiber/Ornamental extractors</th><td></td></tr>
-          <tr><th class="commercial">Industrial processors</th><td></td></tr>
-          <tr><th class="commercial">Industrial dischargers</th><td></td></tr>
-          <tr><th class="commercial">Energy generators</th><td></td></tr>
-          <tr><th class="commercial">Resource-dependent businesses</th><td></td></tr>
-          <tr><th class="commercial">Pharmaceutical/Food supplement suppliers</th><td></td></tr>
-          <tr><th class="commercial">Fur/Hide trappers/hunters</th><td></td></tr>
-          <tr><th class="governmental" rowspan="4">Governmental/Municipal/Residential</th><th class="governmental">Municipal drinking water plant operators</th><td></td></tr>
-          <tr><th class="governmental">Wastewater treatment plant operators</th><td></td></tr>
-          <tr><th class="governmental">Residential property owners</th><td></td></tr>
-          <tr><th class="governmental">Military/Coast Guard</th><td></td></tr>
-          <tr><th class="transportation" rowspan="2">Commercial/Military Transportation</th><th class="transportation">Transporters of goods</th><td></td></tr>
-          <tr><th class="transportation">Transporters of people</th><td></td></tr>
-          <tr><th class="subsistence" rowspan="4">Subsistence</th><th class="subsistence">Water subsisters</th><td></td></tr>
-          <tr><th class="subsistence">Food subsisters</th><td></td></tr>
-          <tr><th class="subsistence">Timber/Fiber/Fur/Hide subsisters</th><td></td></tr>
-          <tr><th class="subsistence">Building material subsisters</th><td></td></tr>
-          <tr><th class="recreational" rowspan="6">Recreational</th><th class="recreational">Experiencers/viewers</th><td></td></tr>
-          <tr><th class="recreational">Food pickers/gatherers</th><td></td></tr>
-          <tr><th class="recreational">Hunters</th><td></td></tr>
-          <tr><th class="recreational">Anglers</th><td></td></tr>
-          <tr><th class="recreational">Waders/Swimmers/Divers</th><td></td></tr>
-          <tr><th class="recreational">Boaters</th><td></td></tr>
-          <tr><th class="inspirational" rowspan="2">Inspirational</th><th class="inspirational">Spiritual and ceremonial participants</th><td></td></tr>
-          <tr><th class="inspirational">Artists</th><td></td></tr>
-          <tr><th class="learning" rowspan="2">Learning</th><th class="learning">Students and educators</th><td></td></tr>
-          <tr><th class="learning">Researchers</th><td></td></tr>
-          <tr><th class="nonuse" rowspan="2">Non-Use</th><th class="nonuse">People who care (existence)</th><td></td></tr>
-          <tr><th class="nonuse">People who care (option, bequest)</th><td></td></tr>
-          <tr><td></td><td></td><td>0</td></tr>
+          <tr><td></td><td></td></tr>
+        </thead>
+        <tbody>
+          <tr><th class="agricultural" rowspan="7">Agricultural</th><th class="agricultural">Irrigators</th></tr>
+          <tr><th class="agricultural">CAFO Operators</th></tr>
+          <tr><th class="agricultural">Livestock grazers</th></tr>
+          <tr><th class="agricultural">Agricultural processors</th></tr>
+          <tr><th class="agricultural">Aquaculturalists</th></tr>
+          <tr><th class="agricultural">Farmers</th></tr>
+          <tr><th class="agricultural">Foresters</th></tr>
+          <tr><th class="commercial" rowspan="8">Commercial/Industrial</th><th class="commercial">Food extractors</th></tr>
+          <tr><th class="commercial">Timber/Fiber/Ornamental extractors</th></tr>
+          <tr><th class="commercial">Industrial processors</th></tr>
+          <tr><th class="commercial">Industrial dischargers</th></tr>
+          <tr><th class="commercial">Energy generators</th></tr>
+          <tr><th class="commercial">Resource-dependent businesses</th></tr>
+          <tr><th class="commercial">Pharmaceutical/Food supplement suppliers</th></tr>
+          <tr><th class="commercial">Fur/Hide trappers/hunters</th></tr>
+          <tr><th class="governmental" rowspan="4">Governmental/Municipal/Residential</th><th class="governmental">Municipal drinking water plant operators</th></tr>
+          <tr><th class="governmental">Wastewater treatment plant operators</th></tr>
+          <tr><th class="governmental">Residential property owners</th></tr>
+          <tr><th class="governmental">Military/Coast Guard</th></tr>
+          <tr><th class="transportation" rowspan="2">Commercial/Military Transportation</th><th class="transportation">Transporters of goods</th></tr>
+          <tr><th class="transportation">Transporters of people</th></tr>
+          <tr><th class="subsistence" rowspan="4">Subsistence</th><th class="subsistence">Water subsisters</th></tr>
+          <tr><th class="subsistence">Food subsisters</th></tr>
+          <tr><th class="subsistence">Timber/Fiber/Fur/Hide subsisters</th></tr>
+          <tr><th class="subsistence">Building material subsisters</th></tr>
+          <tr><th class="recreational" rowspan="6">Recreational</th><th class="recreational">Experiencers/viewers</th></tr>
+          <tr><th class="recreational">Food pickers/gatherers</th></tr>
+          <tr><th class="recreational">Hunters</th></tr>
+          <tr><th class="recreational">Anglers</th></tr>
+          <tr><th class="recreational">Waders/Swimmers/Divers</th></tr>
+          <tr><th class="recreational">Boaters</th></tr>
+          <tr><th class="inspirational" rowspan="2">Inspirational</th><th class="inspirational">Spiritual and ceremonial participants</th></tr>
+          <tr><th class="inspirational">Artists</th></tr>
+          <tr><th class="learning" rowspan="2">Learning</th><th class="learning">Students and educators</th></tr>
+          <tr><th class="learning">Researchers</th></tr>
+          <tr><th class="nonuse" rowspan="2">Non-Use</th><th class="nonuse">People who care (existence)</th></tr>
+          <tr><th class="nonuse">People who care (option, bequest)</th></tr>
+          <tr></tr>
         </tbody>
       </table>
+
     </div>
 
     <div id="section-attribute-definitions">
       <h2>Attribute Definitions</h2>
-      <table>
+
+      <table id="table-attribute-definitions">
         <tr class="dark">
           <td>Weather</td>
           <td>Weather (e.g., climate, seasons, rain, temperature, snow, ice, summer, spring, winter, autumn) available to enjoy (e.g., for recreation, tourism, sunbathing) or favorable for activities (e.g., agriculture)</td>
@@ -504,13 +515,124 @@
           <td></td>
         </tr>
       </table>
+
     </div>
-    
+
     <div id="section-attributes">
       <h2>Attributes</h2>
-      <table>
+
+      <table id="table-beneficiary-scores">
+        <thead>
+          <tr>
+            <td></td>
+            <th colspan="7">Agricultural</th>
+            <th colspan="8">Commercial/ Industrial</th>
+            <th colspan="4">Governmental/Municipal/Residential</th>
+            <th colspan="2">Commercial/  Military Transportation</th>
+            <th colspan="4">Subsistence</th>
+            <th colspan="6">Recreational</th>
+            <th colspan="2">Inspirational</th>
+            <th colspan="2">Learning</th>
+            <th colspan="2">Non-Use</th>
+          </tr>
+          <tr>
+            <td></td>
+            <th>Irrigators</th>
+            <th>CAFO Operators</th>
+            <th>Livestock grazers</th>
+            <th>Agricultural processors</th>
+            <th>Aquaculturalists</th>
+            <th>Farmers</th>
+            <th>Foresters</th>
+            <th>Food extractors</th>
+            <th>Timber/Fiber/Ornamental extractors</th>
+            <th>Industrial processors</th>
+            <th>Industrial dischargers</th>
+            <th>Energy generators</th>
+            <th>Resource-dependent businesses</th>
+            <th>Pharmaceutical/Food supplement suppliers</th>
+            <th>Fur/Hide trappers/hunters</th>
+            <th>Municipal drinking water plant operators</th>
+            <th>Wastewater treatment plant operators</th>
+            <th>Residential property owners</th>
+            <th>Military/Coast Guard</th>
+            <th>Transporters of goods</th>
+            <th>Transporters of people</th>
+            <th>Water subsisters</th>
+            <th>Food subsisters</th>
+            <th>Timber/Fiber/Fur/Hide subsisters</th>
+            <th>Building material subsisters</th>
+            <th>Experiencers/viewers</th>
+            <th>Food pickers/ gatherers</th>
+            <th>Hunters</th>
+            <th>Anglers</th>
+            <th>Waders/Swimmers/Divers</th>
+            <th>Boaters</th>
+            <th>Spiritual and ceremonial participants</th>
+            <th>Artists</th>
+            <th>Students and educators</th>
+            <th>Researchers</th>
+            <th>People who care (existence)</th>
+            <th>People who care (option, bequest)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Beneficiary Score</th>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table id="table-attributes">
+        <col />
+        <colgroup span="7" style="background-color: beige"></colgroup>
+        <colgroup span="8"></colgroup>
+        <colgroup span="4"></colgroup>
+        <colgroup span="2"></colgroup>
+        <colgroup span="4"></colgroup>
+        <colgroup span="6"></colgroup>
+        <colgroup span="2"></colgroup>
+        <colgroup span="2"></colgroup>
+        <colgroup span="2"></colgroup>
         <tr>
-          <th></th>
+          <td></td>
           <th colspan="7">Agricultural</th>
           <th colspan="8">Commercial/ Industrial</th>
           <th colspan="4">Governmental/Municipal/Residential</th>
@@ -521,47 +643,7 @@
           <th colspan="2">Learning</th>
           <th colspan="2">Non-Use</th>
         </tr>
-        <tr>
-          <th>Beneficiary Score</th>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-        </tr>
-        <tr>
+        <tr style="border: 1px solid rgba(0,0,0,.5)">
           <td></td>
           <th>Irrigators</th>
           <th>CAFO Operators</th>
@@ -1482,6 +1564,7 @@
           <td>0</td>
         </tr>
       </table>
+
     </div>
     <script type="text/javascript">
       // https://d3js.org Version 4.11.0. Copyright 2017 Mike Bostock.
@@ -1952,7 +2035,7 @@
       function addStakeholder() {
         var rowData = getRowData();
         // prevent duplate stakeholders from being added to the table
-        tblRows = document.getElementById('stakeholders').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        tblRows = document.getElementById('table-stakeholders').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
         for (var i = 0; i < tblRows.length; i++) {
           if (tblRows.length > 0 && tblRows[i].getElementsByTagName('td')[1].innerText === rowData[0]) {
             alert('a stakeholder with this name is already in the table');
@@ -1961,7 +2044,7 @@
         }
         var weights = new Weights(formatRowData(rowData));
         stakeholders.addStakeholder(rowData[0], weights);
-        addRow('stakeholders', rowData); // table name and array of values to insert
+        addRow('table-stakeholders', rowData); // table name and array of values to insert
         initStackedBarChart.draw({
           data: getStakeholderPrioritizationsFromTable(),
           key: criteria,
@@ -2264,7 +2347,7 @@
       }
 
       var getStakeholderPrioritizationsFromTable = function() {
-        var table = document.getElementById('stakeholders');
+        var table = document.getElementById('table-stakeholders');
         var tbody = table.getElementsByTagName('tbody')[0]; // get all rows of body
         var rows = tbody.getElementsByTagName('tr');
         var data = [];
@@ -2281,7 +2364,7 @@
         }
         return data; // return data as array of objects with criteria as keys
       };
-      
+
       var fegsAttributes = [
         'Weather',
         'Air',
