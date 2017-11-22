@@ -1920,6 +1920,7 @@
       var stakeholders = new Stakeholders();
       var criteria = ["magnitude", "influence", "interest", "urgency", "proximity", "economic-interest", "rights", "fairness", "representation"];
       var criteriaObjectFormat = ["magnitude", "influence", "interest", "urgency", "proximity", "economicInterest", "rights", "fairness", "representation"];
+      var weightColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
 
       var data = getJSON(); // Get the data from the inputs
       var width = 400;
@@ -2310,7 +2311,7 @@
           var height = 400 - margin.top - margin.bottom;
           var xScale = d3.scaleBand().range([0, width]).padding(0.1);
           var yScale = d3.scaleLinear().range([height, 0]);
-          var color = d3.scaleOrdinal(d3.schemeCategory20);
+          var color = d3.scaleOrdinal(weightColors);
           var xAxis = d3.axisBottom(xScale);
           var yAxis =  d3.axisLeft(yScale);
           var container = d3.select("#"+domEle);
