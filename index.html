@@ -122,6 +122,10 @@
         border-collapse: collapse;
         width: 100%;
       }
+      table input {
+        width: 5em;
+        text-align: right;
+      }
     </style>
 
   </head>
@@ -312,7 +316,7 @@
           <div>
             <h4>Rights</h4>
             <div class="light-gray">  
-              <p>8. Does this stakholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
+              <p>8. Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
               <ul>
                 <ol><label><input type="radio" name="rights-score" id="rights-score-01" value="100"/>Yes, all 3.</label></ol>
                 <ol><label><input type="radio" name="rights-score" id="rights-score-02" value="60"/>Yes, 2 of the 3.</label></ol>
@@ -395,9 +399,17 @@
     <div id="section-beneficiaries">
       <h2>Beneficiaries</h2>
 
+      <label for="select-stakeholder-to-slice-into-beneficiaries">
+        Identify the types of beneficiaries making up each stakeholder group by percentage. 		
+        <br />
+        <select id="select-stakeholder-to-slice-into-beneficiaries" onchange="selectStakeholderToSlice(this.value)">
+          <option selected="selected" disabled="disabled">Select a Stakehohlder-Group</option>
+        </select>
+      </label>
+
       <table id="table-beneficiaries">
         <thead>
-          <tr><td></td><td></td></tr>
+          <tr><th>Category</th><th>Subcategory</th></tr>
         </thead>
         <tbody>
           <tr><th class="agricultural" rowspan="7">Agricultural</th><th class="agricultural">Irrigators</th></tr>
@@ -437,7 +449,6 @@
           <tr><th class="learning">Researchers</th></tr>
           <tr><th class="nonuse" rowspan="2">Non-Use</th><th class="nonuse">People who care (existence)</th></tr>
           <tr><th class="nonuse">People who care (option, bequest)</th></tr>
-          <tr></tr>
         </tbody>
       </table>
 
@@ -584,7 +595,7 @@
             <th>Timber/Fiber/Fur/Hide subsisters</th>
             <th>Building material subsisters</th>
             <th>Experiencers/viewers</th>
-            <th>Food pickers/ gatherers</th>
+            <th>Food pickers/gatherers</th>
             <th>Hunters</th>
             <th>Anglers</th>
             <th>Waders/Swimmers/Divers</th>
@@ -692,7 +703,7 @@
           <th>Timber/Fiber/Fur/Hide subsisters</th>
           <th>Building material subsisters</th>
           <th>Experiencers/viewers</th>
-          <th>Food pickers/ gatherers</th>
+          <th>Food pickers/gatherers</th>
           <th>Hunters</th>
           <th>Anglers</th>
           <th>Waders/Swimmers/Divers</th>
@@ -1659,8 +1670,9 @@
          * add attributes to stakeholder's beneficiary
          * @param {string} stakeholderName - owner of beneficiary
          * @param {string} beneficiaryName - owner of attributes
-         * @param {Object <string>.<string>} - keys are attribute-names
-         *  and values are their respective percentages
+         * @param {Object <string>.<string>} attributes - keys are
+         *  attribute-names and values are percentages of the
+         *  attributes' owning beneficiary
          */
         this.addAttributes = function(stakeholderName, beneficiaryName, attributes) {
           if (typeof(this.stakeholders[stakeholderName]
@@ -1674,7 +1686,7 @@
           for (i = 0; i < keys.length; i++) {
             this.stakeholders[stakeholderName]
                 .beneficiaries[beneficiaryName]
-                .attributes[keys[i]] = attributes[keys[i]];
+                .attributes[keys[i]] = {percentageOfBeneficiary: attributes[keys[i]]};
           }
         };
 
@@ -1730,7 +1742,8 @@
         /**
          * add value to propertyChain, possibly override current value
          * @param {string} propertyChain - property of object to which
-         *  value will be added as a string, eg: 'foo.bar.baz'
+         *  value will be added as a string, eg:
+         *  'beneficiaryName.beneficiaryName.attributeName'
          * @param {string|Object <string>.<string>} value - value to
          *  add to propertyChain; if value is an object then all
          *  its key-value-pairs are added
@@ -1738,8 +1751,6 @@
         this.add = function(propertyChain, value) {
           var propertyArray = propertyChain.split('.');
           var accessPoint = this;
-          console.log('accessPoint:');
-          console.log(accessPoint);
           for (var i = 0; i < propertyArray.length; i++) {
             accessPoint = accessPoint[propertyArray[i]];
           }
@@ -1788,7 +1799,7 @@
          * @param {Array.<string>} beneficiariesArray - names of
          *  beneficiaries over whom to sum
          * @param {Array.<string>} attributesArray - names of
-         *  attributes over whom to sum
+         *  attributes over which to sum
          */
         this.sumAttributePercentages = function(stakeholderNames, beneficiaryNames, attributeNames) {
           if (typeof(stakeholderNames) === 'undefined') {
@@ -1812,6 +1823,20 @@
             }
           }
         };
+
+        /**
+         * return {..., benName_i: percentageOfStakeholder_i, ...}
+         *  for the named stakeholder
+         */
+        this.getBeneficiaryPercentages = function (stakeholderName) {
+          var percentages = {};
+          var beneficiaryNamesArray = Object.keys(this.stakeholders[stakeholderName].beneficiaries);
+          for (i = 0; i < beneficiaryNamesArray.length; i++) {
+            percentages[beneficiaryNamesArray[i]] = this.stakeholders[stakeholderName].beneficiaries[beneficiaryNamesArray[i]].percentageOfStakeholder
+          }
+          return percentages;
+        };
+
       }
 
       /**
@@ -2085,6 +2110,8 @@
           element: 'stakeholder-prioritization'
         });
         cancelAddStakeholder();
+        addOption('select-stakeholder-to-slice-into-beneficiaries', rowData[0], rowData[0]);
+        document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
       }
 
       /**
@@ -2185,6 +2212,7 @@
           var stakeholder = this.parentNode.nextSibling.innerHTML;
           stakeholders.removeStakeholders([stakeholder]);
           this.parentNode.parentNode.remove();
+          removeOptionFromSelect('select-stakeholder-to-slice-into-beneficiaries', stakeholder);
           initStackedBarChart.draw({
             data: getStakeholderPrioritizationsFromTable(),
             key: criteria,
@@ -2226,7 +2254,7 @@
           } else {
             stakeholders.addStakeholder(originalStakeholderName, weights);
           }
-
+          updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries');
           initStackedBarChart.draw({
             data: getStakeholderPrioritizationsFromTable(),
             key: criteria,
@@ -2360,8 +2388,12 @@
              .enter().append("rect")
                .attr('class', 'bar')
                .attr("x", function(d) { return xScale(d.data.stakeholder); })
-               .attr("y", function(d) { return yScale(d[1]); })
-               .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
+               .attr("y", function(d) {
+                 return yScale(d[1]);
+               })
+               .attr("height", function(d) {
+                 return yScale(d[0]) - yScale(d[1]);
+               })
                .attr("width", xScale.bandwidth())
                .on('click', function(d, i) {
                  d3.selectAll('.bar').classed('selected', false);
@@ -2393,7 +2425,7 @@
             cells = rows[i].getElementsByTagName('td');
             data[i]['stakeholder'] = cells[1].innerText;
             for (var j = 2; j < cellsPerRow; j++) {
-              data[i][criteria[j - 2]] = cells[j].innerText;
+              data[i][criteria[j - 1]] = cells[j].innerText;
             }
           }
         }
@@ -2423,6 +2455,290 @@
         'Pollinators',
         'Depredators and (Pest) Predators'
       ];
+
+      var fegsBeneficiaries = [
+        'Irrigators',
+        'CAFO Operators',
+        'Livestock grazers',
+        'Agricultural processors',
+        'Aquaculturalists',
+        'Farmers',
+        'Foresters',
+        'Food extractors',
+        'Timber/Fiber/Ornamental extractors',
+        'Industrial processors',
+        'Industrial dischargers',
+        'Energy generators',
+        'Resource-dependent businesses',
+        'Pharmaceutical/Food supplement suppliers',
+        'Fur/Hide trappers/hunters',
+        'Municipal drinking water plant operators',
+        'Wastewater treatment plant operators',
+        'Residential property owners',
+        'Military/Coast Guard',
+        'Transporters of goods',
+        'Transporters of people',
+        'Water subsisters',
+        'Food subsisters',
+        'Timber/Fiber/Fur/Hide subsisters',
+        'Building material subsisters',
+        'Experiencers/viewers',
+        'Food pickers/gatherers',
+        'Hunters',
+        'Anglers',
+        'Waders/Swimmers/Divers',
+        'Boaters',
+        'Spiritual and ceremonial participants',
+        'Artists',
+        'Students and educators',
+        'Researchers',
+        'People who care (existence)',
+        'People who care (option, bequest)'
+      ];
+
+      /**
+       * Add a column of data to the table with id tableId.
+       * @param {string} tableId - id of table
+       * @param {string} columnName - name of column to use as header
+       * @param {string} dataArray - array whose elements will populate
+       *  the columns where column i + 1 gets ith element of the array
+       */
+      var addTableColumn = function(tableId, columnName, dataArray) {
+        var tbl = document.getElementById(tableId);
+        tbl.tHead.rows[0].insertCell(-1).outerHTML = '<th>' + columnName + '<th>';
+        var rows = tbl.tBodies[0].rows;
+        for (i = 0; i < rows.length; i++) {
+          var cell = rows[i].insertCell(-1);
+          cell.innerHTML = dataArray[i];
+        }
+      };
+
+      /**
+       * Returns the cell of the table by given (x;y) coordinates considering
+       *  colSpan and rowSpan of the cells.
+       * @param {HTMLElement} table - HTML table
+       * @param {number} x - X position in table matrix
+       * @param {number} y - Y position in table matrix
+       * @returns {HTMLElement|null}
+       */
+      var getTableCell = function (table, x, y) {
+        var m = [], row, cell, xx, tx, ty, xxx, yyy;
+        for (yyy = 0; yyy < table.rows.length; yyy++) {
+          row = table.rows[yyy];
+          for (xxx = 0; xxx < row.cells.length; xxx++) {
+            cell = row.cells[xxx];
+            xx = xxx;
+            for (; m[yyy] && m[yyy][xx]; ++xx) {}
+            for (tx = xx; tx < xx + cell.colSpan; ++tx) {
+              for (ty = yyy; ty < yyy + cell.rowSpan; ++ty) {
+                if (!m[ty])
+                  m[ty] = [];
+                m[ty][tx] = true;
+              }
+            }
+            if (xx <= x && x < xx + cell.colSpan && yyy <= y && y < yyy + cell.rowSpan)
+                return cell;
+          }
+        }
+        return null;
+      };
+
+      /** Add an option with given value and text to a given select-box. */
+      var addOption = function(selectId, optionText, optionValue) {
+        var select = document.getElementById(selectId);
+        var optionToAdd = document.createElement('option');
+        optionToAdd.innerText = optionText;
+        optionToAdd.value = optionValue;
+        select.add(optionToAdd);
+      };
+
+      /**
+       * Populate a stakeholder's beneficiary-percentages into the view.
+       *
+       * Put each value in a text-input.
+       * Validate data-entry by alerting when sum of inputs > 100.
+       */
+      var selectStakeholderToSlice = function() {
+        var tbl = document.getElementById('table-beneficiaries');
+        var select = document.getElementById('select-stakeholder-to-slice-into-beneficiaries');
+        var stakeholderName = select.value;
+        var tBody = tbl.tBodies[0];
+        var iRow, cell, input, cellText, rowspan, numberOfBeneficiaryColumn;
+        var beneficiaryPercentageOfStakeholderInputValidator = function(){ // validate sum of percentages is 100 +- 0.05 then save
+          var percentageSum = 0;
+          var j, inputs, input;
+          inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
+          for (j = 0; j < inputs.length; j++) {
+            if (isNaN(+(inputs[j].value))) {
+              inputs[j].parentElement.style = 'background-color: red';
+            }
+            percentageSum += +inputs[j].value;
+          }
+          if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of bad percentages
+            alert('The percentages must sum to 100. The current sum is ' + percentageSum);
+            for (j = 0; j < inputs.length; j++) {
+              inputs[j].parentElement.style = 'background-color: red';
+            }
+          } else { // update data to valid input
+            for (j = 0; j < inputs.length; j++) {
+              inputs[j].parentElement.style = 'background-color: initial';
+              beneficiaryNameForInput = inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 1].innerText;
+              if (!stakeholders.stakeholders[stakeholderName].beneficiaries
+                  || !stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]) {
+                stakeholders.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
+              } else {
+                stakeholders.stakeholders[stakeholderName]
+                            .beneficiaries[beneficiaryNameForInput]
+                            .percentageOfStakeholder = inputs[j].value;
+              }
+            }
+          }
+        };
+        for (i = tbl.tBodies[0].rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
+          removeLastColumnFromTable(tbl.id);
+        }
+        if (select.selectedIndex === 0) { // default selection => do nothing further
+          return;
+        }
+        addTableColumn(tbl.id, stakeholderName, fegsBeneficiaries); // add a column to house the data
+        for (iRow = 0; iRow < tBody.rows.length; iRow++) {
+          cell = tBody.rows[iRow].cells[tBody.rows[iRow].cells.length - 1];
+          if (!stakeholders.stakeholders[stakeholderName]
+              || !('beneficiaries' in stakeholders.stakeholders[stakeholderName])) {
+            cell.innerHTML = '';
+            input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'beneficiary-percentage-of-stakeholder';
+            cell.appendChild(input);
+            input.onchange = beneficiaryPercentageOfStakeholderInputValidator;
+            continue;
+          }
+          if (tBody.rows[iRow].cells[0].getAttribute('rowspan') === null) {
+            numberOfBeneficiaryColumn = 0;
+          } else {
+            numberOfBeneficiaryColumn = 1;
+          }
+          beneficiaryName = tBody.rows[iRow].cells[numberOfBeneficiaryColumn].innerText;
+          cell.innerHTML = '';
+          input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'beneficiary-percentage-of-stakeholder';
+          if (stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryName]
+              && stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryName].hasOwnProperty('percentageOfStakeholder')) {
+            input.value = stakeholders.stakeholders[stakeholderName]
+                                      .beneficiaries[beneficiaryName]
+                                      .percentageOfStakeholder;
+          }
+          input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
+          cell.appendChild(input);
+        }
+      };
+
+      /**
+       * Populate sample data into app for development.
+       * Access data as stakeholders.stakeholders['foo']
+       *                            .beneficiaries['Irrigators']
+       *                            .attributes['Weather']
+       */
+      var populateDevData = function(stakeholderNames) {
+        if (typeof(stakeholderNames) === 'undefined') {
+          var stakeholderNames = ['foo', 'bar', 'baz', 'qux'];
+        }
+        for (var i = 0; i < stakeholderNames.length; i++){
+          var stakeholderName = stakeholderNames[i];
+          var beneficiarySlices = [];
+          var iBen, iAttr;
+          var benSum = 0;
+          var sliceSum = 0;
+          var attrSum = 0;
+          var normalizedSlice;
+          var unnormalizedPercentages = [];
+          var AttributesObject = {};
+          stakeholders.addStakeholder(stakeholderName, new Weights);
+          for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
+            beneficiarySlices.push(Math.random());
+            benSum += beneficiarySlices[iBen];
+          }
+          for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
+            normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
+            stakeholders.addBeneficiary(stakeholderName, fegsBeneficiaries[iBen], normalizedSlice);
+            attrSum = 0;
+            for (iAttr = 0; iAttr < fegsAttributes.length; iAttr++) {
+              AttributesObject[fegsAttributes[iAttr]] = Math.random();
+              attrSum += AttributesObject[fegsAttributes[iAttr]];
+            }
+            for (iAttr = 0; iAttr < fegsAttributes.length; iAttr++) {
+              AttributesObject[fegsAttributes[iAttr]] = AttributesObject[fegsAttributes[iAttr]] * attrSum**-1 * 100;
+            }
+            stakeholders.addAttributes(stakeholderName, fegsBeneficiaries[iBen], AttributesObject);
+          }
+          for (iBen = 0; iBen < fegsBeneficiaries.length - 1; iBen++) {
+            normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
+            sliceSum += normalizedSlice;
+            stakeholders.stakeholders[stakeholderName]
+                        .beneficiaries[fegsBeneficiaries[iBen]]
+                        .percentageOfStakeholder = normalizedSlice;
+          }
+            stakeholders.stakeholders[stakeholderName]
+                        .beneficiaries[fegsBeneficiaries[fegsBeneficiaries.length - 1]]
+                        .percentageOfStakeholder = (100 - sliceSum).toFixed(2);
+        };
+        return stakeholders;
+      };
+
+      var testy = function() {
+        var select = document.getElementById('select-stakeholder-to-slice-into-beneficiaries');
+        var stakeholdersArray;
+        populateDevData();
+        stakeholdersArray = Object.keys(stakeholders.stakeholders);
+        for (var i = 0; i < stakeholdersArray.length; i++) {
+          addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholdersArray[i], stakeholdersArray[i]);
+        }
+        select.selectedIndex = 1;
+        selectStakeholderToSlice();
+      };
+
+      /** clean trailing empty cells from each row then remove last cell from each row */
+      var removeLastColumnFromTable = function(tableId) {
+        tbl = document.getElementById(tableId);
+        for (var i = 0; i < tbl.rows.length; i++) {
+          for (var j = 0; j < tbl.rows[i].cells.length; j++) {
+            if (tbl.rows[i].cells[tbl.rows[i].cells.length - 1].innerHTML.trim() === '') {
+              tbl.rows[i].cells[tbl.rows[i].cells.length - 1].remove();// trim blank trailing cells
+            }
+          }
+          tbl.rows[i].cells[tbl.rows[i].cells.length - 1].remove();// remove leftmost cell of data
+        }
+      };
+
+      var removeOptionFromSelect = function(selectId, optionText) {
+        select = document.getElementById(selectId);
+        if (select.options[select.selectedIndex].text === optionText) {// is the option to be removed selected?
+          select.selectedIndex = 0;// if selected => select default option
+        }
+        for (var i = 0; i < select.options.length; i++) {// remove option
+          if (optionText === select.options[i].text) {
+            select.options[i].remove();
+          }
+        }
+        select.onchange(); // fire select's onchange callback
+      };
+
+      var updateSelectStakeholder = function(selectId) {
+        console.log('hit updateSelectStakeholder()');
+        var i;
+        var select = document.getElementById(selectId);
+        var stakeholderNames = Object.keys(stakeholders.stakeholders);
+        for (i = 1; i < select.options.length; i++) {
+          console.log('removing ' + select.options[i].text);
+          select.options[i].remove();
+        }
+        for (i = 0; i < stakeholderNames.length; i++) { // add option for each stakeholder
+          console.log('adding ' + stakeholderNames[i]);
+          addOption(selectId, stakeholderNames[i], stakeholderNames[i]);
+        }
+        selectStakeholderToSlice();
+      };
 
     </script>
   </body>
