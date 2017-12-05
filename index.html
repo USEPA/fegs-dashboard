@@ -2575,11 +2575,12 @@
             percentageSum += +inputs[j].value;
           }
           if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of bad percentages
-            alert('The percentages must sum to 100. The current sum is ' + percentageSum);
+            accessiblyNotify('The percentages must sum to 100. The current sum is ' + percentageSum);
             for (j = 0; j < inputs.length; j++) {
               inputs[j].parentElement.style = 'background-color: red';
             }
           } else { // update data to valid input
+            clearNotices();
             for (j = 0; j < inputs.length; j++) {
               inputs[j].parentElement.style = 'background-color: initial';
               beneficiaryNameForInput = inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 1].innerText;
@@ -2711,6 +2712,7 @@
         }
       };
 
+      /** remove options with text of optionText from selectid */
       var removeOptionFromSelect = function(selectId, optionText) {
         select = document.getElementById(selectId);
         if (select.options[select.selectedIndex].text === optionText) {// is the option to be removed selected?
@@ -2724,22 +2726,49 @@
         select.onchange(); // fire select's onchange callback
       };
 
+      /** refresh select-box from data */
       var updateSelectStakeholder = function(selectId) {
-        console.log('hit updateSelectStakeholder()');
         var i;
         var select = document.getElementById(selectId);
         var stakeholderNames = Object.keys(stakeholders.stakeholders);
         for (i = 1; i < select.options.length; i++) {
-          console.log('removing ' + select.options[i].text);
           select.options[i].remove();
         }
         for (i = 0; i < stakeholderNames.length; i++) { // add option for each stakeholder
-          console.log('adding ' + stakeholderNames[i]);
           addOption(selectId, stakeholderNames[i], stakeholderNames[i]);
         }
         selectStakeholderToSlice();
       };
 
+      /** return HTMLElement of accessible notice of text */
+      var accessiblyNotify = function(text) {
+        var notices = document.getElementsByClassName('notice');
+        var notice = document.createElement('div');
+        var textNode = document.createTextNode(text);
+        notice.appendChild(textNode);
+        notice.style.position = 'fixed';
+        notice.style.bottom = '0';
+        notice.style.padding = '.5em';
+        notice.style['background-color'] = 'pink';
+        notice.setAttribute('aria-live', 'polite');
+        notice.addEventListener('click', function() {this.remove()});
+        notice.className = 'notice';
+        if (notices.length > 0) { // clear all notices
+          for (var i = 0; i < notices.length; i++) {
+            notices[i].remove();
+          }
+        }
+        document.getElementsByTagName('body')[0].appendChild(notice);
+        return notice;
+      };
+
+      /** clear all notices */
+      var clearNotices = function() {
+        var notices = document.getElementsByClassName('notice');
+        for (var i = 0; i < notices.length; i++) {
+          notices[i].remove();
+        }
+      };
     </script>
   </body>
 </html>
