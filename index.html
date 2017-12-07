@@ -1619,13 +1619,13 @@
 
     <script type="text/javascript">
       /**
-       * This prototype sets weight as specified in arg weights else
+       * This prototype sets value as specified in arg criteria else
        *  to defaultValue.
        *
-       * @param {Object.<string, string>} weights - specify each
-       *  weight as a numerical string indexed by its criterion.
+       * @param {Object.<string, string>} values - specify each
+       *  value as a numerical string indexed by its criterion.
        */
-      var Weights = function(weights) {
+      var Criteria = function(values) {
         defaultValue = '1';
         this.magnitude = defaultValue;
         this.influence = defaultValue;
@@ -1636,10 +1636,10 @@
         this.rights = defaultValue;
         this.fairness = defaultValue;
         this.representation = defaultValue;
-        if (weights !== 'undefined') {
-          for (var property in weights) {
-            if (weights.hasOwnProperty(property)) {
-              this[property] = weights[property];
+        if (values !== 'undefined') {
+          for (var property in values) {
+            if (values.hasOwnProperty(property)) {
+              this[property] = values[property];
              }
           }
         }
@@ -1652,19 +1652,19 @@
         this.stakeholders = {};
 
         /**
-         * add a stakeholder and its weights
+         * add a stakeholder and its criteria-scores
          * @param {string} stakeholderName - name of stakeholder to add
-         * @param {Object <string>.<string>} stakeholderWeights -
-         *  criteria are keys and respective weights for this
+         * @param {Object <string>.<string>} stakeholderScores -
+         *  criteria are keys and respective scores for this
          *  stakeholder are values
          */
-        this.addStakeholder = function(stakeholderName, stakeholderWeights) {
-          this.stakeholders[stakeholderName] = {weights: stakeholderWeights};
+        this.addStakeholder = function(stakeholderName, stakeholderScores) {
+          this.stakeholders[stakeholderName] = {scores: stakeholderScores};
         };
 
-        this.renameStakeholder = function(oldstakeholderName, newStakeholderName, stakeholderWeights) {
+        this.renameStakeholder = function(oldstakeholderName, newStakeholderName, stakeholderScores) {
           this.removeStakeholders([oldstakeholderName]);
-          this.addStakeholder(newStakeholderName, stakeholderWeights);
+          this.addStakeholder(newStakeholderName, stakeholderScores);
         };
 
         /**
@@ -1854,26 +1854,26 @@
       }
 
       /**
-       * Prototype assigns weights to each criterion for each
+       * Prototype assigns a score to each criterion for each
        *  specified stakeholder.
        *
-       * @param {Array} weightsArray - an array of weights where ith
-       *  weights corresponds to ith name in stakeholders
+       * @param {Array} scoresArray - an array of scores where ith
+       *  score corresponds to ith name in stakeholders
        *
-       * @param {Object.<string, string>} weights - Each key is a
-       *  criterion and its weight for the corresponding stakeholder
+       * @param {Object.<string, string>} scores - Each key is a
+       *  criterion and its score for the corresponding stakeholder
        *  from stakeholders is its value.
        *
-       * @returns {Object.<string, Weights>} Each stakeholder keys
-       *  its weights for all criteria; this object provides a
-       *  @method add for adding more stakeholders' criteria-weights.
+       * @returns {Object.<string, Criteria>} Each stakeholder keys
+       *  its scores for all criteria; this object provides a
+       *  @method add for adding more stakeholders' criteria-scores.
        */
-      var StakeholderWeights = function(stakeholders, weightsArray) {
+      var StakeholderScores = function(stakeholders, scoresArray) {
         this.id = 0;
-        this.add = function(stakeholder, weights) {
+        this.add = function(stakeholder, scores) {
           this[this.id] = {
             stakeholder: stakeholder,
-            weights: new Weights(weights) 
+            scores: new Criteria(scores) 
           };
           this.id++;
         };
@@ -1884,11 +1884,11 @@
             }
           }
         };
-        this.update = function(id, stakeholder, weights) {
+        this.update = function(id, stakeholder, scores) {
           if (this.hasOwnProperty(id)) {
-            for (var weight in weights) {
-              if (weights.hasOwnProperty(weight) && this[id]['weights'].hasOwnProperty(weight) && this[id]['weights'][weight] !== weights[weight]) {
-                this[id]['weights'][weight] = weights[weight];
+            for (var score in scores) {
+              if (scores.hasOwnProperty(score) && this[id]['scores'].hasOwnProperty(score) && this[id]['scores'][score] !== scores[score]) {
+                this[id]['scores'][score] = scores[score];
               }
             }
             if (this[id].stakeholder !== stakeholder) {
@@ -1907,10 +1907,10 @@
         };
         if (typeof(stakeholders) !== 'undefined') {
           for (var i = 0; i < stakeholders.length; i++) {
-            if (typeof(weightsArray) !== 'undefined' && typeof(weightsArray[i] !== 'undefined')) {
-              this[stakeholders[i]] = new Weights(weightsArray[i]);
+            if (typeof(scoresArray) !== 'undefined' && typeof(scoresArray[i] !== 'undefined')) {
+              this[stakeholders[i]] = new Criteria(scoresArray[i]);
             } else {
-              this[stakeholders[i]] = new Weights();
+              this[stakeholders[i]] = new Criteria();
             }
           }
         }
@@ -1928,30 +1928,30 @@
       }
 
       /**
-       * Calculate stakeholder-weight normalized by relative global
+       * Calculate stakeholder-score normalized by relative global
        *  weight for each criterion.
        *
        * @param {string[]} stakeholders - array of stakeholder-names
        *
-       * @param {Object[]} stakeholderWeights - array of
-       *  Weights-objects where the ith weight-object corresponds to
+       * @param {Object[]} stakeholderScores - array of
+       *  Criteria-objects where the ith score-object corresponds to
        *  the ith stakeholder-name
        *
        * @param {Object[]} globalWeights - a global, ie
-       *  stakeholder-independent, Weights-object
+       *  stakeholder-independent, Criteria-object
        */
-      var stakeholderNormalizedWeights = function (stakeholders, stakeholderWeights, globalWeights) {
+      var stakeholderNormalizedScores = function (stakeholders, stakeholderScores, globalWeights) {
         globalWeightsSum = sum(globalWeights);
-        normalizedWeights = {};
+        normalizedScores = {};
         for (var i = 0; i < stakeholders.length; i++) {
-          normalizedWeights[stakeholders[i]] = {};
-          for (criterion in stakeholderWeights[stakeholders[i]]) {
-            if (stakeholderWeights[stakeholders[i]].hasOwnProperty(criterion)) {
-              normalizedWeights[stakeholders[i]][criterion] = stakeholderWeights[stakeholders[i]][criterion] * globalWeights[criterion] / globalWeightsSum;
+          normalizedScores[stakeholders[i]] = {};
+          for (criterion in stakeholderScores[stakeholders[i]]) {
+            if (stakeholderScores[stakeholders[i]].hasOwnProperty(criterion)) {
+              normalizedScores[stakeholders[i]][criterion] = stakeholderScores[stakeholders[i]][criterion] * globalWeights[criterion] / globalWeightsSum;
             }
           }
         }
-        return normalizedWeights;
+        return normalizedScores;
       };
 
       /** pie chart */
@@ -1967,7 +1967,7 @@
           var legendRectSize = 18;
           var legendSpacing = 4;
 
-          var color = d3.scaleOrdinal(weightColors); // Set the colors
+          var color = d3.scaleOrdinal(criteriaColors); // Set the colors
 
           var pie = d3.pie().value(function(d) { return d.value; })(data);
 
@@ -2073,12 +2073,12 @@
         }
       };
 
-      var globalWeights = new Weights();
-      var stakeholderWeights = new StakeholderWeights();
+      var globalWeights = new Criteria();
+      var stakeholderScores = new StakeholderScores();
       var stakeholders = new Stakeholders();
       var criteria = ["magnitude", "influence", "interest", "urgency", "proximity", "economic-interest", "rights", "fairness", "representation"];
       var criteriaObjectFormat = ["magnitude", "influence", "interest", "urgency", "proximity", "economicInterest", "rights", "fairness", "representation"];
-      var weightColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
+      var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
 
       initPieChart.draw({
         data: getJSON(), // Get the data from the inputs
@@ -2115,8 +2115,8 @@
             return;
           }
         }
-        var weights = new Weights(formatRowData(rowData));
-        stakeholders.addStakeholder(rowData[0], weights);
+        var scores = new Criteria(formatRowData(rowData));
+        stakeholders.addStakeholder(rowData[0], scores);
         addRow('table-stakeholders', rowData); // table name and array of values to insert
         initStackedBarChart.draw({
           data: getStakeholderPrioritizationsFromTable(),
@@ -2129,23 +2129,23 @@
       }
 
       /**
-       * Formats the row data so that it can be used with the StakeholderWeights functionality.
+       * Formats the row data so that it can be used with the StakeholderScores functionality.
        * @function
        * @param {array} rowData - An array containing the data to display in the table.
        * @return {object} - An object holding the formatted row data.
        */
       function formatRowData(rowData) {
-        var weights = {};
-        weights[criteriaObjectFormat[0]] = rowData[1];
-        weights[criteriaObjectFormat[1]] = rowData[2];
-        weights[criteriaObjectFormat[2]] = rowData[3];
-        weights[criteriaObjectFormat[3]] = rowData[4];
-        weights[criteriaObjectFormat[4]] = rowData[5];
-        weights[criteriaObjectFormat[5]] = rowData[6];
-        weights[criteriaObjectFormat[6]] = rowData[7];
-        weights[criteriaObjectFormat[7]] = rowData[8];
-        weights[criteriaObjectFormat[8]] = rowData[9];
-        return weights;
+        var scores = {};
+        scores[criteriaObjectFormat[0]] = rowData[1];
+        scores[criteriaObjectFormat[1]] = rowData[2];
+        scores[criteriaObjectFormat[2]] = rowData[3];
+        scores[criteriaObjectFormat[3]] = rowData[4];
+        scores[criteriaObjectFormat[4]] = rowData[5];
+        scores[criteriaObjectFormat[5]] = rowData[6];
+        scores[criteriaObjectFormat[6]] = rowData[7];
+        scores[criteriaObjectFormat[7]] = rowData[8];
+        scores[criteriaObjectFormat[8]] = rowData[9];
+        return scores;
       }
 
       /**
@@ -2261,12 +2261,12 @@
             rowData.push(cell.firstElementChild.value);
             cell.innerHTML = cell.firstElementChild.value; // set the value of the cell to the value of the child input of the cell
           }
-          var weights = new Weights(formatRowData(rowData));
+          var scores = new Criteria(formatRowData(rowData));
 
           if (rowData[0] !== originalStakeholderName) {
-            stakeholders.renameStakeholder(originalStakeholderName, rowData[0], weights);
+            stakeholders.renameStakeholder(originalStakeholderName, rowData[0], scores);
           } else {
-            stakeholders.addStakeholder(originalStakeholderName, weights);
+            stakeholders.addStakeholder(originalStakeholderName, scores);
           }
           updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries');
           initStackedBarChart.draw({
@@ -2365,7 +2365,7 @@
           var height = 400 - margin.top - margin.bottom;
           var xScale = d3.scaleBand().range([0, width]).padding(0.1);
           var yScale = d3.scaleLinear().range([height, 0]);
-          var color = d3.scaleOrdinal(weightColors);
+          var color = d3.scaleOrdinal(criteriaColors);
           var xAxis = d3.axisBottom(xScale);
           var yAxis =  d3.axisLeft(yScale);
           var container = d3.select("#"+domEle);
@@ -2669,7 +2669,7 @@
           var normalizedSlice;
           var unnormalizedPercentages = [];
           var AttributesObject = {};
-          stakeholders.addStakeholder(stakeholderName, new Weights);
+          stakeholders.addStakeholder(stakeholderName, new Criteria);
           for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
             beneficiarySlices.push(Math.random());
             benSum += beneficiarySlices[iBen];
