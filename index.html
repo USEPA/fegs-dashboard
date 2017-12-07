@@ -1663,7 +1663,7 @@
         };
 
         this.renameStakeholder = function(oldStakeholderName, newStakeholderName) {
-          this.addStakeholder(newStakeholderName, this.stakeholders[oldStakeholderName].scores);
+          this.stakeholders[newStakeholderName] = this.stakeholders[oldStakeholderName];
           this.removeStakeholders([oldStakeholderName]);
         };
 
@@ -2203,7 +2203,7 @@
       }
 
       /**
-       * Adds a row containing the specified data to the table, with appropriote listeners.
+       * Adds a row containing the specified data to the table, with appropriate listeners.
        * @function
        * @param {string} tableID - The ID of the table element.
        * @param {array} rowData - An array containing the data to display in the table.
@@ -2268,6 +2268,7 @@
           } else {
             fegsScopingData.addStakeholder(originalStakeholderName, scores);
           }
+          fegsScopingData.stakeholders[rowData[0]].scores = scores;
           updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries'); // update select-box that its entries have changed
           initStackedBarChart.draw({
             data: getStakeholderPrioritizationsFromTable(),
@@ -2275,7 +2276,6 @@
             element: 'stakeholder-prioritization'
           });
         });
-
         for (var i = 0, length = rowData.length; i < length; i++) {
           var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
           var newText = document.createTextNode(rowData[i]); // Append a text node to the cell
