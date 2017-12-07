@@ -1649,7 +1649,31 @@
        * Prototype data-structures and their CRUD-methods.
        */
       var FEGSScopingData = function() {
+        this.criteria = ["magnitude", "influence", "interest", "urgency", "proximity", "economic-interest", "rights", "fairness", "representation"];
         this.stakeholders = {};
+
+        /**
+         * This prototype sets value as specified in arg criteria else
+         *  to defaultValue.
+         *
+         * @param {Object.<string, string>} values - specify each
+         *  value as a numerical string indexed by its criterion.
+         */
+        this.Criteria = function(values) {
+          var defaultValue = '1';
+          var valuesObject = {}
+          for (var i = 0; i < this.criteria.length; i++) {
+            valuesObject[this.criteria[i]] = defaultValue;
+          }
+          if (values !== 'undefined') {
+            for (var property in values) {
+              if (values.hasOwnProperty(property)) {
+                this[property] = values[property];
+               }
+            }
+          }
+          return valuesObject;
+        };
 
         /**
          * add a stakeholder and its criteria-scores
