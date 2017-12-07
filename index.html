@@ -1648,7 +1648,7 @@
       /**
        * Prototype data-structures and their CRUD-methods.
        */
-      var Stakeholders = function() {
+      var FEGSScopingData = function() {
         this.stakeholders = {};
 
         /**
@@ -1662,9 +1662,9 @@
           this.stakeholders[stakeholderName] = {scores: stakeholderScores};
         };
 
-        this.renameStakeholder = function(oldstakeholderName, newStakeholderName, stakeholderScores) {
-          this.removeStakeholders([oldstakeholderName]);
-          this.addStakeholder(newStakeholderName, stakeholderScores);
+        this.renameStakeholder = function(oldStakeholderName, newStakeholderName) {
+          this.addStakeholder(newStakeholderName, this.stakeholders[oldStakeholderName].scores);
+          this.removeStakeholders([oldStakeholderName]);
         };
 
         /**
@@ -2075,7 +2075,7 @@
 
       var globalWeights = new Criteria();
       var stakeholderScores = new StakeholderScores();
-      var stakeholders = new Stakeholders();
+      var fegsScopingData = new FEGSScopingData();
       var criteria = ["magnitude", "influence", "interest", "urgency", "proximity", "economic-interest", "rights", "fairness", "representation"];
       var criteriaObjectFormat = ["magnitude", "influence", "interest", "urgency", "proximity", "economicInterest", "rights", "fairness", "representation"];
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
@@ -2107,7 +2107,7 @@
        */
       function addStakeholder() {
         var rowData = getRowData();
-        // prevent duplate stakeholders from being added to the table
+        // prevent duplicate stakeholders from being added to the table
         tblRows = document.getElementById('table-stakeholders').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
         for (var i = 0; i < tblRows.length; i++) {
           if (tblRows.length > 0 && tblRows[i].getElementsByTagName('td')[1].innerText === rowData[0]) {
@@ -2116,7 +2116,7 @@
           }
         }
         var scores = new Criteria(formatRowData(rowData));
-        stakeholders.addStakeholder(rowData[0], scores);
+        fegsScopingData.addStakeholder(rowData[0], scores);
         addRow('table-stakeholders', rowData); // table name and array of values to insert
         initStackedBarChart.draw({
           data: getStakeholderPrioritizationsFromTable(),
@@ -2224,7 +2224,7 @@
 
         removeButton.addEventListener ("click", function() { // create listeners for the buttons
           var stakeholder = this.parentNode.nextSibling.innerHTML;
-          stakeholders.removeStakeholders([stakeholder]);
+          fegsScopingData.removeStakeholders([stakeholder]);
           this.parentNode.parentNode.remove();
           removeOptionFromSelect('select-stakeholder-to-slice-into-beneficiaries', stakeholder);
           initStackedBarChart.draw({
@@ -2264,11 +2264,11 @@
           var scores = new Criteria(formatRowData(rowData));
 
           if (rowData[0] !== originalStakeholderName) {
-            stakeholders.renameStakeholder(originalStakeholderName, rowData[0], scores);
+            fegsScopingData.renameStakeholder(originalStakeholderName, rowData[0]);
           } else {
-            stakeholders.addStakeholder(originalStakeholderName, scores);
+            fegsScopingData.addStakeholder(originalStakeholderName, scores);
           }
-          updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries');
+          updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries'); // update select-box that its entries have changed
           initStackedBarChart.draw({
             data: getStakeholderPrioritizationsFromTable(),
             key: criteria,
@@ -2598,18 +2598,18 @@
             for (j = 0; j < inputs.length; j++) {
               inputs[j].parentElement.style = 'background-color: initial';
               beneficiaryNameForInput = inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 1].innerText;
-              if (!stakeholders.stakeholders[stakeholderName].beneficiaries
-                  || !stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]) {
-                stakeholders.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
+              if (!fegsScopingData.stakeholders[stakeholderName].beneficiaries
+                  || !fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]) {
+                fegsScopingData.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
               } else {
-                stakeholders.stakeholders[stakeholderName]
-                            .beneficiaries[beneficiaryNameForInput]
-                            .percentageOfStakeholder = inputs[j].value;
+                fegsScopingData.stakeholders[stakeholderName]
+                               .beneficiaries[beneficiaryNameForInput]
+                               .percentageOfStakeholder = inputs[j].value;
               }
             }
           }
         };
-        for (i = tbl.tBodies[0].rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
+        for (i = tBody.rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
           removeLastColumnFromTable(tbl.id);
         }
         if (select.selectedIndex === 0) { // default selection => do nothing further
@@ -2618,8 +2618,8 @@
         addTableColumn(tbl.id, stakeholderName, fegsBeneficiaries); // add a column to house the data
         for (iRow = 0; iRow < tBody.rows.length; iRow++) {
           cell = tBody.rows[iRow].cells[tBody.rows[iRow].cells.length - 1];
-          if (!stakeholders.stakeholders[stakeholderName]
-              || !('beneficiaries' in stakeholders.stakeholders[stakeholderName])) {
+          if (!fegsScopingData.stakeholders[stakeholderName]
+              || !('beneficiaries' in fegsScopingData.stakeholders[stakeholderName])) {
             cell.innerHTML = '';
             input = document.createElement('input');
             input.type = 'number';
@@ -2638,9 +2638,9 @@
           input = document.createElement('input');
           input.type = 'number';
           input.className = 'beneficiary-percentage-of-stakeholder';
-          if (stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryName]
-              && stakeholders.stakeholders[stakeholderName].beneficiaries[beneficiaryName].hasOwnProperty('percentageOfStakeholder')) {
-            input.value = stakeholders.stakeholders[stakeholderName]
+          if (fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName]
+              && fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName].hasOwnProperty('percentageOfStakeholder')) {
+            input.value = fegsScopingData.stakeholders[stakeholderName]
                                       .beneficiaries[beneficiaryName]
                                       .percentageOfStakeholder;
           }
@@ -2651,9 +2651,9 @@
 
       /**
        * Populate sample data into app for development.
-       * Access data as stakeholders.stakeholders['foo']
-       *                            .beneficiaries['Irrigators']
-       *                            .attributes['Weather']
+       * Access data as fegsScopingData.stakeholders['foo']
+       *                               .beneficiaries['Irrigators']
+       *                               .attributes['Weather']
        */
       var populateDevData = function(stakeholderNames) {
         if (typeof(stakeholderNames) === 'undefined') {
@@ -2669,14 +2669,14 @@
           var normalizedSlice;
           var unnormalizedPercentages = [];
           var AttributesObject = {};
-          stakeholders.addStakeholder(stakeholderName, new Criteria);
+          fegsScopingData.addStakeholder(stakeholderName, new Criteria);
           for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
             beneficiarySlices.push(Math.random());
             benSum += beneficiarySlices[iBen];
           }
           for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
             normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
-            stakeholders.addBeneficiary(stakeholderName, fegsBeneficiaries[iBen], normalizedSlice);
+            fegsScopingData.addBeneficiary(stakeholderName, fegsBeneficiaries[iBen], normalizedSlice);
             attrSum = 0;
             for (iAttr = 0; iAttr < fegsAttributes.length; iAttr++) {
               AttributesObject[fegsAttributes[iAttr]] = Math.random();
@@ -2685,27 +2685,27 @@
             for (iAttr = 0; iAttr < fegsAttributes.length; iAttr++) {
               AttributesObject[fegsAttributes[iAttr]] = AttributesObject[fegsAttributes[iAttr]] * attrSum**-1 * 100;
             }
-            stakeholders.addAttributes(stakeholderName, fegsBeneficiaries[iBen], AttributesObject);
+            fegsScopingData.addAttributes(stakeholderName, fegsBeneficiaries[iBen], AttributesObject);
           }
           for (iBen = 0; iBen < fegsBeneficiaries.length - 1; iBen++) {
             normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
             sliceSum += normalizedSlice;
-            stakeholders.stakeholders[stakeholderName]
-                        .beneficiaries[fegsBeneficiaries[iBen]]
-                        .percentageOfStakeholder = normalizedSlice;
+            fegsScopingData.stakeholders[stakeholderName]
+                           .beneficiaries[fegsBeneficiaries[iBen]]
+                           .percentageOfStakeholder = normalizedSlice;
           }
-            stakeholders.stakeholders[stakeholderName]
-                        .beneficiaries[fegsBeneficiaries[fegsBeneficiaries.length - 1]]
-                        .percentageOfStakeholder = (100 - sliceSum).toFixed(2);
+            fegsScopingData.stakeholders[stakeholderName]
+                           .beneficiaries[fegsBeneficiaries[fegsBeneficiaries.length - 1]]
+                           .percentageOfStakeholder = (100 - sliceSum).toFixed(2);
         };
-        return stakeholders;
+        return fegsScopingData;
       };
 
       var testy = function() {
         var select = document.getElementById('select-stakeholder-to-slice-into-beneficiaries');
         var stakeholdersArray;
         populateDevData();
-        stakeholdersArray = Object.keys(stakeholders.stakeholders);
+        stakeholdersArray = Object.keys(fegsScopingData.stakeholders);
         for (var i = 0; i < stakeholdersArray.length; i++) {
           addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholdersArray[i], stakeholdersArray[i]);
         }
@@ -2744,8 +2744,8 @@
       var updateSelectStakeholder = function(selectId) {
         var i;
         var select = document.getElementById(selectId);
-        var stakeholderNames = Object.keys(stakeholders.stakeholders);
-        for (i = 1; i < select.options.length; i++) {
+        var stakeholderNames = Object.keys(fegsScopingData.stakeholders);
+        for (i = 1; i < select.options.length; i++) { // remove all options
           select.options[i].remove();
         }
         for (i = 0; i < stakeholderNames.length; i++) { // add option for each stakeholder
