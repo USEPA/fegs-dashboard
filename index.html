@@ -2915,7 +2915,7 @@
         for (i = 0; i < beneficiaries.length; i++) {
           cell = tbl.cell(rowHeader, beneficiaries[i]);
           cellValue = fegsScopingData.beneficiaryScore(beneficiaries[i]);
-          if (cellValue === NaN || cellValue === 'NaN') {
+          if (isNaN(cellValue)) {
            cellValue = '';
           }
           cell.innerText = cellValue;
