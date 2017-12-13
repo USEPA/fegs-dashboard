@@ -1920,9 +1920,7 @@
               * parseFloat(this.weightsTimesScoresSum(stakeholders[i]));
           }
           for (var i = 0; i < stakeholders.length; i++) {
-            denominator += parseFloat(this.stakeholders[stakeholders[i]]
-                                          .beneficiaries[beneficiary]
-                                          .percentageOfStakeholder);
+            denominator += parseFloat(this.weightsTimesScoresSum(stakeholders[i]));
           }
           return numerator / denominator;
         };
