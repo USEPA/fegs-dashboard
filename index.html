@@ -123,8 +123,14 @@
         width: 100%;
       }
       table input {
-        width: 5em;
+        width: calc(100% - 2em);
+        minimum-width: 90%;
         text-align: right;
+        margin: .5em 1em;
+        padding: .2em;
+      }
+      table td {
+        text-align: center;
       }
     </style>
 
@@ -2064,6 +2070,7 @@
         }
       };
 
+      //TAG:PROCESS
       var fegsScopingData = new FEGSScopingData();
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
 
@@ -2850,11 +2857,60 @@
         return [columnMap, rowMap];
       };
 
-      var tablesomeSpec = function(tablesome) {
+      /** exemplify testing to a spec on the function that
+       *   digests data to cleanse ugly characters
+       */
+      var tablesomeSpec = function(tablesome) { // a spec is a set of tests that define an API
         // sanitize arrays in url-friendly ways
         console.log('expecting', 'foo-bar-baz-qux');
+        console.log("tablesome(['Foo - Bar/Baz(Qux)'], ['Foo - Bar/Baz(Qux)']):");
         console.log(tablesome(['Foo - Bar/Baz(Qux)'], ['Foo - Bar/Baz(Qux)']));
-        return tablesome(['Foo - Bar/Baz(Qux)'], ['Foo - Bar/Baz(Qux)']) === [['foo-bar-baz-qux'], ['foo-bar-baz-qux']];
+        return tablesome(['Foo- Bar / Baz(Qux )'], ['Foo - Bar/Baz (Qux)']) === [['foo-bar-baz-qux'], ['foo-bar-baz-qux']]; // should do something like array.replace(/\s*[-/\)\(]*\s*/, '-')
+      };
+
+      var attributesTableCreator = function(tableId) {
+        var rowOffset = 2;
+        var columnOffset = 1;
+        var rowNames = fegsScopingData.fegsAttributes;
+        var columnNames = fegsScopingData.fegsBeneficiaries;
+        var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
+        var cell;
+        var numericalInputValidator = function() {
+          if (this.value >= 0 && this.value <= 100) {
+            this.parentElement.classList.add('background-color: lightgreen');
+          }
+        };
+        for (var i = 0; i < rowNames.length; i++) {
+          for (var j = 0; j < columnNames.length; j++) {
+            //FIXME set text and any other properties of input before insertion into DOM to optimize performance
+            cell = table.cell(rowNames[i], columnNames[j]);
+            input = document.createElement('input');
+            input.type = 'number';
+            //FIXME implement excel-compatible keyboard-navigation listeners
+            input.onchange = numericalInputValidator();
+            cell.appendChild(input);
+          }
+        }
+        return table;
+      };
+
+      var scopeExplorer = function() {
+          var x = 1;
+          console.log('x before closure:');
+          console.log(x);
+          var blah = function() {
+              console.log('x inside closure before declaration:');
+              console.log(x);
+              var x;
+              console.log('x inside closure after declaration:');
+              console.log(x);
+              x = 2;
+              console.log('x inside closure after initialization:');
+              console.log(x);
+          };
+          blah();
+          console.log('x after closure:');
+          console.log(x);
       };
 
       /**
@@ -2870,6 +2926,7 @@
        *  and row-headers against the table's headers
        */
       var Table = function(tableId, rowHeaders, columnHeaders, rowOffset, columnOffset) {
+        this.id = tableId;
         this.rowHeaders = rowHeaders;
         this.columnHeaders = columnHeaders;
         this.rowOffset = rowOffset;
@@ -2920,6 +2977,9 @@
         }
       };
 
+    </script>
+    <script>
+      var tableAttributes = attributesTableCreator('table-attributes');
     </script>
   </body>
 </html>
