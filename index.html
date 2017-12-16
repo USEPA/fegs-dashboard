@@ -132,6 +132,9 @@
       table td {
         text-align: center;
       }
+      .invalid-text-input {
+        background-color: red;
+      }
     </style>
 
   </head>
@@ -728,8 +731,7 @@
             <th>Spiritual and ceremonial participants</th>
             <th>Artists</th>
             <th>Students and educators</th>
-            <th>Researchers</th>
-            <th>People who care (existence)</th>
+            <th>Researchers</th> <th>People who care (existence)</th>
             <th>People who care (option, bequest)</th>
           </tr>
         </thead>
@@ -1708,16 +1710,16 @@
 
         /**
          * add attributes to this.attributes
-         * @param {string} stakeholderName - owner of beneficiary
          * @param {string} beneficiaryName - owner of attributes
          * @param {Object <string>.<string>} attributes - keys are
          *  attribute-names and values are percentages of the
-         *  attributes' owning beneficiary
+         *  corresponding attributes' owning beneficiary
          */
         this.addAttributes = function(beneficiaryName, attributes) {
           if (typeof(this.attributes) === 'undefined') {
             this.attributes = {};
           }
+          this.attributes[beneficiaryName] = {};
           var keys = Object.keys(attributes)
           for (i = 0; i < keys.length; i++) {
             this.attributes[beneficiaryName][keys[i]] = {percentageOfBeneficiary: attributes[keys[i]]};
@@ -1781,8 +1783,10 @@
          *  attributes to be removed specified like
          *  [attributeName]
          */
-        this.removeAttributesCompletely = function(attributesArray) {
-          var beneficiariesArray = Object.keys(this.attributes);
+        this.removeAttributesCompletely = function(beneficiariesArray, attributesArray) {
+          if (typeof(beneficiariesArray) === 'undefined') {
+            var beneficiariesArray = Object.keys(this.attributes);
+          }
           for (var j = 0; j < beneficiariesArray.length; j++) {
             for (var k = 0; k < attributesArray.length; k++) {
               delete(this.attributes[benficiariesArray[k]][attributesArray[k]]);
@@ -2445,9 +2449,9 @@
        *  the columns where column i + 1 gets ith element of the array
        */
       var addTableColumn = function(tableId, columnName, dataArray) {
-        var tbl = document.getElementById(tableId);
-        tbl.tHead.rows[0].insertCell(-1).outerHTML = '<th>' + columnName + '<th>';
-        var rows = tbl.tBodies[0].rows;
+        var table = document.getElementById(tableId);
+        table.tHead.rows[0].insertCell(-1).outerHTML = '<th>' + columnName + '<th>';
+        var rows = table.tBodies[0].rows;
         for (i = 0; i < rows.length; i++) {
           var cell = rows[i].insertCell(-1);
           cell.innerHTML = dataArray[i];
@@ -2500,10 +2504,10 @@
        * Validate data-entry by alerting when sum of inputs > 100.
        */
       var selectStakeholderToSlice = function() {
-        var tbl = document.getElementById('table-beneficiaries');
+        var table = document.getElementById('table-beneficiaries');
         var select = document.getElementById('select-stakeholder-to-slice-into-beneficiaries');
         var stakeholderName = select.value;
-        var tBody = tbl.tBodies[0];
+        var tBody = table.tBodies[0];
         var iRow, cell, input, cellText, rowspan, numberOfBeneficiaryColumn;
         var beneficiaryPercentageOfStakeholderInputValidator = function(){ // validate sum of percentages is 100 +- 0.05 then save
           var percentageSum = 0;
@@ -2537,12 +2541,12 @@
           }
         };
         for (i = tBody.rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
-          removeLastColumnFromTable(tbl.id);
+          removeLastColumnFromTable(table.id);
         }
         if (select.selectedIndex === 0) { // default selection => do nothing further
           return;
         }
-        addTableColumn(tbl.id, stakeholderName, fegsScopingData.fegsBeneficiaries); // add a column to house the data
+        addTableColumn(table.id, stakeholderName, fegsScopingData.fegsBeneficiaries); // add a column to house the data
         for (iRow = 0; iRow < tBody.rows.length; iRow++) {
           cell = tBody.rows[iRow].cells[tBody.rows[iRow].cells.length - 1];
           if (!fegsScopingData.stakeholders[stakeholderName]
@@ -2764,14 +2768,14 @@
 
       /** clean trailing empty cells from each row then remove last cell from each row */
       var removeLastColumnFromTable = function(tableId) {
-        tbl = document.getElementById(tableId);
-        for (var i = 0; i < tbl.rows.length; i++) {
-          for (var j = 0; j < tbl.rows[i].cells.length; j++) {
-            if (tbl.rows[i].cells[tbl.rows[i].cells.length - 1].innerHTML.trim() === '') {
-              tbl.rows[i].cells[tbl.rows[i].cells.length - 1].remove();// trim blank trailing cells
+        table = document.getElementById(tableId);
+        for (var i = 0; i < table.rows.length; i++) {
+          for (var j = 0; j < table.rows[i].cells.length; j++) {
+            if (table.rows[i].cells[table.rows[i].cells.length - 1].innerHTML.trim() === '') {
+              table.rows[i].cells[table.rows[i].cells.length - 1].remove();// trim blank trailing cells
             }
           }
-          tbl.rows[i].cells[tbl.rows[i].cells.length - 1].remove();// remove leftmost cell of data
+          table.rows[i].cells[table.rows[i].cells.length - 1].remove();// remove leftmost cell of data
         }
       };
 
@@ -2805,9 +2809,10 @@
 
       /** return HTMLElement of accessible notice of text */
       var accessiblyNotify = function(text) {
-        var notices = document.getElementsByClassName('notice');
+        var notices = document.getElementsByClassName('accessible-notification');
         var notice = document.createElement('div');
         var textNode = document.createTextNode(text);
+        clearNotices();
         notice.appendChild(textNode);
         notice.style.position = 'fixed';
         notice.style.bottom = '0';
@@ -2815,19 +2820,14 @@
         notice.style['background-color'] = 'pink';
         notice.setAttribute('aria-live', 'polite');
         notice.addEventListener('click', function() {this.remove()});
-        notice.className = 'notice';
-        if (notices.length > 0) { // clear all notices
-          for (var i = 0; i < notices.length; i++) {
-            notices[i].remove();
-          }
-        }
+        notice.className = 'accessible-notification';
         document.getElementsByTagName('body')[0].appendChild(notice);
         return notice;
       };
 
       /** clear all notices */
       var clearNotices = function() {
-        var notices = document.getElementsByClassName('notice');
+        var notices = document.getElementsByClassName('accessible-notification');
         for (var i = 0; i < notices.length; i++) {
           notices[i].remove();
         }
@@ -2875,19 +2875,57 @@
         var columnNames = fegsScopingData.fegsBeneficiaries;
         var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
         var cell;
-        var numericalInputValidator = function() {
-          if (this.value >= 0 && this.value <= 100) {
-            this.parentElement.classList.add('background-color: lightgreen');
+        var validateAndSaveData = function() {
+          //var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+          //var columnOffset = 1; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+          var columnIndex = this.parentElement.cellIndex;
+          var beneficiaryName = fegsScopingData.fegsBeneficiaries[columnIndex - columnOffset];
+          var allBlank = true;
+          var attributesObject = {};
+          var sum = 0; // sum all cells to see if sum is correctly normalized
+          var rows = this.parentElement.parentElement.parentElement.rows;
+          var rowIndex;
+          if (this.value < 0 || this.value > 100) { // value is invalid after change
+            for (i = 0; i < rows.length; i++) {
+              rows[i].cells[columnIndex].classList.remove('invalid-text-input');
+            }
+            this.parentElement.classList.add('invalid-text-input');
+            console.log("rows[1].cells[this.parentElement.cellIndex].innerText:");
+            console.log(rows[1].cells[this.parentElement.cellIndex].innerText);
+            accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
+          } else { // individual input is valid
+            for (i = 0; i < rows.length - 1; i++) {
+              if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
+                allBlank = false;
+              }
+              sum += +rows[i].cells[columnIndex].getElementsByTagName('input')[0].value;
+            }
+            if (allBlank === true || String(sum) === '100') { // pecentages are correctly normalized
+              clearNotices(); // clear notices which describe bad input
+              for (i = 0; i < rows.length; i++) { // clear styling indicating bad input
+                rows[i].cells[columnIndex].classList.remove('invalid-text-input');
+              }
+              for (rowIndex = 0; rowIndex < rows.length - 1; rowIndex++) {
+                rows[rowIndex].cells[columnIndex].classList.remove('invalid-text-input');
+                attributeName = fegsScopingData.fegsAttributes[rowIndex];
+                attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
+              }
+              fegsScopingData.addAttributes(beneficiaryName, attributesObject);
+            } else { // notify of incorrect normalization
+              accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
+              for (i = 0; i < rows.length; i++) {
+                rows[i].cells[columnIndex].classList.add('invalid-text-input');
+              }
+            }
           }
         };
         for (var i = 0; i < rowNames.length; i++) {
           for (var j = 0; j < columnNames.length; j++) {
-            //FIXME set text and any other properties of input before insertion into DOM to optimize performance
             cell = table.cell(rowNames[i], columnNames[j]);
             input = document.createElement('input');
             input.type = 'number';
             //FIXME implement excel-compatible keyboard-navigation listeners
-            input.onchange = numericalInputValidator();
+            input.onchange = validateAndSaveData; // store data and set properties of input before insertion into DOM to optimize performance
             cell.appendChild(input);
           }
         }
@@ -2931,26 +2969,55 @@
         this.columnHeaders = columnHeaders;
         this.rowOffset = rowOffset;
         this.columnOffset = columnOffset;
-        this.tbl = document.getElementById(tableId);
+        this.table = document.getElementById(tableId);
         this.cell = function(rowHeader, columnHeader) {
           var iRow = rowHeaders.indexOf(rowHeader) + this.rowOffset;
           var iCol = columnHeaders.indexOf(columnHeader) + this.columnOffset;
-          return this.tbl.rows[iRow].cells[iCol];
+          return this.table.rows[iRow].cells[iCol];
         };
         this.test = function() {
           var rowHeaderColumnNumber = 0;
           var columnHeaderRowNumber = 1;
           var i;
           for (i = 0; i < rowHeaders.length; i++) { // test rowHeaders
-            if (rowHeaders[i] !== this.tbl.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
-              console.log(rowHeaders[i], this.tbl.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText);
+            if (rowHeaders[i] !== this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
+              console.log(rowHeaders[i], this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText);
             }
           }
           for (i = 0; i < columnHeaders.length; i++) { // test columnHeaders
-            if (columnHeaders[i] !== this.tbl.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
-              console.log(columnHeaders[i], this.tbl.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText);
+            if (columnHeaders[i] !== this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
+              console.log(columnHeaders[i], this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText);
             }
           }
+        };
+        this.cells = function() {
+          var cells = [];
+          for (i = 0; i < this.table.rows.length; i++) {
+            if (typeof(cells[i]) === 'undefined') {
+              cells[i] = [];
+            }
+            for (j = 0; j < this.table.rows[i]; j++) {
+              cells[i][j] = this.table.rows[i].cells[j];
+            }
+          }
+        };
+        this.hideColumn = function(columnIndicator) {
+          var columnIndex;
+          var rows;
+          var i;
+          var j;
+          if (isNaN(columnIndicator)) { // assume a header if coerced into NaN
+            columnIndex = this.columnHeaders.indexOf(columnIndicator) + columnOffset;
+          } else { // assume an index was supplied if not coerced to NaN
+            columnIndex = columnIndicator;
+          }
+          rows = this.table.rows;
+          for (i = 0; i < rows.length; i++) {
+            rows[i].cells[columnIndex].classList.add('display-none');
+          }
+        };
+        this.hideRow = function(rowIndicator) {
+          //STUB: fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
       };
 
@@ -2963,12 +3030,12 @@
         var rowHeader = 'Beneficiary Score';
         var rowOffset = 2;
         var columnOffset = 1;
-        var tbl = new Table('table-beneficiary-scores', [rowHeader], beneficiaries, rowOffset, columnOffset);
+        var table = new Table('table-beneficiary-scores', [rowHeader], beneficiaries, rowOffset, columnOffset);
         var i;
         var cell;
         var cellValue;
         for (i = 0; i < beneficiaries.length; i++) {
-          cell = tbl.cell(rowHeader, beneficiaries[i]);
+          cell = table.cell(rowHeader, beneficiaries[i]);
           cellValue = fegsScopingData.beneficiaryScore(beneficiaries[i]);
           if (isNaN(cellValue)) {
            cellValue = '';
