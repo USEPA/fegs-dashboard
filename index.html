@@ -129,11 +129,34 @@
         margin: .5em 1em;
         padding: .2em;
       }
-      table td {
+      table {
+        border-collapse: collapse;
+        border: 1px solid black;
+        margin-bottom: 1em;
+      }
+      table th {
         text-align: center;
+      }
+      table th {
+        padding: .5em;
+      }
+      td {
+        padding: .3em;
+      }
+      .column-name-labels {
+        border-bottom: 1px dashed darkgrey;
+      }
+      .column-names th {
+        border-bottom: 1px solid black;
+      }
+      .row-name {
+        border-right: 1px solid black;
       }
       .invalid-text-input {
         background-color: red;
+      }
+      .display-none {
+        display: none;
       }
     </style>
 
@@ -563,17 +586,19 @@
       <h2>Attributes</h2>
 
       <table id="table-beneficiary-scores">
-        <thead>
+        <colgroup>
           <col />
-          <colgroup span="7" class="agricultural"></colgroup>
-          <colgroup span="8" class="commercial"></colgroup>
-          <colgroup span="4" class="governmental"></colgroup>
-          <colgroup span="2" class="transportation"></colgroup>
-          <colgroup span="4" class="subsistence"></colgroup>
-          <colgroup span="6" class="recreational"></colgroup>
-          <colgroup span="2" class="inspirational"></colgroup>
-          <colgroup span="2" class="learning"></colgroup>
-          <colgroup span="2" class="nonuse"></colgroup>
+          <col class="agricultural" span="7" />
+          <col class="commercial" span="8" />
+          <col class="governmental" span="4" />
+          <col class="transportation" span="2" />
+          <col class="subsistence" span="4" />
+          <col class="recreational" span="6" />
+          <col class="inspirational" span="2" />
+          <col class="learning" span="2" />
+          <col class="nonuse" span="2" />
+        </colgroup>
+        <thead>
           <tr>
             <td></td>
             <th colspan="7">Agricultural</th>
@@ -672,19 +697,21 @@
       </table>
 
       <table id="table-attributes">
-        <col />
-        <colgroup span="7" class="agricultural"></colgroup>
-        <colgroup span="8" class="commercial"></colgroup>
-        <colgroup span="4" class="governmental"></colgroup>
-        <colgroup span="2" class="transportation"></colgroup>
-        <colgroup span="4" class="subsistence"></colgroup>
-        <colgroup span="6" class="recreational"></colgroup>
-        <colgroup span="2" class="inspirational"></colgroup>
-        <colgroup span="2" class="learning"></colgroup>
-        <colgroup span="2" class="nonuse"></colgroup>
+        <colgroup>
+          <col class="row-labels" />
+          <col class="agricultural" span="7" />
+          <col class="commercial" span="8" />
+          <col class="governmental" span="4" />
+          <col class="transportation" span="2" />
+          <col class="subsistence" span="4" />
+          <col class="recreational" span="6" />
+          <col class="inspirational" span="2" />
+          <col class="learning" span="2" />
+          <col class="nonuse" span="2" />
+        </colgroup>
         <thead>
-          <tr>
-            <td></td>
+          <tr class="column-name-labels">
+            <th class+"row-label-header">Row labels</th>
             <th colspan="7">Agricultural</th>
             <th colspan="8">Commercial/ Industrial</th>
             <th colspan="4">Governmental/Municipal/Residential</th>
@@ -695,8 +722,8 @@
             <th colspan="2">Learning</th>
             <th colspan="2">Non-Use</th>
           </tr>
-          <tr class="column-names" style="border: 1px solid rgba(0,0,0,.5)">
-            <td></td>
+          <tr class="column-names">
+            <th>Attribute</th>
             <th>Irrigators</th>
             <th>CAFO Operators</th>
             <th>Livestock grazers</th>
@@ -2481,7 +2508,10 @@
                 m[ty][tx] = true;
               }
             }
-            if (xx <= x && x < xx + cell.colSpan && yyy <= y && y < yyy + cell.rowSpan)
+            if (xx <= x
+                && x < xx + cell.colSpan
+                && yyy <= y
+                && y < yyy + cell.rowSpan)
                 return cell;
           }
         }
@@ -2868,7 +2898,173 @@
         return tablesome(['Foo- Bar / Baz(Qux )'], ['Foo - Bar/Baz (Qux)']) === [['foo-bar-baz-qux'], ['foo-bar-baz-qux']]; // should do something like array.replace(/\s*[-/\)\(]*\s*/, '-')
       };
 
-      var attributesTableCreator = function(tableId) {
+      /**
+       * interface cells indexed by row- and column-headers
+       * @param {string} tableId - id of table to interface
+       * @param {string[]} rowHeaders - headers of rows
+       * @param {string[]} columnHeaders - headers of columns
+       * @param {number} rowOffset - offset for tHead
+       * @param {number} columnOffset - offset for header in row
+       * @property {function} cell - return the HTMLElemtent of
+       *  the cell specified by its row-header and column-header
+       * @property {function} test - test the arrays of column-
+       *  and row-headers against the table's headers
+       */
+      var Table = function(tableId, rowHeaders, columnHeaders, rowOffset, columnOffset) {
+        this.id = tableId;
+        this.rowHeaders = rowHeaders;
+        this.columnHeaders = columnHeaders;
+        this.rowOffset = rowOffset;
+        this.columnOffset = columnOffset;
+        this.table = document.getElementById(tableId);
+        this.hiddenClassName = 'display-none';
+        this.spannedHeaders = this.table.rows[0].cells
+        this.colSpanOriginalValuePropertyName = 'data-colspan-original-value';
+        this.cols = this.table.querySelectorAll('col');
+        this.colCells = this.table.rows[0].cells;
+        /** store an element's initial span in a uniformly named property of the element */
+        this.storeInitialSpanOfCols = function storeInitialSpanOfCols() {
+          var iCol;
+          for (iCol = 0; iCol < this.cols.length; iCol++) {
+            this.cols[iCol].setAttribute(this.colSpanOriginalValuePropertyName, this.cols[iCol].span);
+          }
+        };
+        /** return the specified cell */
+        this.cell = function(rowHeader, columnHeader) {
+          var iRow = rowHeaders.indexOf(rowHeader) + this.rowOffset;
+          var iColumn = columnHeaders.indexOf(columnHeader) + this.columnOffset;
+          return this.table.rows[iRow].cells[iColumn];
+        };
+        /** test the table's construction */
+        this.test = function() {
+          var rowHeaderColumnNumber = 0;
+          var columnHeaderRowNumber = 1;
+          var i;
+          for (i = 0; i < rowHeaders.length; i++) { // test rowHeaders
+            if (rowHeaders[i] !== this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
+              console.log(rowHeaders[i], this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText);
+            }
+          }
+          for (i = 0; i < columnHeaders.length; i++) { // test columnHeaders
+            if (columnHeaders[i] !== this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
+              console.log(columnHeaders[i], this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText);
+            }
+          }
+        };
+        /** return table's cells in an array of arrays */
+        this.cells = function() {
+          var cells = [];
+          for (i = 0; i < this.table.rows.length; i++) {
+            if (typeof(cells[i]) === 'undefined') {
+              cells[i] = [];
+            }
+            for (j = 0; j < this.table.rows[i]; j++) {
+              cells[i][j] = this.table.rows[i].cells[j];
+            }
+          }
+          return cells;
+        };
+        /**
+         * get or set value of the input in the supplied cell
+         * @param {td or th object} cell - supplied cell containing an input-element
+         * @param {string} setterValue - specifies the value to set the input to when present
+         */
+        this.cellInputValue = function(cell, setterValue) {// setterValue is optional parameter to make this a setter
+          if (typeof(setterValue) === 'undefined') {
+            return cell.getElementsByTagName('input')[0].value; 
+          } else { // if setterValue is present then set the input's value to setterValue
+            cell.getElementsByTagName('input')[0].value = setterValue;
+          }
+        };
+        /** get index of indicated column */
+        this.getColumnIndex = function(columnIndicator) {
+          if (isNaN(columnIndicator)) { // assume the argument is a heading-string if coerced into NaN
+            if (this.columnHeaders.indexOf(columnIndicator) === -1) {
+              return new Error('columnIndicator not found: ' + columnIndicator)
+            }
+            return this.columnHeaders.indexOf(columnIndicator) + this.columnOffset;
+          } else { // assume a numerical index was supplied if not coerced to NaN
+            return columnIndicator;
+          }
+        };
+        /** true if the indicated column is hidden */
+        this.isHidden = function(columnIndicator) {
+          return this.table.rows[1].cells[this.getColumnIndex(columnIndicator)].classList.contains(this.hiddenClassName);
+        };
+        /** get index of col containing the indated column */
+        this.getColIndex = function(columnIndicator) {
+          var columnIndex = this.getColumnIndex(columnIndicator);
+          var currentColOriginalSpan;
+          var colIndex = 0;
+          var colSpanIndex = 0;
+          for (colIndex  = 0; colIndex < this.cols.length; colIndex++) {
+            currentColOriginalSpan = parseFloat(this.cols[colIndex].getAttribute(this.colSpanOriginalValuePropertyName));
+            if (colSpanIndex + currentColOriginalSpan > columnIndex) {
+              return colIndex; // colIndex was the index of the col containing the indicated column
+            } else {
+              colSpanIndex += currentColOriginalSpan;
+            }
+          }
+        };
+        /** get name of indicated column */
+        this.getColumnName = function(columnIndicator) {
+          var columnIndex = this.getColumnIndex(columnIndicator);
+          return this.table.rows[rowOffset - 1].cells[columnIndex].innerText;
+        };
+
+        /** hide columns up to that indicated */
+        this.hideColumnsUpTo = function(columnIndicator) {
+          var i;
+          var n = this.getColumnIndex(columnIndicator);
+          for (i = columnOffset; i < n; i++) {
+            this.hideColumn(i);
+          }
+        };
+
+        /** hide indicated column */
+        this.hideColumn = function(columnIndicator) {
+          console.log("Hiding " + this.getColumnName(columnIndicator));
+          var rowIndex;
+          var columnIndex = this.getColumnIndex(columnIndicator);
+          var colIndex = this.getColIndex(columnIndex);
+          var colSpanIndex = 0;
+          console.log("columnIndex, colIndex:");
+          console.log(columnIndex, colIndex);
+          if (this.isHidden(columnIndex)) { console.log('Column ' + columnIndex + ' is already hidden.');return; } // do nothing if already hidden
+          if (this.cols[colIndex].span === 1) { // hide col and its labelling headers if this is last column
+            this.cols[colIndex].classList.add(this.hiddenClassName);
+            this.colCells[colIndex].classList.add(this.hiddenClassName);
+          } else { // decrement span and colspan
+            this.cols[colIndex].span -= 1;
+            this.colCells[colIndex].colSpan -= 1;
+          }
+          for (rowIndex = 1; rowIndex < this.table.rows.length; rowIndex++) {
+            this.table.rows[rowIndex].cells[columnIndex].classList.add(this.hiddenClassName);
+          }
+        };
+
+        this.showColumn = function(columnIndicator) {
+          //TODO show specified hidden column
+          //TODO adjust spans and colspans or show hidden containing header
+        };
+
+        this.hideRow = function(rowIndicator) {
+          //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
+        };
+
+        this.storeInitialSpanOfCols();
+        var cell;
+        for (i = 0; i < this.table.rows.length; i++) {
+          for (j = 0; j < this.table.rows[i].cells.length; j++) {
+            cell = this.table.rows[i].cells[j];
+            if (cell.colSpan > 1) {
+              cell.setAttribute(this.colSpanOriginalValuePropertyName, cell.colSpan);
+            }
+          }
+        }
+      };
+
+      var tableAttributesCreator = function(tableId) {
         var rowOffset = 2;
         var columnOffset = 1;
         var rowNames = fegsScopingData.fegsAttributes;
@@ -2925,100 +3121,11 @@
             input = document.createElement('input');
             input.type = 'number';
             //FIXME implement excel-compatible keyboard-navigation listeners
-            input.onchange = validateAndSaveData; // store data and set properties of input before insertion into DOM to optimize performance
+            input.onchange = validateAndSaveData; // store data and set properties including callbacks before insertion into DOM to optimize performance
             cell.appendChild(input);
           }
         }
         return table;
-      };
-
-      var scopeExplorer = function() {
-          var x = 1;
-          console.log('x before closure:');
-          console.log(x);
-          var blah = function() {
-              console.log('x inside closure before declaration:');
-              console.log(x);
-              var x;
-              console.log('x inside closure after declaration:');
-              console.log(x);
-              x = 2;
-              console.log('x inside closure after initialization:');
-              console.log(x);
-          };
-          blah();
-          console.log('x after closure:');
-          console.log(x);
-      };
-
-      /**
-       * interface cells indexed by row- and column-headers
-       * @param {string} tableId - id of table to interface
-       * @param {string[]} rowHeaders - headers of rows
-       * @param {string[]} columnHeaders - headers of columns
-       * @param {number} rowOffset - offset for tHead
-       * @param {number} columnOffset - offset for header in row
-       * @property {function} cell - return the HTMLElemtent of
-       *  the cell specified by its row-header and column-header
-       * @property {function} test - test the arrays of column-
-       *  and row-headers against the table's headers
-       */
-      var Table = function(tableId, rowHeaders, columnHeaders, rowOffset, columnOffset) {
-        this.id = tableId;
-        this.rowHeaders = rowHeaders;
-        this.columnHeaders = columnHeaders;
-        this.rowOffset = rowOffset;
-        this.columnOffset = columnOffset;
-        this.table = document.getElementById(tableId);
-        this.cell = function(rowHeader, columnHeader) {
-          var iRow = rowHeaders.indexOf(rowHeader) + this.rowOffset;
-          var iCol = columnHeaders.indexOf(columnHeader) + this.columnOffset;
-          return this.table.rows[iRow].cells[iCol];
-        };
-        this.test = function() {
-          var rowHeaderColumnNumber = 0;
-          var columnHeaderRowNumber = 1;
-          var i;
-          for (i = 0; i < rowHeaders.length; i++) { // test rowHeaders
-            if (rowHeaders[i] !== this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
-              console.log(rowHeaders[i], this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText);
-            }
-          }
-          for (i = 0; i < columnHeaders.length; i++) { // test columnHeaders
-            if (columnHeaders[i] !== this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
-              console.log(columnHeaders[i], this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText);
-            }
-          }
-        };
-        this.cells = function() {
-          var cells = [];
-          for (i = 0; i < this.table.rows.length; i++) {
-            if (typeof(cells[i]) === 'undefined') {
-              cells[i] = [];
-            }
-            for (j = 0; j < this.table.rows[i]; j++) {
-              cells[i][j] = this.table.rows[i].cells[j];
-            }
-          }
-        };
-        this.hideColumn = function(columnIndicator) {
-          var columnIndex;
-          var rows;
-          var i;
-          var j;
-          if (isNaN(columnIndicator)) { // assume a header if coerced into NaN
-            columnIndex = this.columnHeaders.indexOf(columnIndicator) + columnOffset;
-          } else { // assume an index was supplied if not coerced to NaN
-            columnIndex = columnIndicator;
-          }
-          rows = this.table.rows;
-          for (i = 0; i < rows.length; i++) {
-            rows[i].cells[columnIndex].classList.add('display-none');
-          }
-        };
-        this.hideRow = function(rowIndicator) {
-          //STUB: fill in stub s.t. rowIndicator can be a numerical index or a header-name
-        };
       };
 
       /**
@@ -3046,7 +3153,7 @@
 
     </script>
     <script>
-      var tableAttributes = attributesTableCreator('table-attributes');
+      var tableAttributes = tableAttributesCreator('table-attributes');
     </script>
   </body>
 </html>
