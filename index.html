@@ -1969,7 +1969,7 @@
         this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
         this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber/Fiber/Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource-dependent businesses', 'Pharmaceutical/Food supplement suppliers', 'Fur/Hide trappers/hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military/Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber/Fiber/Fur/Hide subsisters', 'Building material subsisters', 'Experiencers/viewers', 'Food pickers/gatherers', 'Hunters', 'Anglers', 'Waders/Swimmers/Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
 
-      } // end of FEGScopingData-prototype
+      };//////// END PROTOTYPE FEGScopingData ////////
 
       /** sum all values in an object */
       var sum = function(obj) {
@@ -2100,9 +2100,8 @@
           */
         }
       };
-
-      //TAG:PROCESS
       var fegsScopingData = new FEGSScopingData();
+
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
 
       initPieChart.draw({
@@ -2942,15 +2941,16 @@
         this.test = function() {
           var rowHeaderColumnNumber = 0;
           var columnHeaderRowNumber = 1;
+          var errors = [];
           var i;
           for (i = 0; i < rowHeaders.length; i++) { // test rowHeaders
             if (rowHeaders[i] !== this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
-              console.log(rowHeaders[i], this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText);
+              errors.push(new Error('rowHeaders mismatch: ' + rowHeaders[i] + ' does not match ' + this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText));
             }
           }
           for (i = 0; i < columnHeaders.length; i++) { // test columnHeaders
             if (columnHeaders[i] !== this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
-              console.log(columnHeaders[i], this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText);
+              errors.push(new Error('columnHeaders mismatch: ' + columnHeaders[i] + ' does not match ' + this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText));
             }
           }
         };
@@ -2994,9 +2994,20 @@
           }
         };
 
-        /** true if the indicated column is hidden */
+        /** true if the indicated column is hidden else false */
         this.isHidden = function(columnIndicator) {
           return this.table.rows[1].cells[this.getColumnIndex(columnIndicator)].classList.contains(this.hiddenClassName);
+        };
+
+        /** true if the indicated col is hidden else false */
+        this.isColHidden = function(colIndicator) {
+          var colIndex;
+          if (+colIndicator === NaN) {
+            colIndex = this.cols.indexOf(colIndicator);
+          } else {
+            colIndex = colIndicator;
+          }
+          return this.cols[colIndex].classList.contains(this.hiddenClassName);
         };
 
         /** get index of col containing the indated column */
@@ -3035,7 +3046,7 @@
           var rowIndex;
           var columnIndex = this.getColumnIndex(columnIndicator);
           var colIndex = this.getColIndex(columnIndex);
-          if (this.isHidden(columnIndex)) {return console.log('Column ' + columnIndex + ' is already hidden.');} // do nothing if already hidden
+          if (this.isHidden(columnIndex)) {return;}
           if (this.cols[colIndex].span === 1) { // hide col and its labelling headers if this is last column
             this.cols[colIndex].classList.add(this.hiddenClassName);
             this.colCells[colIndex].classList.add(this.hiddenClassName);
@@ -3053,16 +3064,32 @@
           var rowIndex;
           var columnIndex = this.getColumnIndex(columnIndicator);
           var colIndex = this.getColIndex(columnIndex);
-          if (!(this.isHidden(columnIndex))) {return console.log('Column ' + columnIndex + ' is already shown.')} // do nothing if already hidden
-          if (this.cols[colIndex].span === 1) { // hide col and its labelling headers if this is last column
-            this.cols[colIndex].classList.remove(this.hiddenClassName);
-            this.colCells[colIndex].classList.remove(this.hiddenClassName);
-          } else { // decrement span and colspan
+          if (!this.isHidden(columnIndex)) { // do nothing if already shown
+            return;
+          }
+          if (!this.isColHidden(colIndex)) { // increment span and colspan
             this.cols[colIndex].span += 1;
             this.colCells[colIndex].colSpan += 1;
           }
+          if (this.cols[colIndex].span === 1) { // show col and its labelling headers if this is the first visible column in col
+            this.cols[colIndex].classList.remove(this.hiddenClassName);
+            this.colCells[colIndex].classList.remove(this.hiddenClassName);
+          }
           for (rowIndex = 1; rowIndex < this.table.rows.length; rowIndex++) {
             this.table.rows[rowIndex].cells[columnIndex].classList.remove(this.hiddenClassName);
+          }
+        };
+
+        /** show only specified columns */
+        this.showOnlyTheseColumns = function(columnIndicators) {
+          var i;
+          var columnIndex;
+          for (i = 1; i < this.table.rows[1].cells.length; i++) {
+            this.hideColumn(i);
+          }
+          for (i = 0; i < columnIndicators.length; i++) {
+            columnIndex = this.getColumnIndex(columnIndicators[i]);
+            this.showColumn(columnIndex);
           }
         };
 
@@ -3074,6 +3101,7 @@
           //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
 
+        ////////////////// PROCESS ////////////////////
         this.storeInitialSpanOfCols();
         var cell;
         for (i = 0; i < this.table.rows.length; i++) {
