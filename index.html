@@ -1962,13 +1962,26 @@
           return numerator / denominator;
         };
 
+        /** store each form-control's value in its value attribute */
+        this.encodeViewDataInHTML = funtion() {
+          var i;
+          var score-inputs = document.querySelectorAll('td[data-th="Value"]>input');
+          this.scores//FIXME
+          for (i = 0; i < inputs.length; i++) {
+            this.values = inputs[i].value;
+          }
+        };
+
+        this.View = functiow() {
+          this.scores = 'foo';
+        };
+
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
         this.attributes = {};
         this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
         this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber/Fiber/Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource-dependent businesses', 'Pharmaceutical/Food supplement suppliers', 'Fur/Hide trappers/hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military/Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber/Fiber/Fur/Hide subsisters', 'Building material subsisters', 'Experiencers/viewers', 'Food pickers/gatherers', 'Hunters', 'Anglers', 'Waders/Swimmers/Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
-
       };//////// END PROTOTYPE FEGScopingData ////////
 
       /** sum all values in an object */
