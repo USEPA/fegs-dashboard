@@ -2922,6 +2922,7 @@
         this.colSpanOriginalValuePropertyName = 'data-colspan-original-value';
         this.cols = this.table.querySelectorAll('col');
         this.colCells = this.table.rows[0].cells;
+
         /** store an element's initial span in a uniformly named property of the element */
         this.storeInitialSpanOfCols = function storeInitialSpanOfCols() {
           var iCol;
@@ -2929,12 +2930,14 @@
             this.cols[iCol].setAttribute(this.colSpanOriginalValuePropertyName, this.cols[iCol].span);
           }
         };
+        
         /** return the specified cell */
         this.cell = function(rowHeader, columnHeader) {
           var iRow = rowHeaders.indexOf(rowHeader) + this.rowOffset;
           var iColumn = columnHeaders.indexOf(columnHeader) + this.columnOffset;
           return this.table.rows[iRow].cells[iColumn];
         };
+
         /** test the table's construction */
         this.test = function() {
           var rowHeaderColumnNumber = 0;
@@ -2951,6 +2954,7 @@
             }
           }
         };
+
         /** return table's cells in an array of arrays */
         this.cells = function() {
           var cells = [];
@@ -2964,6 +2968,7 @@
           }
           return cells;
         };
+
         /**
          * get or set value of the input in the supplied cell
          * @param {td or th object} cell - supplied cell containing an input-element
@@ -2976,21 +2981,24 @@
             cell.getElementsByTagName('input')[0].value = setterValue;
           }
         };
+
         /** get index of indicated column */
         this.getColumnIndex = function(columnIndicator) {
           if (isNaN(columnIndicator)) { // assume the argument is a heading-string if coerced into NaN
             if (this.columnHeaders.indexOf(columnIndicator) === -1) {
-              return new Error('columnIndicator not found: ' + columnIndicator)
+              return new Error('columnIndicator not found: ' + columnIndicator);
             }
             return this.columnHeaders.indexOf(columnIndicator) + this.columnOffset;
           } else { // assume a numerical index was supplied if not coerced to NaN
             return columnIndicator;
           }
         };
+
         /** true if the indicated column is hidden */
         this.isHidden = function(columnIndicator) {
           return this.table.rows[1].cells[this.getColumnIndex(columnIndicator)].classList.contains(this.hiddenClassName);
         };
+
         /** get index of col containing the indated column */
         this.getColIndex = function(columnIndicator) {
           var columnIndex = this.getColumnIndex(columnIndicator);
@@ -3006,6 +3014,7 @@
             }
           }
         };
+
         /** get name of indicated column */
         this.getColumnName = function(columnIndicator) {
           var columnIndex = this.getColumnIndex(columnIndicator);
@@ -3014,23 +3023,19 @@
 
         /** hide columns up to that indicated */
         this.hideColumnsUpTo = function(columnIndicator) {
-          var i;
-          var n = this.getColumnIndex(columnIndicator);
-          for (i = columnOffset; i < n; i++) {
-            this.hideColumn(i);
+          var targetColumnIndex = this.getColumnIndex(columnIndicator);
+          var currentColumnIndex;
+          for (currentColumnIndex = columnOffset; currentColumnIndex < targetColumnIndex; currentColumnIndex++) {
+            this.hideColumn(currentColumnIndex);
           }
         };
 
         /** hide indicated column */
         this.hideColumn = function(columnIndicator) {
-          console.log("Hiding " + this.getColumnName(columnIndicator));
           var rowIndex;
           var columnIndex = this.getColumnIndex(columnIndicator);
           var colIndex = this.getColIndex(columnIndex);
-          var colSpanIndex = 0;
-          console.log("columnIndex, colIndex:");
-          console.log(columnIndex, colIndex);
-          if (this.isHidden(columnIndex)) { console.log('Column ' + columnIndex + ' is already hidden.');return; } // do nothing if already hidden
+          if (this.isHidden(columnIndex)) {return console.log('Column ' + columnIndex + ' is already hidden.');} // do nothing if already hidden
           if (this.cols[colIndex].span === 1) { // hide col and its labelling headers if this is last column
             this.cols[colIndex].classList.add(this.hiddenClassName);
             this.colCells[colIndex].classList.add(this.hiddenClassName);
@@ -3043,12 +3048,29 @@
           }
         };
 
+        /** show indicated column */
         this.showColumn = function(columnIndicator) {
-          //TODO show specified hidden column
-          //TODO adjust spans and colspans or show hidden containing header
+          var rowIndex;
+          var columnIndex = this.getColumnIndex(columnIndicator);
+          var colIndex = this.getColIndex(columnIndex);
+          if (!(this.isHidden(columnIndex))) {return console.log('Column ' + columnIndex + ' is already shown.')} // do nothing if already hidden
+          if (this.cols[colIndex].span === 1) { // hide col and its labelling headers if this is last column
+            this.cols[colIndex].classList.remove(this.hiddenClassName);
+            this.colCells[colIndex].classList.remove(this.hiddenClassName);
+          } else { // decrement span and colspan
+            this.cols[colIndex].span += 1;
+            this.colCells[colIndex].colSpan += 1;
+          }
+          for (rowIndex = 1; rowIndex < this.table.rows.length; rowIndex++) {
+            this.table.rows[rowIndex].cells[columnIndex].classList.remove(this.hiddenClassName);
+          }
         };
 
         this.hideRow = function(rowIndicator) {
+          //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
+        };
+
+        this.showRow = function(rowIndicator) {
           //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
 
@@ -3062,8 +3084,9 @@
             }
           }
         }
-      };
+      };////// END PROTOTYPE Table ////////////
 
+      /** instantiate a Table() and perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
         var rowOffset = 2;
         var columnOffset = 1;
@@ -3086,8 +3109,6 @@
               rows[i].cells[columnIndex].classList.remove('invalid-text-input');
             }
             this.parentElement.classList.add('invalid-text-input');
-            console.log("rows[1].cells[this.parentElement.cellIndex].innerText:");
-            console.log(rows[1].cells[this.parentElement.cellIndex].innerText);
             accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
           } else { // individual input is valid
             for (i = 0; i < rows.length - 1; i++) {
