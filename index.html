@@ -36,62 +36,62 @@
         border: 1px solid rgba(0, 0, 0, .2);
         display: inline-block;
       }
-      .weighting input {
+      .scoring input {
         max-width: 4em;
       }
-      .weighting {
+      .scoring {
         margin: 1em 0;
         min-width: 300px;
       }
       [data-th='Color'] {
         margin-top: 1em;
       }
-      .weighting th {
+      .scoring th {
         position: absolute;
         left: -10000px;
       }
-      .weighting td {
+      .scoring td {
         display: block;
       }
-      .weighting td:first-child {
+      .scoring td:first-child {
         padding-top: .1em;
       }
-      .weighting td:last-child {
+      .scoring td:last-child {
         padding-bottom: .1em;
       }
-      .weighting td:before {
+      .scoring td:before {
         content: attr(data-th) ": ";
-        font-weight: bold;
+        font-score: bold;
         display: inline;
       }
       @media (min-width: 600px) {
-        .weighting td:before {
+        .scoring td:before {
           display: none;
         }
       }
-      .weighting th, .weighting td {
+      .scoring th, .scoring td {
         text-align: left;
       }
       @media (min-width: 600px) {
-        .weighting th, .weighting td {
+        .scoring th, .scoring td {
           display: table-cell;
         }
-        .weighting th:first-child, .weighting td:first-child {
+        .scoring th:first-child, .scoring td:first-child {
           padding-left: 0;
         }
-        .weighting th:last-child, .weighting td:last-child {
+        .scoring th:last-child, .scoring td:last-child {
           padding-right: 0;
         }
         [data-th='Color'] {
           margin-top: none;
         }
-        .weighting th {
+        .scoring th {
           position: unset;
           left: auto;
         }
       }
 
-      .weighting th, .weighting td:before {
+      .scoring th, .scoring td:before {
         color: #555;
       }
 
@@ -164,12 +164,12 @@
   <body>
     <h1>FEGS Scoping Tool</h1>
 
-    <div id="section-weighting">
-      <h2>Weighting</h2>
-      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
+    <div id="section-scoring">
+      <h2>Scoring</h2>
+      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a score of 100. Score all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
 
-      <table class="weighting">
+      <table class="scoring">
         <thead>
           <tr>
             <th>Color</th>
@@ -181,47 +181,47 @@
           <tr>
             <td data-th="Color"><span class="legend magnitude"></span></td>
             <td data-th="Label">Magnitude/Probability of impact</td>
-            <td data-th="Value"><input id="magnitude-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="magnitude-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend influence"></span></td>
             <td data-th="Label">Level of influence</td>
-            <td data-th="Value"><input id="influence-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="influence-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend interest"></span></td>
             <td data-th="Label">Level of interest</td>
-            <td data-th="Value"><input id="interest-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="interest-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend urgency"></span></td>
             <td data-th="Label">Urgency/ Temporal immediacy</td>
-            <td data-th="Value"><input id="urgency-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="urgency-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend proximity"></span></td>
             <td data-th="Label">Proximity</td>
-            <td data-th="Value"><input id="proximity-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="proximity-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend economic-interest"></span></td>
             <td data-th="Label">Economic interest</td>
-            <td data-th="Value"><input id="economic-interest-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="economic-interest-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend rights"></span></td>
             <td data-th="Label">Rights</td>
-            <td data-th="Value"><input id="rights-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="rights-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend fairness"></span></td>
             <td data-th="Label">Fairness</td>
-            <td data-th="Value"><input id="fairness-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="fairness-score" type="number" value="1"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend representation"></span></td>
             <td data-th="Label">Underrepresented/Underserved representation</td>
-            <td data-th="Value"><input id="representation-weight" type="number" value="1"/></td>
+            <td data-th="Value"><input id="representation-score" type="number" value="1"/></td>
           </tr>
         </tbody>
       </table>
@@ -1662,8 +1662,8 @@
       var FEGSScopingData = function() {
 
         /**
-         * This prototype sets value as specified in arg criteria else
-         *  to defaultValue.
+         * This object-factory sets value as specified in arg criteria
+         *  else to defaultValue.
          *
          * @param {string|Object.<string, string>} values - a single
          *  string to use as a value for all criteria or an object
@@ -1923,20 +1923,20 @@
         };
 
         /**
-         * return the sum of weights times stakeholder-score
+         * return the sum of scores times stakeholder-score
          *  for each criterion
          * @param {string} stakeholders - stakeholder whose scores
          *  will be summed
          */
-        this.weightsTimesScoresSum = function(stakeholder) {
-          var criteria = Object.keys(this.weights);
+        this.scoresTimesScoresSum = function(stakeholder) {
+          var criteria = Object.keys(this.scores);
           var sum = 0;
           for (var k = 0; k < criteria.length; k++) {
             if (typeof(this.stakeholders[stakeholder].scores[criteria[k]]) === 'undefined') {
               accessiblyNotify(stakeholder + ' has no score for ' + criteria[k]);
               continue;
             }
-            sum += parseFloat(this.weights[criteria[k]]) * parseFloat(this.stakeholders[stakeholder].scores[criteria[k]]);
+            sum += parseFloat(this.scores[criteria[k]]) * parseFloat(this.stakeholders[stakeholder].scores[criteria[k]]);
           }
           return sum;
         };
@@ -1954,16 +1954,16 @@
             numerator += parseFloat(this.stakeholders[stakeholders[i]]
                                         .beneficiaries[beneficiary]
                                         .percentageOfStakeholder)
-              * parseFloat(this.weightsTimesScoresSum(stakeholders[i]));
+              * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
           }
           for (var i = 0; i < stakeholders.length; i++) {
-            denominator += parseFloat(this.weightsTimesScoresSum(stakeholders[i]));
+            denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
           }
           return numerator / denominator;
         };
 
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
-        this.weights = this.makeCriteriaObject('1');
+        this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
         this.attributes = {};
         this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
@@ -2073,7 +2073,7 @@
             //d3.selectAll("text").data(pie).transition().duration(500).attrTween("transform", labelArcTween); // Smooth transition with labelArcTween
           }
 
-          d3.selectAll(".weighting input")
+          d3.selectAll(".scoring input")
               .on("input", function() {
                   // Add input validation.
                   data = getJSON();
@@ -2110,12 +2110,12 @@
       });
 
       /**
-       * Get the data for the global weights and return them in a JSON object.
+       * Get the data for the global scores and return them in a JSON object.
        * @function
-       * @return {object} - A JSON object containing the criteria and their weights. 
+       * @return {object} - A JSON object containing the criteria and their scores. 
        */ function getJSON() {
           var json = [];
-          d3.selectAll('.weighting input').each(function() {
+          d3.selectAll('.scoring input').each(function() {
           json.push({
             label: this.id,
             value: this.value
