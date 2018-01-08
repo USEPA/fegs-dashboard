@@ -1649,18 +1649,29 @@
     </div>
 
 <!-- FIXME: integrate code between comment flags into application -->
-    <button onclick="saveCallback(document.querySelector('#save-name').value)">Save Application and Data</button>
-    <input type="text" id="save-name" />
+    <button onclick="saveCallback(document.querySelector('#save-name'))">
+      Save Application and Data
+    </button>
+    <input type="text" id="save-name" value="optionally enter a name" />
+    <button onclick="restoreCallback()">
+      Restore Application and Data
+    </button>
 
     <script>
-      var saveCallback = function(name) {
+      var saveCallback = function(reportElement) {
         var timestamp = (new Date()).toISOString();
         fegsScopingData.saveView();
-        if (name === '') {
-          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, timestamp + window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1));
+        fegsScopingData.saveData();
+        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') {
+          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1) + timestamp);
         } else {
           saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, document.getElementById('save-name').value + '.html')
         }
+      };
+
+      var restoreCallback = function() {
+        fegsScopingData.restoreData();
+        fegsScopingData.restoreView();
       };
 
       var savePage = function() {
@@ -2283,25 +2294,50 @@
           return numerator / denominator;
         };
 
-        this.report = function() {
-          var pre = document.createElement('pre');
+        /** write data-model's state into HTML */
+        this.saveData = function() {
+          var pre;
+          if (document.querySelectorAll('#report-data-on-page').length === 0) { // gracefully run repeatedly during a single instance of document
+            pre = document.createElement('pre');
+            pre.setAttribute('id', 'report-data-on-page');
+          } else {
+            pre = document.querySelector('#report-data-on-page');
+            pre.innerHTML = '';
+          }
           var t = document.createTextNode(JSON.stringify(this, null, 2));
           pre.appendChild(t);
           document.body.appendChild(pre);
-        }
+        };
 
-        /** store all inputs' data */
+        /** read data-model's state from HTML */
+        this.restoreData = function() {
+          var pre = document.querySelector('#report-data-on-page');
+          var keys;
+          var dataToBeRestored;
+          var i;
+          if (pre !== null) {
+            dataToBeRestored = JSON.parse(pre.innerText);
+            keys = Object.keys(dataToBeRestored);
+            for (i = 0; i < keys.length; i++) {
+              fegsScopingData[keys[i]] = dataToBeRestored[keys[i]];
+            }
+            delete(pre);
+          } else {
+            console.log('There is no element with id report-data-on-page from which data may be restored.');
+          }
+        };
+
+        /** save view's state: each input stores its own data */
         this.saveView = function() {
           var inputs = document.querySelectorAll('input');
           var i;
           for (i = 0; i < inputs.length; i++) {
             inputs[i].setAttribute('data-value', inputs[i].value);
           }
-          //TODO cycle through each input and save its value
         };
 
+        /** restore view's state: each input with a stored value restores that value */
         this.restoreView = function() {
-          //TODO cycle through each element and restore its value
           var inputs = document.querySelectorAll('input');
           var i;
           for (i = 0; i < inputs.length; i++) {
@@ -3447,7 +3483,7 @@
           //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
 
-        ////////////////// PROCESS ////////////////////
+        ////////////////// PROTOTYPE'S PROCESS ////////////////////
         this.storeInitialSpanOfCols();
         var cell;
         for (i = 0; i < this.table.rows.length; i++) {
@@ -3462,15 +3498,13 @@
 
       /** instantiate a Table() and perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
-        var rowOffset = 2;
-        var columnOffset = 1;
+        var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+        var columnOffset = 1; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
         var rowNames = fegsScopingData.fegsAttributes;
         var columnNames = fegsScopingData.fegsBeneficiaries;
         var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
         var cell;
         var validateAndSaveData = function() {
-          //var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
-          //var columnOffset = 1; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
           var columnIndex = this.parentElement.cellIndex;
           var beneficiaryName = fegsScopingData.fegsBeneficiaries[columnIndex - columnOffset];
           var allBlank = true;
@@ -3520,8 +3554,15 @@
             cell.appendChild(input);
           }
         }
+        table.table.setAttribute('data-initialized', "true")
         return table;
       };
+      var tableAttributes;
+      if (document.querySelector('#table-attributes').getAttribute('data-initialized') !== "true") {
+        tableAttributes = tableAttributesCreator('table-attributes');
+      } else {
+        tableAttributes = document.querySelector('#table-attributes').getAttribute('data-initialized');
+      }
 
       /**
        * caculate and display beneficiary-scores
@@ -3546,9 +3587,6 @@
         }
       };
 
-    </script>
-    <script>
-      var tableAttributes = tableAttributesCreator('table-attributes');
     </script>
   </body>
 </html>
