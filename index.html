@@ -1659,11 +1659,16 @@
 
     <script>
       var saveCallback = function(reportElement) {
-        var timestamp = (new Date()).toISOString();
+        var timestamp;
+        var name;
+        var extension;
         fegsScopingData.saveView();
         fegsScopingData.saveData();
         if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') {
-          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1) + timestamp);
+          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
+          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
+          timestamp = (new Date()).toISOString();
+          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, name + timestamp + extension);
         } else {
           saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, document.getElementById('save-name').value + '.html')
         }
