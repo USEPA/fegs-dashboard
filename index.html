@@ -2334,19 +2334,27 @@
 
         /** save view's state: each input stores its own data */
         this.saveView = function() {
-          var inputs = document.querySelectorAll('input');
           var i;
+          var inputs = document.querySelectorAll('input:not([type="radio"])');
+          var radioInputs = document.querySelectorAll('input[type="radio"]');
           for (i = 0; i < inputs.length; i++) {
             inputs[i].setAttribute('data-value', inputs[i].value);
+          }
+          for (i = 0; i < radioInputs.length; i++) {
+            radioInputs[i].setAttribute('data-checked', radioInputs[i]['checked']);
           }
         };
 
         /** restore view's state: each input with a stored value restores that value */
         this.restoreView = function() {
-          var inputs = document.querySelectorAll('input');
+          var inputs = document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])');
+          var radioInputs = document.querySelectorAll('input[type="radio"]');
           var i;
           for (i = 0; i < inputs.length; i++) {
             inputs[i].value = inputs[i].getAttribute('data-value');
+          }
+          for (i = 0; i < radioInputs.length; i++) {
+            radioInputs[i].checked = JSON.parse(radioInputs[i].getAttribute('data-checked'));
           }
         };
 
@@ -3488,7 +3496,7 @@
           //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
 
-        ////////////////// PROTOTYPE'S PROCESS ////////////////////
+        ////////////////// PROTOTYPE NAMED Table'S PROCESS ////////////////////
         this.storeInitialSpanOfCols();
         var cell;
         for (i = 0; i < this.table.rows.length; i++) {
@@ -3499,7 +3507,7 @@
             }
           }
         }
-      };////// END PROTOTYPE Table ////////////
+      };////// END PROTOTYPE NAMED Table ////////////
 
       /** instantiate a Table() and perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
@@ -3554,7 +3562,7 @@
             cell = table.cell(rowNames[i], columnNames[j]);
             input = document.createElement('input');
             input.type = 'number';
-            //FIXME implement excel-compatible keyboard-navigation listeners
+            //TODO implement excel-compatible keyboard-navigation listeners
             input.onchange = validateAndSaveData; // store data and set properties including callbacks before insertion into DOM to optimize performance
             cell.appendChild(input);
           }
