@@ -1684,7 +1684,7 @@
           console.log(page);
 
           document.getElementById('test23').setAttribute('href', 'data:application/xml;charset=utf-8,' + encodeURIComponent(page));
-      }
+      };
 
         /* FileSaver.js
          *  A saveAs() & saveTextAs() FileSaver implementation.
@@ -2343,6 +2343,7 @@
           for (i = 0; i < radioInputs.length; i++) {
             radioInputs[i].setAttribute('data-checked', radioInputs[i]['checked']);
           }
+          document.body.setAttribute('data-restore', 'true'); // set flag to automatically restore data on document load
         };
 
         /** restore view's state: each input with a stored value restores that value */
@@ -3600,6 +3601,10 @@
         }
       };
 
+      ////////// PROCESS //////////////////////////////////////
+      if (document.body.getAttribute('data-restore') === 'true') {
+        fegsScopingData = restoreCallback();
+      }
     </script>
   </body>
 </html>
