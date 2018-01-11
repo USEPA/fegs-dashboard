@@ -1655,13 +1655,27 @@
     </div>
 
 <!-- FIXME: integrate code between comment flags into application -->
-    <button onclick="saveCallback(document.querySelector('#save-name'))">Generate Report and Save</button>
-    <input type="text" id="save-name" value="optionally enter a name" />
-    <button onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
+    <div id="save-app"> 
+      <div>
+        <label for="save-name">Optionally enter the name with which this app will be saved.</label>
+        <input id="save-name" type="text" value="optionally enter a name" />
+      </div>
+      <div>
+        <label for="report-and-save">Report the app's data and save the app with its data.</label>
+        <button id="report-and-save" onclick="saveCallback('save-name')">Generate Report and Save</button>
+        <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
+        <input id="save-with-timestamp" type="checkbox" checked="checked"></input>
+      </div>
+      <div>
+        <label for="toggle-report">Toggle the report's visibility.</label>
+        <button onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
+      </div>
+    </div>
 
     <script>
-      var saveCallback = function(reportElement) {
-        var timestamp;
+      var saveCallback = function(reportElementId) {
+        var reportElement = document.getElementById(reportElementId);
+        var timestamp = '';
         var name;
         var extension;
         fegsScopingData.saveView();
@@ -1669,7 +1683,9 @@
         if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
           name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
           extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          timestamp = (new Date()).toISOString();
+          if (document.getElementById('save-with-timestamp').checked !== false) {
+            timestamp = (new Date()).toISOString();
+          }
           saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, name + timestamp + extension);
         } else {
           saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, document.getElementById('save-name').value + '.html')
@@ -2274,7 +2290,7 @@
         /** write data-model's state into HTML */
         this.saveData = function() {
           var pre = document.getElementById('report-data-on-page');
-          if (pre === null) { // gracefully report repeatedly throughout lineage of document
+          if (!pre) { // gracefully report repeatedly throughout lineage of document
             pre = document.createElement('pre');
             pre.setAttribute('id', 'report-data-on-page');
           } else {
@@ -2282,7 +2298,7 @@
           }
           var t = document.createTextNode(JSON.stringify(this, null, 2));
           pre.appendChild(t);
-          document.body.appendChild(pre);
+          document.getElementById('save-app').appendChild(pre);
         };
 
         /** read data-model's state from HTML */
