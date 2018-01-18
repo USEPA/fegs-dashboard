@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FEGS Scoping Tool</title>
 
+    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
+
     <style>
       * {
         font-family: arial, sans-serif;
@@ -168,7 +170,7 @@
   <body>
     <h1>FEGS Scoping Tool</h1>
 
-    <div id="section-scoring">
+    <div class="page" id="section-scoring">
       <h2>Scoring</h2>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a score of 100. Score all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
@@ -232,7 +234,7 @@
 
     </div>
 
-    <div id="section-stakeholders">
+    <div class="page" id="section-stakeholders">
       <h2>Stakeholders</h2>
       <div id="stakeholder-prioritization">
         <h3>Stakeholder Prioritization</h3>
@@ -387,7 +389,7 @@
       </div>
     </div>
 
-    <div id="section-beneficiary-definitions">
+    <div class="page" id="section-beneficiary-definitions">
       <h2>Beneficiary Definitions</h2>
 
       <table id="table-beneficiary-definitions">
@@ -432,7 +434,7 @@
 
     </div>
 
-    <div id="section-beneficiaries">
+    <div class="page" id="section-beneficiaries">
       <h2>Beneficiaries</h2>
 
       <label for="select-stakeholder-to-slice-into-beneficiaries">
@@ -490,7 +492,7 @@
 
     </div>
 
-    <div id="section-attribute-definitions">
+    <div class="page" id="section-attribute-definitions">
       <h2>Attribute Definitions</h2>
 
       <table id="table-attribute-definitions">
@@ -586,7 +588,7 @@
 
     </div>
 
-    <div id="section-attributes">
+    <div class="page" id="section-attributes">
       <h2>Attributes</h2>
 
       <table id="table-beneficiary-scores">
@@ -3589,9 +3591,7 @@
         return table;
       };
 
-      /**
-       * caculate and display beneficiary-scores
-       */
+      /** caculate and display beneficiary-scores */
       var displayBeneficiaryScores = function() {
         var attributes = fegsScopingData.fegsAttributes;
         var beneficiaries = fegsScopingData.fegsBeneficiaries;
@@ -3611,6 +3611,82 @@
           cell.innerText = cellValue;
         }
       };
+
+      /** Prototype view to encapsulate representation. */
+      var FEGSScopingView = function() {
+        this.pages = document.querySelectorAll('.page');
+        var self = this;
+        /** show only the identified page */
+        this.focusPage = function(pageId) {
+          var pages = document.querySelectorAll('.page');
+          var pageIndex;
+          for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+            if (pages[pageIndex].id === pageId) {
+              pages[pageIndex].style.display = 'block';
+            } else {
+              pages[pageIndex].style.display = 'none';
+            }
+          }
+          self.ensureNavigability(pageId);
+        };
+        /** add navigability if absent */
+        this.ensureNavigability = function(pageId) {
+          var navigation;
+          var back;
+          var forward;
+          console.log("pageId:");
+          console.log(pageId);
+          if (!document.getElementById(pageId).querySelector('.navigation')) {
+            navigation = document.createElement('div');
+            navigation.setAttribute('class', 'navigation');
+            back = document.createElement('button');
+            forward = document.createElement('button');
+            back.innerHTML = 'back';
+            forward.innerHTML = 'forward';
+            back.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
+                }
+              }
+              console.log("currentPageIndex:");
+              console.log(currentPageIndex);
+              if (currentPageIndex > 0) {
+                self.focusPage(pages[currentPageIndex - 1].id)
+              } else {
+                console.log('there is no page before the first page');
+              }
+            };
+            forward.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var currentPage = document.querySelector('.page[display="block"]');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
+                }
+              }
+              console.log("currentPageIndex:");
+              console.log(currentPageIndex);
+              if (currentPageIndex < pages.length - 1) {
+                self.focusPage(pages[currentPageIndex + 1].id)
+              } else {
+                console.log('there is no page after the last page');
+              }
+            };
+            navigation.appendChild(back);
+            navigation.appendChild(forward);
+            document.getElementById(pageId).appendChild(navigation);
+          }
+        };
+        //////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+      };////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
       ////////// PROCESS //////////////////////////////////////
       var fegsScopingData = new FEGSScopingData();
