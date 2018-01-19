@@ -18,3 +18,14 @@ Ratings can be saved as `.csv` files. Theses files can be created and edited wit
 ## Sharepoint Site
 Additional information about the tool can be found on a 
 [Sharepoint-site.](https://usepa.sharepoint.com/sites/ORD_Work/Dash/_layouts/15/start.aspx#/)
+
+## Electron App Installation
+**Note**: Running this requires [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/en/) (which includes npm) on your system.
+### Clone the repository
+`$ git clone -b fegs-electron https://github.com/USEPA/fegs-dashboard`
+### Go into the repository
+`$ cd fegs-dashboard`
+### Install dependencies
+`$ npm install`
+### Run the app
+`$ npm start`
