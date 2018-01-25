@@ -57,3 +57,7 @@ dist/
 ## wiki ##
 ##########
 wiki/
+
+## node_modules ##
+##########
+node_modules/
