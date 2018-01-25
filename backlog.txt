@@ -1,0 +1,26 @@
+- show project name by app's title
+- allow users to change project name where it's shown
+
+- save to a file
+
+- open from a file
+
+- hide unrepresented beneficiaries automatically
+
+- bar-chart should visualize global weights times scores
+
+- indicate progress
+	- Menu like: https://www.nature.com/articles/s41370-017-0012-y
+		- persists
+		- allows for navigation
+		- reflects current location on page
+	- show progress of step: Beneficiaries 8/9 complete
+		- red when incomplete
+		- green and a checkmark when complete
+
+- "send up a flare" to alert users of incomplete sections
+- "keep flare up" until sections which sent up the flare are completed
+
+- possibly open multiple scenarios
+
+- research a Chrome extension named waves for validating accessibility
