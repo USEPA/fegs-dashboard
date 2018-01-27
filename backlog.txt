@@ -8,8 +8,12 @@
 - hide unrepresented beneficiaries automatically
 
 - bar-chart should visualize global weights times scores
+	done: sethjenkins
 
-- indicate progress
+- bar-chart should update when weights change
+	done: sethjenkins
+
+- indicate progress #WIP sethjenkins
 	- Menu like: https://www.nature.com/articles/s41370-017-0012-y
 		- persists
 		- allows for navigation
