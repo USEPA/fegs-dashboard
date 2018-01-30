@@ -1,18 +1,25 @@
 {
   "name": "fegs-dashboard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Stakeholders describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/USEPA/fegs-dashboard/",
   "keywords": [
     "FEGS"
   ],
-  "author": "GitHub",
+  "author": "EPA",
   "license": "",
   "devDependencies": {
-    "electron": "~1.7.8"
+    "electron-builder": "^19.55.3"
+  },
+  "build": {
+    "appId": "fegs-dashboard",
+    "mac": {
+      "category": "public.app-category.utilities"
+    }
   }
 }

@@ -40,12 +40,12 @@ function createWindow () {
           click: () => {
             saveFile();
           }
-        },{
+        }, {
           label: 'Save As...',
           click: () => {
             saveFileAs();
           }
-        },{
+        }, {
           type: 'separator'
         }, {
           label: 'About ...',
