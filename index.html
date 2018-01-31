@@ -167,8 +167,26 @@
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
     <h1>FEGS Scoping Tool</h1>
 
+    <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
+    <div id="save-app"> 
+      <div>
+        <label for="input-name">Optionally enter the name with which this app will be saved.</label>
+        <input id="input-name" type="text" value="optionally enter a name" />
+      </div>
+      <div>
+        <label for="report-and-save">Report the app's data and save the app with its data.</label>
+        <button id="report-and-save" onclick="saveCallback('input-name')">Generate Report and Save</button>
+        <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
+        <input id="save-with-timestamp" type="checkbox" checked="checked"></input>
+      </div>
+      <div>
+        <label for="toggle-report">Toggle the report's visibility.</label>
+        <button onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
+      </div>
+    </div>
+
     <div class="page" id="section-scoring">
-      <h2>Scoring</h2>
+      <h3>Scoring</h3>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a score of 100. Score all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
 
@@ -232,7 +250,7 @@
     </div>
 
     <div class="page" id="section-stakeholders">
-      <h2>Stakeholders</h2>
+      <h3>Stakeholders</h3>
       <div id="stakeholder-prioritization">
         <h3>Stakeholder Prioritization</h3>
 
@@ -262,7 +280,7 @@
         </table>
 
         <div id="add-stakeholder">    
-          <h2>Add a new stakeholder</h2>
+          <h3>Add a new stakeholder</h3>
           <div class="light-gray">
             <label>Stakeholder-group name <input type="text" id="stakeholder-group"/></label>
           </div>
@@ -387,7 +405,7 @@
     </div>
 
     <div class="page" id="section-beneficiary-definitions">
-      <h2>Beneficiary Definitions</h2>
+      <h3>Beneficiary Definitions</h3>
 
       <table id="table-beneficiary-definitions">
         <tr class="agricultural"><th rowspan="7">Agricultural</th><th>Irrigators</th><td>Irrigator, irrigation, watering</td></tr>
@@ -432,7 +450,7 @@
     </div>
 
     <div class="page" id="section-beneficiaries">
-      <h2>Beneficiaries</h2>
+      <h3>Beneficiaries</h3>
 
       <label for="select-stakeholder-to-slice-into-beneficiaries">
         Identify the types of beneficiaries making up each stakeholder-group by percentage. 		
@@ -490,7 +508,7 @@
     </div>
 
     <div class="page" id="section-attribute-definitions">
-      <h2>Attribute Definitions</h2>
+      <h3>Attribute Definitions</h3>
 
       <table id="table-attribute-definitions">
         <tr class="dark">
@@ -586,7 +604,7 @@
     </div>
 
     <div class="page" id="section-attributes">
-      <h2>Attributes</h2>
+      <h3>Attributes</h3>
 
       <table id="table-beneficiary-scores">
         <colgroup>
@@ -1654,40 +1672,30 @@
     </div>
 
 <!-- FIXME: integrate code between comment flags into application -->
-    <div id="save-app"> 
-      <div>
-        <label for="save-name">Optionally enter the name with which this app will be saved.</label>
-        <input id="save-name" type="text" value="optionally enter a name" />
-      </div>
-      <div>
-        <label for="report-and-save">Report the app's data and save the app with its data.</label>
-        <button id="report-and-save" onclick="saveCallback('save-name')">Generate Report and Save</button>
-        <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
-        <input id="save-with-timestamp" type="checkbox" checked="checked"/>
-      </div>
-      <div>
-        <label for="toggle-report">Toggle the report's visibility.</label>
-        <button id="toggle-report" onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
-      </div>
-    </div>
 
     <script>
+      var getDocument = function() {
+        var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
+        return documentText;
+      }
+
       var saveCallback = function(reportElementId) {
         var reportElement = document.getElementById(reportElementId);
         var timestamp = '';
         var name;
         var extension;
-        fegsScopingData.saveView();
-        fegsScopingData.saveData();
+        const fs = require('fs');
+        fegsScopingView.saveView();
+        fegsScopingView.saveData();
         if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
           name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
           extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
           if (document.getElementById('save-with-timestamp').checked !== false) {
             timestamp = (new Date()).toISOString();
           }
-          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, name + timestamp + extension);
+          fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
         } else {
-          saveTextAs('<!DOCTYPE html>' + document.documentElement.outerHTML, document.getElementById('save-name').value + '.html')
+          fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
         }
       };
 
@@ -1696,308 +1704,6 @@
         fegsScopingData.restoreView();
       };
 
-      var savePage = function() {
-          var page = '<!DOCTYPE html>' + document.documentElement.outerHTML;
-          console.log(page);
-
-          document.getElementById('test23').setAttribute('href', 'data:application/xml;charset=utf-8,' + encodeURIComponent(page));
-      };
-
-        /* FileSaver.js
-         *  A saveAs() & saveTextAs() FileSaver implementation.
-         *  2014-06-24
-         *
-         *  Modify by Brian Chen
-         *  Author: Eli Grey, http://eligrey.com
-         *  License: X11/MIT
-         *    See https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md
-         */
-
-        /*global self */
-        /*jslint bitwise: true, indent: 4, laxbreak: true, laxcomma: true, smarttabs: true, plusplus: true */
-
-        /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
-
-        var saveAs = saveAs
-          // IE 10+ (native saveAs)
-          || (typeof navigator !== "undefined" &&
-              navigator.msSaveOrOpenBlob && navigator.msSaveOrOpenBlob.bind(navigator))
-          // Everyone else
-          || (function (view) {
-              "use strict";
-              // IE <10 is explicitly unsupported
-              if (typeof navigator !== "undefined" &&
-                  /MSIE [1-9]\./.test(navigator.userAgent)) {
-                  return;
-              }
-              var
-                    doc = view.document
-                    // only get URL when necessary in case Blob.js hasn't overridden it yet
-                  , get_URL = function () {
-                      return view.URL || view.webkitURL || view;
-                  }
-                  , save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
-                  , can_use_save_link = !view.externalHost && "download" in save_link
-                  , click = function (node) {
-                      var event = doc.createEvent("MouseEvents");
-                      event.initMouseEvent(
-                          "click", true, false, view, 0, 0, 0, 0, 0
-                          , false, false, false, false, 0, null
-                      );
-                      node.dispatchEvent(event);
-                  }
-                  , webkit_req_fs = view.webkitRequestFileSystem
-                  , req_fs = view.requestFileSystem || webkit_req_fs || view.mozRequestFileSystem
-                  , throw_outside = function (ex) {
-                      (view.setImmediate || view.setTimeout)(function () {
-                          throw ex;
-                      }, 0);
-                  }
-                  , force_saveable_type = "application/octet-stream"
-                  , fs_min_size = 0
-                  , deletion_queue = []
-                  , process_deletion_queue = function () {
-                      var i = deletion_queue.length;
-                      while (i--) {
-                          var file = deletion_queue[i];
-                          if (typeof file === "string") { // file is an object URL
-                              get_URL().revokeObjectURL(file);
-                          } else { // file is a File
-                              file.remove();
-                          }
-                      }
-                      deletion_queue.length = 0; // clear queue
-                  }
-                  , dispatch = function (filesaver, event_types, event) {
-                      event_types = [].concat(event_types);
-                      var i = event_types.length;
-                      while (i--) {
-                          var listener = filesaver["on" + event_types[i]];
-                          if (typeof listener === "function") {
-                              try {
-                                  listener.call(filesaver, event || filesaver);
-                              } catch (ex) {
-                                  throw_outside(ex);
-                              }
-                          }
-                      }
-                  }
-                  , FileSaver = function (blob, name) {
-                      // First try a.download, then web filesystem, then object URLs
-                      var
-                            filesaver = this
-                          , type = blob.type
-                          , blob_changed = false
-                          , object_url
-                          , target_view
-                          , get_object_url = function () {
-                              var object_url = get_URL().createObjectURL(blob);
-                              deletion_queue.push(object_url);
-                              return object_url;
-                          }
-                          , dispatch_all = function () {
-                              dispatch(filesaver, "writestart progress write writeend".split(" "));
-                          }
-                          // on any filesys errors revert to saving with object URLs
-                          , fs_error = function () {
-                              // don't create more object URLs than needed
-                              if (blob_changed || !object_url) {
-                                  object_url = get_object_url(blob);
-                              }
-                              if (target_view) {
-                                  target_view.location.href = object_url;
-                              } else {
-                                  window.open(object_url, "_blank");
-                              }
-                              filesaver.readyState = filesaver.DONE;
-                              dispatch_all();
-                          }
-                          , abortable = function (func) {
-                              return function () {
-                                  if (filesaver.readyState !== filesaver.DONE) {
-                                      return func.apply(this, arguments);
-                                  }
-                              };
-                          }
-                          , create_if_not_found = { create: true, exclusive: false }
-                          , slice
-                      ;
-                      filesaver.readyState = filesaver.INIT;
-                      if (!name) {
-                          name = "download";
-                      }
-                      if (can_use_save_link) {
-                          object_url = get_object_url(blob);
-                          save_link.href = object_url;
-                          save_link.download = name;
-                          click(save_link);
-                          filesaver.readyState = filesaver.DONE;
-                          dispatch_all();
-                          return;
-                      }
-                      // Object and web filesystem URLs have a problem saving in Google Chrome when
-                      // viewed in a tab, so I force save with application/octet-stream
-                      // http://code.google.com/p/chromium/issues/detail?id=91158
-                      if (view.chrome && type && type !== force_saveable_type) {
-                          slice = blob.slice || blob.webkitSlice;
-                          blob = slice.call(blob, 0, blob.size, force_saveable_type);
-                          blob_changed = true;
-                      }
-                      // Since I can't be sure that the guessed media type will trigger a download
-                      // in WebKit, I append .download to the filename.
-                      // https://bugs.webkit.org/show_bug.cgi?id=65440
-                      if (webkit_req_fs && name !== "download") {
-                          name += ".download";
-                      }
-                      if (type === force_saveable_type || webkit_req_fs) {
-                          target_view = view;
-                      }
-                      if (!req_fs) {
-                          fs_error();
-                          return;
-                      }
-                      fs_min_size += blob.size;
-                      req_fs(view.TEMPORARY, fs_min_size, abortable(function (fs) {
-                          fs.root.getDirectory("saved", create_if_not_found, abortable(function (dir) {
-                              var save = function () {
-                                  dir.getFile(name, create_if_not_found, abortable(function (file) {
-                                      file.createWriter(abortable(function (writer) {
-                                          writer.onwriteend = function (event) {
-                                              target_view.location.href = file.toURL();
-                                              deletion_queue.push(file);
-                                              filesaver.readyState = filesaver.DONE;
-                                              dispatch(filesaver, "writeend", event);
-                                          };
-                                          writer.onerror = function () {
-                                              var error = writer.error;
-                                              if (error.code !== error.ABORT_ERR) {
-                                                  fs_error();
-                                              }
-                                          };
-                                          "writestart progress write abort".split(" ").forEach(function (event) {
-                                              writer["on" + event] = filesaver["on" + event];
-                                          });
-                                          writer.write(blob);
-                                          filesaver.abort = function () {
-                                              writer.abort();
-                                              filesaver.readyState = filesaver.DONE;
-                                          };
-                                          filesaver.readyState = filesaver.WRITING;
-                                      }), fs_error);
-                                  }), fs_error);
-                              };
-                              dir.getFile(name, { create: false }, abortable(function (file) {
-                                  // delete file if it already exists
-                                  file.remove();
-                                  save();
-                              }), abortable(function (ex) {
-                                  if (ex.code === ex.NOT_FOUND_ERR) {
-                                      save();
-                                  } else {
-                                      fs_error();
-                                  }
-                              }));
-                          }), fs_error);
-                      }), fs_error);
-                  }
-                  , FS_proto = FileSaver.prototype
-                  , saveAs = function (blob, name) {
-                      return new FileSaver(blob, name);
-                  }
-              ;
-              FS_proto.abort = function () {
-                  var filesaver = this;
-                  filesaver.readyState = filesaver.DONE;
-                  dispatch(filesaver, "abort");
-              };
-              FS_proto.readyState = FS_proto.INIT = 0;
-              FS_proto.WRITING = 1;
-              FS_proto.DONE = 2;
-
-              FS_proto.error =
-              FS_proto.onwritestart =
-              FS_proto.onprogress =
-              FS_proto.onwrite =
-              FS_proto.onabort =
-              FS_proto.onerror =
-              FS_proto.onwriteend =
-                  null;
-
-              view.addEventListener("unload", process_deletion_queue, false);
-              saveAs.unload = function () {
-                  process_deletion_queue();
-                  view.removeEventListener("unload", process_deletion_queue, false);
-              };
-              return saveAs;
-          }(
-             typeof self !== "undefined" && self
-          || typeof window !== "undefined" && window
-          || this.content
-        ));
-        // `self` is undefined in Firefox for Android content script context
-        // while `this` is nsIContentFrameMessageManager
-        // with an attribute `content` that corresponds to the window
-
-        if (typeof module !== "undefined" && module !== null) {
-            module.exports = saveAs;
-        } else if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
-            define([], function () {
-                return saveAs;
-            });
-        }
-
-        String.prototype.endsWithAny = function () {
-            var strArray = Array.prototype.slice.call(arguments),
-                $this = this.toLowerCase().toString();
-            for (var i = 0; i < strArray.length; i++) {
-                if ($this.indexOf(strArray[i], $this.length - strArray[i].length) !== -1) return true;
-            }
-            return false;
-        };
-
-        var saveTextAs = saveTextAs
-        || (function (textContent, fileName, charset) {
-            fileName = fileName || 'download.txt';
-            charset = charset || 'utf-8';
-            textContent = (textContent || '').replace(/\r?\n/g, "\r\n");
-            if (saveAs && Blob) {
-                var blob = new Blob([textContent], { type: "text/plain;charset=" + charset });
-                saveAs(blob, fileName);
-                return true;
-            } else {//IE9-
-                var saveTxtWindow = window.frames.saveTxtWindow;
-                if (!saveTxtWindow) {
-                    saveTxtWindow = document.createElement('iframe');
-                    saveTxtWindow.id = 'saveTxtWindow';
-                    saveTxtWindow.style.display = 'none';
-                    document.body.insertBefore(saveTxtWindow, null);
-                    saveTxtWindow = window.frames.saveTxtWindow;
-                    if (!saveTxtWindow) {
-                        saveTxtWindow = window.open('', '_temp', 'width=100,height=100');
-                        if (!saveTxtWindow) {
-                            window.alert('Sorry, download file could not be created.');
-                            return false;
-                        }
-                    }
-                }
-
-                var doc = saveTxtWindow.document;
-                doc.open('text/html', 'replace');
-                doc.charset = charset;
-                if (fileName.endsWithAny('.htm', '.html')) {
-                    doc.close();
-                    doc.body.innerHTML = '\r\n' + textContent + '\r\n';
-                } else {
-                    if (!fileName.endsWithAny('.txt')) fileName += '.txt';
-                    doc.write(textContent);
-                    doc.close();
-                }
-
-                var retValue = doc.execCommand('SaveAs', null, fileName);
-                saveTxtWindow.close();
-                return retValue;
-            }
-        })
     </script>
 <!-- FIXME: integrate code between comment flags into application -->
 
@@ -2286,47 +1992,19 @@
           return numerator / denominator;
         };
 
-        /** write data-model's state into HTML */
-        this.saveData = function() {
-          var pre = document.getElementById('report-data-on-page');
-          if (!pre) { // gracefully report repeatedly throughout lineage of document
-            pre = document.createElement('pre');
-            pre.setAttribute('id', 'report-data-on-page');
-          } else {
-            pre.innerHTML = '';
-          }
-          var t = document.createTextNode(JSON.stringify(this, null, 2));
-          pre.appendChild(t);
-          document.getElementById('save-app').appendChild(pre);
-        };
-
         /** read data-model's state from HTML */
         this.restoreData = function() {
-          var pre = document.getElementById('report-data-on-page');
+          var preId = 'report-data-on-page';
+          var pre = document.getElementById(preId);
           var keys;
           var dataToBeRestored;
           var i;
-          //FIXME restore fegsScoping data from pre
           if (pre !== null) {
             fegsScopingData = new FEGSScopingData();
             Object.assign(fegsScopingData, JSON.parse(pre.innerHTML));
           } else {
-            console.log('There is no element with id report-data-on-page from which data may be restored.');
+            console.log('There is no element with id ' + preId + ' from which data may be restored.');
           }
-        };
-
-        /** save view's state: each input stores its own data */
-        this.saveView = function() {
-          var i;
-          var inputs = document.querySelectorAll('input:not([type="radio"])');
-          var radioInputs = document.querySelectorAll('input[type="radio"]');
-          for (i = 0; i < inputs.length; i++) {
-            inputs[i].setAttribute('data-value', inputs[i].value);
-          }
-          for (i = 0; i < radioInputs.length; i++) {
-            radioInputs[i].setAttribute('data-checked', radioInputs[i]['checked']);
-          }
-          document.body.setAttribute('data-restore', 'true'); // set flag to automatically restore data on document load
         };
 
         /** restore view's state: each input with a stored value restores that value */
@@ -2930,7 +2608,6 @@
           addOption(selectId, options[i], options[i]);
         }
         selectStakeholderToSlice();
-        console.log(document.querySelectorAll('#' + selectId + ' option:not([disabled="disabled"])'));
       };
 
       /**
@@ -3611,6 +3288,63 @@
 
       /** Prototype view to encapsulate representation. */
       var FEGSScopingView = function() {
+
+        /** initialize the view of the application */
+        this.initializeView = function() {
+          var inputName = document.getElementById('input-name');
+          var showName = document.getElementById('show-name');
+          showName.style.display = 'block';
+          inputName.style.display = 'none';
+        };
+
+        /** toggle between show or input the name of this instance of the app */
+        this.toggleEditOrShowName = function() {
+          var inputName = document.getElementById('input-name');
+          var showName = document.getElementById('show-name');
+          var name = 'index.html';
+          if (inputName.style.display === 'block') {
+            showName.style.display = 'none';
+            inputName.style.display = 'block';
+            inputName.value = showName.innerText;
+            //TODO FIXME let user submit new name and toggle visibility
+          }
+          if (showName.style.display === 'block') {
+            inputName.style.display = 'none';
+            showName.style.display = 'block';
+            showName.innerText = inputName.value;
+            //TODO FIXME let user change name
+          }
+        };
+
+        /** write data-model's state into HTML */
+        this.saveData = function() {
+          var pre = document.getElementById('report-data-on-page');
+          if (!pre) { // gracefully report repeatedly throughout lineage of document
+            pre = document.createElement('pre');
+            pre.setAttribute('id', 'report-data-on-page');
+            pre.style.display = 'none'; // hide report's text
+          } else {
+            pre.innerHTML = '';
+          }
+          var textNode = document.createTextNode(JSON.stringify(this, null, 2));
+          pre.appendChild(textNode);
+          document.getElementById('save-app').appendChild(pre);
+        };
+
+        /** save view's state: each input stores its own data */
+        this.saveView = function() {
+          var i;
+          var inputs = document.querySelectorAll('input:not([type="radio"])');
+          var radioInputs = document.querySelectorAll('input[type="radio"]');
+          for (i = 0; i < inputs.length; i++) {
+            inputs[i].setAttribute('data-value', inputs[i].value);
+          }
+          for (i = 0; i < radioInputs.length; i++) {
+            radioInputs[i].setAttribute('data-checked', radioInputs[i]['checked']);
+          }
+          document.body.setAttribute('data-restore', 'true'); // set flag to automatically restore data on document load
+        };
+
         this.pages = document.querySelectorAll('.page');
         var self = this;
         /** show only the identified page */
@@ -3626,13 +3360,12 @@
           }
           self.ensureNavigability(pageId);
         };
+
         /** add navigability if absent */
         this.ensureNavigability = function(pageId) {
           var navigation;
           var back;
           var forward;
-          console.log("pageId:");
-          console.log(pageId);
           if (!document.getElementById(pageId).querySelector('.navigation')) {
             navigation = document.createElement('div');
             navigation.setAttribute('class', 'navigation');
@@ -3650,8 +3383,6 @@
                   break;
                 }
               }
-              console.log("currentPageIndex:");
-              console.log(currentPageIndex);
               if (currentPageIndex > 0) {
                 self.focusPage(pages[currentPageIndex - 1].id)
               } else {
@@ -3669,8 +3400,6 @@
                   break;
                 }
               }
-              console.log("currentPageIndex:");
-              console.log(currentPageIndex);
               if (currentPageIndex < pages.length - 1) {
                 self.focusPage(pages[currentPageIndex + 1].id)
               } else {
@@ -3681,8 +3410,8 @@
             navigation.appendChild(forward);
             document.getElementById(pageId).appendChild(navigation);
           }
-        };
-        //////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+        };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+        this.initializeView();
       };////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
       ////////// PROCESS //////////////////////////////////////

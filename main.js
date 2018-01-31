@@ -61,8 +61,13 @@ function createWindow () {
           }
         }
       ]
+    }, {
+      label: 'Open DevTools',
+      click: () => {
+        mainWindow.webContents.openDevTools();
+      }
     }
-];
+  ];
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
   //**
@@ -104,7 +109,13 @@ function openFile() {
 }
 
 function saveFile() {
-  console.log("saveFile");
+  const {ipcMain} = require('electron');
+  const fs = require('fs');
+  ipcMain.on('synchronous-message', (event, documentText) => {
+    var message = 'synchronous message was received from page by main.js';
+    console.log(message);
+    fs.writeFile('windex.html', documentText);
+  });
 }
 
 function saveFileAs() {
@@ -114,7 +125,6 @@ function saveFileAs() {
   dialog.showSaveDialog(function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
-    
     } else {
       writeFile(fileNames);
     }
@@ -124,10 +134,10 @@ function saveFileAs() {
     fs.writeFile(filepath, '111\n111\n111', (err) => {
       console.log(filepath);
       if (err) { 
-        console.log("An error ocurred saving the file :" + err.message);
+        console.log("An error ocurred saving the file:" + err.message);
         return;
       }
-      console.log("The file has been saved!");
+      console.log("The file has been saved.");
     });
   }
 }
