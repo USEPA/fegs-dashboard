@@ -12,7 +12,7 @@
     "FEGS"
   ],
   "author": "EPA",
-  "license": "",
+  "license": "Unlicense",
   "devDependencies": {
     "electron-builder": "^19.55.3"
   },
