@@ -4,17 +4,26 @@
   "description": "Stakeholders describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
+    "test": "mocha",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
   "repository": "https://github.com/USEPA/fegs-dashboard/",
   "keywords": [
-    "FEGS"
+    "FEGS",
+    "Final Ecosystem Goods and Services"
   ],
   "author": "EPA",
   "license": "Unlicense",
   "devDependencies": {
-    "electron-builder": "^19.55.3"
+    "@types/mocha": "^2.2.48",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "electron": "^1.7.12",
+    "electron-builder": "^19.55.3",
+    "electron-chromedriver": "^1.8.0",
+    "mocha": "^5.0.0",
+    "spectron": "^3.8.0"
   },
   "build": {
     "appId": "fegs-dashboard",
