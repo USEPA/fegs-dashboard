@@ -62,9 +62,9 @@ function createWindow () {
         }
       ]
     }, {
-      label: 'Open DevTools',
+      label: 'Toggle DevTools',
       click: () => {
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.toggleDevTools();
       }
     }
   ];

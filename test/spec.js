@@ -3,7 +3,7 @@ const assert = require('assert')
 const electronPath = require('electron') // Require Electron from the binaries included in node_modules.
 const path = require('path')
  
-describe('Application launch', function () {
+describe('Isolation testbed', function () {
   this.timeout(30000)
  
   beforeEach(function () {
@@ -44,4 +44,13 @@ describe('Application launch', function () {
       // assert.equal(count, 2)
     })
   })
+
+  it('shows project name by app\'s title')
+  it('allows users to change project name where it\'s shown')
+
+  it('saves to a file')
+
+  it('opens from a file')
+
+  it('hides unrepresented beneficiaries automatically')
 })
