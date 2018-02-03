@@ -28,3 +28,11 @@
 - possibly open multiple scenarios
 
 - research a Chrome extension named waves for validating accessibility
+  - the name of the extension is WAVE Evaluation Tool
+  - electron does not facilitate use of extensions
+  - other options include node modules, CSS, bookmarklets and unafiliated javascript OSS
+  - done: kylethomas
+
+- seth suggests styling the app
+
+- seth suggests indicating when there are unsaved changes

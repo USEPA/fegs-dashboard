@@ -165,7 +165,7 @@
   </head>
   <body>
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
-    <h1>FEGS Scoping Tool</h1>
+    <h1 id="app-name">FEGS Scoping Tool</h1>
 
     <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
     <div id="save-app"> 
@@ -175,7 +175,7 @@
       </div>
       <div>
         <label for="report-and-save">Report the app's data and save the app with its data.</label>
-        <button id="report-and-save" onclick="saveCallback('input-name')">Generate Report and Save</button>
+        <button id="report-and-save" onclick="saveCallback('report-data-on-page')">Generate Report and Save</button>
         <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
         <input id="save-with-timestamp" type="checkbox" checked="checked"></input>
       </div>
@@ -183,6 +183,7 @@
         <label for="toggle-report">Toggle the report's visibility.</label>
         <button onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
       </div>
+      <pre class="display-none" id="report-data-on-page"></pre>
     </div>
 
     <div class="page" id="section-scoring">
@@ -1679,12 +1680,24 @@
         return documentText;
       }
 
+      var downloadText = function (filename, text) {
+				var element = document.createElement('a');
+				element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+				element.setAttribute('download', filename);
+
+				element.style.display = 'none';
+				document.body.appendChild(element);
+
+				element.click();
+
+				document.body.removeChild(element);
+			}
+
       var saveCallback = function(reportElementId) {
         var reportElement = document.getElementById(reportElementId);
         var timestamp = '';
         var name;
         var extension;
-        const fs = require('fs');
         fegsScopingView.saveView();
         fegsScopingView.saveData();
         if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
@@ -1693,9 +1706,11 @@
           if (document.getElementById('save-with-timestamp').checked !== false) {
             timestamp = (new Date()).toISOString();
           }
-          fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
         } else {
-          fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
         }
       };
 
@@ -3319,16 +3334,9 @@
         /** write data-model's state into HTML */
         this.saveData = function() {
           var pre = document.getElementById('report-data-on-page');
-          if (!pre) { // gracefully report repeatedly throughout lineage of document
-            pre = document.createElement('pre');
-            pre.setAttribute('id', 'report-data-on-page');
-            pre.style.display = 'none'; // hide report's text
-          } else {
-            pre.innerHTML = '';
-          }
+          pre.innerHTML = '';
           var textNode = document.createTextNode(JSON.stringify(this, null, 2));
           pre.appendChild(textNode);
-          document.getElementById('save-app').appendChild(pre);
         };
 
         /** save view's state: each input stores its own data */
@@ -3416,6 +3424,7 @@
 
       ////////// PROCESS //////////////////////////////////////
       var fegsScopingData = new FEGSScopingData();
+      var fegsScopingView = new FEGSScopingView();
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
       var tableAttributes = tableAttributesCreator('table-attributes');
       document.addEventListener('DOMContentLoaded', function() {
