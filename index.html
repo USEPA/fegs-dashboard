@@ -176,8 +176,13 @@
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
     <h1 id="app-name">FEGS Scoping Tool</h1>
 
-    <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
-    <div id="save-app"> 
+    <h2>
+      <span id="show-name"></span>
+      <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
+      <input id="input-name" type="text"></input>
+      <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
+    </h2>
+    <div id="save-app" style="color: pink"> 
       <div>
         <label for="input-name">Optionally enter the name with which this app will be saved.</label>
         <input id="input-name" type="text" value="optionally enter a name" />
@@ -1747,9 +1752,7 @@
 
     <script>
 
-      /**
-       * Prototype data-model and its CRUD-methods.
-       */
+      /** Prototype data-model and its CRUD-methods. */
       var FEGSScopingData = function() {
 
         /**
@@ -2032,7 +2035,7 @@
           var dataToBeRestored;
           var i;
           if (pre !== null) {
-            fegsScopingData = new FEGSScopingData();
+            fegsScopingData = new FEGSScopingData();//TODO ensure this doesn't overwrite all data on load
             Object.assign(fegsScopingData, JSON.parse(pre.innerHTML));
           } else {
             console.log('There is no element with id ' + preId + ' from which data may be restored.');
@@ -2071,6 +2074,11 @@
           return extantBeneficiaries;
         };
 
+        this.updateName = function(name) {
+          this.projectName = name;
+        };
+
+        this.projectName = '';
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
@@ -2078,6 +2086,17 @@
         this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
         this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber/Fiber/Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource-dependent businesses', 'Pharmaceutical/Food supplement suppliers', 'Fur/Hide trappers/hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military/Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber/Fiber/Fur/Hide subsisters', 'Building material subsisters', 'Experiencers/viewers', 'Food pickers/gatherers', 'Hunters', 'Anglers', 'Waders/Swimmers/Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
       };//////// END PROTOTYPE FEGScopingData ////////
+
+      /** Prototype controller of communication between data and view */
+      FEGSScopingController = function() {
+
+        /** update name of an instance of the app */
+        this.updateName = function(name) {
+          fegsScopingView.updateName(name);
+          fegsScopingData.updateName(name);
+        };
+
+      };//////// END PROTOTYPE FEGScopingController ////////
 
       /** sum all values in an object */
       var sum = function(obj) {
@@ -3366,29 +3385,52 @@
 
         /** initialize the view of the application */
         this.initializeView = function() {
-          var inputName = document.getElementById('input-name');
-          var showName = document.getElementById('show-name');
-          showName.style.display = 'block';
-          inputName.style.display = 'none';
+          this.showName.style.display = 'inline-block';
+          this.changeNameButton.style.display = 'inline-block';
+          this.inputName.style.display = 'none';
+          this.saveNameButton.style.display = 'none';
+          this.name = (new Date()).toISOString() + '_FEGS_Scoping_Tool_Data';
+          this.showName.innerHTML = this.name;
         };
 
-        /** toggle between show or input the name of this instance of the app */
-        this.toggleEditOrShowName = function() {
-          var inputName = document.getElementById('input-name');
-          var showName = document.getElementById('show-name');
-          var name = 'index.html';
-          if (inputName.style.display === 'block') {
-            showName.style.display = 'none';
-            inputName.style.display = 'block';
-            inputName.value = showName.innerText;
-            //TODO FIXME let user submit new name and toggle visibility
-          }
-          if (showName.style.display === 'block') {
-            inputName.style.display = 'none';
-            showName.style.display = 'block';
-            showName.innerText = inputName.value;
-            //TODO FIXME let user change name
-          }
+        /** update name displayed in titlebar and header */
+        this.updateName = function(name) {
+          this.showName.text = name;
+          this.inputName.text = name;
+          this.name = name;
+          document.title = name;
+        };
+
+        /** input the name of this project */
+        this.editName = function() {
+          this.showName.style.display = 'none';
+          this.changeNameButton.style.display = 'none';
+          this.inputName.style.display = 'inline-block';
+          this.saveNameButton.style.display = 'inline-block';
+          this.inputName.value = this.showName.innerText;
+        };
+
+        /** save the name of this project */
+        this.saveNameButton = function() {
+          this.inputName.style.display = 'none';
+          this.saveNameButton.style.display = 'none';
+          this.showName.style.display = 'inline-block';
+          this.changeName.style.display = 'inline-block';
+          this.showName.innerText = inputName.value;
+          fegsScopingController.saveData();
+          this.name = inputName.value;
+        };
+
+        /** indicate saved status */
+        this.indicateSaved = function() {
+          document.title = this.name;
+          document.body.style.border = none;
+        };
+
+        /** indicate saved status */
+        this.indicateUnsaved = function() {
+          document.title = this.name + '*';
+          document.body.style.border = '1px solid red';
         };
 
         /** write data-model's state into HTML */
@@ -3479,12 +3521,17 @@
             document.getElementById(pageId).appendChild(navigation);
           }
         };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+        this.inputName = document.getElementById('input-name');
+        this.showName = document.getElementById('show-name');
+        this.saveNameButton = document.getElementById('save-name');
+        this.changeNameButton = document.getElementById('change-name');
         this.initializeView();
       };////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
-      ////////// PROCESS //////////////////////////////////////
+      ////////// PAGE-PROCESS //////////////////////////////////////
       var fegsScopingData = new FEGSScopingData();
       var fegsScopingView = new FEGSScopingView();
+      var fegsScopingController = new FEGSScopingController();
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
       var tableAttributes = tableAttributesCreator('table-attributes');
       document.addEventListener('DOMContentLoaded', function() {
