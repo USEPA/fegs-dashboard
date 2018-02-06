@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "start": "electron ."
   },
   "repository": "https://github.com/USEPA/fegs-dashboard/",
   "keywords": [

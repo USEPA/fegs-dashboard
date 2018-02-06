@@ -160,13 +160,40 @@
       .display-none {
         display: none;
       }
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-size: 20px;
+      }
+      #menu {
+        width: 15%;
+        position: fixed;
+        border-right: 1px solid;
+        height: 100%;
+        background-color: #8ba6ca;
+        font-size: 18px;
+      }
+      #menu a {
+        color: #000;
+        text-decoration: none;
+      }
+      #menu a:hover {
+        text-decoration: link;
+      }
+      #main-content {
+        width: 85%;
+        position: absolute;
+        right: 0;
+      }
+      .active {
+        font-weight: bold;
+      }
     </style>
 
   </head>
   <body>
+    <div id="main-content">
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
-    <h1 id="app-name">FEGS Scoping Tool</h1>
-
     <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
     <div id="save-app"> 
       <div>
@@ -1671,10 +1698,35 @@
       </table>
 
     </div>
+  </div>
+  <div id="menu">
+    <ul>
+      <li><a href="#section-scoring">Scoring</a></li>
+      <li><a href="#section-stakeholders">Stakeholders</a></li>
+      <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
+      <li><a href="#section-beneficiaries">Beneficiaries</a></li>
+      <li><a href="#section-attribute-definitions">Attribute Definitions</a></li>
+      <li><a href="#section-attributes">Attributes</a></li>
+    </ul>
+  </div>
 
 <!-- FIXME: integrate code between comment flags into application -->
 
     <script>
+      window.addEventListener("scroll", onScroll);
+      function onScroll(event){
+        var scrollPos = window.scrollY;
+        var menuItems = document.getElementById("menu").getElementsByTagName('a');
+        for (var i = 0; i < menuItems.length; i++) {
+          var currentItem = menuItems[i];
+          var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
+          if (hrefElement.offsetTop <= scrollPos && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
+            currentItem.classList.add("active");
+          } else {
+            currentItem.classList.remove("active");
+          }
+        }
+      }
       var getDocument = function() {
         var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
         return documentText;
