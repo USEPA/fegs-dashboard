@@ -1735,8 +1735,8 @@
         for (var i = 0; i < menuItems.length; i++) {
           var currentItem = menuItems[i];
           var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
-          if (hrefElement.offsetTop <= scrollPos && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
-            currentItem.classList.add("active");
+          if (hrefElement.offsetTop <= (scrollPos + 1) && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
+            currentItem.parentNode.classList.add("active");
           } else {
             currentItem.parentNode.classList.remove("active");
           }
