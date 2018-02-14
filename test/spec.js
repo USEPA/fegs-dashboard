@@ -4,8 +4,9 @@ const electronPath = require('electron') // Require Electron from the binaries i
 const path = require('path')
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const fs = require('fs');
 
-describe('Isolation testbeds', function() {
+describe('Isolated testbeds house suites of tests which are certainly independent.', function() {
   this.timeout(30000);
 
   global.before(function() {
@@ -38,7 +39,13 @@ describe('Isolation testbeds', function() {
     return this.app.start()
   });
 
-  it('shows an initial window', function() {
+  after(function() {
+    if (this.app && this.app.isRunning()) {
+      return this.app.stop()
+    }
+  });
+
+  it('show an initial window', function() {
     return this.app.client.getWindowCount().then(function (count) {
       assert.equal(count, 1)
       // Please note that getWindowCount() will return 2 if `dev tools` are opened.
@@ -46,34 +53,29 @@ describe('Isolation testbeds', function() {
     })
   });
 
-  it('scrapes view', function() {
-    return this.app.client.getValue('#magnitude-score').should.become('1');
+  it('scrape view', function() {
+    // scrape page, save data to #scrape-page.data-view-state, and getAttribute(#scrape-page, data-view-state)
+    //TODO FIXME by finishing
+    require('fs').rename('data.json', 'data-renamed.json') // given no data.json
+    this.app.client.click('#scrape-page'); // when #scrape-page.click()
+    return Promise.resolve(require('fs').existsSync('data.json')).should.eventually.be.true; // then data.json should be true
   });
 
-  it('saves to a file', function() {
-    var fs = require('fs');
+  it('save to a file', function() {
     return this.app.client.getValue('fegsScopingData').should.eventually.contain('criteria');
   });
 
-  it('opens from a file');
+  it('open from a file');
 
-  it('hides unrepresented beneficiaries automatically');
+  it('hide unrepresented beneficiaries automatically');
 
   it('style app with EPA\'s web-style');
 
-  it('shows project-name as app\'s title', function() {
-    this.app.client.waitUntilWindowLoaded()
-    this.app.client.document.title = 'foo';
+  it('show project-name as app\'s title', function() {
     return this.app.client.waitUntilWindowLoaded()
       .getTitle().should.eventually.equal('FEGS Scoping Tool');
   });
 
-  it('allows users to change project name where it\'s shown');
-
-  after(function() {
-    if (this.app && this.app.isRunning()) {
-      return this.app.stop()
-    }
-  });
+  it('allow users to change project name where it\'s shown');
 
 })

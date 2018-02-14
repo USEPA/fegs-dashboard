@@ -176,6 +176,8 @@
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
     <h1 id="app-name">FEGS Scoping Tool</h1>
 
+    <button id="scrape-page" onclick="fegsScopingController.saveView();">Scrape This Page</button>
+
     <h2>
       <span id="show-name"></span>
       <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
@@ -205,7 +207,7 @@
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
 
-      <table class="scoring">
+      <table class="scoring" id="table-scores">
         <thead>
           <tr>
             <th>Color</th>
@@ -2090,11 +2092,81 @@
       /** Prototype controller of communication between data and view */
       FEGSScopingController = function() {
 
+        /** scrape data from the page and save the data */
+        this.saveView = function() {
+          var returnValue;
+          if (window && window.process && window.process.type) { // true if in NODE's ELECTRON
+            returnValue = this.saveJSON('data.json', this.scrapePage());
+          } else { // else is selected if this instance appears to be running in the browser
+            returnValue = this.downloadText('data.json', JSON.stringify(this.scrapePage()));
+          }
+          return returnValue;
+        };
+
         /** update name of an instance of the app */
         this.updateName = function(name) {
           fegsScopingView.updateName(name);
           fegsScopingData.updateName(name);
         };
+
+        /** scrape state of page */
+        this.scrapePage = function() {
+          var scrapedValues;
+          var scores = {};
+          var beneficiaries = {};
+          var attributes = {};
+          var i;
+          var j;
+          for (i = 0; i < fegsScopingData.criteria.length; i++) { // save view-state of #table-scores
+            scores[fegsScopingData.criteria[i] + '-score'] = document.getElementById(fegsScopingData.criteria[i] + '-score').value;
+          }
+          if (document.getElementById('table-beneficiaries').rows[0].cells.length > 2) { // scrape #table-beneficiaries conditioned upon whether table-beneficiaries is populated
+            for (i = 0; i < fegsScopingData.fegsBeneficiaries.length; i++) { // loop through each row of the table
+              if (+(document.getElementById('table-beneficiaries').rows[i + 1].cells.length) < 3) { // does the row have two th-elements?
+                beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById('table-beneficiaries').rows[i + 1].cells[1].firstChild.value; // scrape this beneficiary's value
+              } else { // the row appears to have only one th as a label
+                beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById('table-beneficiaries').rows[i + 1].cells[2].firstChild.value; // scrape this beneficiary's value
+              }
+            }
+          } else { // no beneficiaries are populated into #table-beneficiaries
+            console.log('no attributes recorded from view');
+          }
+          for (i = 0; i < fegsScopingData.fegsBeneficiaries.length; i++) {
+            attributes[fegsScopingData.fegsBeneficiaries[i]] = {};
+            for (j = 0; j < fegsScopingData.fegsAttributes.length; j++) {
+              attributes[fegsScopingData.fegsBeneficiaries[i]][fegsScopingData.fegsAttributes[j]] = tableAttributes.cellInputValue(tableAttributes.cell(fegsScopingData.fegsAttributes[j], fegsScopingData.fegsBeneficiaries[i]));
+            }
+          }
+          /* //works in BROWSER
+          document.getElementById('scrape-page').setAttribute('data-view-state', JSON.stringify({'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes})); */
+          //TODO forge a workflow that flows efficiently within electron for testing and debugging
+          scrapedValues = {'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes};
+          return scrapedValues;
+        };
+
+        /** save json to file; only works in NODE's ELECTRON */
+        this.saveJSON = function(savePath, jsonToBeSaved) {
+          var fs = require('fs');
+          if (typeof(jsonToBeSaved) !== 'string') {
+            var jsonText = JSON.stringify(jsonToBeSaved);
+          } else {
+            jsonText = jsonToBeSaved;
+          }
+console.log("typeof(jsonText):", typeof(jsonText));
+console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
+          fs.writeFileSync(savePath, jsonText, function(err) {throw(err)});
+        };
+
+        /** download given text to given filename; works in BROWSER */
+        this.downloadText = function (filename, text) {
+          var element = document.createElement('a');
+          element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+          element.setAttribute('download', filename);
+          element.style.display = 'none';
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+        }
 
       };//////// END PROTOTYPE FEGScopingController ////////
 
@@ -3107,7 +3179,7 @@
             this.cols[iCol].setAttribute(this.colSpanOriginalValuePropertyName, this.cols[iCol].span);
           }
         };
-        
+
         /** return the specified cell */
         this.cell = function(rowHeader, columnHeader) {
           var iRow = rowHeaders.indexOf(rowHeader) + this.rowOffset;
@@ -3188,7 +3260,7 @@
           return this.cols[colIndex].classList.contains(this.hiddenClassName);
         };
 
-        /** get index of col containing the indated column */
+        /** get index of col containing the indicated column */
         this.getColIndex = function(columnIndicator) {
           var columnIndex = this.getColumnIndex(columnIndicator);
           var currentColOriginalSpan;
@@ -3292,7 +3364,7 @@
         }
       };////// END PROTOTYPE NAMED Table ////////////
 
-      /** instantiate a Table() and perform specialized initializations */
+      /** instantiate a Table() for #table-attributes; perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
         var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
         var columnOffset = 1; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
