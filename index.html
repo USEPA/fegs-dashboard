@@ -99,12 +99,14 @@
       .light-gray {
         background-color: #d6d7d9;
         border-radius: 3px;
-        padding: .1em 1em 1em 1em;
+        padding: 1em 1em 1em 1em;
         margin-bottom: .4em;
       }
-
-      #add-stakeholder {
-        display: none;
+      #stakeholder-list {
+        list-style: none;
+      }
+      .stakeholder-value-list {
+        list-style: none; 
       }
 
       #table-stakeholders td, #table-stakeholders th {
@@ -202,12 +204,19 @@
         font-weight: bold;
         background-color: #aeb0b5;
       }
+      .remove-stakeholder {
+        background-color: #cd2026;
+        color: #fff;
+        margin: 0 0 0 10px;
+        padding: 0.25em .5em;
+        cursor: pointer;
+      }
     </style>
 
   </head>
   <body>
     <div id="main-content">
-    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
+    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-weighting');">Paginate App</button>
     <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
     <div id="save-app"> 
       <div>
@@ -227,9 +236,9 @@
       <pre class="display-none" id="report-data-on-page"></pre>
     </div>
 
-    <div class="page" id="section-scoring">
-      <h3>Scoring</h3>
-      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a score of 100. Score all other criteria relative to that most valued criterion.</p>
+    <div class="page" id="section-weighting">
+      <h3>Weighting</h3>
+      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
 
       <table class="scoring">
@@ -288,162 +297,170 @@
           </tr>
         </tbody>
       </table>
-
     </div>
 
     <div class="page" id="section-stakeholders">
-      <h3>Stakeholders</h3>
+      <h3>Add Stakeholders</h3>
+      <p>Identify your stakeholder-groups.</p>
       <div id="stakeholder-prioritization">
-        <h3>Stakeholder Prioritization</h3>
-
-        <table id="table-stakeholders">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Stakeholder-group</th>
-              <th>Magnitude/Probability of impact</th>
-              <th>Level of influence</th>
-              <th>Level of interest</th>
-              <th>Urgency/Temporal immediacy</th>
-              <th>Proximity</th>
-              <th>Economic interest</th>
-              <th>Rights</th>
-              <th>Fairness</th>
-              <th>Underrepresented/Underserved representation</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="11"><button id="show-stakeholder-button" onclick="showAddStakeholder();">Add a new stakeholder-group</button></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div id="add-stakeholder">    
-          <h3>Add a new stakeholder</h3>
+        <div>    
           <div class="light-gray">
             <label>Stakeholder-group name <input type="text" id="stakeholder-group"/></label>
+            <button id="add-stakeholder" onclick="addStakeholder();">Add this stakeholder</button>
+            <ul id="stakeholder-list"></ul>
           </div>
+        </div>
+        <br />
+        <br />
+        <div id="set-stakeholder-values">
+          <h3>Score Stakeholders</h3>
+          <p>Score each stakeholder-group for each of the 9 criteria.</p>
           <div>
-            <h4>Magnitude/Probability of impact</h4>
             <div class="light-gray">
-              <p>1. If changes are made in this decision context what is the likelihood that this stakeholder-group will be impacted?</p>
-              <ul>
-                <li><label><input type="radio" name="magnitude-probability-weight" id="magnitude-probability-weight-01" value="60"/>High.</label></li>
-                <li><label><input type="radio" name="magnitude-probability-weight" id="magnitude-probability-weight-02" value="40"/>Moderate.</label></li>
-                <li><label><input type="radio" name="magnitude-probability-weight" id="magnitude-probability-weight-03" value="20"/>Low.</label></li>
-                <li><label><input type="radio" name="magnitude-probability-weight" id="magnitude-probability-weight-04" value="0"/>None.</label></li>
-              </ul>
+              <h4>Magnitude/Probability of impact</h4>
+              <p>If changes are made in this decision context what is the likelihood that this stakeholder-group will be impacted?</p>
+              <p>Please enter a number 0 to 100.</p>
+              <p>High = 60; Moderate = 40; Low = 20; None = 0</p>
+              <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
             </div>
             <div class="light-gray">
-              <p>2. What is the magnitude of the impact?</p>
-              <ul>
-                <li><label><input type="radio" name="magnitude-impact-weight" id="magnitude-impact-weight-01" value="60"/>Significant.</label></li>
-                <li><label><input type="radio" name="magnitude-impact-weight" id="magnitude-impact-weight-02" value="40"/>Moderate.</label></li>
-                <li><label><input type="radio" name="magnitude-impact-weight" id="magnitude-impact-weight-03" value="20"/>Minimal.</label></li>
-                <li><label><input type="radio" name="magnitude-impact-weight" id="magnitude-impact-weight-04" value="0"/>None.</label></li>
-              </ul>
+              <p>What is the magnitude of the impact?</p>
+              <p>Please enter a number 0 to 100.</p>
+              <p>Significant = 60; Moderate = 40; Minimal = 20; None = 0</p>
+              <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Level of influence</h4>
-            <div class="light-gray">  
-              <p>3. Does this stakeholder-group have any formal or informal influence over the decision making process?</p>
-              <ul>
-                <li><label><input type="radio" name="influence-weight" id="influence-weight-01" value="100"/>This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</label></li>
-                <li><label><input type="radio" name="influence-weight" id="influence-weight-02" value="50"/>This group has informal influence over the decision-making process.</label></li>
-                <li><label><input type="radio" name="influence-weight" id="influence-weight-03" value="0"/>This group has no influence over the decision-making process.</label></li>
-              </ul>
-            </div>
-          </div>
-          <div>
-            <h4>Level of interest</h4>
-            <div class="light-gray">  
-              <p>4. What is this stakeholder-group's level of interest in this decision/action?</p>
-              <ul>
-                <li><label><input type="radio" name="interest-weight" id="interest-weight-01" value="100"/>High.</label></li>
-                <li><label><input type="radio" name="interest-weight" id="interest-weight-02" value="75"/>Moderate.</label></li>
-                <li><label><input type="radio" name="interest-weight" id="interest-weight-03" value="50"/>Low.</label></li>
-                <li><label><input type="radio" name="interest-weight" id="interest-weight-04" value="0"/>None.</label></li>
-              </ul>
-            </div>
-          </div>
-          <div>
-            <h4>Urgency/Temporal immediacy</h4>
             <div class="light-gray">
-              <p>5. Does this stakeholder-group want an immediate decision/action on this issue?</p>
+              <h4>Level of influence</h4>
+              <p>Does this stakeholder-group have any formal or informal influence over the decision making process?</p>
+              <p>Please enter a number 0 to 100.</p>
               <ul>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-01" value="100"/>Yes, even if other actions/decisions must be postponed.</label></li>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-02" value="80"/>Yes, as long as it does not delay current commitments.</label></li>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-03" value="60"/>They would like to see action/a decision within a relatively short timeframe.</label></li>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-04" value="40"/>They would like to see action/a decision within a medium range timeframe.</label></li>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-05" value="20"/>They would like to see action/a decision made, but have no timeframe for it.</label></li>
-                <li><label><input type="radio" name="urgency-weight" id="urgency-weight-06" value="0"/>They do not care when an action/decision takes place.</label></li>
+                <li>100 = This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</li>
+                <li>50 = This group has informal influence over the decision-making process.</li>
+                <li>0 = This group has no influence over the decision-making process.</li>
               </ul>
+              <ul data-criterion="influence" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Proximity</h4>
             <div class="light-gray">  
-              <p>6. How frequently does this stakeholder-group come into contact with the area subject to this decision?</p>
+              <h4>Level of interest</h4>
+              <p>What is this stakeholder-group's level of interest in this decision/action?</p>
+              <p>Please enter a number 0 to 100.</p>
               <ul>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-01" value="100"/>They are constantly in direct contact with the area.</label></li>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-02" value="75"/>They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</label></li>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-03" value="50"/>They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</label></li>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-04" value="25"/>They are infrequently in contact with areas adjacent to the area.</label></li>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-05" value="10"/>They interact with this area from a distance.</label></li>
-                <li><label><input type="radio" name="proximity-weight" id="proximity-weight-06" value="0"/>They are never in contact with the area.</label></li>
+                <li>100 = High.</li>
+                <li>75 = Moderate.</li>
+                <li>50 = Low.</li>
+                <li>0 = None.</li>
               </ul>
+              <ul data-criterion="interest" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Economic interest</h4>
             <div class="light-gray">
-              <p>7. Does this stakeholder-group have an economic interest in the outcome of this decision?</p>
+              <h4>Urgency/Temporal immediacy</h4>
+              <p>Does this stakeholder-group want an immediate decision/action on this issue?</p>
               <ul>
-                <li><label><input type="radio" name="economic-interest-weight" id="economic-interest-weight-01" value="100"/>Yes.</label></li>
-                <li><label><input type="radio" name="economic-interest-weight" id="economic-interest-weight-02" value="0"/>No.</label></li>
+                <li>100 = Yes, even if other actions/decisions must be postponed.</li>
+                <li>80 = Yes, as long as it does not delay current commitments.</li>
+                <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
+                <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
+                <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
+                <li>0 = They do not care when an action/decision takes place.</li>
               </ul>
+              <ul data-criterion="urgency" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Rights</h4>
             <div class="light-gray">  
-              <p>8. Does this stakeholder-group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
+              <h4>Proximity</h4>
+              <p>How frequently does this stakeholder-group come into contact with the area subject to this decision?</p>
               <ul>
-                <li><label><input type="radio" name="rights-weight" id="rights-weight-01" value="100"/>Yes, all 3.</label></li>
-                <li><label><input type="radio" name="rights-weight" id="rights-weight-02" value="60"/>Yes, 2 of the 3.</label></li>
-                <li><label><input type="radio" name="rights-weight" id="rights-weight-03" value="20"/>Yes, 1 of the 3.</label></li>
-                <li><label><input type="radio" name="rights-weight" id="rights-weight-04" value="0"/>No.</label></li>
+                <li>100 = They are constantly in direct contact with the area.</li>
+                <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</li>
+                <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</li>
+                <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
+                <li>10 = They interact with this area from a distance.</li>
+                <li>0 = They are never in contact with the area.</li>
               </ul>
+              <ul data-criterion="proximity" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Fairness</h4>
+            <div class="light-gray">
+              <h4>Economic interest</h4>
+              <p>Does this stakeholder-group have an economic interest in the outcome of this decision?</p>
+              <ul>
+                <li>100 = Yes.</li>
+                <li>0 = No.</li>
+              </ul>
+              <ul data-criterion="economic-interest" class="stakeholder-value-list"></ul>
+            </div>
+          </div>
+          <div>
             <div class="light-gray">  
-              <p>9. If this stakeholder-group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
+              <h4>Rights</h4>
+              <p>Does this stakeholder-group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</p>
+              <ul>
+                <li>100 = Yes, all 3.</li>
+                <li>60 = Yes, 2 of the 3.</li>
+                <li>20 = Yes, 1 of the 3.</li>
+                <li>0 = No.</li>
+              </ul>
+              <ul data-criterion="rights" class="stakeholder-value-list"></ul>
+            </div>
+          </div>
+          <div>
+            <div class="light-gray">  
+              <h4>Fairness</h4>
+              <p>If this stakeholder-group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
                 <ul>
-                  <li><label><input type="radio" name="fairness-weight" id="fairness-weight-01" value="100"/>Yes.</label></li>
-                  <li><label><input type="radio" name="fairness-weight" id="fairness-weight-02" value="0"/>No.</label></li>
+                  <li>100 = Yes.</li>
+                  <li>0 = No.</li>
                 </ul>
+                <ul data-criterion="fairness" class="stakeholder-value-list"></ul>
             </div>
           </div>
           <div>
-            <h4>Underrepresented/Underserved representation</h4>
             <div class="light-gray">
-              <p>10. Does this stakeholder-group represent underserved or underrepresented groups?</p>
+              <h4>Underrepresented/Underserved representation</h4>
+              <p>Does this stakeholder-group represent underserved or underrepresented groups?</p>
               <ul>
-                <li><label><input type="radio" name="representation-weight" id="representation-weight-01" value="100"/>Yes.</label></li>
-                <li><label><input type="radio" name="representation-weight" id="representation-weight-02" value="0"/>No.</label></li>
+                <li>100 = Yes.</li>
+                <li>0 = No.</li>
               </ul>
+              <ul data-criterion="representation" class="stakeholder-value-list"></ul>
             </div>
           </div>
-          <button onclick="addStakeholder();">Add this stakeholder</button>
-          <button onclick="cancelAddStakeholder();">Cancel</button>
+          <button onclick="addStakeholderScores();">Add stakeholder scores</button>
         </div>
       </div>
+      <h3>Stakeholders</h3>
+      <table id="table-stakeholders">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Stakeholder-group</th>
+            <th>Magnitude/Probability of impact</th>
+            <th>Level of influence</th>
+            <th>Level of interest</th>
+            <th>Urgency/Temporal immediacy</th>
+            <th>Proximity</th>
+            <th>Economic interest</th>
+            <th>Rights</th>
+            <th>Fairness</th>
+            <th>Underrepresented/Underserved representation</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="11"></td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
 
     <div class="page" id="section-beneficiary-definitions">
@@ -495,7 +512,7 @@
       <h3>Beneficiaries</h3>
 
       <label for="select-stakeholder-to-slice-into-beneficiaries">
-        Identify the types of beneficiaries making up each stakeholder-group by percentage. 		
+        Identify the types of beneficiaries making up each stakeholder-group by percentage.     
         <br />
         <select id="select-stakeholder-to-slice-into-beneficiaries" onchange="selectStakeholderToSlice()">
           <option selected="selected" disabled="disabled">Select a Stakehohlder-Group</option>
@@ -1716,7 +1733,7 @@
   <div id="menu">
     <div>Menu</div>
     <ul>
-      <li><a href="#section-scoring">Scoring</a></li>
+      <li><a href="#section-weighting">Weighting</a></li>
       <li><a href="#section-stakeholders">Stakeholders</a></li>
       <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
       <li><a href="#section-beneficiaries">Beneficiaries</a></li>
@@ -1748,17 +1765,17 @@
       }
 
       var downloadText = function (filename, text) {
-				var element = document.createElement('a');
-				element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-				element.setAttribute('download', filename);
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
 
-				element.style.display = 'none';
-				document.body.appendChild(element);
+        element.style.display = 'none';
+        document.body.appendChild(element);
 
-				element.click();
+        element.click();
 
-				document.body.removeChild(element);
-			}
+        document.body.removeChild(element);
+      }
 
       var saveCallback = function(reportElementId) {
         var reportElement = document.getElementById(reportElementId);
@@ -2288,41 +2305,126 @@
         return json;
       }
 
+      document.getElementById("stakeholder-group").addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("add-stakeholder").click();
+        }
+      });
+
       /**
        * Adds a stakeholder based on the input data
        * @function
        */
       function addStakeholder() {
-        var weights = {};
-        var stakeholderGroup = document.getElementById('stakeholder-group').value;
-        for (var i = 0; i < fegsScopingData.criteria.length; i++) {
-          var criteria = fegsScopingData.criteria[i];
-          if (criteria === 'magnitude') {
-            var magnitudeProbabilityScore = parseInt(getCheckedValueByName('magnitude-probability-weight'));
-            var magnitudeImpactScore = parseInt(getCheckedValueByName('magnitude-impact-weight'));
-            var totalMagnitudeScore = 0;
-            if (magnitudeProbabilityScore !== 0 && magnitudeImpactScore !== 0) {
-              totalMagnitudeScore = magnitudeProbabilityScore + magnitudeImpactScore - 20 + '';
-            }
-            weights[criteria] = totalMagnitudeScore;
-          } else {
-            weights[criteria] = getCheckedValueByName(criteria + '-weight');
-          }
-        }
+        event.preventDefault();
+        var weights = fegsScopingData.makeCriteriaObject({});
+        var stakeholderGroupInput = document.getElementById('stakeholder-group');
+        var stakeholderGroup = stakeholderGroupInput.value;
+        stakeholderGroupInput.value = '';
         if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) {
-          alert('a stakeholder with this name already exists');
+          accessiblyNotify('A stakeholder with this name already exists.');
+          return;
+        } else if (stakeholderGroup.trim() === "") {
+          accessiblyNotify('Enter a valid stakeholder name.');
           return;
         }
         fegsScopingData.addStakeholder(stakeholderGroup, weights);
-        addRow('table-stakeholders', [stakeholderGroup, weights]); // table name and array of values to insert
+
+        var stakeholderList = document.getElementById('stakeholder-list');
+        var li = document.createElement('li');
+        li.setAttribute('data-stakeholder', stakeholderGroup);
+        li.appendChild(document.createTextNode(stakeholderGroup));
+
+        var button = document.createElement('button');
+        button.setAttribute('class', 'remove-stakeholder');
+        button.setAttribute('aria-label', 'remove stakeholder');
+        button.innerHTML = '&#215;';
+
+        button.addEventListener("click", function() { // create listeners for the buttons
+          console.log(this.parentNode);
+          console.log(this.parentNode.getAttribute('data-stakeholder'));
+          var stakeholder = this.parentNode.getAttribute('data-stakeholder');
+          var elementsToRemove = document.querySelectorAll('[data-stakeholder="' + stakeholder + '"]');
+          for (var i = 0, length = elementsToRemove.length; i < length; i++) {
+            elementsToRemove[i].remove();
+          }
+          fegsScopingData.removeStakeholders([stakeholder]);
+        });
+
+        li.appendChild(button);
+        stakeholderList.appendChild(li);
+
+        var lists = document.getElementsByClassName('stakeholder-value-list');
+        for (var i = 0; i < lists.length; i++) {
+          var ul = lists[i];
+          var li = document.createElement('li');
+          li.setAttribute('class', 'stakeholder-score-item');
+          li.setAttribute('data-stakeholder', stakeholderGroup);
+          li.appendChild(document.createTextNode(stakeholderGroup));
+
+          var input = document.createElement('input');
+          input.setAttribute('type', 'number');
+          input.setAttribute('min', '0');
+          input.setAttribute('max', '100');
+          input.setAttribute('step', '1');
+          input.setAttribute('class', 'stakeholder-score-input');
+          input.setAttribute('id', stakeholderGroup + '-' + ul.getAttribute('data-criterion'));
+          input.setAttribute('data-criterion', ul.getAttribute('data-criterion'));
+          li.appendChild(input);
+          ul.appendChild(li);
+        }
+      }
+
+      function addStakeholderScores() {
+        event.preventDefault();
+        var stakeholdersToAdd = scrapeAddStakeholders();
+        for (var stakeholder in stakeholdersToAdd) {
+          fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
+          addRow('table-stakeholders', [stakeholder, stakeholdersToAdd[stakeholder]]); // table name and array of values to insert
+        }
+        clearStakeholderScores();
         initStackedBarChart.draw({
           data: formatStakeholderData(),
           key: fegsScopingData.criteria,
           element: 'stakeholder-prioritization'
         });
-        cancelAddStakeholder();
-        addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholderGroup, stakeholderGroup);
+        addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholder, stakeholder);
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
+      }
+
+      function clearStakeholderScores() {
+        var items = document.getElementsByClassName('stakeholder-score-item');
+        for (var i = items.length - 1; i >= 0;  i--) {
+          items[i].parentNode.removeChild(items[i]);
+        }
+
+        var names = document.getElementById('stakeholder-list');
+        for (var j = names.children.length - 1; j >= 0 ; j--) {
+          names.removeChild(names.children[j]);
+        }
+      }
+
+      /*
+        Scrape the values from the stakeholder inputs
+      */
+      function scrapeAddStakeholders() {
+        var stakeholdersToAdd = {};
+        var stakeholderScoreInputs = document.getElementsByClassName('stakeholder-score-input');
+        for (var i = 0; i < stakeholderScoreInputs.length; i++) {
+          var stakeholder = stakeholderScoreInputs[i].parentNode.getAttribute('data-stakeholder');
+          var criterion = stakeholderScoreInputs[i].getAttribute('data-criterion');
+          if (!stakeholdersToAdd.hasOwnProperty(stakeholder)) {
+            stakeholdersToAdd[stakeholder] = {};
+            stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
+          } else if (criterion === "magnitude") {
+            var sum = +stakeholdersToAdd[stakeholder][criterion] + +stakeholderScoreInputs[i].value;
+            stakeholdersToAdd[stakeholder][criterion] = (sum >= 20 ? sum - 20 : 0) + '';
+          } else {
+            stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
+          }
+        }
+        return stakeholdersToAdd;
       }
 
       var formatStakeholderData = function() {
@@ -2400,7 +2502,7 @@
           removeOptionFromSelect('select-stakeholder-to-slice-into-beneficiaries', stakeholder);
           initStackedBarChart.draw({
             data: formatStakeholderData(),
-            key: criteria,
+            key: fegsScopingData.criteria,
             element: 'stakeholder-prioritization'
           });
         });
@@ -2482,48 +2584,6 @@
           element.style.display = "none";
         } else {
           element.style.display = "block";
-        }
-      }
-
-      /**
-       * Shows the add Stakeholder div.
-       * @function
-       */
-      function showAddStakeholder() {
-        toggleVisibility('add-stakeholder');
-      }
-
-      /**
-       * Cancels the add stakeholder action
-       * @function
-       */
-      function cancelAddStakeholder(){
-        cancel('add-stakeholder');
-      }
-
-      /**
-       * Clears the inputs and hides the element.
-       * @function
-       * @param {string} id - The ID of the element to hide and containing the inputs to clear.
-       */
-      function cancel(id) {
-        clear(id);
-        toggleVisibility(id);
-      }
-
-      /**
-       * Clears radio or text inputs in a specified element.
-       * @function
-       * @param {string} id - The ID of the element containing the inputs to clear.
-       */
-      function clear(id) {
-        var radio = document.getElementById(id).querySelectorAll('[type="radio"]');
-        var text = document.getElementById(id).querySelectorAll('[type="text"]');
-        for (var i = 0, length = text.length; i < length; i++) {
-          text[i].value = '';
-        }
-        for (var i = 0, length = radio.length; i < length; i++) {
-          radio[i].checked = false;
         }
       }
 
