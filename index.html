@@ -176,7 +176,7 @@
         font-size: 18px;
         min-width: 134px;
       }
-      #menu div {
+      #menu-title {
         font-weight: bold;
       }
       #menu a {
@@ -210,6 +210,11 @@
         margin: 0 0 0 10px;
         padding: 0.25em .5em;
         cursor: pointer;
+      }
+
+      .progress-menu {
+        font-weight: normal;
+        font-size: 15px;
       }
     </style>
 
@@ -253,47 +258,47 @@
           <tr>
             <td data-th="Color"><span class="legend magnitude"></span></td>
             <td data-th="Label">Magnitude/Probability of impact</td>
-            <td data-th="Value"><input id="magnitude-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="magnitude-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend influence"></span></td>
             <td data-th="Label">Level of influence</td>
-            <td data-th="Value"><input id="influence-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="influence-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend interest"></span></td>
             <td data-th="Label">Level of interest</td>
-            <td data-th="Value"><input id="interest-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="interest-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend urgency"></span></td>
             <td data-th="Label">Urgency/ Temporal immediacy</td>
-            <td data-th="Value"><input id="urgency-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="urgency-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend proximity"></span></td>
             <td data-th="Label">Proximity</td>
-            <td data-th="Value"><input id="proximity-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="proximity-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend economic-interest"></span></td>
             <td data-th="Label">Economic interest</td>
-            <td data-th="Value"><input id="economic-interest-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="economic-interest-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend rights"></span></td>
             <td data-th="Label">Rights</td>
-            <td data-th="Value"><input id="rights-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="rights-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend fairness"></span></td>
             <td data-th="Label">Fairness</td>
-            <td data-th="Value"><input id="fairness-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="fairness-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend representation"></span></td>
             <td data-th="Label">Underrepresented/Underserved representation</td>
-            <td data-th="Value"><input id="representation-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="representation-score" type="number"/></td>
           </tr>
         </tbody>
       </table>
@@ -1733,8 +1738,8 @@
   <div id="menu">
     <div id="menu-title">Menu</div>
     <ul>
-      <li><a href="#section-weighting">Weighting</a><div id="weighting-progress"></div></li>
-      <li><a href="#section-stakeholders">Stakeholders</a></li>
+      <li><a href="#section-weighting">Weighting</a><div id="weighting-progress" class="progress-menu"></div></li>
+      <li><a href="#section-stakeholders">Stakeholders</a><div id="stakeholder-progress" class="progress-menu"></div></li>
       <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
       <li><a href="#section-beneficiaries">Beneficiaries</a></li>
       <li><a href="#section-attribute-definitions">Attribute Definitions</a></li>
@@ -2267,17 +2272,7 @@
                 key: fegsScopingData.criteria,
                 element: 'stakeholder-prioritization'
               });
-
-              var inputs = document.querySelectorAll('.scoring input');
-
-              var emptyInputs = [];              
-              for (var i = 0; i < inputs.length; i++) {
-                if (!inputs[i].value) {
-                  console.log("empty");
-                  emptyInputs.push(inputs[i]);
-                }
-              }
-              document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + "/" + inputs.length + " weights entered";
+              updateWeightingProgress();
             });
 
           function arcTween(a) {
@@ -2333,16 +2328,17 @@
         var stakeholderGroupInput = document.getElementById('stakeholder-group');
         var stakeholderGroup = stakeholderGroupInput.value;
         stakeholderGroupInput.value = '';
-        if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) {
+        
+        if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) { // if the stakeholder exists or is blank.
           accessiblyNotify('A stakeholder with this name already exists.');
           return;
         } else if (stakeholderGroup.trim() === "") {
           accessiblyNotify('Enter a valid stakeholder name.');
           return;
         }
-        fegsScopingData.addStakeholder(stakeholderGroup, weights);
+        fegsScopingData.addStakeholder(stakeholderGroup, weights); // add the stakeholder to the model
 
-        var stakeholderList = document.getElementById('stakeholder-list');
+        var stakeholderList = document.getElementById('stakeholder-list'); // create the stakeholder list
         var li = document.createElement('li');
         li.setAttribute('data-stakeholder', stakeholderGroup);
         li.appendChild(document.createTextNode(stakeholderGroup));
@@ -2352,22 +2348,21 @@
         button.setAttribute('aria-label', 'remove stakeholder');
         button.innerHTML = '&#215;';
 
-        button.addEventListener("click", function() { // create listeners for the buttons
-          console.log(this.parentNode);
-          console.log(this.parentNode.getAttribute('data-stakeholder'));
+        button.addEventListener("click", function() { // create listeners for the remove stakeholder button
           var stakeholder = this.parentNode.getAttribute('data-stakeholder');
           var elementsToRemove = document.querySelectorAll('[data-stakeholder="' + stakeholder + '"]');
           for (var i = 0, length = elementsToRemove.length; i < length; i++) {
             elementsToRemove[i].remove();
           }
           fegsScopingData.removeStakeholders([stakeholder]);
+          updateStakeholderProgress();
         });
 
         li.appendChild(button);
-        stakeholderList.appendChild(li);
+        stakeholderList.appendChild(li); // append the button and li elements to the ul
 
         var lists = document.getElementsByClassName('stakeholder-value-list');
-        for (var i = 0; i < lists.length; i++) {
+        for (var i = 0; i < lists.length; i++) { // Create the score inputs for the added stakeholder
           var ul = lists[i];
           var li = document.createElement('li');
           li.setAttribute('class', 'stakeholder-score-item');
@@ -2385,6 +2380,7 @@
           li.appendChild(input);
           ul.appendChild(li);
         }
+        updateStakeholderProgress();
       }
 
       function addStakeholderScores() {
@@ -2402,6 +2398,7 @@
         });
         addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholder, stakeholder);
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
+        updateStakeholderProgress();
       }
 
       function clearStakeholderScores() {
@@ -2436,6 +2433,37 @@
           }
         }
         return stakeholdersToAdd;
+      }
+
+      function updateStakeholderProgress() {
+        var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+        if (stakeholderCount === 0) {
+          document.getElementById('stakeholder-progress').innerHTML = "Add a stakeholder";
+          return;
+        }
+        var completeCount = stakeholderCount;
+        for (var stakeholder in fegsScopingData.stakeholders) {
+          for (var criterion in fegsScopingData.stakeholders[stakeholder].scores) {
+            var score = fegsScopingData.stakeholders[stakeholder].scores[criterion];
+            if (score === "" || score > 100 || score < 0) {
+              completeCount--;
+              break;
+            }
+          }
+        }
+        document.getElementById('stakeholder-progress').innerHTML = completeCount + "/" + stakeholderCount + " stakeholders completed";
+      }
+
+      function updateWeightingProgress() {
+        // Count the empty weights and display a progress counter
+        var inputs = document.querySelectorAll('.scoring input');
+        var emptyInputs = [];              
+        for (var i = 0; i < inputs.length; i++) {
+          if (!inputs[i].value) {
+            emptyInputs.push(inputs[i]);
+          }
+        }
+        document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + "/" + inputs.length + " weights entered";
       }
 
       var formatStakeholderData = function() {
@@ -3574,7 +3602,8 @@
             restoreCallback();
         }
       });
-
+      updateStakeholderProgress();
+      updateWeightingProgress();
     </script>
   </body>
 </html>
