@@ -1731,9 +1731,9 @@
     </div>
   </div>
   <div id="menu">
-    <div>Menu</div>
+    <div id="menu-title">Menu</div>
     <ul>
-      <li><a href="#section-weighting">Weighting</a></li>
+      <li><a href="#section-weighting">Weighting</a><div id="weighting-progress"></div></li>
       <li><a href="#section-stakeholders">Stakeholders</a></li>
       <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
       <li><a href="#section-beneficiaries">Beneficiaries</a></li>
@@ -2251,23 +2251,34 @@
           }
 
           d3.selectAll(".scoring input")
-              .on("input", function() {
-                  // Add input validation.
-                  data = getJSON();
-                  // convert JSON data to fit scores data format
-                  var scores = {};
-                  for (var i = 0; i < data.length; i++) {
-                    scores[data[i].label.replace('-score', '')] = data[i].value;
-                  }
-                  // update FEGS scoping data with newest score data
-                  fegsScopingData.scores = scores;
-                  change();
-                  initStackedBarChart.draw({
-                    data: formatStakeholderData(),
-                    key: fegsScopingData.criteria,
-                    element: 'stakeholder-prioritization'
-                  });
+            .on("input", function() {
+              // Add input validation.
+              data = getJSON();
+              // convert JSON data to fit scores data format
+              var scores = {};
+              for (var i = 0; i < data.length; i++) {
+                scores[data[i].label.replace('-score', '')] = data[i].value;
+              }
+              // update FEGS scoping data with newest score data
+              fegsScopingData.scores = scores;
+              change();
+              initStackedBarChart.draw({
+                data: formatStakeholderData(),
+                key: fegsScopingData.criteria,
+                element: 'stakeholder-prioritization'
               });
+
+              var inputs = document.querySelectorAll('.scoring input');
+
+              var emptyInputs = [];              
+              for (var i = 0; i < inputs.length; i++) {
+                if (!inputs[i].value) {
+                  console.log("empty");
+                  emptyInputs.push(inputs[i]);
+                }
+              }
+              document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + "/" + inputs.length + " weights entered";
+            });
 
           function arcTween(a) {
             var i = d3.interpolate(this._current, a);
