@@ -1741,7 +1741,7 @@
       <li><a href="#section-weighting">Weighting</a><div id="weighting-progress" class="progress-menu"></div></li>
       <li><a href="#section-stakeholders">Stakeholders</a><div id="stakeholder-progress" class="progress-menu"></div></li>
       <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
-      <li><a href="#section-beneficiaries">Beneficiaries</a></li>
+      <li><a href="#section-beneficiaries">Beneficiaries</a><div id="beneficiaries-progress" class="progress-menu"></div></li>
       <li><a href="#section-attribute-definitions">Attribute Definitions</a></li>
       <li><a href="#section-attributes">Attributes</a></li>
     </ul>
@@ -2454,6 +2454,33 @@
           }
         }
         document.getElementById('stakeholder-progress').innerHTML = completeCount + "/" + stakeholderCount + " stakeholders completed";
+        updateBeneficiaryProgress();
+      }
+
+      function updateBeneficiaryProgress() {
+        var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+        if (stakeholderCount === 0) {
+          document.getElementById('beneficiaries-progress').innerHTML = "Add a stakeholder";
+          return;
+        }
+        var completeCount = stakeholderCount;
+        for (var stakeholder in fegsScopingData.stakeholders) {
+          if (!Object.keys(fegsScopingData.stakeholders[stakeholder].beneficiaries).length) {
+            completeCount--;
+          }
+        }
+        if (completeCount > 0) {
+          var percentageSum = 0;
+          var j, inputs, input;
+          inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
+          for (j = 0; j < inputs.length; j++) {
+            percentageSum += +inputs[j].value;
+          }
+          if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
+            completeCount--;
+          }
+        }
+        document.getElementById('beneficiaries-progress').innerHTML = completeCount + "/" + stakeholderCount + " beneficiaries completed";
       }
 
       function updateWeightingProgress() {
@@ -2780,6 +2807,7 @@
       };
 
       /** update select-element's options */
+      /** DUPE of updateSelectStakeholder unless modified **/
       updateSelect = function(selectId, options) {
         var options = Object.keys(fegsScopingData.stakeholders);
         var oldOptions = document.querySelectorAll('#' + selectId + ' option:not([disabled="disabled"])');
@@ -2805,7 +2833,7 @@
         var stakeholderName = select.value;
         var tBody = table.tBodies[0];
         var iRow, cell, input, cellText, rowspan, numberOfBeneficiaryColumn;
-        var beneficiaryPercentageOfStakeholderInputValidator = function(){ // validate sum of percentages is 100 +- 0.05 then save
+        var beneficiaryPercentageOfStakeholderInputValidator = function() { // validate sum of percentages is 100 +- 0.05 then save
           var percentageSum = 0;
           var j, inputs, input;
           inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
@@ -2835,6 +2863,7 @@
             }
           displayBeneficiaryScores(); // update #table-beneficiary-score
           }
+          updateBeneficiaryProgress();
         };
         for (i = tBody.rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
           removeLastColumnFromTable(table.id);
@@ -2874,6 +2903,7 @@
           input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
           cell.appendChild(input);
         }
+        updateBeneficiaryProgress();
       };
 
       /**
@@ -3606,6 +3636,7 @@
       });
       updateStakeholderProgress();
       updateWeightingProgress();
+      updateBeneficiaryProgress();
     </script>
   </body>
 </html>
