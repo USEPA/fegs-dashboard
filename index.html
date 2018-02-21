@@ -2085,10 +2085,12 @@
           var numerator = 0;
           var denominator = 0;
           for (var i = 0; i < stakeholders.length; i++) {
-            numerator += parseFloat(this.stakeholders[stakeholders[i]]
+            if (Object.keys(this.stakeholders[stakeholders[i]].beneficiaries).length) {
+              numerator += parseFloat(this.stakeholders[stakeholders[i]]
                                         .beneficiaries[beneficiary]
                                         .percentageOfStakeholder)
               * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
+            }
           }
           for (var i = 0; i < stakeholders.length; i++) {
             denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
