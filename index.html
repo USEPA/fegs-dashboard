@@ -2325,7 +2325,6 @@
        * @function
        */
       function addStakeholder() {
-        event.preventDefault();
         var weights = fegsScopingData.makeCriteriaObject({});
         var stakeholderGroupInput = document.getElementById('stakeholder-group');
         var stakeholderGroup = stakeholderGroupInput.value;
@@ -2386,7 +2385,6 @@
       }
 
       function addStakeholderScores() {
-        event.preventDefault();
         var stakeholdersToAdd = scrapeAddStakeholders();
         for (var stakeholder in stakeholdersToAdd) {
           fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
@@ -2453,7 +2451,7 @@
             }
           }
         }
-        document.getElementById('stakeholder-progress').innerHTML = completeCount + "/" + stakeholderCount + " stakeholders completed";
+        document.getElementById('stakeholder-progress').innerHTML = completeCount + " of " + stakeholderCount + " stakeholders completed";
         updateBeneficiaryProgress();
       }
 
@@ -2480,7 +2478,7 @@
             completeCount--;
           }
         }
-        document.getElementById('beneficiaries-progress').innerHTML = completeCount + "/" + stakeholderCount + " beneficiaries completed";
+        document.getElementById('beneficiaries-progress').innerHTML = completeCount + " of " + stakeholderCount + " beneficiaries completed";
       }
 
       function updateWeightingProgress() {
@@ -2492,7 +2490,7 @@
             emptyInputs.push(inputs[i]);
           }
         }
-        document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + "/" + inputs.length + " weights entered";
+        document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + " of " + inputs.length + " weights entered";
       }
 
       var formatStakeholderData = function() {
