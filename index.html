@@ -2856,7 +2856,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           }
           input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
           cell.appendChild(input);
-          //FIXME hide unused beneficiaries by BDD
+          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); //FIXME hide unused beneficiaries by BDD
         }
       };
 

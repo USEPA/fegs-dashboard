@@ -10,7 +10,7 @@ const sinon = require('sinon');
 
 chai.use(chaiAsPromised);
 
-describe('Isolated testbeds house suites of tests which are certainly independent.', function() {
+describe('Tests which require spectron to test electron', function() {
   this.timeout(30000);
 
   before(function() {
@@ -70,7 +70,27 @@ describe('Isolated testbeds house suites of tests which are certainly independen
     return this.app.client.click('#change-name').element('#input-name').setValue('42').click('#save-name').getTitle().should.eventually.equal('42');
   });
 
-  describe('given weights, stakeholder-name, and stakeholder-weights have been entered', function() {
+  it('hides unrepresented beneficiaries automatically', function() {
+    return this.app.client.waitUntilWindowLoaded();
+  });
+
+  it('saves state of application to a file', function() { // scrape page, save data to #scrape-page.data-view-state, and getAttribute(#scrape-page, data-view-state)
+    if (require('fs').exists('data.json')) { // given there is no data.json
+      require('fs').rename('data.json', 'data-renamed.json');
+    }
+    this.app.client.click('#scrape-page'); // when #scrape-page.click()
+    return require('fs').exists('data.json') // then data.json should be true
+  });
+
+  it('opens from a file');
+
+  it('styles app with EPA\'s web-style');
+
+});
+
+describe('Tests which can function independently of electron RUNFLAG', function() {
+
+  describe('given weights, stakeholder-name, and stakeholder-weights have been entered RUNFLAG', function() {
     before( function() {
       // populate inputs in #table-scores with ones to support later calculation
       var i;
@@ -89,32 +109,22 @@ describe('Isolated testbeds house suites of tests which are certainly independen
       document.querySelector('#select-stakeholder-to-slice-into-beneficiaries').value = 'foo';
       document.querySelector('#select-stakeholder-to-slice-into-beneficiaries').onchange();
     });
-    describe('when valid data are entered into input.beneficiary-percentage-of-stakeholder', function() {
-      before( function() {
-        document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
-        var spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
-        document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
-      };
-      it('then unrepresented beneficiaries are hidden within #table-attributes', function() {
-        return spy.called()//FIXME assert call of tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries())
-      });
+  });
+  describe('when valid data are entered into input.beneficiary-percentage-of-stakeholder RUNFLAG', function() {
+    before( function() {
+      //FIXME uncomment if it() not working;
+      //TODO TODO TODO TODO TODO TODO remember that var declares a variable as local to its containing function
+      //var document = this.app.client.document;
+      //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
+      //spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
+      //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
     });
   });
-
-  it('hides unrepresented beneficiaries automatically', function() {
-    return this.app.client.waitUntilWindowLoaded();
+  it('then unrepresented beneficiaries are hidden within #table-attributes RUNFLAG', function() {
+window.document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
+spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
+document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
+    return spy.called() //FIXME assert call of tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries())
   });
 
-  it('saves state of application to a file', function() { // scrape page, save data to #scrape-page.data-view-state, and getAttribute(#scrape-page, data-view-state)
-    if (require('fs').exists('data.json')) { // given there is no data.json
-      require('fs').rename('data.json', 'data-renamed.json');
-    }
-    this.app.client.click('#scrape-page'); // when #scrape-page.click()
-    return require('fs').exists('data.json') // then data.json should be true
-  });
-
-  it('opens from a file');
-
-  it('styles app with EPA\'s web-style');
-
-})
+});
