@@ -176,28 +176,39 @@
       #set-stakeholder-values {
         display: none;
       }
+      button { 
+        margin: 0;
+      }
+      #show-name {
+        display: block;
+        font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
+        font-weight: bold;
+        line-height: 1.3;
+        margin: 0;
+        text-rendering: optimizeLegibility;
+        padding: 0 0 0.5em;
+        font-size: 176.4706%;
+      }
     </style>
 
   </head>
   <body>
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
-    <h1 id="app-name">FEGS Scoping Tool</h1>
-
-    <h2><span id="show-name"></span><input id="input-name" type="text"></input></h2>
+    <span id="show-name"></span><input id="input-name-header" type="text" />
     <div id="save-app"> 
       <div>
         <label for="input-name">Optionally enter the name with which this app will be saved.</label>
-        <input id="input-name" type="text" value="optionally enter a name" />
+        <input id="input-name" type="text" />
       </div>
       <div>
         <label for="report-and-save">Report the app's data and save the app with its data.</label>
         <button id="report-and-save" onclick="saveCallback('report-data-on-page')">Generate Report and Save</button>
         <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
-        <input id="save-with-timestamp" type="checkbox" checked="checked"></input>
+        <input id="save-with-timestamp" type="checkbox" checked="checked" />
       </div>
       <div>
         <label for="toggle-report">Toggle the report's visibility.</label>
-        <button onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
+        <button id="toggle-report" onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
       </div>
       <pre class="display-none" id="report-data-on-page"></pre>
     </div>
@@ -1745,7 +1756,7 @@
 
     </script>
 <!-- FIXME: integrate code between comment flags into application -->
-    <script src="./js/d3.min.js">/</script>
+    <script src="./js/d3.min.js"></script>
     <script>
 
       /**
