@@ -169,6 +169,9 @@
         padding: 0.25em .5em;
         cursor: pointer;
       }
+      #show-only-these-columns {
+        display: inline;
+      }
     </style>
 
   </head>
@@ -742,7 +745,7 @@
         </tbody>
       </table>
 
-      <button onclick="tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());">Hide Nonexistant Beneficiaries</button>
+      <button id="show-only-these-columns" onclick="tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());">Hide Nonexistant Beneficiaries</button>
 
       <table id="table-attributes">
         <colgroup>

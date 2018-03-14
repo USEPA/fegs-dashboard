@@ -11,7 +11,7 @@ const sinon = require('sinon');
 chai.use(chaiAsPromised);
 
 describe('Tests which require spectron to test electron', function() {
-  this.timeout(30000);
+  this.timeout(0);
 
   before(function() {
     this.app = new Application({
@@ -86,45 +86,38 @@ describe('Tests which require spectron to test electron', function() {
 
   it('styles app with EPA\'s web-style');
 
-});
-
-describe('Tests which can function independently of electron RUNFLAG', function() {
-
-  describe('given weights, stakeholder-name, and stakeholder-weights have been entered RUNFLAG', function() {
-    before( function() {
-      // populate inputs in #table-scores with ones to support later calculation
-      var i;
-      var document = this.app.client.document;
-      var inputs = document.querySelector('#table-scores input');
-      for (i = 0; i < inputs.length; i++) {
-        inputs[i].value = '1';
-      }
-      document.getElementById('stakeholder-group').value = 'foo';
-      document.querySelector('#add-stakeholder').click();
-      inputs = document.querySelector('#set-stakeholder-values input');
-      for (i = 0; i < inputs.length; i++) {
-        inputs[i].value = '1';
-      }
-      document.querySelector('#set-stakeholder-values button').click();
-      document.querySelector('#select-stakeholder-to-slice-into-beneficiaries').value = 'foo';
-      document.querySelector('#select-stakeholder-to-slice-into-beneficiaries').onchange();
-    });
+  it('given weights, stakeholder-name, and stakeholder-weights have been entered RUNFLAG', function() {
+    // populate inputs in #table-scores with ones to support later calculation
+    var UNICODE_BACKSPACE = "\uE003";
+    var i;
+    var inputs = this.app.client.elements('#table-scores input');
+    for (i = 0; i < inputs.length; i++) {
+      inputs[i].value = '1';
+    }
+    this.app.client.setValue('#stakeholder-group', 'foo');
+    this.app.client.click('#add-stakeholder');
+    inputs = this.app.client.elements('#set-stakeholder-values input');
+    for (i = 0; i < inputs.length; i++) {
+      inputs[i].value = '1';
+    }
+    this.app.client.click('#set-stakeholder-values button');
+    this.app.client.setValue('#select-stakeholder-to-slice-into-beneficiaries', 'foo');
+    this.app.client.element('#select-stakeholder-to-slice-into-beneficiaries').deviceKeyEvent(UNICODE_BACKSPACE);
   });
+
   describe('when valid data are entered into input.beneficiary-percentage-of-stakeholder RUNFLAG', function() {
-    before( function() {
-      //FIXME uncomment if it() not working;
-      //TODO TODO TODO TODO TODO TODO remember that var declares a variable as local to its containing function
-      //var document = this.app.client.document;
-      //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
-      //spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
-      //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
-    });
+    //FIXME uncomment if it() not working;
+    //var client = this.app.client;
+    //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
+    //spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
+    //document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
   });
+
   it('then unrepresented beneficiaries are hidden within #table-attributes RUNFLAG', function() {
-window.document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].value = '100';
-spy = sinon.spy(tableAttributes.showOnlyTheseColumns);
-document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
-    return spy.called() //FIXME assert call of tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries())
+    this.app.client.elements('.beneficiary-percentage-of-stakeholder')[0] = '100';
+    spy = sinon.spy(this.tableAttributes.showOnlyTheseColumns());//TODO FIXME FIND GLOBAL VARIABLES!!!
+    document.querySelectorAll('.beneficiary-percentage-of-stakeholder')[0].onchange();
+    return spy.called() //TODO assert call of tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries())
   });
 
 });
