@@ -173,6 +173,9 @@
         padding: 0.25em .5em;
         cursor: pointer;
       }
+      #set-stakeholder-values {
+        display: none;
+      }
     </style>
 
   </head>
@@ -2261,6 +2264,7 @@
           return;
         }
         fegsScopingData.addStakeholder(stakeholderGroup, weights);
+        document.getElementById('set-stakeholder-values').style.display = "block";
 
         var stakeholderList = document.getElementById('stakeholder-list');
         var li = document.createElement('li');
@@ -2273,14 +2277,15 @@
         button.innerHTML = '&#215;';
 
         button.addEventListener("click", function() { // create listeners for the buttons
-          console.log(this.parentNode);
-          console.log(this.parentNode.getAttribute('data-stakeholder'));
           var stakeholder = this.parentNode.getAttribute('data-stakeholder');
           var elementsToRemove = document.querySelectorAll('[data-stakeholder="' + stakeholder + '"]');
           for (var i = 0, length = elementsToRemove.length; i < length; i++) {
             elementsToRemove[i].remove();
           }
           fegsScopingData.removeStakeholders([stakeholder]);
+          if (document.getElementById("stakeholder-list").children.length === 0) {
+            document.getElementById('set-stakeholder-values').style.display = "none";
+          }
         });
 
         li.appendChild(button);
@@ -2314,6 +2319,7 @@
           fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
           addRow('table-stakeholders', [stakeholder, stakeholdersToAdd[stakeholder]]); // table name and array of values to insert
         }
+        document.getElementById('set-stakeholder-values').style.display = "none";
         clearStakeholderScores();
         initStackedBarChart.draw({
           data: formatStakeholderData(),
