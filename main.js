@@ -67,6 +67,7 @@ function createWindow () {
       ]
     }, {
       label: 'Toggle DevTools',
+      accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
       click: () => {
         mainWindow.webContents.toggleDevTools();
       }
