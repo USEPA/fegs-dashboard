@@ -8,6 +8,13 @@
     <style>
       body {
         margin: 1em;
+        zoom: 50%;
+        -moz-transform: scale(.5);
+        -moz-transform-origin: 0 0;
+      }
+      #page-zoom-indicator {
+        display: inline-block;
+        width: 3em;
       }
       * {
         font-family: arial, sans-serif;
@@ -196,10 +203,13 @@
 
   </head>
   <body>
-    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
     <h1 id="app-name">FEGS Scoping Tool</h1>
 
+    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
+
     <button id="scrape-page" onclick="fegsScopingController.saveView();">Scrape This Page</button>
+
+    Zoom: <span id="page-zoom-indicator">0.5</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".5"></input>
 
     <h2>
       <span id="show-name"></span>
@@ -207,8 +217,8 @@
       <input id="input-name" type="text"></input>
       <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
     </h2>
-    <div id="save-app"> 
-    <span id="show-name"></span><input id="input-name-header" type="text" />
+
+    <!-- TODO FIXME DELETE THIS WHEN CODEBASE NEEDS HOUSEKEEPING
     <div id="save-app"> 
       <div>
         <label for="input-name">Optionally enter the name with which this app will be saved.</label>
@@ -226,6 +236,7 @@
       </div>
       <pre class="display-none" id="report-data-on-page"></pre>
     </div>
+    -->
 
     <div class="page" id="section-scoring">
       <h3>Weighting</h3>
@@ -1721,56 +1732,8 @@
 
     </div>
 
-<!-- FIXME: integrate code between comment flags into application -->
-
-    <script>
-      var getDocument = function() {
-        var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
-        return documentText;
-      }
-
-      var downloadText = function (filename, text) {
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', filename);
-
-        element.style.display = 'none';
-        document.body.appendChild(element);
-
-        element.click();
-
-        document.body.removeChild(element);
-      }
-
-      var saveCallback = function(reportElementId) {
-        var reportElement = document.getElementById(reportElementId);
-        var timestamp = '';
-        var name;
-        var extension;
-        fegsScopingView.saveView();
-        fegsScopingView.saveData();
-        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
-          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
-          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          if (document.getElementById('save-with-timestamp').checked !== false) {
-            timestamp = (new Date()).toISOString();
-          }
-          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        } else {
-          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        }
-      };
-
-      var restoreCallback = function() {
-        fegsScopingData.restoreData();
-        fegsScopingData.restoreView();
-      };
-
-    </script>
-<!-- FIXME: integrate code between comment flags into application -->
     <script src="./js/d3.min.js"></script>
+
     <script>
 
       /** Prototype data-model and its CRUD-methods. */
@@ -3566,62 +3529,117 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           self.ensureNavigability(pageId);
         };
 
-        /** add navigability if absent */
-        this.ensureNavigability = function(pageId) {
-          var navigation;
-          var back;
-          var forward;
-          if (!document.getElementById(pageId).querySelector('.navigation')) {
-            navigation = document.createElement('div');
-            navigation.setAttribute('class', 'navigation');
-            back = document.createElement('button');
-            forward = document.createElement('button');
-            back.innerHTML = 'back';
-            forward.innerHTML = 'forward';
-            back.onclick = function() {
-              var pages = document.querySelectorAll('.page');
-              var pageIndex;
-              var currentPageIndex;
-              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                if (pages[pageIndex].style.display === 'block') {
-                  currentPageIndex = pageIndex;
-                  break;
+          /** add navigability if absent */
+          this.ensureNavigability = function(pageId) {
+            var navigation;
+            var back;
+            var forward;
+            if (!document.getElementById(pageId).querySelector('.navigation')) {
+              navigation = document.createElement('div');
+              navigation.setAttribute('class', 'navigation');
+              back = document.createElement('button');
+              forward = document.createElement('button');
+              back.innerHTML = 'back';
+              forward.innerHTML = 'forward';
+              back.onclick = function() {
+                var pages = document.querySelectorAll('.page');
+                var pageIndex;
+                var currentPageIndex;
+                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                  if (pages[pageIndex].style.display === 'block') {
+                    currentPageIndex = pageIndex;
+                    break;
+                  }
                 }
-              }
-              if (currentPageIndex > 0) {
-                self.focusPage(pages[currentPageIndex - 1].id)
-              } else {
-                console.log('there is no page before the first page');
-              }
-            };
-            forward.onclick = function() {
-              var pages = document.querySelectorAll('.page');
-              var currentPage = document.querySelector('.page[display="block"]');
-              var pageIndex;
-              var currentPageIndex;
-              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                if (pages[pageIndex].style.display === 'block') {
-                  currentPageIndex = pageIndex;
-                  break;
+                if (currentPageIndex > 0) {
+                  self.focusPage(pages[currentPageIndex - 1].id)
+                } else {
+                  console.log('there is no page before the first page');
                 }
-              }
-              if (currentPageIndex < pages.length - 1) {
-                self.focusPage(pages[currentPageIndex + 1].id)
-              } else {
-                console.log('there is no page after the last page');
-              }
-            };
-            navigation.appendChild(back);
-            navigation.appendChild(forward);
-            document.getElementById(pageId).appendChild(navigation);
+              };
+              forward.onclick = function() {
+                var pages = document.querySelectorAll('.page');
+                var currentPage = document.querySelector('.page[display="block"]');
+                var pageIndex;
+                var currentPageIndex;
+                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                  if (pages[pageIndex].style.display === 'block') {
+                    currentPageIndex = pageIndex;
+                    break;
+                  }
+                }
+                if (currentPageIndex < pages.length - 1) {
+                  self.focusPage(pages[currentPageIndex + 1].id)
+                } else {
+                  console.log('there is no page after the last page');
+                }
+              };
+              navigation.appendChild(back);
+              navigation.appendChild(forward);
+              document.getElementById(pageId).appendChild(navigation);
+            }
+          };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+          this.inputName = document.getElementById('input-name');
+          this.showName = document.getElementById('show-name');
+          this.saveNameButton = document.getElementById('save-name');
+          this.changeNameButton = document.getElementById('change-name');
+          this.initializeView();
+        };////////////// END PROTOTYPE FEGSScopingView /////////////////////
+
+      var getDocument = function() {
+        var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
+        return documentText;
+      }
+
+      var downloadText = function (filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      }
+
+      var saveCallback = function(reportElementId) {
+        var reportElement = document.getElementById(reportElementId);
+        var timestamp = '';
+        var name;
+        var extension;
+        fegsScopingView.saveView();
+        fegsScopingView.saveData();
+        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
+          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
+          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
+          if (document.getElementById('save-with-timestamp').checked !== false) {
+            timestamp = (new Date()).toISOString();
           }
-        };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
-        this.inputName = document.getElementById('input-name');
-        this.showName = document.getElementById('show-name');
-        this.saveNameButton = document.getElementById('save-name');
-        this.changeNameButton = document.getElementById('change-name');
-        this.initializeView();
-      };////////////// END PROTOTYPE FEGSScopingView /////////////////////
+          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
+          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
+        } else {
+          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
+          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
+        }
+      };
+
+      var restoreCallback = function() {
+        fegsScopingData.restoreData();
+        fegsScopingData.restoreView();
+      };
+
+      var indicatePageZoom = function(event) {
+        document.querySelector('#page-zoom-indicator').innerText = event.target.value;
+      };
+
+      var pageZoomChange = function(event) {
+        document.body.style.zoom = event.target.value;
+        document.body.style['-moz-transform'] = 'scale(' + event.target.value + ')';
+      };
 
       ////////// PAGE-PROCESS //////////////////////////////////////
       var fegsScopingData = new FEGSScopingData();
