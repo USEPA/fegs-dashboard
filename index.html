@@ -173,6 +173,49 @@
       .display-none {
         display: none;
       }
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-size: 20px;
+      }
+      #menu {
+        width: 15%;
+        position: fixed;
+        border-right: 1px solid #5b616b;
+        height: 100%;
+        background-color: #e4e2e0;
+        font-size: 18px;
+        min-width: 134px;
+      }
+      #menu-title {
+        font-weight: bold;
+      }
+      #menu a {
+        color: #000;
+        text-decoration: none;
+      }
+      #menu a:hover {
+        text-decoration: underline;
+      }
+      #menu ul {
+        list-style: none;
+        padding-left: 10px;
+      }
+      #menu li {
+        margin: 10px;
+        padding: 5px;
+        border-radius: 2px;
+      }
+      #main-content {
+        width: 85%;
+        position: absolute;
+        right: 0;
+        margin: 0.5em -0.5em;
+      }
+      .active {
+        font-weight: bold;
+        background-color: #aeb0b5;
+      }
       .remove-stakeholder {
         background-color: #cd2026;
         color: #fff;
@@ -182,6 +225,10 @@
       }
       #show-only-these-columns {
         display: inline;
+      }
+      .progress-menu {
+        font-weight: normal;
+        font-size: 15px;
       }
       #set-stakeholder-values {
         display: none;
@@ -203,6 +250,7 @@
 
   </head>
   <body>
+    <div id="main-content">
     <h1 id="app-name">FEGS Scoping Tool</h1>
 
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
@@ -217,7 +265,6 @@
       <input id="input-name" type="text"></input>
       <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
     </h2>
-
     <!-- TODO FIXME DELETE THIS WHEN CODEBASE NEEDS HOUSEKEEPING
     <div id="save-app"> 
       <div>
@@ -238,7 +285,7 @@
     </div>
     -->
 
-    <div class="page" id="section-scoring">
+    <div class="page" id="section-weighting">
       <h3>Weighting</h3>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
       <div id="pie"></div>
@@ -255,47 +302,47 @@
           <tr>
             <td data-th="Color"><span class="legend magnitude"></span></td>
             <td data-th="Label">Magnitude/Probability of impact</td>
-            <td data-th="Value"><input id="magnitude-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="magnitude-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend influence"></span></td>
             <td data-th="Label">Level of influence</td>
-            <td data-th="Value"><input id="influence-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="influence-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend interest"></span></td>
             <td data-th="Label">Level of interest</td>
-            <td data-th="Value"><input id="interest-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="interest-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend urgency"></span></td>
             <td data-th="Label">Urgency/ Temporal immediacy</td>
-            <td data-th="Value"><input id="urgency-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="urgency-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend proximity"></span></td>
             <td data-th="Label">Proximity</td>
-            <td data-th="Value"><input id="proximity-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="proximity-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend economic-interest"></span></td>
             <td data-th="Label">Economic interest</td>
-            <td data-th="Value"><input id="economic-interest-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="economic-interest-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend rights"></span></td>
             <td data-th="Label">Rights</td>
-            <td data-th="Value"><input id="rights-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="rights-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend fairness"></span></td>
             <td data-th="Label">Fairness</td>
-            <td data-th="Value"><input id="fairness-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="fairness-score" type="number"/></td>
           </tr>
           <tr>
             <td data-th="Color"><span class="legend representation"></span></td>
             <td data-th="Label">Underrepresented/Underserved representation</td>
-            <td data-th="Value"><input id="representation-score" type="number" value=""/></td>
+            <td data-th="Value"><input id="representation-score" type="number"/></td>
           </tr>
         </tbody>
       </table>
@@ -517,7 +564,7 @@
         Identify the types of beneficiaries making up each stakeholder-group by percentage.     
         <br />
         <select id="select-stakeholder-to-slice-into-beneficiaries" onchange="selectStakeholderToSlice()">
-          <option selected="selected" disabled="disabled">Select a Stakehohlder-Group</option>
+          <option selected="selected" disabled="disabled">Select a Stakeholder-Group</option>
         </select>
       </label>
 
@@ -1731,7 +1778,82 @@
       </table>
 
     </div>
+  </div>
+  <div id="menu">
+    <div id="menu-title">Menu</div>
+    <ul>
+      <li><a href="#section-weighting">Weighting</a><div id="weighting-progress" class="progress-menu"></div></li>
+      <li><a href="#section-stakeholders">Stakeholders</a><div id="stakeholder-progress" class="progress-menu"></div></li>
+      <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
+      <li><a href="#section-beneficiaries">Beneficiaries</a><div id="beneficiaries-progress" class="progress-menu"></div></li>
+      <li><a href="#section-attribute-definitions">Attribute Definitions</a></li>
+      <li><a href="#section-attributes">Attributes</a></li>
+    </ul>
+  </div>
 
+<!-- FIXME: integrate code between comment flags into application -->
+
+    <script>
+      window.addEventListener("scroll", onScroll);
+      function onScroll(event){
+        var scrollPos = window.scrollY;
+        var menuItems = document.getElementById("menu").getElementsByTagName('a');
+        for (var i = 0; i < menuItems.length; i++) {
+          var currentItem = menuItems[i];
+          var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
+          if (hrefElement.offsetTop <= (scrollPos + 1) && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
+            currentItem.parentNode.classList.add("active");
+          } else {
+            currentItem.parentNode.classList.remove("active");
+          }
+        }
+      }
+      var getDocument = function() {
+        var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
+        return documentText;
+      }
+
+      var downloadText = function (filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      }
+
+      var saveCallback = function(reportElementId) {
+        var reportElement = document.getElementById(reportElementId);
+        var timestamp = '';
+        var name;
+        var extension;
+        fegsScopingView.saveView();
+        fegsScopingView.saveData();
+        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
+          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
+          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
+          if (document.getElementById('save-with-timestamp').checked !== false) {
+            timestamp = (new Date()).toISOString();
+          }
+          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
+        } else {
+          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
+          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
+        }
+      };
+
+      var restoreCallback = function() {
+        fegsScopingData.restoreData();
+        fegsScopingData.restoreView();
+      };
+
+    </script>
+<!-- FIXME: integrate code between comment flags into application -->
     <script src="./js/d3.min.js"></script>
 
     <script>
@@ -2000,10 +2122,12 @@
           var numerator = 0;
           var denominator = 0;
           for (var i = 0; i < stakeholders.length; i++) {
-            numerator += parseFloat(this.stakeholders[stakeholders[i]]
+            if (Object.keys(this.stakeholders[stakeholders[i]].beneficiaries).length) {
+              numerator += parseFloat(this.stakeholders[stakeholders[i]]
                                         .beneficiaries[beneficiary]
                                         .percentageOfStakeholder)
               * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
+            }
           }
           for (var i = 0; i < stakeholders.length; i++) {
             denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
@@ -2257,23 +2381,24 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           }
 
           d3.selectAll(".scoring input")
-              .on("input", function() {
-                  // Add input validation.
-                  data = getJSON();
-                  // convert JSON data to fit scores data format
-                  var scores = {};
-                  for (var i = 0; i < data.length; i++) {
-                    scores[data[i].label.replace('-score', '')] = data[i].value;
-                  }
-                  // update FEGS scoping data with newest score data
-                  fegsScopingData.scores = scores;
-                  change();
-                  initStackedBarChart.draw({
-                    data: formatStakeholderData(),
-                    key: fegsScopingData.criteria,
-                    element: 'stakeholder-prioritization'
-                  });
+            .on("input", function() {
+              // Add input validation.
+              data = getJSON();
+              // convert JSON data to fit scores data format
+              var scores = {};
+              for (var i = 0; i < data.length; i++) {
+                scores[data[i].label.replace('-score', '')] = data[i].value;
+              }
+              // update FEGS scoping data with newest score data
+              fegsScopingData.scores = scores;
+              change();
+              initStackedBarChart.draw({
+                data: formatStakeholderData(),
+                key: fegsScopingData.criteria,
+                element: 'stakeholder-prioritization'
               });
+              updateWeightingProgress();
+            });
 
           function arcTween(a) {
             var i = d3.interpolate(this._current, a);
@@ -2323,22 +2448,22 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
        * @function
        */
       function addStakeholder() {
-        //event.preventDefault();
         var weights = fegsScopingData.makeCriteriaObject({});
         var stakeholderGroupInput = document.getElementById('stakeholder-group');
         var stakeholderGroup = stakeholderGroupInput.value;
         stakeholderGroupInput.value = '';
-        if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) {
+        
+        if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) { // if the stakeholder exists or is blank.
           accessiblyNotify('A stakeholder with this name already exists.');
           return;
         } else if (stakeholderGroup.trim() === "") {
           accessiblyNotify('Enter a valid stakeholder name.');
           return;
         }
-        fegsScopingData.addStakeholder(stakeholderGroup, weights);
+        fegsScopingData.addStakeholder(stakeholderGroup, weights); // add the stakeholder to the model
         document.getElementById('set-stakeholder-values').style.display = "block";
 
-        var stakeholderList = document.getElementById('stakeholder-list');
+        var stakeholderList = document.getElementById('stakeholder-list'); // create the stakeholder list
         var li = document.createElement('li');
         li.setAttribute('data-stakeholder', stakeholderGroup);
         li.appendChild(document.createTextNode(stakeholderGroup));
@@ -2348,23 +2473,24 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
         button.setAttribute('aria-label', 'remove stakeholder');
         button.innerHTML = '&#215;';
 
-        button.addEventListener("click", function() { // create listeners for the buttons
+        button.addEventListener("click", function() { // create listeners for the remove stakeholder button
           var stakeholder = this.parentNode.getAttribute('data-stakeholder');
           var elementsToRemove = document.querySelectorAll('[data-stakeholder="' + stakeholder + '"]');
           for (var i = 0, length = elementsToRemove.length; i < length; i++) {
             elementsToRemove[i].remove();
           }
           fegsScopingData.removeStakeholders([stakeholder]);
+          updateStakeholderProgress();
           if (document.getElementById("stakeholder-list").children.length === 0) {
             document.getElementById('set-stakeholder-values').style.display = "none";
           }
         });
 
         li.appendChild(button);
-        stakeholderList.appendChild(li);
+        stakeholderList.appendChild(li); // append the button and li elements to the ul
 
         var lists = document.getElementsByClassName('stakeholder-value-list');
-        for (var i = 0; i < lists.length; i++) {
+        for (var i = 0; i < lists.length; i++) { // Create the score inputs for the added stakeholder
           var ul = lists[i];
           var li = document.createElement('li');
           li.setAttribute('class', 'stakeholder-score-item');
@@ -2382,10 +2508,10 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           li.appendChild(input);
           ul.appendChild(li);
         }
+        updateStakeholderProgress();
       }
 
       function addStakeholderScores() {
-        //event.preventDefault();
         var stakeholdersToAdd = scrapeAddStakeholders();
         for (var stakeholder in stakeholdersToAdd) {
           fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
@@ -2398,8 +2524,9 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           key: fegsScopingData.criteria,
           element: 'stakeholder-prioritization'
         });
-        addOption('select-stakeholder-to-slice-into-beneficiaries', stakeholder, stakeholder);
+        updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries');
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
+        updateStakeholderProgress();
       }
 
       function clearStakeholderScores() {
@@ -2434,6 +2561,64 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           }
         }
         return stakeholdersToAdd;
+      }
+
+      function updateStakeholderProgress() {
+        var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+        if (stakeholderCount === 0) {
+          document.getElementById('stakeholder-progress').innerHTML = "Add a stakeholder";
+          return;
+        }
+        var completeCount = stakeholderCount;
+        for (var stakeholder in fegsScopingData.stakeholders) {
+          for (var criterion in fegsScopingData.stakeholders[stakeholder].scores) {
+            var score = fegsScopingData.stakeholders[stakeholder].scores[criterion];
+            if (score === "" || score > 100 || score < 0) {
+              completeCount--;
+              break;
+            }
+          }
+        }
+        document.getElementById('stakeholder-progress').innerHTML = completeCount + " of " + stakeholderCount + " stakeholders completed";
+        updateBeneficiaryProgress();
+      }
+
+      function updateBeneficiaryProgress() {
+        var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+        if (stakeholderCount === 0) {
+          document.getElementById('beneficiaries-progress').innerHTML = "Add a stakeholder";
+          return;
+        }
+        var completeCount = stakeholderCount;
+        for (var stakeholder in fegsScopingData.stakeholders) {
+          if (!Object.keys(fegsScopingData.stakeholders[stakeholder].beneficiaries).length) {
+            completeCount--;
+          }
+        }
+        if (completeCount > 0) {
+          var percentageSum = 0;
+          var j, inputs, input;
+          inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
+          for (j = 0; j < inputs.length; j++) {
+            percentageSum += +inputs[j].value;
+          }
+          if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
+            completeCount--;
+          }
+        }
+        document.getElementById('beneficiaries-progress').innerHTML = completeCount + " of " + stakeholderCount + " beneficiaries completed";
+      }
+
+      function updateWeightingProgress() {
+        // Count the empty weights and display a progress counter
+        var inputs = document.querySelectorAll('.scoring input');
+        var emptyInputs = [];              
+        for (var i = 0; i < inputs.length; i++) {
+          if (!inputs[i].value) {
+            emptyInputs.push(inputs[i]);
+          }
+        }
+        document.getElementById('weighting-progress').innerHTML = inputs.length - emptyInputs.length + " of " + inputs.length + " weights entered";
       }
 
       var formatStakeholderData = function() {
@@ -2748,6 +2933,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
       };
 
       /** update select-element's options */
+      /** DUPE of updateSelectStakeholder unless modified **/
       updateSelect = function(selectId, options) {
         var options = Object.keys(fegsScopingData.stakeholders);
         var oldOptions = document.querySelectorAll('#' + selectId + ' option:not([disabled="disabled"])');
@@ -2773,7 +2959,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
         var stakeholderName = select.value;
         var tBody = table.tBodies[0];
         var iRow, cell, input, cellText, rowspan, numberOfBeneficiaryColumn;
-        var beneficiaryPercentageOfStakeholderInputValidator = function(){ // validate sum of percentages is 100 +- 0.05 then save
+        var beneficiaryPercentageOfStakeholderInputValidator = function() { // validate sum of percentages is 100 +- 0.05 then save
           var percentageSum = 0;
           var j, inputs, input;
           inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
@@ -2803,6 +2989,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
             }
           displayBeneficiaryScores(); // update #table-beneficiary-score
           }
+          updateBeneficiaryProgress();
         };
         for (i = tBody.rows[0].cells.length - 1; i > 1; i--) { // remove all data columns
           removeLastColumnFromTable(table.id);
@@ -2843,6 +3030,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           cell.appendChild(input);
           tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); //FIXME hide unused beneficiaries by BDD
         }
+        updateBeneficiaryProgress();
       };
 
       /**
@@ -3656,7 +3844,9 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
             restoreCallback();
         }
       });
-
+      updateStakeholderProgress();
+      updateWeightingProgress();
+      updateBeneficiaryProgress();
     </script>
   </body>
 </html>
