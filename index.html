@@ -825,7 +825,7 @@
         </tbody>
       </table>
 
-      <button id="show-only-these-columns" onclick="tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());">Hide Nonexistant Beneficiaries</button>
+      <h3 id="table-attributes-header">Score Attributes for each Beneficiary</h3>
 
       <table id="table-attributes">
         <colgroup>
@@ -3562,7 +3562,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
             this.parentElement.classList.add('invalid-text-input');
             accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
           } else { // individual input is valid
-            for (i = 0; i < rows.length - 1; i++) {
+            for (i = 0; i < rows.length - 1; i++) { // loop through values in column
               if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
                 allBlank = false;
               }
@@ -3578,7 +3578,8 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
                 attributeName = fegsScopingData.fegsAttributes[rowIndex];
                 attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
               }
-              fegsScopingData.addAttributes(beneficiaryName, attributesObject);
+              fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
+              tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()) // update beneficiaries shown in #table-attributes
             } else { // notify of incorrect normalization
               accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
               for (i = 0; i < rows.length; i++) {
@@ -3835,6 +3836,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
       var fegsScopingController = new FEGSScopingController();
       var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
       var tableAttributes = tableAttributesCreator('table-attributes');
+      tableAttributes.showOnlyTheseColumns();
       document.addEventListener('DOMContentLoaded', function() {
         initPieChart.draw({
           data: getJSON(), // Get the data from the inputs
