@@ -52,6 +52,7 @@
       .scoring {
         margin: 1em 0;
         min-width: 300px;
+        display: inline-block;
       }
       [data-th='Color'] {
         margin-top: 1em;
@@ -288,8 +289,6 @@
     <div class="page" id="section-weighting">
       <h3>Weighting</h3>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
-      <div id="pie"></div>
-
       <table class="scoring" id="table-scores">
         <thead>
           <tr>
@@ -346,6 +345,7 @@
           </tr>
         </tbody>
       </table>
+      <span id="pie"></span>
     </div>
 
     <div class="page" id="section-stakeholders">
@@ -3506,6 +3506,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
 
         /** show only specified columns */
         this.showOnlyTheseColumns = function(columnIndicators) {
+          columnIndicators = (typeof columnIndicators !== 'undefined') ?  columnIndicators : [];
           var i;
           var columnIndex;
           for (i = 1; i < this.table.rows[1].cells.length; i++) {
