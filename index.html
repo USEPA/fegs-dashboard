@@ -121,6 +121,7 @@
       }
       #stakeholder-list {
         list-style: none;
+        display: none;
       }
       .stakeholder-value-list {
         list-style: none; 
@@ -129,6 +130,9 @@
       #table-stakeholders td, #table-stakeholders th {
         border: 1px solid #d6d7d9;
         padding: 8px;
+      }
+      #stakeholder-table-container {
+        display: none;
       }
       #table-stakeholders tr:nth-child(even){
         background-color: #f1f1f1;
@@ -152,7 +156,6 @@
       }
       table {
         border-collapse: collapse;
-        border: 1px solid black;
         margin-bottom: 1em;
       }
       table th {
@@ -238,9 +241,6 @@
       }
       #set-stakeholder-values {
         display: none;
-      }
-      button { 
-        margin: 0;
       }
       #show-name {
         display: block;
@@ -360,7 +360,7 @@
         <div>    
           <div class="light-gray">
             <label>Stakeholder-group name <input type="text" id="stakeholder-group"/></label>
-            <button id="add-stakeholder" onclick="addStakeholder();">Add this stakeholder</button>
+            <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder-group</button>
             <ul id="stakeholder-list"></ul>
           </div>
         </div>
@@ -490,31 +490,33 @@
           <button onclick="addStakeholderScores();">Add stakeholder scores</button>
         </div>
       </div>
-      <h3>Stakeholders</h3>
-      <table id="table-stakeholders">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Stakeholder-group</th>
-            <th>Magnitude/Probability of impact</th>
-            <th>Level of influence</th>
-            <th>Level of interest</th>
-            <th>Urgency/Temporal immediacy</th>
-            <th>Proximity</th>
-            <th>Economic interest</th>
-            <th>Rights</th>
-            <th>Fairness</th>
-            <th>Underrepresented/Underserved representation</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="11"></td>
-          </tr>
-        </tfoot>
-      </table>
+      <div id="stakeholder-table-container">
+        <h3>Stakeholders</h3>
+        <table id="table-stakeholders">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Stakeholder-group</th>
+              <th>Magnitude/Probability of impact</th>
+              <th>Level of influence</th>
+              <th>Level of interest</th>
+              <th>Urgency/Temporal immediacy</th>
+              <th>Proximity</th>
+              <th>Economic interest</th>
+              <th>Rights</th>
+              <th>Fairness</th>
+              <th>Underrepresented/Underserved representation</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="11"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
 
     <div class="page" id="section-beneficiary-definitions">
@@ -1735,46 +1737,6 @@
             <td></td>
             <td></td>
           </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
         </tbody>
       </table>
 
@@ -2463,6 +2425,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
         }
         fegsScopingData.addStakeholder(stakeholderGroup, weights); // add the stakeholder to the model
         document.getElementById('set-stakeholder-values').style.display = "block";
+        document.getElementById('stakeholder-list').style.display = "block";
 
         var stakeholderList = document.getElementById('stakeholder-list'); // create the stakeholder list
         var li = document.createElement('li');
@@ -2519,6 +2482,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           addRow('table-stakeholders', [stakeholder, stakeholdersToAdd[stakeholder]]); // table name and array of values to insert
         }
         document.getElementById('set-stakeholder-values').style.display = "none";
+        document.getElementById('stakeholder-list').style.display = "none";
         clearStakeholderScores();
         initStackedBarChart.draw({
           data: formatStakeholderData(),
@@ -2528,6 +2492,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
         updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries');
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
         updateStakeholderProgress();
+        document.getElementById('stakeholder-table-container').style.display = "block";
       }
 
       function clearStakeholderScores() {
@@ -2700,6 +2665,10 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
             key: fegsScopingData.criteria,
             element: 'stakeholder-prioritization'
           });
+          var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+          if (stakeholderCount === 0) {
+            document.getElementById('stakeholder-table-container').style.display = "none";
+          }
         });
 
         editButton.addEventListener("click", function() {
