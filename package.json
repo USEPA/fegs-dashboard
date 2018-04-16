@@ -1,7 +1,7 @@
 {
   "name": "FEGS-Scoping-Tool",
   "version": "0.1.0",
-  "description": "Stakeholders describe utilization of Final Ecosystem Goods and Services(FEGS).",
+  "description": "Describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
     "test": "mocha",
