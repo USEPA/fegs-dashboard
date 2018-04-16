@@ -243,14 +243,12 @@
         display: none;
       }
       #show-name {
-        display: block;
+        display: inline;
         font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
         font-weight: bold;
         line-height: 1.3;
         margin: 0;
         text-rendering: optimizeLegibility;
-        padding: 0 0 0.5em;
-        font-size: 176.4706%;
       }
     </style>
 
@@ -259,18 +257,20 @@
     <div id="main-content">
     <h1 id="app-name">FEGS Scoping Tool</h1>
 
+    <h2>
+      Project Name:
+      <span id="show-name"></span>
+      <input id="input-name" type="text"></input>
+    </h2>
+    <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
+    <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
+
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
 
     <button id="scrape-page" onclick="fegsScopingController.saveView();">Scrape This Page</button>
 
     Zoom: <span id="page-zoom-indicator">0.7</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".7"></input>
 
-    <h2>
-      <span id="show-name"></span>
-      <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
-      <input id="input-name" type="text"></input>
-      <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
-    </h2>
     <!-- TODO FIXME DELETE THIS WHEN CODEBASE NEEDS HOUSEKEEPING
     <div id="save-app"> 
       <div>
@@ -3608,10 +3608,13 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
 
         /** update name displayed in titlebar and header */
         this.updateName = function(name) {
-          this.showName.text = name;
-          this.inputName.text = name;
-          this.name = name;
-          document.title = name;
+          this.showName.innerHTML = name; // update the name shown
+          this.name = name; // update the name of the view
+          this.title = name; // call the name a title, too
+          this.showName.style.display = 'block';
+          this.changeNameButton.style.display = 'inline-block';
+          this.inputName.style.display = 'none';
+          this.saveNameButton.style.display = 'none';
         };
 
         /** input the name of this project */
