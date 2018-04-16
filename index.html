@@ -372,16 +372,10 @@
           <div>
             <div class="light-gray">
               <h4>Magnitude/Probability of impact</h4>
-              <p>If changes are made in this decision context what is the likelihood that this stakeholder-group will be impacted?</p>
+              <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?</p>
               <p>Please enter a number 0 to 100.</p>
-              <p>High = 60; Moderate = 40; Low = 20; None = 0</p>
               <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
-            </div>
-            <div class="light-gray">
-              <p>What is the magnitude of the impact?</p>
-              <p>Please enter a number 0 to 100.</p>
-              <p>Significant = 60; Moderate = 40; Minimal = 20; None = 0</p>
-              <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
+              <img src="img\probabilitymagnitude.PNG" width="300">
             </div>
           </div>
           <div>
@@ -2519,9 +2513,9 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           if (!stakeholdersToAdd.hasOwnProperty(stakeholder)) {
             stakeholdersToAdd[stakeholder] = {};
             stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
-          } else if (criterion === "magnitude") {
-            var sum = +stakeholdersToAdd[stakeholder][criterion] + +stakeholderScoreInputs[i].value;
-            stakeholdersToAdd[stakeholder][criterion] = (sum >= 20 ? sum - 20 : 0) + '';
+          // } else if (criterion === "magnitude") {
+          //   var sum = +stakeholdersToAdd[stakeholder][criterion] + +stakeholderScoreInputs[i].value;
+          //   stakeholdersToAdd[stakeholder][criterion] = (sum >= 20 ? sum - 20 : 0) + '';
           } else {
             stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
           }
