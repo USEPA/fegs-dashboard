@@ -2080,9 +2080,11 @@
           var denominator = 0;
           for (var i = 0; i < stakeholders.length; i++) {
             if (Object.keys(this.stakeholders[stakeholders[i]].beneficiaries).length) {
-              numerator += parseFloat(this.stakeholders[stakeholders[i]]
-                                        .beneficiaries[beneficiary]
-                                        .percentageOfStakeholder)
+              var percentageOfStakeholder = parseFloat(this.stakeholders[stakeholders[i]].beneficiaries[beneficiary].percentageOfStakeholder);
+              if (isNaN(percentageOfStakeholder)) {
+                continue;
+              }
+              numerator += percentageOfStakeholder
               * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
             }
           }
@@ -3588,7 +3590,7 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           cell = table.cell(rowHeader, beneficiaries[i]);
           cellValue = fegsScopingData.beneficiaryScore(beneficiaries[i]);
           if (isNaN(cellValue)) {
-           cellValue = '';
+           cellValue = '0';
           }
           cell.innerText = cellValue;
         }
