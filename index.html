@@ -2161,7 +2161,7 @@
         this.saveView = function() {
           var returnValue;
           if (window && window.process && window.process.type) { // true if in NODE's ELECTRON
-            returnValue = this.saveJSON('data.json', this.scrapePage());
+            returnValue = fegsScopingController.saveJSON('data.json', this.scrapePage());
           } else { // else is selected if this instance appears to be running in the browser
             returnValue = this.downloadText('data.json', JSON.stringify(this.scrapePage()));
           }
@@ -2212,14 +2212,13 @@
         /** save json to file; only works in NODE's ELECTRON */
         this.saveJSON = function(savePath, jsonToBeSaved) {
           var fs = require('fs');
+          var jsonText;
           if (typeof(jsonToBeSaved) !== 'string') {
-            var jsonText = JSON.stringify(jsonToBeSaved);
+            jsonText = JSON.stringify(jsonToBeSaved);
           } else {
             jsonText = jsonToBeSaved;
           }
-console.log("typeof(jsonText):", typeof(jsonText));
-console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
-          fs.writeFileSync(savePath, jsonText, function(err) {throw(err)});
+          fs.writeFileSync(savePath, jsonText);
         };
 
         /** download given text to given filename; works in BROWSER */
@@ -2232,6 +2231,24 @@ console.log("jsonText.substr(0,81):", jsonText.substr(0,81));
           element.click();
           document.body.removeChild(element);
         }
+
+        /** write data-model to disk by default; optionally supply data to write */
+        this.writeData = function(filename, data) {
+          if (typeof(data) == 'undefined') {data = fegsScopingData}
+          if (process.versions['electron']) {
+            this.saveJSON(filename, fegsScopingData);
+          } else {
+            this.downloadText(filename, data);
+          }
+        };
+
+        /** read data-model from disk */
+        this.readData = function(filename) {
+          const fs = require('fs');
+          var importedData = fs.readFileSync(filename);
+          importedData = JSON.parse(importedData);
+          fegsScopingData = importedData;
+        };
 
       };//////// END PROTOTYPE FEGScopingController ////////
 
