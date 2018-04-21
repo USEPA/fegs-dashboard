@@ -267,7 +267,9 @@
 
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
 
-    <button id="scrape-page" onclick="fegsScopingController.saveView();">Scrape This Page</button>
+    <button id="restore" onclick="fegsScopingController.restoreCallback();">Save data</button>
+
+    <button id="scrape-page" onclick="fegsScopingView.indicateSaved()//FIXME load data">Load Data</button>
 
     Zoom: <span id="page-zoom-indicator">0.7</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".7"></input>
 
@@ -1748,8 +1750,6 @@
     </ul>
   </div>
 
-<!-- FIXME: integrate code between comment flags into application -->
-
     <script>
       window.addEventListener("scroll", onScroll);
       function onScroll(event){
@@ -1785,7 +1785,7 @@
 
       var saveCallback = function(reportElementId) {
         var reportElement = document.getElementById(reportElementId);
-        var timestamp = '';
+        var timestamp = ''; // replace empty string with text of new Date() to prepend a timestamp
         var name;
         var extension;
         fegsScopingView.saveView();
@@ -1802,11 +1802,6 @@
           //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
           downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
         }
-      };
-
-      var restoreCallback = function() {
-        fegsScopingData.restoreData();
-        fegsScopingData.restoreView();
       };
 
     </script>
@@ -2094,34 +2089,6 @@
           return numerator / denominator;
         };
 
-        /** read data-model's state from HTML */
-        this.restoreData = function() {
-          var preId = 'report-data-on-page';
-          var pre = document.getElementById(preId);
-          var keys;
-          var dataToBeRestored;
-          var i;
-          if (pre !== null) {
-            fegsScopingData = new FEGSScopingData();//TODO ensure this doesn't overwrite all data on load
-            Object.assign(fegsScopingData, JSON.parse(pre.innerHTML));
-          } else {
-            console.log('There is no element with id ' + preId + ' from which data may be restored.');
-          }
-        };
-
-        /** restore view's state: each input with a stored value restores that value */
-        this.restoreView = function() {
-          var inputs = document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])');
-          var radioInputs = document.querySelectorAll('input[type="radio"]');
-          var i;
-          for (i = 0; i < inputs.length; i++) {
-            inputs[i].value = inputs[i].getAttribute('data-value');
-          }
-          for (i = 0; i < radioInputs.length; i++) {
-            radioInputs[i].checked = JSON.parse(radioInputs[i].getAttribute('data-checked'));
-          }
-        };
-
         /** return current array of extant beneficiaries */
         this.extantBeneficiaries = function() {
           var extantStakeholders = Object.keys(this.stakeholders);
@@ -2145,7 +2112,9 @@
           this.projectName = name;
         };
 
-        this.projectName = '';
+        this.appName = 'FEGS Scoping Tool';
+        this.version = '0.1.0';
+        this.name = 'New Project';
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
@@ -2161,9 +2130,9 @@
         this.saveView = function() {
           var returnValue;
           if (window && window.process && window.process.type) { // true if in NODE's ELECTRON
-            returnValue = fegsScopingController.saveJSON('data.json', this.scrapePage());
+            returnValue = fegsScopingController.saveJSON('data.json', fegsScopingView.scrapePage());
           } else { // else is selected if this instance appears to be running in the browser
-            returnValue = this.downloadText('data.json', JSON.stringify(this.scrapePage()));
+            returnValue = this.downloadText('data.json', JSON.stringify(fegsScopingView.scrapePage()));
           }
           return returnValue;
         };
@@ -2172,6 +2141,7 @@
         this.updateName = function(name) {
           fegsScopingView.updateName(name);
           fegsScopingData.updateName(name);
+          fegsScopingView.indicateUnsaved();
         };
 
         /** scrape state of page */
@@ -2204,7 +2174,6 @@
           }
           /* //works in BROWSER
           document.getElementById('scrape-page').setAttribute('data-view-state', JSON.stringify({'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes})); */
-          //TODO forge a workflow that flows efficiently within electron for testing and debugging
           scrapedValues = {'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes};
           return scrapedValues;
         };
@@ -2250,7 +2219,13 @@
           fegsScopingData = importedData;
         };
 
-      };//////// END PROTOTYPE FEGScopingController ////////
+        this.restoreCallback = function() {
+          if (fegsScopingData.restoreData) {fegsScopingData.restoreData()};//FIXME
+          fegsScopingView.restoreView();
+          fegsScopingView.indicateSaved();
+        };
+
+      };//////// END PROTOTYPE FEGSScopingController ////////
 
       /** sum all values in an object */
       var sum = function(obj) {
@@ -2374,6 +2349,7 @@
                 element: 'stakeholder-prioritization'
               });
               updateWeightingProgress();
+              fegsScopingView.indicateUnsaved();
             });
 
           function arcTween(a) {
@@ -2486,6 +2462,7 @@
           ul.appendChild(li);
         }
         updateStakeholderProgress();
+        fegsScopingView.indicateUnsaved();
       }
 
       function addStakeholderScores() {
@@ -2506,6 +2483,7 @@
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
         updateStakeholderProgress();
         document.getElementById('stakeholder-table-container').style.display = "block";
+        fegsScopingView.indicateUnsaved();
       }
 
       function clearStakeholderScores() {
@@ -2970,6 +2948,7 @@
               fegsScopingData.stakeholders[stakeholderName]
                              .beneficiaries[beneficiaryNameForInput]
                              .percentageOfStakeholder = inputs[j].value;
+              fegsScopingView.indicateUnsaved();
             }
           displayBeneficiaryScores(); // update #table-beneficiary-score
           }
@@ -3013,7 +2992,7 @@
           }
           input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
           cell.appendChild(input);
-          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); //FIXME hide unused beneficiaries by BDD
+          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
         }
         updateBeneficiaryProgress();
       };
@@ -3566,6 +3545,7 @@
               }
               fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
               tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()) // update beneficiaries shown in #table-attributes
+              fegsScopingView.indicateUnsaved();
             } else { // notify of incorrect normalization
               accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
               for (i = 0; i < rows.length; i++) {
@@ -3588,7 +3568,7 @@
             input.onchange = validateAndSaveData; // apply onchange callback late to restore functionality
           }
         }
-        table.table.setAttribute('data-initialized', "true")
+        table.table.setAttribute('data-initialized', "true");
         return table;
       };
 
@@ -3622,7 +3602,7 @@
           this.changeNameButton.style.display = 'inline-block';
           this.inputName.style.display = 'none';
           this.saveNameButton.style.display = 'none';
-          this.name = (new Date()).toISOString() + '_FEGS_Scoping_Tool_Data';
+          this.name = fegsScopingData.name;
           this.showName.innerHTML = this.name;
         };
 
@@ -3657,16 +3637,29 @@
           this.name = inputName.value;
         };
 
-        /** indicate saved status */
-        this.indicateSaved = function() {
-          document.title = this.name;
-          document.body.style.border = none;
+        /** restore view's state: each input with a stored value restores that value */
+        this.restoreView = function() {
+          var inputs = document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])');
+          var radioInputs = document.querySelectorAll('input[type="radio"]');
+          var i;
+          for (i = 0; i < inputs.length; i++) {
+            inputs[i].value = inputs[i].getAttribute('data-value');
+          }
+          for (i = 0; i < radioInputs.length; i++) {
+            radioInputs[i].checked = JSON.parse(radioInputs[i].getAttribute('data-checked'));
+          }
         };
 
         /** indicate saved status */
+        this.indicateSaved = function() {
+          document.title = fegsScopingData.name;
+          document.getElementById('menu').style.border = 'none';
+        };
+
+        /** indicate unsaved status */
         this.indicateUnsaved = function() {
-          document.title = this.name + '*';
-          document.body.style.border = '1px solid red';
+          document.title = fegsScopingData.name + '*';
+          document.getElementById('menu').style.border = '1px solid red';
         };
 
         /** write data-model's state into HTML */
@@ -3707,62 +3700,63 @@
           self.ensureNavigability(pageId);
         };
 
-          /** add navigability if absent */
-          this.ensureNavigability = function(pageId) {
-            var navigation;
-            var back;
-            var forward;
-            if (!document.getElementById(pageId).querySelector('.navigation')) {
-              navigation = document.createElement('div');
-              navigation.setAttribute('class', 'navigation');
-              back = document.createElement('button');
-              forward = document.createElement('button');
-              back.innerHTML = 'back';
-              forward.innerHTML = 'forward';
-              back.onclick = function() {
-                var pages = document.querySelectorAll('.page');
-                var pageIndex;
-                var currentPageIndex;
-                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                  if (pages[pageIndex].style.display === 'block') {
-                    currentPageIndex = pageIndex;
-                    break;
-                  }
+        /** add navigability if absent */
+        this.ensureNavigability = function(pageId) {
+          var navigation;
+          var back;
+          var forward;
+          if (!document.getElementById(pageId).querySelector('.navigation')) {
+            navigation = document.createElement('div');
+            navigation.setAttribute('class', 'navigation');
+            back = document.createElement('button');
+            forward = document.createElement('button');
+            back.innerHTML = 'back';
+            forward.innerHTML = 'forward';
+            back.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
                 }
-                if (currentPageIndex > 0) {
-                  self.focusPage(pages[currentPageIndex - 1].id)
-                } else {
-                  console.log('there is no page before the first page');
+              }
+              if (currentPageIndex > 0) {
+                self.focusPage(pages[currentPageIndex - 1].id)
+              } else {
+                console.log('there is no page before the first page');
+              }
+            };
+            forward.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var currentPage = document.querySelector('.page[display="block"]');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
                 }
-              };
-              forward.onclick = function() {
-                var pages = document.querySelectorAll('.page');
-                var currentPage = document.querySelector('.page[display="block"]');
-                var pageIndex;
-                var currentPageIndex;
-                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                  if (pages[pageIndex].style.display === 'block') {
-                    currentPageIndex = pageIndex;
-                    break;
-                  }
-                }
-                if (currentPageIndex < pages.length - 1) {
-                  self.focusPage(pages[currentPageIndex + 1].id)
-                } else {
-                  console.log('there is no page after the last page');
-                }
-              };
-              navigation.appendChild(back);
-              navigation.appendChild(forward);
-              document.getElementById(pageId).appendChild(navigation);
-            }
-          };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
-          this.inputName = document.getElementById('input-name');
-          this.showName = document.getElementById('show-name');
-          this.saveNameButton = document.getElementById('save-name');
-          this.changeNameButton = document.getElementById('change-name');
-          this.initializeView();
-        };////////////// END PROTOTYPE FEGSScopingView /////////////////////
+              }
+              if (currentPageIndex < pages.length - 1) {
+                self.focusPage(pages[currentPageIndex + 1].id)
+              } else {
+                console.log('there is no page after the last page');
+              }
+            };
+            navigation.appendChild(back);
+            navigation.appendChild(forward);
+            document.getElementById(pageId).appendChild(navigation);
+          }
+        };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+
+        this.inputName = document.getElementById('input-name');
+        this.showName = document.getElementById('show-name');
+        this.saveNameButton = document.getElementById('save-name');
+        this.changeNameButton = document.getElementById('change-name');
+        this.initializeView();
+      };////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
       var getDocument = function() {
         var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
@@ -3805,11 +3799,6 @@
         }
       };
 
-      var restoreCallback = function() {
-        fegsScopingData.restoreData();
-        fegsScopingData.restoreView();
-      };
-
       var indicatePageZoom = function(event) {
         document.querySelector('#page-zoom-indicator').innerText = event.target.value;
       };
@@ -3832,7 +3821,7 @@
           element: 'pie'
         });
         if (document.body.getAttribute('data-restore') === 'true') {
-            restoreCallback();
+            fegsScopingController.restoreCallback();
         }
       });
       updateStakeholderProgress();
