@@ -267,31 +267,11 @@
 
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
 
-    <button id="restore" onclick="fegsScopingController.restoreCallback();">Save data</button>
+    <button id="restore" onclick="fegsScopingController.saveValidatedData();">Save Data</button>
 
-    <button id="scrape-page" onclick="fegsScopingView.indicateSaved()//FIXME load data">Load Data</button>
+    <button id="scrape-page" onclick="fegsScopingController.restoreData()//FIXME load data">Load Data</button>
 
     Zoom: <span id="page-zoom-indicator">0.7</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".7"></input>
-
-    <!-- TODO FIXME DELETE THIS WHEN CODEBASE NEEDS HOUSEKEEPING
-    <div id="save-app"> 
-      <div>
-        <label for="input-name">Optionally enter the name with which this app will be saved.</label>
-        <input id="input-name" type="text" />
-      </div>
-      <div>
-        <label for="report-and-save">Report the app's data and save the app with its data.</label>
-        <button id="report-and-save" onclick="saveCallback('report-data-on-page')">Generate Report and Save</button>
-        <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
-        <input id="save-with-timestamp" type="checkbox" checked="checked" />
-      </div>
-      <div>
-        <label for="toggle-report">Toggle the report's visibility.</label>
-        <button id="toggle-report" onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
-      </div>
-      <pre class="display-none" id="report-data-on-page"></pre>
-    </div>
-    -->
 
     <div class="page" id="section-weighting">
       <h3>Weighting</h3>
@@ -1783,27 +1763,6 @@
         document.body.removeChild(element);
       }
 
-      var saveCallback = function(reportElementId) {
-        var reportElement = document.getElementById(reportElementId);
-        var timestamp = ''; // replace empty string with text of new Date() to prepend a timestamp
-        var name;
-        var extension;
-        fegsScopingView.saveView();
-        fegsScopingView.saveData();
-        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
-          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
-          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          if (document.getElementById('save-with-timestamp').checked !== false) {
-            timestamp = (new Date()).toISOString();
-          }
-          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        } else {
-          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        }
-      };
-
     </script>
 <!-- FIXME: integrate code between comment flags into application -->
     <script src="./js/d3.min.js"></script>
@@ -2137,6 +2096,12 @@
           return returnValue;
         };
 
+        /** save validated data */
+        this.saveValidatedData = function() {
+          this.saveJSON('data.json', fegsScopingData);
+          fegsScopingView.indicateSaved();
+        };
+
         /** update name of an instance of the app */
         this.updateName = function(name) {
           fegsScopingView.updateName(name);
@@ -2178,7 +2143,7 @@
           return scrapedValues;
         };
 
-        /** save json to file; only works in NODE's ELECTRON */
+        /** save json to file; requires ELECTRON */
         this.saveJSON = function(savePath, jsonToBeSaved) {
           var fs = require('fs');
           var jsonText;
@@ -2201,26 +2166,17 @@
           document.body.removeChild(element);
         }
 
-        /** write data-model to disk by default; optionally supply data to write */
-        this.writeData = function(filename, data) {
-          if (typeof(data) == 'undefined') {data = fegsScopingData}
-          if (process.versions['electron']) {
-            this.saveJSON(filename, fegsScopingData);
-          } else {
-            this.downloadText(filename, data);
-          }
-        };
-
-        /** read data-model from disk */
+        /** read data-model from disk; requires ELECTRON */
         this.readData = function(filename) {
           const fs = require('fs');
+          if (typeof(filename) === 'undefined') {filename = 'data.json'}
           var importedData = fs.readFileSync(filename);
           importedData = JSON.parse(importedData);
           fegsScopingData = importedData;
         };
 
-        this.restoreCallback = function() {
-          if (fegsScopingData.restoreData) {fegsScopingData.restoreData()};//FIXME
+        this.restoreData = function() {
+          this.readData();
           fegsScopingView.restoreView();
           fegsScopingView.indicateSaved();
         };
@@ -3633,7 +3589,7 @@
           this.showName.style.display = 'inline-block';
           this.changeName.style.display = 'inline-block';
           this.showName.innerText = inputName.value;
-          fegsScopingController.saveData();
+          fegsScopingController.saveValidatedData();
           this.name = inputName.value;
         };
 
@@ -3660,14 +3616,6 @@
         this.indicateUnsaved = function() {
           document.title = fegsScopingData.name + '*';
           document.getElementById('menu').style.border = '1px solid red';
-        };
-
-        /** write data-model's state into HTML */
-        this.saveData = function() {
-          var pre = document.getElementById('report-data-on-page');
-          pre.innerHTML = '';
-          var textNode = document.createTextNode(JSON.stringify(this, null, 2));
-          pre.appendChild(textNode);
         };
 
         /** save view's state: each input stores its own data */
@@ -3776,29 +3724,6 @@
         document.body.removeChild(element);
       }
 
-      var saveCallback = function(reportElementId) {
-        var reportElement = document.getElementById(reportElementId);
-        var timestamp = '';
-        var name;
-        var extension;
-        fegsScopingView.saveView();
-        fegsScopingView.saveData();
-        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
-          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
-          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          if (document.getElementById('save-with-timestamp').checked !== false) {
-            timestamp = (new Date()).toISOString();
-          }
-          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
-          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        } else {
-          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
-          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        }
-      };
-
       var indicatePageZoom = function(event) {
         document.querySelector('#page-zoom-indicator').innerText = event.target.value;
       };
@@ -3821,7 +3746,7 @@
           element: 'pie'
         });
         if (document.body.getAttribute('data-restore') === 'true') {
-            fegsScopingController.restoreCallback();
+            fegsScopingController.restoreData();
         }
       });
       updateStakeholderProgress();
