@@ -99,7 +99,8 @@ function openFile() {
       console.log("No file selected");
     
     } else {
-      readFile(fileNames[0]);
+      //readFile(fileNames[0]);
+      mainWindow.webContents.send('open-file', fileNames);
     }
   });
 
@@ -138,6 +139,9 @@ function saveFileAs() {
     } else {
       console.log("get data to save");
       //mainWindow.webContents.send('data-request', fileNames);
+      if(!fileNames.endsWith(".fegs")) {
+        fileNames += ".fegs";
+      }
       mainWindow.webContents.send('save-as', fileNames);
     }
   });
@@ -205,8 +209,3 @@ ipcMain.on('sync', (event, arg) => {
   mainWindow.webContents.send('ping', 5);
 });
 
-// Make method externaly visible
-exports.pong = arg => {  
-  //Print 6
-  console.log(arg);
-}

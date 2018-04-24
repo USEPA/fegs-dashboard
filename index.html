@@ -2174,6 +2174,7 @@
         this.readData = function(filename) {
           const fs = require('fs');
           if (typeof(filename) === 'undefined') {filename = 'data.json'}
+          console.log(filename)
           var importedData = fs.readFileSync(filename);
           importedData = JSON.parse(importedData);
           fegsScopingData = importedData;
@@ -3788,8 +3789,15 @@
         });
         // Listen for save as from main process
         ipcRenderer.on('save-as', (event, arg) => {  
-            console.log("save as" + arg);
-            fegsScopingController.saveView(arg);
+            console.log("save as " + arg);
+            fegsScopingController.saveJSON(arg, fegsScopingData);
+            fegsScopingView.indicateSaved();
+        });
+        ipcRenderer.on('open-file', (event, arg) => {  
+            console.log("open file " + arg);
+            fegsScopingController.readData(arg[0]);
+            fegsScopingView.restoreView();
+            fegsScopingView.indicateSaved();
         });
       }
     </script>
