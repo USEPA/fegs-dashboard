@@ -267,29 +267,11 @@
 
     <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
 
-    <button id="scrape-page" onclick="fegsScopingController.saveView();">Scrape This Page</button>
+    <button id="restore" onclick="fegsScopingController.saveValidatedData();">Save Data</button>
+
+    <button id="scrape-page" onclick="fegsScopingController.restoreData()//FIXME load data">Load Data</button>
 
     Zoom: <span id="page-zoom-indicator">0.7</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".7"></input>
-
-    <!-- TODO FIXME DELETE THIS WHEN CODEBASE NEEDS HOUSEKEEPING
-    <div id="save-app"> 
-      <div>
-        <label for="input-name">Optionally enter the name with which this app will be saved.</label>
-        <input id="input-name" type="text" />
-      </div>
-      <div>
-        <label for="report-and-save">Report the app's data and save the app with its data.</label>
-        <button id="report-and-save" onclick="saveCallback('report-data-on-page')">Generate Report and Save</button>
-        <label for="save-with-timestamp">Timestamp current filename if no name is entered?</label>
-        <input id="save-with-timestamp" type="checkbox" checked="checked" />
-      </div>
-      <div>
-        <label for="toggle-report">Toggle the report's visibility.</label>
-        <button id="toggle-report" onclick="toggleVisibility('report-data-on-page')">Toggle Report</button>
-      </div>
-      <pre class="display-none" id="report-data-on-page"></pre>
-    </div>
-    -->
 
     <div class="page" id="section-weighting">
       <h3>Weighting</h3>
@@ -1748,8 +1730,6 @@
     </ul>
   </div>
 
-<!-- FIXME: integrate code between comment flags into application -->
-
     <script>
       window.addEventListener("scroll", onScroll);
       function onScroll(event){
@@ -1782,32 +1762,6 @@
 
         document.body.removeChild(element);
       }
-
-      var saveCallback = function(reportElementId) {
-        var reportElement = document.getElementById(reportElementId);
-        var timestamp = '';
-        var name;
-        var extension;
-        fegsScopingView.saveView();
-        fegsScopingView.saveData();
-        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
-          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
-          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          if (document.getElementById('save-with-timestamp').checked !== false) {
-            timestamp = (new Date()).toISOString();
-          }
-          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        } else {
-          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        }
-      };
-
-      var restoreCallback = function() {
-        fegsScopingData.restoreData();
-        fegsScopingData.restoreView();
-      };
 
     </script>
 <!-- FIXME: integrate code between comment flags into application -->
@@ -2094,34 +2048,6 @@
           return numerator / denominator;
         };
 
-        /** read data-model's state from HTML */
-        this.restoreData = function() {
-          var preId = 'report-data-on-page';
-          var pre = document.getElementById(preId);
-          var keys;
-          var dataToBeRestored;
-          var i;
-          if (pre !== null) {
-            fegsScopingData = new FEGSScopingData();//TODO ensure this doesn't overwrite all data on load
-            Object.assign(fegsScopingData, JSON.parse(pre.innerHTML));
-          } else {
-            console.log('There is no element with id ' + preId + ' from which data may be restored.');
-          }
-        };
-
-        /** restore view's state: each input with a stored value restores that value */
-        this.restoreView = function() {
-          var inputs = document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])');
-          var radioInputs = document.querySelectorAll('input[type="radio"]');
-          var i;
-          for (i = 0; i < inputs.length; i++) {
-            inputs[i].value = inputs[i].getAttribute('data-value');
-          }
-          for (i = 0; i < radioInputs.length; i++) {
-            radioInputs[i].checked = JSON.parse(radioInputs[i].getAttribute('data-checked'));
-          }
-        };
-
         /** return current array of extant beneficiaries */
         this.extantBeneficiaries = function() {
           var extantStakeholders = Object.keys(this.stakeholders);
@@ -2145,7 +2071,9 @@
           this.projectName = name;
         };
 
-        this.projectName = '';
+        this.appName = 'FEGS Scoping Tool';
+        this.version = '0.1.0';
+        this.name = 'New Project';
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
@@ -2161,21 +2089,25 @@
         this.saveView = function(filename = "data.json") {
           var returnValue;
           var userAgent = navigator.userAgent.toLowerCase();
-          console.log(userAgent.indexOf(' electron/') > -1)
           if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
-            console.log("electron")
-            returnValue = fegsScopingController.saveJSON(filename, this.scrapePage());
+            returnValue = fegsScopingController.saveJSON('data.json', fegsScopingView.scrapePage());
           } else { // else is selected if this instance appears to be running in the browser
-            console.log("not electron")
-            returnValue = this.downloadText(filename, JSON.stringify(this.scrapePage()));
+            returnValue = this.downloadText('data.json', JSON.stringify(fegsScopingView.scrapePage()));
           }
           return returnValue;
+        };
+
+        /** save validated data */
+        this.saveValidatedData = function() {
+          this.saveJSON('data.json', fegsScopingData);
+          fegsScopingView.indicateSaved();
         };
 
         /** update name of an instance of the app */
         this.updateName = function(name) {
           fegsScopingView.updateName(name);
           fegsScopingData.updateName(name);
+          fegsScopingView.indicateUnsaved();
         };
 
         /** scrape state of page */
@@ -2209,12 +2141,11 @@
           }
           /* //works in BROWSER
           document.getElementById('scrape-page').setAttribute('data-view-state', JSON.stringify({'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes})); */
-          //TODO forge a workflow that flows efficiently within electron for testing and debugging
           scrapedValues = {'scores': scores, 'beneficiaries': beneficiaries, 'attributes': attributes};
           return scrapedValues;
         };
 
-        /** save json to file; only works in NODE's ELECTRON */
+        /** save json to file; requires ELECTRON */
         this.saveJSON = function(savePath, jsonToBeSaved) {
           console.log("saveJSON")
           var fs = require('fs');
@@ -2239,25 +2170,22 @@
           document.body.removeChild(element);
         }
 
-        /** write data-model to disk by default; optionally supply data to write */
-        this.writeData = function(filename, data) {
-          if (typeof(data) == 'undefined') {data = fegsScopingData}
-          if (process.versions['electron']) {
-            this.saveJSON(filename, fegsScopingData);
-          } else {
-            this.downloadText(filename, data);
-          }
-        };
-
-        /** read data-model from disk */
+        /** read data-model from disk; requires ELECTRON */
         this.readData = function(filename) {
           const fs = require('fs');
+          if (typeof(filename) === 'undefined') {filename = 'data.json'}
           var importedData = fs.readFileSync(filename);
           importedData = JSON.parse(importedData);
           fegsScopingData = importedData;
         };
 
-      };//////// END PROTOTYPE FEGScopingController ////////
+        this.restoreData = function() {
+          this.readData();
+          fegsScopingView.restoreView();
+          fegsScopingView.indicateSaved();
+        };
+
+      };//////// END PROTOTYPE FEGSScopingController ////////
 
       /** sum all values in an object */
       var sum = function(obj) {
@@ -2381,6 +2309,7 @@
                 element: 'stakeholder-prioritization'
               });
               updateWeightingProgress();
+              fegsScopingView.indicateUnsaved();
             });
 
           function arcTween(a) {
@@ -2493,6 +2422,7 @@
           ul.appendChild(li);
         }
         updateStakeholderProgress();
+        fegsScopingView.indicateUnsaved();
       }
 
       function addStakeholderScores() {
@@ -2513,6 +2443,7 @@
         document.getElementById('select-stakeholder-to-slice-into-beneficiaries').onchange();
         updateStakeholderProgress();
         document.getElementById('stakeholder-table-container').style.display = "block";
+        fegsScopingView.indicateUnsaved();
       }
 
       function clearStakeholderScores() {
@@ -2977,6 +2908,7 @@
               fegsScopingData.stakeholders[stakeholderName]
                              .beneficiaries[beneficiaryNameForInput]
                              .percentageOfStakeholder = inputs[j].value;
+              fegsScopingView.indicateUnsaved();
             }
           displayBeneficiaryScores(); // update #table-beneficiary-score
           }
@@ -3020,7 +2952,7 @@
           }
           input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
           cell.appendChild(input);
-          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); //FIXME hide unused beneficiaries by BDD
+          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
         }
         updateBeneficiaryProgress();
       };
@@ -3573,6 +3505,7 @@
               }
               fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
               tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()) // update beneficiaries shown in #table-attributes
+              fegsScopingView.indicateUnsaved();
             } else { // notify of incorrect normalization
               accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
               for (i = 0; i < rows.length; i++) {
@@ -3595,7 +3528,7 @@
             input.onchange = validateAndSaveData; // apply onchange callback late to restore functionality
           }
         }
-        table.table.setAttribute('data-initialized', "true")
+        table.table.setAttribute('data-initialized', "true");
         return table;
       };
 
@@ -3629,7 +3562,7 @@
           this.changeNameButton.style.display = 'inline-block';
           this.inputName.style.display = 'none';
           this.saveNameButton.style.display = 'none';
-          this.name = (new Date()).toISOString() + '_FEGS_Scoping_Tool_Data';
+          this.name = fegsScopingData.name;
           this.showName.innerHTML = this.name;
         };
 
@@ -3660,28 +3593,33 @@
           this.showName.style.display = 'inline-block';
           this.changeName.style.display = 'inline-block';
           this.showName.innerText = inputName.value;
-          fegsScopingController.saveData();
+          fegsScopingController.saveValidatedData();
           this.name = inputName.value;
+        };
+
+        /** restore view's state: each input with a stored value restores that value */
+        this.restoreView = function() {
+          var inputs = document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])');
+          var radioInputs = document.querySelectorAll('input[type="radio"]');
+          var i;
+          for (i = 0; i < inputs.length; i++) {
+            inputs[i].value = inputs[i].getAttribute('data-value');
+          }
+          for (i = 0; i < radioInputs.length; i++) {
+            radioInputs[i].checked = JSON.parse(radioInputs[i].getAttribute('data-checked'));
+          }
         };
 
         /** indicate saved status */
         this.indicateSaved = function() {
-          document.title = this.name;
-          document.body.style.border = none;
+          document.title = fegsScopingData.name;
+          document.getElementById('menu').style.border = 'none';
         };
 
-        /** indicate saved status */
+        /** indicate unsaved status */
         this.indicateUnsaved = function() {
-          document.title = this.name + '*';
-          document.body.style.border = '1px solid red';
-        };
-
-        /** write data-model's state into HTML */
-        this.saveData = function() {
-          var pre = document.getElementById('report-data-on-page');
-          pre.innerHTML = '';
-          var textNode = document.createTextNode(JSON.stringify(this, null, 2));
-          pre.appendChild(textNode);
+          document.title = fegsScopingData.name + '*';
+          document.getElementById('menu').style.border = '1px solid red';
         };
 
         /** save view's state: each input stores its own data */
@@ -3714,62 +3652,63 @@
           self.ensureNavigability(pageId);
         };
 
-          /** add navigability if absent */
-          this.ensureNavigability = function(pageId) {
-            var navigation;
-            var back;
-            var forward;
-            if (!document.getElementById(pageId).querySelector('.navigation')) {
-              navigation = document.createElement('div');
-              navigation.setAttribute('class', 'navigation');
-              back = document.createElement('button');
-              forward = document.createElement('button');
-              back.innerHTML = 'back';
-              forward.innerHTML = 'forward';
-              back.onclick = function() {
-                var pages = document.querySelectorAll('.page');
-                var pageIndex;
-                var currentPageIndex;
-                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                  if (pages[pageIndex].style.display === 'block') {
-                    currentPageIndex = pageIndex;
-                    break;
-                  }
+        /** add navigability if absent */
+        this.ensureNavigability = function(pageId) {
+          var navigation;
+          var back;
+          var forward;
+          if (!document.getElementById(pageId).querySelector('.navigation')) {
+            navigation = document.createElement('div');
+            navigation.setAttribute('class', 'navigation');
+            back = document.createElement('button');
+            forward = document.createElement('button');
+            back.innerHTML = 'back';
+            forward.innerHTML = 'forward';
+            back.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
                 }
-                if (currentPageIndex > 0) {
-                  self.focusPage(pages[currentPageIndex - 1].id)
-                } else {
-                  console.log('there is no page before the first page');
+              }
+              if (currentPageIndex > 0) {
+                self.focusPage(pages[currentPageIndex - 1].id)
+              } else {
+                console.log('there is no page before the first page');
+              }
+            };
+            forward.onclick = function() {
+              var pages = document.querySelectorAll('.page');
+              var currentPage = document.querySelector('.page[display="block"]');
+              var pageIndex;
+              var currentPageIndex;
+              for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (pages[pageIndex].style.display === 'block') {
+                  currentPageIndex = pageIndex;
+                  break;
                 }
-              };
-              forward.onclick = function() {
-                var pages = document.querySelectorAll('.page');
-                var currentPage = document.querySelector('.page[display="block"]');
-                var pageIndex;
-                var currentPageIndex;
-                for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                  if (pages[pageIndex].style.display === 'block') {
-                    currentPageIndex = pageIndex;
-                    break;
-                  }
-                }
-                if (currentPageIndex < pages.length - 1) {
-                  self.focusPage(pages[currentPageIndex + 1].id)
-                } else {
-                  console.log('there is no page after the last page');
-                }
-              };
-              navigation.appendChild(back);
-              navigation.appendChild(forward);
-              document.getElementById(pageId).appendChild(navigation);
-            }
-          };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
-          this.inputName = document.getElementById('input-name');
-          this.showName = document.getElementById('show-name');
-          this.saveNameButton = document.getElementById('save-name');
-          this.changeNameButton = document.getElementById('change-name');
-          this.initializeView();
-        };////////////// END PROTOTYPE FEGSScopingView /////////////////////
+              }
+              if (currentPageIndex < pages.length - 1) {
+                self.focusPage(pages[currentPageIndex + 1].id)
+              } else {
+                console.log('there is no page after the last page');
+              }
+            };
+            navigation.appendChild(back);
+            navigation.appendChild(forward);
+            document.getElementById(pageId).appendChild(navigation);
+          }
+        };//////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
+
+        this.inputName = document.getElementById('input-name');
+        this.showName = document.getElementById('show-name');
+        this.saveNameButton = document.getElementById('save-name');
+        this.changeNameButton = document.getElementById('change-name');
+        this.initializeView();
+      };////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
       var getDocument = function() {
         var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
@@ -3789,34 +3728,6 @@
 
         document.body.removeChild(element);
       }
-
-      var saveCallback = function(reportElementId) {
-        var reportElement = document.getElementById(reportElementId);
-        var timestamp = '';
-        var name;
-        var extension;
-        fegsScopingView.saveView();
-        fegsScopingView.saveData();
-        if (reportElement.getAttribute('value') === reportElement.value || reportElement.getAttribute('value') === '') { // check for name
-          name = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.lastIndexOf('.'));
-          extension = window.location.pathname.substring(window.location.pathname.lastIndexOf('.'));
-          if (document.getElementById('save-with-timestamp').checked !== false) {
-            timestamp = (new Date()).toISOString();
-          }
-          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
-          //fs.writeFile('DELETEME-test-save' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + timestamp + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        } else {
-          // Commenting the line below allows the same action to happen utilizing Web-standards instead of some particular node solutions whose foundational libraries have unknown dependability.
-          //fs.writeFile('DELETEME-test-save' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML, (error) => {console.log('fs.writeFile failed with error', error)});
-          downloadText('DELETEME-test-download' + name + extension, '<!DOCTYPE html>' + document.documentElement.outerHTML)
-        }
-      };
-
-      var restoreCallback = function() {
-        fegsScopingData.restoreData();
-        fegsScopingData.restoreView();
-      };
 
       var indicatePageZoom = function(event) {
         document.querySelector('#page-zoom-indicator').innerText = event.target.value;
@@ -3840,7 +3751,7 @@
           element: 'pie'
         });
         if (document.body.getAttribute('data-restore') === 'true') {
-            restoreCallback();
+            fegsScopingController.restoreData();
         }
       });
       updateStakeholderProgress();
