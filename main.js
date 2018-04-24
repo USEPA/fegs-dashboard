@@ -47,6 +47,7 @@ function createWindow () {
         }, {
           label: 'Save As...',
           click: () => {
+            console.log("click")
             saveFileAs();
           }
         }, {
@@ -126,26 +127,41 @@ function saveFile() {
 function saveFileAs() {
   console.log("saveFileAs");
   const {dialog} = require('electron');
-  const fs = require('fs');
-  dialog.showSaveDialog(function (fileNames) {
+  dialog.showSaveDialog
+  ({filters: [
+    {name: 'Custom File Type', extensions: ['fegs']},
+    {name: 'All Files', extensions: ['*']}
+  ]}, 
+  function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
     } else {
-      writeFile(fileNames);
+      console.log("get data to save");
+      //mainWindow.webContents.send('data-request', fileNames);
+      mainWindow.webContents.send('save-as', fileNames);
     }
   });
-
-  function writeFile(filepath) {
-    fs.writeFile(filepath, '111\n111\n111', (err) => {
-      console.log(filepath);
-      if (err) { 
-        console.log("An error ocurred saving the file:" + err.message);
-        return;
-      }
-      console.log("The file has been saved.");
-    });
-  }
 }
+
+function writeFile(filepath, content) {
+  const fs = require('fs');
+  fs.writeFile(filepath, content, (err) => {
+    console.log(filepath);
+    if (err) { 
+      mainWindow.webContents.send('data-written', "An error ocurred saving the file: " + err.message);
+      console.log("An error ocurred saving the file:" + err.message);
+      return;
+    }
+    mainWindow.webContents.send('data-written', "The file has been saved");
+    console.log("The file has been saved.");
+  });
+}
+
+// Saves the file when the renderer returns the data
+ipcMain.on('data-message', function(event, arg) {
+  console.log(arg)
+  writeFile(arg[1], arg[0]);
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -171,3 +187,26 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+// Listen for async message from renderer process
+ipcMain.on('async', (event, arg) => {  
+  // Print 1
+  console.log(arg);
+  // Reply on async message from renderer process
+  event.sender.send('async-reply', 2);
+});
+
+// Listen for sync message from renderer process
+ipcMain.on('sync', (event, arg) => {  
+  // Print 3
+  console.log(arg);
+  // Send value synchronously back to renderer process
+  event.returnValue = 4;
+  // Send async message to renderer process
+  mainWindow.webContents.send('ping', 5);
+});
+
+// Make method externaly visible
+exports.pong = arg => {  
+  //Print 6
+  console.log(arg);
+}

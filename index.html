@@ -2158,12 +2158,16 @@
       FEGSScopingController = function() {
 
         /** scrape data from the page and save the data */
-        this.saveView = function() {
+        this.saveView = function(filename = "data.json") {
           var returnValue;
-          if (window && window.process && window.process.type) { // true if in NODE's ELECTRON
-            returnValue = fegsScopingController.saveJSON('data.json', this.scrapePage());
+          var userAgent = navigator.userAgent.toLowerCase();
+          console.log(userAgent.indexOf(' electron/') > -1)
+          if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
+            console.log("electron")
+            returnValue = fegsScopingController.saveJSON(filename, this.scrapePage());
           } else { // else is selected if this instance appears to be running in the browser
-            returnValue = this.downloadText('data.json', JSON.stringify(this.scrapePage()));
+            console.log("not electron")
+            returnValue = this.downloadText(filename, JSON.stringify(this.scrapePage()));
           }
           return returnValue;
         };
@@ -2176,6 +2180,7 @@
 
         /** scrape state of page */
         this.scrapePage = function() {
+          console.log("scrapePage")
           var scrapedValues;
           var scores = {};
           var beneficiaries = {};
@@ -2211,6 +2216,7 @@
 
         /** save json to file; only works in NODE's ELECTRON */
         this.saveJSON = function(savePath, jsonToBeSaved) {
+          console.log("saveJSON")
           var fs = require('fs');
           var jsonText;
           if (typeof(jsonToBeSaved) !== 'string') {
@@ -2223,6 +2229,7 @@
 
         /** download given text to given filename; works in BROWSER */
         this.downloadText = function (filename, text) {
+          console.log("FEGSScopingController downloadText")
           var element = document.createElement('a');
           element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
           element.setAttribute('download', filename);
@@ -3770,6 +3777,7 @@
       }
 
       var downloadText = function (filename, text) {
+        console.log("downloadText")
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
@@ -3838,6 +3846,41 @@
       updateStakeholderProgress();
       updateWeightingProgress();
       updateBeneficiaryProgress();
+
+      function round(number, precision) {
+        var shift = function (number, precision, reverseShift) {
+          if (reverseShift) {
+            precision = -precision;
+          }  
+          var numArray = ("" + number).split("e");
+          return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+        };
+        return shift(Math.round(shift(number, precision, false)), precision, true);
+      }
+    </script>
+    <script>
+      var userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
+        var {ipcRenderer, remote} = require('electron');  
+        //var main = remote.require("./main.js");
+
+        // Listen for data-request message from main process
+        ipcRenderer.on('data-request', (event, arg) => {  
+            console.log("received request");
+            ipcRenderer.send('data-message', [JSON.stringify(fegsScopingData), arg]);
+        });
+
+        // Listen for data-written message from main process
+        ipcRenderer.on('data-written', (event, arg) => {  
+            console.log("data written?");
+            console.log(arg);
+        });
+        // Listen for save as from main process
+        ipcRenderer.on('save-as', (event, arg) => {  
+            console.log("save as" + arg);
+            fegsScopingController.saveView(arg);
+        });
+      }
     </script>
   </body>
 </html>
