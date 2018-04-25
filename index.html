@@ -2421,7 +2421,7 @@
         var stakeholdersToAdd = scrapeAddStakeholders();
         for (var stakeholder in stakeholdersToAdd) {
           fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
-          addRow('table-stakeholders', [stakeholder, stakeholdersToAdd[stakeholder]]); // table name and array of values to insert
+          addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]); // table name and array of values to insert
         }
         document.getElementById('set-stakeholder-values').style.display = "none";
         document.getElementById('stakeholder-list').style.display = "none";
@@ -2544,26 +2544,6 @@
       };
 
       /**
-       * Formats the row data
-       * @function
-       * @param {array} rowData - An array containing the data to display in the table.
-       * @return {object} - An object holding the formatted row data.
-       */
-      function formatRowData(rowData) {
-        var scores = {};
-        scores[fegsScopingData.criteria[0]] = rowData[1];
-        scores[fegsScopingData.criteria[1]] = rowData[2];
-        scores[fegsScopingData.criteria[2]] = rowData[3];
-        scores[fegsScopingData.criteria[3]] = rowData[4];
-        scores[fegsScopingData.criteria[4]] = rowData[5];
-        scores[fegsScopingData.criteria[5]] = rowData[6];
-        scores[fegsScopingData.criteria[6]] = rowData[7];
-        scores[fegsScopingData.criteria[7]] = rowData[8];
-        scores[fegsScopingData.criteria[8]] = rowData[9];
-        return scores;
-      }
-
-      /**
        * Gets the checked value of a specified name of ratio inputs.
        * @function
        * @param {string} name - The name of the radio buttons.
@@ -2631,24 +2611,28 @@
           var row = this.parentNode.parentNode;
           row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
           var cells = row.cells;
-          rowData = [];
-          var originalStakeholderName;
+          var originalStakeholderName = cells[1].innerText;
           if (cells[1].firstElementChild.hasAttribute("data-original-value")) {
             originalStakeholderName = cells[1].firstElementChild.getAttribute("data-original-value");
           }
           for (var i = 1, length = cells.length; i < length; i++) {
             var cell = cells[i];
-            rowData.push(cell.firstElementChild.value);
             cell.innerHTML = cell.firstElementChild.value; // set the value of the cell to the value of the child input of the cell
           }
-          var scores = fegsScopingData.makeCriteriaObject(formatRowData(rowData));
-
-          if (rowData[0] !== originalStakeholderName) {
-            fegsScopingData.renameStakeholder(originalStakeholderName, rowData[0]);
+          var scores = {};
+          for (var j = 0; j < fegsScopingData.criteria.length; j++) {
+            var cell = document.getElementById(originalStakeholderName + '-' + fegsScopingData.criteria[j]);
+            scores[fegsScopingData.criteria[j]] = cell.innerHTML;
+            cell.id =  cells[1].innerText + '-' + fegsScopingData.criteria[j];
+          }
+          scores = fegsScopingData.makeCriteriaObject(scores);          
+          var inputStakeholderValue = document.getElementById(originalStakeholderName + '-' + fegsScopingData.criteria[j])
+          if (cells[1].innerText !== originalStakeholderName) {
+            fegsScopingData.renameStakeholder(originalStakeholderName, cells[1].innerText);
           } else {
             fegsScopingData.addStakeholder(originalStakeholderName, scores);
           }
-          fegsScopingData.stakeholders[rowData[0]].scores = scores;
+          fegsScopingData.stakeholders[cells[1].innerText].scores = scores;
           updateSelectStakeholder('select-stakeholder-to-slice-into-beneficiaries'); // update select-box that its entries have changed
           initStackedBarChart.draw({
             data: formatStakeholderData(),
@@ -2661,7 +2645,7 @@
         newCell.appendChild(newText);
         for (var i = 0, length = fegsScopingData.criteria.length; i < length; i++) {
           var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
-          var newText = document.createTextNode(rowData[1][fegsScopingData.criteria[i]]); // Append a text node to the cell
+          var newText = document.createTextNode(rowData[1].scores[fegsScopingData.criteria[i]]); // Append a text node to the cell
           newCell.id = rowData[0] + '-' + fegsScopingData.criteria[i];
           newCell.appendChild(newText);
         }
@@ -3698,10 +3682,8 @@
         };
 
         this.showStakeholderScores = function() {
-          var stakeholdersToAdd = scrapeAddStakeholders();
-          for (var stakeholder in stakeholdersToAdd) {
-            fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
-            addRow('table-stakeholders', [stakeholder, stakeholdersToAdd[stakeholder]]); // table name and array of values to insert
+          for (var stakeholder in fegsScopingData.stakeholders) {
+            addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]); // table name and array of values to insert
           }
           document.getElementById('set-stakeholder-values').style.display = "none";
           document.getElementById('stakeholder-list').style.display = "none";
