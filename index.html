@@ -2072,6 +2072,8 @@
         this.appName = 'FEGS Scoping Tool';
         this.version = '0.1.0';
         this.projectName = 'New Project';
+        this.filePath = '';
+        this.projectName = 'New Project';
         this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
@@ -3777,28 +3779,26 @@
       var userAgent = navigator.userAgent.toLowerCase();
       if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
         var {ipcRenderer, remote} = require('electron');  
-        //var main = remote.require("./main.js");
 
-        // Listen for data-request message from main process
-        ipcRenderer.on('data-request', (event, arg) => {  
-            console.log("received request");
-            ipcRenderer.send('data-message', [JSON.stringify(fegsScopingData), arg]);
-        });
-
-        // Listen for data-written message from main process
-        ipcRenderer.on('data-written', (event, arg) => {  
-            console.log("data written?");
-            console.log(arg);
-        });
         // Listen for save as from main process
         ipcRenderer.on('save-as', (event, arg) => {  
-            console.log("save as " + arg);
+            fegsScopingData.filePath = arg; 
             fegsScopingController.saveJSON(arg, fegsScopingData);
             fegsScopingView.indicateSaved();
         });
+
+        // Listen for save from main process
+        ipcRenderer.on('save', (event, arg) => {  
+            if (fegsScopingData.filePath != '') {
+              fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
+              fegsScopingView.indicateSaved();
+            } else {
+              ipcRenderer.send('save-as');
+            }
+        });
+
+        // Listen for open file from main process
         ipcRenderer.on('open-file', (event, arg) => {  
-            console.log("open file " + arg);
-            //fegsScopingController.importData(arg[0]);
             fegsScopingView.restoreView(arg[0]);
             fegsScopingView.indicateSaved();
         });

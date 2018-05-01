@@ -47,7 +47,6 @@ function createWindow () {
         }, {
           label: 'Save As...',
           click: () => {
-            console.log("click")
             saveFileAs();
           }
         }, {
@@ -92,41 +91,20 @@ function createWindow () {
 
 function openFile() {
   const {dialog} = require('electron');
-  const fs = require('fs');
   dialog.showOpenDialog(function (fileNames) {
-    
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
-    
     } else {
-      //readFile(fileNames[0]);
       mainWindow.webContents.send('open-file', fileNames);
     }
   });
-
-  function readFile(filepath) {
-    fs.readFile(filepath, 'utf-8', (err, data) => {
-       if (err) { 
-         console.log("An error ocurred reading the file :" + err.message);
-         return;
-       }
-       console.log(data); // handle the file content. data contains the data read from the file
-    });
-  }
 }
 
 function saveFile() {
-  const {ipcMain} = require('electron');
-  const fs = require('fs');
-  ipcMain.on('synchronous-message', (event, documentText) => {
-    var message = 'synchronous message was received from page by main.js';
-    console.log(message);
-    fs.writeFile('windex.html', documentText);
-  });
+  mainWindow.webContents.send('save');
 }
 
 function saveFileAs() {
-  console.log("saveFileAs");
   const {dialog} = require('electron');
   dialog.showSaveDialog
   ({filters: [
@@ -137,8 +115,6 @@ function saveFileAs() {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
     } else {
-      console.log("get data to save");
-      //mainWindow.webContents.send('data-request', fileNames);
       if(!fileNames.endsWith(".fegs")) {
         fileNames += ".fegs";
       }
@@ -147,24 +123,9 @@ function saveFileAs() {
   });
 }
 
-function writeFile(filepath, content) {
-  const fs = require('fs');
-  fs.writeFile(filepath, content, (err) => {
-    console.log(filepath);
-    if (err) { 
-      mainWindow.webContents.send('data-written', "An error ocurred saving the file: " + err.message);
-      console.log("An error ocurred saving the file:" + err.message);
-      return;
-    }
-    mainWindow.webContents.send('data-written', "The file has been saved");
-    console.log("The file has been saved.");
-  });
-}
-
 // Saves the file when the renderer returns the data
-ipcMain.on('data-message', function(event, arg) {
-  console.log(arg)
-  writeFile(arg[1], arg[0]);
+ipcMain.on('save-as', function(event, arg) {
+  saveFileAs();
 });
 
 // This method will be called when Electron has finished
@@ -188,24 +149,3 @@ app.on('activate', function () {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-// Listen for async message from renderer process
-ipcMain.on('async', (event, arg) => {  
-  // Print 1
-  console.log(arg);
-  // Reply on async message from renderer process
-  event.sender.send('async-reply', 2);
-});
-
-// Listen for sync message from renderer process
-ipcMain.on('sync', (event, arg) => {  
-  // Print 3
-  console.log(arg);
-  // Send value synchronously back to renderer process
-  event.returnValue = 4;
-  // Send async message to renderer process
-  mainWindow.webContents.send('ping', 5);
-});
-
