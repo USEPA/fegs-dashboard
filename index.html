@@ -3590,6 +3590,7 @@
             document.querySelector('#' + criterion + '-score').value = fegsScopingData.scores[criterion];
           }
           fegsScopingView.showStakeholderScores();
+          fegsScopingView.restoreAttributes();
 
 //TODO LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
           fegsScopingView.indicateSaved();
@@ -3705,6 +3706,32 @@
           updateStakeholderProgress();
           document.getElementById('stakeholder-table-container').style.display = "block";
           fegsScopingView.indicateUnsaved();
+        };
+
+        this.restoreAttributes = function() {
+          var rowOffset = 2;
+          var columnOffset = 1;
+          var rowNames = fegsScopingData.fegsAttributes;
+          var columnNames = fegsScopingData.fegsBeneficiaries;
+          var table = new Table("table-attributes", rowNames, columnNames, rowOffset, columnOffset);
+          var cell;
+
+          for (var i = 0; i < rowNames.length; i++) {
+            for (var j = 0; j < columnNames.length; j++) {
+              if (fegsScopingData.attributes.hasOwnProperty(columnNames[j])) {
+                table.showColumn(columnNames[j]);
+                cell = table.cell(rowNames[i], columnNames[j]);
+                if (cell.querySelector('input') === null) {
+                  input = document.createElement('input');
+                  input.type = 'number';
+                  cell.appendChild(input);
+                } else {
+                  input = cell.querySelector('input');
+                }
+                input.value = fegsScopingData.attributes[columnNames[j]][rowNames[i]].percentageOfBeneficiary;
+              }
+            }
+          }
         };
 
         //////////// PROCESS IN PROTOTYPE FEGSScopingView ///////////////
