@@ -3469,7 +3469,7 @@
             this.parentElement.classList.add('invalid-text-input');
             accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
           } else { // individual input is valid
-            for (i = 0; i < rows.length - 1; i++) { // loop through values in column
+            for (i = 0; i < rows.length; i++) { // loop through values in column
               if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
                 allBlank = false;
               }
@@ -3480,7 +3480,7 @@
               for (i = 0; i < rows.length; i++) { // clear styling indicating bad input
                 rows[i].cells[columnIndex].classList.remove('invalid-text-input');
               }
-              for (rowIndex = 0; rowIndex < rows.length - 1; rowIndex++) {
+              for (rowIndex = 0; rowIndex < rows.length; rowIndex++) {
                 rows[rowIndex].cells[columnIndex].classList.remove('invalid-text-input');
                 attributeName = fegsScopingData.fegsAttributes[rowIndex];
                 attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
