@@ -2046,6 +2046,29 @@
           return numerator / denominator;
         };
 
+        /**
+         * return the sum of stakeholder-scores for all stakeholders [stakeholder weight * relative weight / sum of relative weights]
+         * @param {string} stakeholder - stakeholder whose
+         *  scores are summed
+         */
+         this.stakeholderPrioritizationScores = function(stakeholder) {
+          var score = 0;
+          var overallScore = this.calculateOverallScore(); // sum of relative weights
+          return score;
+        };
+
+        /**
+         * return the overall score (sum of relative weights)
+         */
+         this.calculateOverallScore = function() {
+          var elements = Object.values(fegsScopingData.scores);
+          var overallScore = 0;
+          for (var i = 0; i < elements.length; i++) {
+            overallScore += +elements[i];
+          }
+          return overallScore;
+        };
+
         /** return current array of extant beneficiaries */
         this.extantBeneficiaries = function() {
           var extantStakeholders = Object.keys(this.stakeholders);
