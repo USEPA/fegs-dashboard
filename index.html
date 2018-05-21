@@ -806,7 +806,7 @@
 
       <table id="table-attributes">
         <colgroup>
-          <col class="row-labels" />
+          <col class="row-labels" span="2"/>
           <col class="agricultural" span="7" />
           <col class="commercial" span="8" />
           <col class="governmental" span="4" />
@@ -819,7 +819,7 @@
         </colgroup>
         <thead>
           <tr class="column-name-labels">
-            <th class="row-label-header">Row labels</th>
+            <th colspan="2" class="row-label-header">Row labels</th>
             <th colspan="7">Agricultural</th>
             <th colspan="8">Commercial/ Industrial</th>
             <th colspan="4">Governmental/Municipal/Residential</th>
@@ -831,7 +831,8 @@
             <th colspan="2">Non-Use</th>
           </tr>
           <tr class="column-names">
-            <th>Attribute</th>
+            <th>Attribute tier 1</th>
+            <th>Attribute tier 2</th>
             <th>Irrigators</th>
             <th>CAFO Operators</th>
             <th>Livestock grazers</th>
@@ -873,7 +874,8 @@
         </thead>
         <tbody>
           <tr class="dark">
-            <th class="row-name">Weather</th>
+            <th rowspan="3" class="row-tier-1">Water</th>
+            <th class="row-name">Water quality</th>
             <td></td>
             <td></td>
             <td></td>
@@ -913,7 +915,8 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Air</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Water quantity</th>
             <td></td>
             <td></td>
             <td></td>
@@ -953,47 +956,8 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Wind</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="dark">
-            <th class="row-name">Atmospheric Phenomena</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Water movement</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1033,7 +997,8 @@
             <td></td>
           </tr>
           <tr>
-            <th class="row-name">Sounds and Scents</th>
+            <th rowspan="3" class="row-tier-1">Land</th>
+            <th class="row-name">Land quantity</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1073,167 +1038,8 @@
             <td></td>
           </tr>
           <tr>
-            <th class="row-name">Viewscapes</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="dark">
-            <th class="row-name">Open Space</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="dark">
-            <th class="row-name">Presence of the Environment</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="dark">
-            <th class="row-name">Land</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="dark">
-            <th class="row-name">Water</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Land quality</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1273,167 +1079,8 @@
             <td></td>
           </tr>
           <tr>
-            <th class="row-name">Soil</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th class="row-name">Substrate</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th class="row-name">Timber</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th class="row-name">Fiber</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th class="row-name">Natural Materials</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Land availability</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1473,7 +1120,8 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Fauna</th>
+            <th rowspan="5" class="row-tier-1">Atmosphere</th>
+            <th class="row-name">Wind strength / speed</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1513,7 +1161,8 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Fish</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Wind predictability / consistency</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1553,7 +1202,8 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Flora</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Air quality</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1593,7 +1243,49 @@
             <td></td>
           </tr>
           <tr class="dark">
-            <th class="row-name">Fungi</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Weather predictability</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Frequency of extreme weather events</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1633,7 +1325,8 @@
             <td></td>
           </tr>
           <tr>
-            <th class="row-name">Pollinators</th>
+            <th rowspan="8" class="row-tier-1">Natural materials</th>
+            <th class="row-name">Soil availability</th>
             <td></td>
             <td></td>
             <td></td>
@@ -1673,7 +1366,1238 @@
             <td></td>
           </tr>
           <tr>
-            <th class="row-name">Depredators and (Pest) Predators</th>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Soil quality</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Substrate quantity</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Substrate quality</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Fuel quantity</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Availability of fiber materials for use or subsistence</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Availability of minerals / chemicals</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Availability of other natural materials for artistic use or consumption (e.g. shells, clay, acorns, honey)</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th rowspan="9" class="row-tier-1">Flora / fungi</th>
+            <th class="row-name">Flora community</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Edible flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Medicinal flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Structural flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Charismatic flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Aesthetic flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Rare flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Commercially important flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Spiritually / culturally important flora / fungi</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th rowspan="11" class="row-tier-1">Fauna</th>
+            <th class="row-name">Fauna community</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Edible fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Medicinal fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>            
+            <th class="row-name">Keystone fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>            
+            <th class="row-name">Charismatic fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Aesthetic fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Rare fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>            
+            <th class="row-name">Pollinating fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Pest / predator / depredator fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Commercially important fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th aria-hidden="true"></th>
+            <th class="row-name">Spiritually / culturally important fauna</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th rowspan="4" class="row-tier-1">Environmental aesthetics</th>
+            <th class="row-name">Sounds</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Scents</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Scents</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="dark">
+            <th aria-hidden="true"></th>
+            <th class="row-name">Phenomena (e.g. sunsets, northern lights, etc)</th>
             <td></td>
             <td></td>
             <td></td>
@@ -2044,6 +2968,8 @@
           for (var i = 0; i < stakeholders.length; i++) {
             denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
           }
+          console.log(numerator)
+          console.log(denominator)
           return numerator / denominator;
         };
 
@@ -2102,7 +3028,8 @@
         this.scores = this.makeCriteriaObject('1');
         this.stakeholders = {};
         this.attributes = {};
-        this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
+        this.fegsAttributes = ["Water quality", "Water quantity", "Water movement", "Land quantity", "Land quality", "Land availability", "Wind strength / speed", "Wind predictability / consistency", "Air quality", "Weather predictability", "Frequency of extreme weather events", "Soil availability", "Soil quality", "Substrate quantity", "Substrate quality", "Fuel quantity", "Availablability of fiber materials for use or subsistence", "Availability of minerals / chemicals", "Availability of other natural  materials for artistic use or consumption (e.g. shells, clay, acorns, honey)", "Flora community", "Edible flora / fungi", "Medicinal flora / fungi", "Structural flora / fungi", "Charismatic flora / fungi", "Aesthetic flora / fungi", "Rare flora / fungi", "Commercially important flora / fungi", "Spiritually/culturally important flora / fungi", "Fauna community", "Edible fauna", "Medicinal fauna", "Keystone fauna", "Charismatic fauna", "Aesthetic fauna", "Rare fauna", "Pollinating fauna", "Pest predator / depredator fauna", "Commercially important fauna", "Spiritually / culturally important fauna", "Sounds", "Scents", "Viewscapes", "Phenomena (e.g. sunsets, northern lights, etc)"];
+        //this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
         this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber/Fiber/Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource-dependent businesses', 'Pharmaceutical/Food supplement suppliers', 'Fur/Hide trappers/hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military/Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber/Fiber/Fur/Hide subsisters', 'Building material subsisters', 'Experiencers/viewers', 'Food pickers/gatherers', 'Hunters', 'Anglers', 'Waders/Swimmers/Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
       };//////// END PROTOTYPE FEGScopingData ////////
 
@@ -3365,7 +4292,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** get index of indicated column assuming numerical args are indices */
         this.getColumnIndex = function(columnIndicator) {
-          console.log("getColumnIndex")
           if (isNaN(columnIndicator) || Number('1') !== Math.round(Number('1'))) { // assume the argument is a heading-string if not coercible to NaN
             unshiftedColumnIndex = this.columnHeaders.indexOf(columnIndicator);
             if (unshiftedColumnIndex === -1) {
@@ -3395,7 +4321,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** get index of col containing the indicated column */
         this.getColIndex = function(columnIndicator) {
-          console.log("getColIndex")
           var columnIndex = this.getColumnIndex(columnIndicator);
           var currentColOriginalSpan;
           var colIndex = 0;
@@ -3459,16 +4384,9 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           var rowIndex;
           var columnIndex = this.getColumnIndex(columnIndicator);
           var colIndex = this.getColIndex(columnIndex);
-          console.log(columnIndicator)
-          console.log(columnIndex)
-          console.log(colIndex)
           if (!this.isHidden(columnIndex)) { // do nothing if already shown
             return;
           }
-          console.log(this.cols)
-          console.log(colIndex)
-          console.log("#####################")
-          console.log("#####################")
           if (this.cols[colIndex].span === 1) { // show col and its labelling headers if this is the first visible column in col
             this.cols[colIndex].classList.remove(this.hiddenClassName);
             this.colCells[colIndex].classList.remove(this.hiddenClassName);
@@ -3488,7 +4406,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
             this.showColumn(columnIndex);
             columnIndices.push(columnIndex);
           }
-          for (var i = 1; i < this.table.rows[1].cells.length; i++) {
+          for (var i = 2; i < this.table.rows[1].cells.length; i++) {
             if (columnIndices.indexOf(i) === -1) {
               this.clearColumn(i);
               this.hideColumn(i);
@@ -3520,7 +4438,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
       /** instantiate a Table() for #table-attributes; perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
         var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
-        var columnOffset = 1; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+        var columnOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
         var rowNames = fegsScopingData.fegsAttributes;
         var columnNames = fegsScopingData.fegsBeneficiaries;
         var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
@@ -3770,26 +4688,20 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** caculate and display beneficiary-scores */
         this.displayBeneficiaryScores = function() {
-          console.log("displayBeneficiaryScores")
+          var attributes = fegsScopingData.fegsAttributes;
+          var beneficiaries = fegsScopingData.fegsBeneficiaries;
+          var rowHeader = 'Beneficiary Score';
           var rowOffset = 2;
           var columnOffset = 1;
-          var rowNames = ['Beneficiary Score'];
-          var columnNames = fegsScopingData.fegsBeneficiaries;
-          var table = new Table('table-beneficiary-scores', rowNames, columnNames, rowOffset, columnOffset);
+          var table = new Table('table-beneficiary-scores', [rowHeader], beneficiaries, rowOffset, columnOffset);
+          var i;
           var cell;
           var cellValue;
-          for (var i = 0; i < columnNames.length; i++) {
-            cell = table.cell(rowNames[0], columnNames[i]);
-            cellValue = fegsScopingData.beneficiaryScore(columnNames[i]);
+          for (i = 0; i < beneficiaries.length; i++) {
+            cell = table.cell(rowHeader, beneficiaries[i]);
+            cellValue = fegsScopingData.beneficiaryScore(beneficiaries[i]);
             if (isNaN(cellValue)) {
-              cellValue = 0;
-            }
-            if (cellValue === 0) {
-              console.log("hide: " + columnNames[i]);
-              table.hideColumn(columnNames[i]);
-            } else {
-              console.log("show: " + columnNames[i]);
-              table.showColumn(columnNames[i]);
+            cellValue = '0';
             }
             cell.innerText = cellValue;
           }
@@ -3798,7 +4710,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         this.restoreAttributes = function() {
           console.log("restoreAttributes");
           var rowOffset = 2;
-          var columnOffset = 1;
+          var columnOffset = 2;
           var rowNames = fegsScopingData.fegsAttributes;
           var columnNames = fegsScopingData.fegsBeneficiaries;
           var table = new Table("table-attributes", rowNames, columnNames, rowOffset, columnOffset);
