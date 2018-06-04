@@ -3469,6 +3469,10 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           console.log(colIndex)
           console.log("#####################")
           console.log("#####################")
+          if (!this.isColHidden(colIndex)) { // increment span and colspan
+            this.cols[colIndex].span += 1;
+            this.colCells[colIndex].colSpan += 1;
+          }
           if (this.cols[colIndex].span === 1) { // show col and its labelling headers if this is the first visible column in col
             this.cols[colIndex].classList.remove(this.hiddenClassName);
             this.colCells[colIndex].classList.remove(this.hiddenClassName);
