@@ -3365,7 +3365,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** get index of indicated column assuming numerical args are indices */
         this.getColumnIndex = function(columnIndicator) {
-          console.log("getColumnIndex")
           if (isNaN(columnIndicator) || Number('1') !== Math.round(Number('1'))) { // assume the argument is a heading-string if not coercible to NaN
             unshiftedColumnIndex = this.columnHeaders.indexOf(columnIndicator);
             if (unshiftedColumnIndex === -1) {
@@ -3395,7 +3394,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** get index of col containing the indicated column */
         this.getColIndex = function(columnIndicator) {
-          console.log("getColIndex")
           var columnIndex = this.getColumnIndex(columnIndicator);
           var currentColOriginalSpan;
           var colIndex = 0;
@@ -3459,16 +3457,9 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           var rowIndex;
           var columnIndex = this.getColumnIndex(columnIndicator);
           var colIndex = this.getColIndex(columnIndex);
-          console.log(columnIndicator)
-          console.log(columnIndex)
-          console.log(colIndex)
           if (!this.isHidden(columnIndex)) { // do nothing if already shown
             return;
           }
-          console.log(this.cols)
-          console.log(colIndex)
-          console.log("#####################")
-          console.log("#####################")
           if (!this.isColHidden(colIndex)) { // increment span and colspan
             this.cols[colIndex].span += 1;
             this.colCells[colIndex].colSpan += 1;
@@ -3484,7 +3475,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
         /** show only specified columns */
         this.showOnlyTheseColumns = function(columnIndicators) {
-          console.log("showOnlyTheseColumns")
           columnIndicators = (typeof columnIndicators !== 'undefined') ?  columnIndicators : [];
           var columnIndices = [];
           for (var i = 0; i < columnIndicators.length; i++) {
@@ -3530,7 +3520,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
         var cell;
         var validateAndSaveData = function() {
-          console.log('validateAndSaveData')
           var columnIndex = this.parentElement.cellIndex;
           var beneficiaryName = fegsScopingData.fegsBeneficiaries[columnIndex - columnOffset];
           var allBlank = true;
@@ -3801,11 +3790,9 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         
         this.restoreAttributes = function() {
           console.log("restoreAttributes");
-          var rowOffset = 2;
-          var columnOffset = 1;
-          var rowNames = fegsScopingData.fegsAttributes;
-          var columnNames = fegsScopingData.fegsBeneficiaries;
-          var table = new Table("table-attributes", rowNames, columnNames, rowOffset, columnOffset);
+          var table = tableAttributes;
+          var rowNames = table.rowHeaders;
+          var columnNames = table.columnHeaders;
           var cell;
 
           for (var i = 0; i < rowNames.length; i++) {
