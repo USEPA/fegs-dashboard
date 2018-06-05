@@ -3762,13 +3762,9 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         };
 
         /** caculate and display beneficiary-scores */
+        var beneficiaryScoresTable = new Table('table-beneficiary-scores', ['Beneficiary Score'], fegsScopingData.fegsBeneficiaries, 2, 1);
         this.displayBeneficiaryScores = function() {
-          console.log("displayBeneficiaryScores")
-          var rowOffset = 2;
-          var columnOffset = 1;
-          var rowNames = ['Beneficiary Score'];
-          var columnNames = fegsScopingData.fegsBeneficiaries;
-          var table = new Table('table-beneficiary-scores', rowNames, columnNames, rowOffset, columnOffset);
+          var table = beneficiaryScoresTable;
           var cell;
           var cellValue;
           for (var i = 0; i < columnNames.length; i++) {
