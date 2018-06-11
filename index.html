@@ -3108,13 +3108,13 @@
           var unnormalizedPercentages = [];
           var AttributesObject = {};
           fegsScopingData.addStakeholder(stakeholderName, fegsScopingData.makeCriteriaObject({}));
-          for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
+          for (iBen = 0; iBen < fegsScopingData.fegsBeneficiaries.length; iBen++) {
             beneficiarySlices.push(Math.random());
             benSum += beneficiarySlices[iBen];
           }
-          for (iBen = 0; iBen < fegsBeneficiaries.length; iBen++) {
+          for (iBen = 0; iBen < fegsScopingData.fegsBeneficiaries.length; iBen++) {
             normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
-            fegsScopingData.addBeneficiary(stakeholderName, fegsBeneficiaries[iBen], normalizedSlice);
+            fegsScopingData.addBeneficiary(stakeholderName, fegsScopingData.fegsBeneficiaries[iBen], normalizedSlice);
             attrSum = 0;
             for (iAttr = 0; iAttr < fegsScopingData.fegsAttributes.length; iAttr++) {
               AttributesObject[fegsScopingData.fegsAttributes[iAttr]] = Math.random();
@@ -3123,17 +3123,17 @@
             for (iAttr = 0; iAttr < fegsScopingData.fegsAttributes.length; iAttr++) {
               AttributesObject[fegsScopingData.fegsAttributes[iAttr]] = AttributesObject[fegsScopingData.fegsAttributes[iAttr]] * attrSum**-1 * 100;
             }
-            fegsScopingData.addAttributes(stakeholderName, fegsBeneficiaries[iBen], AttributesObject);
+            fegsScopingData.addAttributes(stakeholderName, fegsScopingData.fegsBeneficiaries[iBen], AttributesObject);
           }
-          for (iBen = 0; iBen < fegsBeneficiaries.length - 1; iBen++) {
+          for (iBen = 0; iBen < fegsScopingData.fegsBeneficiaries.length - 1; iBen++) {
             normalizedSlice = parseFloat((beneficiarySlices[iBen] * benSum**-1 * 100).toFixed(2));
             sliceSum += normalizedSlice;
             fegsScopingData.stakeholders[stakeholderName]
-                           .beneficiaries[fegsBeneficiaries[iBen]]
+                           .beneficiaries[fegsScopingData.fegsBeneficiaries[iBen]]
                            .percentageOfStakeholder = normalizedSlice;
           }
             fegsScopingData.stakeholders[stakeholderName]
-                           .beneficiaries[fegsBeneficiaries[fegsBeneficiaries.length - 1]]
+                           .beneficiaries[fegsScopingData.fegsBeneficiaries[fegsScopingData.fegsBeneficiaries.length - 1]]
                            .percentageOfStakeholder = (100 - sliceSum).toFixed(2);
         };
         return fegsScopingData;
@@ -3635,6 +3635,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
             document.querySelector('#' + criterion + '-score').value = fegsScopingData.scores[criterion];
           }
           fegsScopingView.showStakeholderScores();
+          fegsScopingView.displayBeneficiaryScores();
           fegsScopingView.restoreAttributes();
 
 //TODO FIXME LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
@@ -3764,7 +3765,10 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         /** caculate and display beneficiary-scores */
         var beneficiaryScoresTable = new Table('table-beneficiary-scores', ['Beneficiary Score'], fegsScopingData.fegsBeneficiaries, 2, 1);
         this.displayBeneficiaryScores = function() {
+          console.log("displayBeneficiaryScores")
           var table = beneficiaryScoresTable;
+          var columnNames = beneficiaryScoresTable.columnHeaders;
+          var rowNames = beneficiaryScoresTable.rowHeaders;
           var cell;
           var cellValue;
           for (var i = 0; i < columnNames.length; i++) {
