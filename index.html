@@ -265,9 +265,9 @@
     <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
     <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
 
-    <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button>
+    <!-- <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button> -->
 
-    <button id="restore" onclick="fegsScopingController.saveValidatedData();">Save Data</button>
+    <!-- <button id="restore" onclick="fegsScopingController.saveValidatedData();">Save Data</button> -->
 
     Zoom: <span id="page-zoom-indicator">0.7</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value=".7"></input>
 
@@ -492,52 +492,6 @@
         </table>
       </div>
     </div>
-
-    <div class="page" id="section-beneficiary-definitions">
-      <h3>Beneficiary Definitions</h3>
-
-      <table id="table-beneficiary-definitions">
-        <tr class="agricultural"><th rowspan="7">Agricultural</th><th>Irrigators</th><td>Irrigator, irrigation, watering</td></tr>
-        <tr class="agricultural"><th>CAFO Operators</th><td>CAFO; feeding operations or feed lots for livestock (cattle, hogs, or poultry), livestock production</td></tr>
-        <tr class="agricultural"><th>Livestock grazers</th><td>Ranches or grazing for livestock (cattle, hogs, or poultry), cattle range</td></tr>
-        <tr class="agricultural"><th>Agricultural processors</th><td>Agricultural or farm processors or processing; agricultural or farm production or products (but not seafood)</td></tr>
-        <tr class="agricultural"><th>Aquaculturalists</th><td>Aquaculture or aquafarming; farms or hatcheries for shellfish, fish, oysters, clams, mussels, shrimp, or aquatic plants </td></tr>
-        <tr class="agricultural"><th>Farmers</th><td>Farmer, farming, farm (but not aquaculture); plantation, crops, orchards</td></tr>
-        <tr class="agricultural"><th>Foresters</th><td>Forester or forestry; tree farm; silviculture</td></tr>
-        <tr class="commercial"><th rowspan="8">Commercial/ Industrial</th><th>Food extractors</th><td>Food extraction; hunting or trapping for livelihood, job, or commercial purpose; commercial or artisanal fishing, shrimping, clamming</td></tr>
-        <tr class="commercial"><th>Timber/Fiber/  Ornamental extractors</th><td>Timber, fiber, wood, or ornament extraction or harvest for commercial or business purposes; logging or logger; oyster harvest, abalone collecting</td></tr>
-        <tr class="commercial"><th>Industrial processors</th><td>Industrial processing or production, ; manufacturing; textile, steel, or industries or production; mills; oil and gas industry (including extraction & processing); mining; food (meat, sugar, grain, vegetable, fruit) processing</td></tr>
-        <tr class="commercial"><th>Industrial dischargers</th><td>Industrial discharge or wastewater </td></tr>
-        <tr class="commercial"><th>Energy generators</th><td>Power plant, electric, hydroelectric; solar, wind, hydro, renewable, nuclear power or energy; thermoelectric cooling</td></tr>
-        <tr class="commercial"><th>Resource-dependent businesses</th><td>Businesses that rely or depend on local resources; marina, tourism, , resort, hotel, shop, restaurant, local business, developed or working waterfronts; outfitter, fishing/hunting guide; fishing charter, tour boats</td></tr>
-        <tr class="commercial"><th>Pharmaceutical/ Food supplement suppliers</th><td>Pharmaceuticals, medicines; food supplements, vitamins; </td></tr>
-        <tr class="commercial"><th>Fur/Hide trappers/hunters</th><td>Hunting or trapping for animal skin, hide, fur </td></tr>
-        <tr class="governmental"><th rowspan="4">Governmental/Municipal/     Residential</th><th>Municipal drinking water plant operators</th><td>Drinking water, municipal water supply</td></tr>
-        <tr class="governmental"><th>Wastewater treatment plant operators</th><td>Wastewater or sewage treatment; treatment plant</td></tr>
-        <tr class="governmental"><th>Residential property owners</th><td>Homeowners, private land,  or property, landowner; Residential areas, neighborhoods, or development</td></tr>
-        <tr class="governmental"><th>Military/Coast Guard</th><td>Military, coast guard, navy, army, shipyard</td></tr>
-        <tr class="transportation"><th rowspan="2">Commercial/  Military Transportation</th><th>Transporters of goods</th><td>Goods transport, shipping, cargo, commercial navigation, port, vessel, barge, freight, bulk commodities, containers</td></tr>
-        <tr class="transportation"><th>Transporters of people</th><td>People transport, cruise, ferry, ferries, airplane, airport, train, harbor</td></tr>
-        <tr class="subsistence"><th rowspan="4">Subsistence</th><th>Water subsisters</th><td>Cistern,  rain garden, rain barrel; water for subsistence, including tribal or traditional use</td></tr>
-        <tr class="subsistence"><th>Food subsisters</th><td>Food for subsistence; hunting, fishing, collecting, or gathering food to cook or eat; digging shellfish or clams; including tribal or traditional use, wild rice</td></tr>
-        <tr class="subsistence"><th>Timber/Fiber/Fur/  Hide subsisters</th><td>Collect timber, fiber, fur, or hides for subsistence, including tribal or cultural traditions; firewood </td></tr>
-        <tr class="subsistence"><th>Building material subsisters</th><td>Collecting building materials for subsistence, including tribes or cultural traditions</td></tr>
-        <tr class="recreational"><th rowspan="6">Recreational</th><th>Experiencers/   viewers</th><td>Bird, wildlife, or fauna watching; nature appreciation; hiking, biking, camping, climbing, outings, sunbathing, sightseeing, beach combing; viewing (i.e., observing, enjoying, experiencing, relaxing, outings) nature (e.g., outdoors, wildlife, wildflowers, animals, trails)</td></tr>
-        <tr class="recreational"><th>Food pickers/gatherers</th><td>Collect or gather berries, mushrooms; dig for shellfish or clams; wild rice</td></tr>
-        <tr class="recreational"><th>Hunters</th><td>Hunting for recreation or sport </td></tr>
-        <tr class="recreational"><th>Anglers</th><td>Anglers, fishing for recreation or sport </td></tr>
-        <tr class="recreational"><th>Waders/Swimmers/Divers</th><td>Snorkeling, SCUBA, swimming, beachgoing, wading, diving, bathing </td></tr>
-        <tr class="recreational"><th>Boaters</th><td>Boat, canoe, kayak, rowing, sailing, jet ski, surfing, watercraft</td></tr>
-        <tr class="inspirational"><th rowspan="2">Inspirational</th><th>Spiritual and ceremonial participants</th><td>Festival, observance, religion, ceremony, baptism, wedding, spiritual, worship, prayer</td></tr>
-        <tr class="inspirational"><th>Artists</th><td>Writer, author, poet, painter, artist, sculptor, carver, pottery, photography</td></tr>
-        <tr class="learning"><th rowspan="2">Learning</th><th>Students and educators</th><td>Educational use, resource, interest, or opportunity; academic, teaching, professor, student; secondary schools (elementary, middle, high); school children; field trips or outdoor laboratories</td></tr>
-        <tr class="learning"><th>Researchers</th><td>Opportunities or interest for significant scientific research and improving scientific knowledge, investigation, research, questions </td></tr>
-        <tr class="nonuse"><th rowspan="2">Non-Use</th><th>People who care (existence)</th><td>Caring, concern, conservation, or appreciation by the community (citizens, stakeholders, people, residents, anyone, everyone, children, families); Existence value; History; Culture </td></tr>
-        <tr class="nonuse"><th>People who care (option, bequest)</th><td>Bequest, option, legacy, or heritage value; future or next generation (grandchildren)</td></tr>
-      </table>
-
-    </div>
-
     <div class="page" id="section-beneficiaries">
       <h3>Beneficiaries</h3>
 
@@ -595,213 +549,8 @@
       </table>
 
     </div>
-
-    <!-- <div class="page" id="section-attribute-definitions">
-      <h3>Attribute Definitions</h3>
-
-      <table id="table-attribute-definitions">
-        <tr class="dark">
-          <td>Weather</td>
-          <td>Weather (e.g., climate, seasons, rain, temperature, snow, ice, summer, spring, winter, autumn) available to enjoy (e.g., for recreation, tourism, sunbathing) or favorable for activities (e.g., agriculture)</td>
-        </tr>
-        <tr class="dark">
-          <td>Air</td>
-          <td>Clean, safe, healthy air for breathing; Availability of air for industrial discharges or emission, to transport and ameliorate odors (e.g., smells, fumes), or to transport and deposit pollutants (e.g., deposition, rain fall); </td>
-        </tr>
-        <tr class="dark">
-          <td>Wind</td>
-          <td>Wind available to enjoy (e.g., boating, surfing, recreation) or for commercial uses (e.g., energy, electricity, power)</td>
-        </tr>
-        <tr class="dark">
-          <td>Atmospheric Phenomena</td>
-          <td>Generate or create fog; aesthetic, scenic, or inspirational value of clouds, sunrise, sunsets, morning, or twilight; </td>
-        </tr>
-        <tr>
-          <td>Sounds and Scents</td>
-          <td>Natural sounds, noises, scents, and smells (i.e., sensory, olfactory, auditory resources) available to hear and enjoy, including bird songs or calls, croaking, chirping, rustling, splashing, thunder, ocean waves, flowers, plants, berries, the beach </td>
-        </tr>
-        <tr>
-          <td>Viewscapes</td>
-          <td>Opportunities for scenic (e.g., beautiful, inspirational, spectacular) views (e.g., viewscape, vista, landscape, overlook)</td>
-        </tr>
-        <tr class="dark">
-          <td>Open Space</td>
-          <td>Open space (e.g., greenspace, greenways, parks, nature preserves) that is available to enjoy, appreciate, or other opportunities (e.g., aesthetics, recreation, scenery)</td>
-        </tr>
-        <tr class="dark">
-          <td>Presence of the Environment</td>
-          <td>Opportunities for recreation (e.g., camping, hiking, diving, snorkeling, swimming, sunbathing, sightseeing, walking, biking, outing, trails),  aesthetic enjoyment (e.g., atmosphere, appreciation), or non-use value (e.g., existence, bequest); Provide or generate clean air; Purify, filter, buffer, or clean air pollutants or the atmosphere; Provide or improve air quality; nitrogen fixation; improve respiratory health or reduce asthma; reduce carbon in the atmosphere; Erosion and flood control; Shoreline protection (e.g. dunes, mangroves, reefs); Filtering (e.g. buffering) sediment, nutrients, or water pollutants; Shading by trees (e.g., canopy cover)</td>
-        </tr>
-        <tr class="dark">
-          <td>Land</td>
-          <td>Availability of land, coast, or wetland for residential or commercial development, including sprawl, or for disposal sites; Land identified for protection (e.g, preserve, restore, conserve, easement, trust); Public lands of unspecified use</td>
-        </tr>
-        <tr class="dark">
-          <td>Water</td>
-          <td>Water as a resource for consumption (e.g., drinking); a resource for industry (e.g., cooling, hydroelectricity), households (e.g., rain barrels), or agriculture (e.g., irrigation); as a medium to receive & dilute discharges (e.g., wastewater, ballast) or for transportation (e.g., boat or ship navigation)</td>
-        </tr>
-        <tr>
-          <td>Soil</td>
-          <td>Availability of soil (e.g., dirt, sediment) for farming, gardening, to absorb effluent, as a nutrient source for the estuary (i.e., sediment flux), or for other uses, including soil microorganisms that affect quantity and quality through decomposition or nutrient availability (e.g., nitrogen, carbon) </td>
-        </tr>
-        <tr>
-          <td>Substrate</td>
-          <td>Natural substrate, ground, or surfaces (e.g., clay, chalk, bedrock, limestone, granite, marble, sand, oyster reef, renourished beaches) available for construction, agriculture, aquaculture, or other uses</td>
-        </tr>
-        <tr>
-          <td>Timber</td>
-          <td>Natural wood available as timber, logs, or lumber for household, commercial, or industrial uses</td>
-        </tr>
-        <tr>
-          <td>Fiber</td>
-          <td>Fiber (e.g., salt hay, grass, reeds) collected, harvested, or gathered for use, subsistence, or other benefits (e.g., products, milling, industry, pottery)</td>
-        </tr>
-        <tr>
-          <td>Natural Materials</td>
-          <td>Natural materials that are collected for artistic use (e.g. ornaments or jewelry) or consumption, including rocks, shells, coral skeletons, clay, acorns, honey, maple syrup, sand;</td>
-        </tr>
-        <tr class="dark">
-          <td>Fauna</td>
-          <td>Wildlife or animals, including terrestrial and aquatic mammals, birds, reptiles, amphibians, and insects that are unique (e.g., charismatic, endangered, biodiversity, beauty, special), enjoyed as a resource (e.g., observation, watching, collecting, hunting, trapping), or identified for conservation (e.g., protect, restore, preserve) </td>
-        </tr>
-        <tr class="dark">
-          <td>Fish</td>
-          <td>Wild fish or shellfish (e.g., salmon, oyster, pike, crab, mullet, mussel, bass, herring, grouper, snapper, alewife, flounder, abalone, scallop, worm, clam, geoduck) harvested for seafood consumption or other industrial, commercial, recreational uses; Fish that are unique (e.g., charismatic, endangered, biodiversity, beauty, special) or identified for conservation (e.g., protect, restore, preserve)</td>
-        </tr>
-        <tr class="dark">
-          <td>Flora</td>
-          <td>Flora (e.g., grass, kelp, seaweed, vegetation, mangroves, trees, moss, sedge, lichens, berries, cypress, pine, oak, elm, etc.), including plant parts (e.g., flowers, branches, sticks), that are unique (e.g., charismatic, endangered, biodiversity, beauty, special), enjoyed as a resource (e.g., observation, sightseeing, collecting, consumption, cuttings), or identified for conservation (e.g., protect, restore, preserve)</td>
-        </tr>
-        <tr class="dark">
-          <td>Fungi</td>
-          <td>Wild fungi (i.e., mushrooms) that are unique (e.g., charismatic, endangered, biodiversity, beauty, special), enjoyed as a resource (e.g., observation, sightseeing, collecting, consumption), or identified for conservation (e.g., protect, restore, preserve)</td>
-        </tr>
-        <tr>
-          <td>Pollinators</td>
-          <td>Bees, butterflies, or other animals (e.g., bats, birds) that distribute pollen for plants (e.g., flowers, flora, crops, farms, agriculture, gardens)</td>
-        </tr>
-        <tr>
-          <td>Depredators and (Pest) Predators</td>
-          <td>Biological control (biocontrol); control of pests, invasives, exotics, or nuisance species by predators; natural control or populations or species</td>
-        </tr>
-      </table>
-
-    </div> -->
-
     <div class="page" id="section-attributes">
       <h3>Attributes</h3>
-
-      <table id="table-beneficiary-scores">
-        <colgroup>
-          <col class="row-labels" />
-          <col class="agricultural" span="7" />
-          <col class="commercial" span="8" />
-          <col class="governmental" span="4" />
-          <col class="transportation" span="2" />
-          <col class="subsistence" span="4" />
-          <col class="recreational" span="6" />
-          <col class="inspirational" span="2" />
-          <col class="learning" span="2" />
-          <col class="nonuse" span="2" />
-        </colgroup>
-        <thead>
-          <tr class="column-name-labels">
-            <th class="row-label-header">Row labels</th>
-            <th colspan="7">Agricultural</th>
-            <th colspan="8">Commercial/ Industrial</th>
-            <th colspan="4">Governmental/Municipal/Residential</th>
-            <th colspan="2">Commercial/  Military Transportation</th>
-            <th colspan="4">Subsistence</th>
-            <th colspan="6">Recreational</th>
-            <th colspan="2">Inspirational</th>
-            <th colspan="2">Learning</th>
-            <th colspan="2">Non-Use</th>
-          </tr>
-          <tr class="column-names">
-            <th>Attribute</th>
-            <th>Irrigators</th>
-            <th>CAFO Operators</th>
-            <th>Livestock grazers</th>
-            <th>Agricultural processors</th>
-            <th>Aquaculturalists</th>
-            <th>Farmers</th>
-            <th>Foresters</th>
-            <th>Food extractors</th>
-            <th>Timber/Fiber/Ornamental extractors</th>
-            <th>Industrial processors</th>
-            <th>Industrial dischargers</th>
-            <th>Energy generators</th>
-            <th>Resource-dependent businesses</th>
-            <th>Pharmaceutical/Food supplement suppliers</th>
-            <th>Fur/Hide trappers/hunters</th>
-            <th>Municipal drinking water plant operators</th>
-            <th>Wastewater treatment plant operators</th>
-            <th>Residential property owners</th>
-            <th>Military/Coast Guard</th>
-            <th>Transporters of goods</th>
-            <th>Transporters of people</th>
-            <th>Water subsisters</th>
-            <th>Food subsisters</th>
-            <th>Timber/Fiber/Fur/Hide subsisters</th>
-            <th>Building material subsisters</th>
-            <th>Experiencers/viewers</th>
-            <th>Food pickers/gatherers</th>
-            <th>Hunters</th>
-            <th>Anglers</th>
-            <th>Waders/Swimmers/Divers</th>
-            <th>Boaters</th>
-            <th>Spiritual and ceremonial participants</th>
-            <th>Artists</th>
-            <th>Students and educators</th>
-            <th>Researchers</th>
-            <th>People who care (existence)</th>
-            <th>People who care (option, bequest)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>Beneficiary Score</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-
       <h3 id="table-attributes-header">Score Attributes for each Beneficiary</h3>
 
       <table id="table-attributes">
@@ -820,7 +569,7 @@
         </colgroup>
         <thead>
           <tr class="column-name-labels">
-            <th colspan="2" class="row-label-header">Row labels</th>
+            <th colspan="2" class="row-label-header"></th>
             <th colspan="7">Agricultural</th>
             <th colspan="8">Commercial/ Industrial</th>
             <th colspan="4">Governmental/Municipal/Residential</th>
@@ -833,8 +582,8 @@
             <th colspan="1" rowspan="2">Attribute Score</th>
           </tr>
           <tr class="column-names">
-            <th>Attribute tier 1</th>
-            <th>Attribute tier 2</th>
+            <th colspan="2"></th>
+            <th aria-hidden="true"></th>
             <th>Irrigators</th>
             <th>CAFO Operators</th>
             <th>Livestock grazers</th>
@@ -873,6 +622,48 @@
             <th>People who care (existence)</th>
             <th>People who care (option, bequest)</th>
             <th aria-hidden="true"></th>
+          </tr>
+          <tr class>
+            <th class="row-tier-1" aria-hidden="true"></th>
+            <th colspan="2" class="row-name">Beneficiary Score</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
         </thead>
         <tbody>
@@ -2691,21 +2482,23 @@
     <ul>
       <li><a href="#section-weighting">Weights</a><div id="weighting-progress" class="progress-menu"></div></li>
       <li><a href="#section-stakeholders">Stakeholders</a><div id="stakeholder-progress" class="progress-menu"></div></li>
-      <li><a href="#section-beneficiary-definitions">Beneficiary Definitions</a></li>
       <li><a href="#section-beneficiaries">Beneficiaries</a><div id="beneficiaries-progress" class="progress-menu"></div></li>
-      <!-- <li><a href="#section-attribute-definitions">Attribute Definitions</a></li> -->
       <li><a href="#section-attributes">Attributes</a></li>
     </ul>
   </div>
 
     <script>
       window.addEventListener("scroll", onScroll);
-      function onScroll(event){
+      function onScroll(event) {
         var scrollPos = window.scrollY;
+        console.log("scrollPos: " + scrollPos);
         var menuItems = document.getElementById("menu").getElementsByTagName('a');
         for (var i = 0; i < menuItems.length; i++) {
           var currentItem = menuItems[i];
           var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
+          console.log(hrefElement.offsetParent.id + " hrefElement.offsetParent.id: " + hrefElement.offsetParent.id)
+          console.log(hrefElement.id + " hrefElement.offsetTop: " + hrefElement.offsetTop)
+          console.log(hrefElement.id + " hrefElement.offsetHeight: " + hrefElement.offsetHeight)
           if (hrefElement.offsetTop <= (scrollPos + 1) && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
             currentItem.parentNode.classList.add("active");
           } else {
@@ -3937,6 +3730,7 @@
             }
           fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
           }
+
           updateBeneficiaryProgress();
           tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
           fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
@@ -3957,7 +3751,7 @@
             input.type = 'number';
             input.className = 'beneficiary-percentage-of-stakeholder';
             cell.appendChild(input);
-            input.onchange = beneficiaryPercentageOfStakeholderInputValidator;
+            input.oninput = beneficiaryPercentageOfStakeholderInputValidator;
             continue;
           }
           if (tBody.rows[rowIndex].cells[0].getAttribute('rowspan') === null) { // check for spanned row-header
@@ -3976,7 +3770,7 @@
                                       .beneficiaries[beneficiaryName]
                                       .percentageOfStakeholder;
           }
-          input.onchange = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
+          input.oninput = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
           cell.appendChild(input);
         }
         tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
@@ -4508,6 +4302,13 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           }
         };
 
+        this.showAttributeScores = function() {
+          this.showColumn("Attribute Score");
+          for (var i = 0; i < this.rowHeaders.length; i++) {
+            this.cell(this.rowHeaders[i], "Attribute Score").innerHTML = fegsScopingData.calculateAttributeScore(this.rowHeaders[i]);
+          }
+        };
+
         this.hideRow = function(rowIndicator) {
           //TODO fill in stub s.t. rowIndicator can be a numerical index or a header-name
         };
@@ -4531,7 +4332,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
 
       /** instantiate a Table() for #table-attributes; perform specialized initializations */
       var tableAttributesCreator = function(tableId) {
-        var rowOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+        var rowOffset = 3; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
         var columnOffset = 2; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
         var rowNames = fegsScopingData.fegsAttributes;
         var columnNames = fegsScopingData.fegsBeneficiaries.concat(['Attribute Score']);
@@ -4539,7 +4340,6 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         var cell;
 
         var validateAndSaveData = function() {
-          console.log("validateAndSaveData")
           var columnIndex = this.parentElement.cellIndex;
           var beneficiaryName = fegsScopingData.fegsBeneficiaries[columnIndex - columnOffset];
           var allBlank = true;
@@ -4549,14 +4349,12 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           var rowIndex;
           var input;
           if (this.value < 0 || this.value > 100) { // value is invalid after change
-            console.log("Input is invalid")
             for (i = 0; i < rows.length; i++) {
               rows[i].cells[columnIndex].classList.remove('invalid-text-input');
             }
             this.parentElement.classList.add('invalid-text-input');
             accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
           } else { // individual input is valid
-            console.log("Input is valid")
             for (i = 0; i < rows.length; i++) { // loop through values in column
               if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
                 allBlank = false;
@@ -4574,7 +4372,8 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
                 attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
               }
               fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
-              tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); // update beneficiaries shown in #table-attributes
+              tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries().concat(["Attribute Score"])); // update beneficiaries shown in #table-attributes
+              tableAttributes.showAttributeScores();
               fegsScopingView.indicateUnsaved();
             } else { // notify of incorrect normalization
               accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
@@ -4596,8 +4395,11 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
             } else {
               input = cell.querySelector('input');
             }
-            input.onchange = validateAndSaveData; // apply onchange callback late to restore functionality
+            input.oninput = validateAndSaveData; // apply onchange callback late to restore functionality
           }
+          table.showColumn("Attribute Score");
+          cell = table.cell(rowNames[i], "Attribute Score");
+          cell.innerHTML = fegsScopingData.calculateAttributeScore(rowNames[i]);
         }
         table.table.setAttribute('data-initialized', "true");
         return table;
@@ -4786,11 +4588,10 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
         };
 
         /** caculate and display beneficiary-scores */
-        var beneficiaryScoresTable = new Table('table-beneficiary-scores', ['Beneficiary Score'], fegsScopingData.fegsBeneficiaries, 2, 1);
         this.displayBeneficiaryScores = function() {
-          var table = beneficiaryScoresTable;
-          var columnNames = beneficiaryScoresTable.columnHeaders;
-          var rowNames = beneficiaryScoresTable.rowHeaders;
+          var table = tableAttributes;
+          var columnNames = fegsScopingData.extantBeneficiaries();
+          var rowNames = ["Beneficiary Score"];
           var cell;
           var cellValue;
           for (var i = 0; i < columnNames.length; i++) {
