@@ -3077,50 +3077,12 @@
             .style("fill", function(d) { return color(d.index);})
             .each(function(d) { this._current = d; }); // store the initial angles
 
-          // Removed because we aren't using a label on the pie chart
-          /*
-          g.append("text")
-            .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
-            .text(function(d) { return d.data.label;}) 
-            .style("fill", "#fff")
-            .each(function(d) { this._current = d; }); // store the initial angles;
-          */
-
-          //d3 legend not configured properly - just using HTML next to the inputs instead
-          /*
-           var legend = svg.selectAll('.legend')
-              .data(color.domain())
-              .enter()
-              .append('g')
-              .attr('class', 'legend')
-              .attr('transform', function(d, i) {
-                var height = legendRectSize + legendSpacing;
-                var offset =  height * color.domain().length / 2;
-                var horz = -2 * legendRectSize;
-                var vert = i * height - offset;
-                return 'translate(' + horz + ',' + vert + ')';
-              });
-
-            legend.append('rect')
-              .attr('width', legendRectSize)
-              .attr('height', legendRectSize)
-              .style('fill', color)
-              .style('stroke', color);
-
-            legend.append('text')
-              .attr('x', legendRectSize + legendSpacing)
-              .attr('y', legendRectSize - legendSpacing)
-              .text(function(d) { return d; });
-            */
-
           //update
           function change() {
             var pie = d3.pie().sort(null)
               .value(function(d) { return d.value; })(data);
             path = d3.select("#" + domEle).selectAll("path").data(pie);
             path.transition().duration(500).attrTween("d", arcTween); // Smooth transition with arcTween
-            // Removed because we aren't using a label on the pie chart
-            //d3.selectAll("text").data(pie).transition().duration(500).attrTween("transform", labelArcTween); // Smooth transition with labelArcTween
           }
 
           d3.selectAll(".scoring input")
@@ -3151,17 +3113,6 @@
               return arc(i(t));
             };
           } 
-
-          // Removed because we aren't using a label on the pie chart
-          /*
-          function labelArcTween(a) {
-            var i = d3.interpolate(this._current, a);
-            this._current = i(0);
-            return function(t) {
-              return "translate(" + labelArc.centroid(i(t)) + ")";
-            };
-          }
-          */
         }
       };
 
