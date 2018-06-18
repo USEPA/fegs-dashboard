@@ -491,6 +491,7 @@
           </tfoot>
         </table>
       </div>
+      <div id="stakeholder-barchart"></div>
     </div>
     <div class="page" id="section-beneficiaries">
       <h3>Beneficiaries</h3>
@@ -3090,7 +3091,7 @@
                 initStackedBarChart.draw({
                   data: formatStakeholderData(),
                   key: fegsScopingData.criteria,
-                  element: 'stakeholder-prioritization'
+                  element: 'stakeholder-barchart'
                 });
               } else {
                 this.classList.add('invalid-text-input');
@@ -3233,7 +3234,7 @@
         initStackedBarChart.draw({
           data: formatStakeholderData(),
           key: fegsScopingData.criteria,
-          element: 'stakeholder-prioritization'
+          element: 'stakeholder-barchart'
         });
         updateSelectStakeholder('select-stakeholder');
         document.getElementById('select-stakeholder').onchange();
@@ -3410,7 +3411,7 @@
           initStackedBarChart.draw({
             data: formatStakeholderData(),
             key: fegsScopingData.criteria,
-            element: 'stakeholder-prioritization'
+            element: 'stakeholder-barchart'
           });
           var stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
           if (stakeholderCount === 0) {
@@ -3461,7 +3462,7 @@
           initStackedBarChart.draw({
             data: formatStakeholderData(),
             key: fegsScopingData.criteria,
-            element: 'stakeholder-prioritization'
+            element: 'stakeholder-barchart'
           });
         });
         var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
@@ -4551,7 +4552,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
           initStackedBarChart.draw({
             data: formatStakeholderData(),
             key: fegsScopingData.criteria,
-            element: 'stakeholder-prioritization'
+            element: 'stakeholder-barchart'
           });
           updateSelectStakeholder('select-stakeholder');
           document.getElementById('select-stakeholder').onchange();
