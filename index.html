@@ -3050,13 +3050,6 @@
                       .outerRadius(radius - 10)
                       .innerRadius(0);
 
-          // Removed because we aren't using a label on the pie chart
-          /*
-          var labelArc = d3.arc()
-                           .outerRadius(radius - 40)
-                           .innerRadius(radius - 40);
-          */
-
           var blankSlate = d3.select('#' + domEle + '>*').remove();
 
           var svg = d3.select("#" + domEle)
