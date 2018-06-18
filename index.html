@@ -2491,14 +2491,10 @@
       window.addEventListener("scroll", onScroll);
       function onScroll(event) {
         var scrollPos = window.scrollY;
-        console.log("scrollPos: " + scrollPos);
         var menuItems = document.getElementById("menu").getElementsByTagName('a');
         for (var i = 0; i < menuItems.length; i++) {
           var currentItem = menuItems[i];
           var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
-          console.log(hrefElement.offsetParent.id + " hrefElement.offsetParent.id: " + hrefElement.offsetParent.id)
-          console.log(hrefElement.id + " hrefElement.offsetTop: " + hrefElement.offsetTop)
-          console.log(hrefElement.id + " hrefElement.offsetHeight: " + hrefElement.offsetHeight)
           if (hrefElement.offsetTop <= (scrollPos + 1) && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
             currentItem.parentNode.classList.add("active");
           } else {
