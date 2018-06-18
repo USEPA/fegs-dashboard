@@ -4661,6 +4661,11 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
       if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
         var {ipcRenderer, remote} = require('electron');  
 
+        if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === ".fegs") {
+          fegsScopingView.restoreView(remote.process.argv[1]);
+          fegsScopingView.indicateSaved();
+        }
+
         // Listen for save as from main process
         ipcRenderer.on('save-as', (event, arg) => {  
             fegsScopingData.filePath = arg; 
