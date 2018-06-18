@@ -3079,21 +3079,23 @@
 
           d3.selectAll(".scoring input")
             .on("input", function() {
-              // Add input validation.
-              data = getJSON();
-              // convert JSON data to fit scores data format
-              var scores = {};
-              for (var i = 0; i < data.length; i++) {
-                scores[data[i].label.replace('-score', '')] = data[i].value;
+              clearNotices();
+              var value = parseInt(this.value, 10);
+              var isValid = validateInput(value, 1, 100);
+              if (isValid) {
+                this.classList.remove('invalid-text-input');
+                fegsScopingData.scores[this.id.replace('-score', '')] = value;
+                data = getScores();
+                change();
+                initStackedBarChart.draw({
+                  data: formatStakeholderData(),
+                  key: fegsScopingData.criteria,
+                  element: 'stakeholder-prioritization'
+                });
+              } else {
+                this.classList.add('invalid-text-input');
+                accessiblyNotify('Enter a number between 1 and 100');
               }
-              // update FEGS scoping data with newest score data
-              fegsScopingData.scores = scores;
-              change();
-              initStackedBarChart.draw({
-                data: formatStakeholderData(),
-                key: fegsScopingData.criteria,
-                element: 'stakeholder-prioritization'
-              });
               updateWeightingProgress();
               fegsScopingView.indicateUnsaved();
             });
@@ -3109,18 +3111,36 @@
       };
 
       /**
+       * Check if value is between min and max (inclusive)
+       * @function
+       * @return {bool} - A bool
+       */ 
+      var validateInput = function(value, min, max) {
+        if (!isNaN(value)) {
+          if (value > max || value < min) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      };
+
+      /**
        * Get the data for the global scores and return them in a JSON object.
        * @function
        * @return {object} - A JSON object containing the criteria and their scores. 
-       */ function getJSON() {
-          var json = [];
-          d3.selectAll('.scoring input').each(function() {
-          json.push({
-            label: this.id,
-            value: this.value
+       */ 
+      function getScores() {
+        var data = [];
+        for (var prop in fegsScopingData.scores) {
+          data.push({
+            label: prop,
+            value: fegsScopingData.scores[prop]
           });
-        });
-        return json;
+        }
+        return data;
       }
 
       document.getElementById("stakeholder-group").addEventListener("keyup", function(event) {
@@ -3193,6 +3213,7 @@
           input.setAttribute('class', 'stakeholder-score-input');
           input.setAttribute('id', stakeholderGroup + '-' + ul.getAttribute('data-criterion'));
           input.setAttribute('data-criterion', ul.getAttribute('data-criterion'));
+          input.oninput = validateStakeholderScore;
           li.appendChild(input);
           ul.appendChild(li);
         }
@@ -3244,7 +3265,14 @@
           var criterion = stakeholderScoreInputs[i].getAttribute('data-criterion');
           if (!stakeholdersToAdd.hasOwnProperty(stakeholder)) {
             stakeholdersToAdd[stakeholder] = {};
-            stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
+            var value = parseInt(stakeholderScoreInputs[i].value, 10);
+            var isValid = validateInput(value, 0, 100);
+            if (isValid) {
+              stakeholdersToAdd[stakeholder][criterion] = value;
+            } else {
+              accessiblyNotify("Invalid inputs. Please review your stakeholder weights.")
+              return {};
+            }
           // } else if (criterion === "magnitude") {
           //   var sum = +stakeholdersToAdd[stakeholder][criterion] + +stakeholderScoreInputs[i].value;
           //   stakeholdersToAdd[stakeholder][criterion] = (sum >= 20 ? sum - 20 : 0) + '';
@@ -3253,6 +3281,19 @@
           }
         }
         return stakeholdersToAdd;
+      }
+
+      function validateStakeholderScore() {
+        clearNotices();
+        var value = parseInt(this.value, 10);
+        var isValid = validateInput(value, 0, 100);
+        if (!isValid) {
+          accessiblyNotify("Please enter a value between 0 and 100")
+          this.classList.add('invalid-text-input');
+        } else {
+          this.classList.remove('invalid-text-input');
+          clearNotices();
+        }
       }
 
       function updateStakeholderProgress() {
@@ -3306,7 +3347,7 @@
         var inputs = document.querySelectorAll('.scoring input');
         var emptyInputs = [];              
         for (var i = 0; i < inputs.length; i++) {
-          if (!inputs[i].value) {
+          if (!inputs[i].value || inputs[i].classList.contains('invalid-text-input')) {
             emptyInputs.push(inputs[i]);
           }
         }
@@ -4623,7 +4664,7 @@ console.log('fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary
       tableAttributes.showOnlyTheseColumns();
       document.addEventListener('DOMContentLoaded', function() {
         initPieChart.draw({
-          data: getJSON(), // Get the data from the inputs
+          data: getScores(), // Get the score data
           element: 'pie'
         });
         if (document.body.getAttribute('data-restore') === 'true') {
