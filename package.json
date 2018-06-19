@@ -36,17 +36,17 @@
     },
     "nsis": {
       "oneClick": false
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "fegs"
+        ],
+        "name": "FEGS",
+        "description": "FEGS file extension",
+        "role": "Editor"
+      }
+    ]
   },
-  "fileAssociations": [
-    {
-      "ext": [
-        "fegs"
-      ],
-      "name": "FEGS",
-      "description": "FEGS file extension",
-      "role": "none"
-    }
-  ],
   "dependencies": {}
 }
