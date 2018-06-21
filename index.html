@@ -3114,13 +3114,11 @@
       this.version = '0.1.0';
       this.projectName = 'New Project';
       this.filePath = '';
-      this.projectName = 'New Project';
       this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
       this.scores = this.makeCriteriaObject('0');
       this.stakeholders = {};
       this.attributes = {};
       this.fegsAttributes = ["Water quality", "Water quantity", "Water movement", "Land quantity", "Land quality", "Land availability", "Wind strength / speed", "Wind predictability / consistency", "Air quality", "Weather predictability", "Frequency of extreme weather events", "Soil availability", "Soil quality", "Substrate quantity", "Substrate quality", "Fuel quantity", "Availablability of fiber materials for use or subsistence", "Availability of minerals / chemicals", "Availability of other natural  materials for artistic use or consumption (e.g. shells, clay, acorns, honey)", "Flora community", "Edible flora / fungi", "Medicinal flora / fungi", "Structural flora / fungi", "Charismatic flora / fungi", "Aesthetic flora / fungi", "Rare flora / fungi", "Commercially important flora / fungi", "Spiritually/culturally important flora / fungi", "Fauna community", "Edible fauna", "Medicinal fauna", "Keystone fauna", "Charismatic fauna", "Aesthetic fauna", "Rare fauna", "Pollinating fauna", "Pest predator / depredator fauna", "Commercially important fauna", "Spiritually / culturally important fauna", "Sounds", "Scents", "Viewscapes", "Phenomena (e.g. sunsets, northern lights, etc)"];
-      //this.fegsAttributes = ['Weather', 'Air', 'Wind', 'Atmospheric Phenomena', 'Sounds and Scents', 'Viewscapes', 'Open Space', 'Presence of the Environment', 'Land', 'Water', 'Soil', 'Substrate', 'Timber', 'Fiber', 'Natural Materials', 'Fauna', 'Fish', 'Flora', 'Fungi', 'Pollinators', 'Depredators and (Pest) Predators'];
       this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber/Fiber/Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource-dependent businesses', 'Pharmaceutical/Food supplement suppliers', 'Fur/Hide trappers/hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military/Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber/Fiber/Fur/Hide subsisters', 'Building material subsisters', 'Experiencers/viewers', 'Food pickers/gatherers', 'Hunters', 'Anglers', 'Waders/Swimmers/Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
     }; //////// END PROTOTYPE FEGScopingData ////////
 
@@ -3273,7 +3271,7 @@
           .outerRadius(radius - 10)
           .innerRadius(0);
 
-        var blankSlate = d3.select('#' + domEle + '>*').remove();
+        d3.select('#' + domEle + '>*').remove();
 
         var svg = d3.select("#" + domEle)
           .append("svg")
