@@ -8,17 +8,78 @@
   <title>FEGS Scoping Tool</title>
   <link type="text/css" rel="stylesheet" href="./css/s.css" media="all" />
   <style>
+    html,
     body {
-      margin: 1em;
+      border: 0;
+      font-size: 14pt;
+      margin: 0;
+      padding: 0;
+      vertical-align: baseline;
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
     }
     
+    section {
+      display: block;
+    }
+
+    body {
+      line-height: 1;
+    }
+
+    @media screen and (max-width: 1680px) {
+      body {
+        font-size: 13pt;
+      }
+    }
+
+    @media screen and (max-width: 1280px) {
+      body {
+        font-size: 12pt;
+      }
+    }
+
+    @media screen and (max-width: 360px) {
+      body {
+        font-size: 11pt;
+      }
+    }
+
+    .wrapper {
+      position: relative
+    }
+
+    .wrapper > .inner {
+      padding: 5em 5em 3em 5em;
+      max-width: 100%;
+      width: 75em;
+    }
+
+    @media screen and (max-width: 1680px) {
+      .wrapper > .inner {
+        padding: 4em 4em 2em 4em;
+      }
+    }
+
+    @media screen and (max-width: 1280px) {
+      .wrapper > .inner {
+        width: 100%;
+      }
+    }
+
+    @media screen and (max-width: 736px) {
+      .wrapper > .inner {
+        padding: 3em 2em 1em 2em;
+      }
+    }
+
     #page-zoom-indicator {
       display: inline-block;
       width: 3em;
-    }
-    
-    * {
-      font-family: arial, sans-serif;
     }
     
     [aria-hidden="true"] {
@@ -98,10 +159,10 @@
     }
     
     .legend {
-      width: 20px;
-      height: 20px;
       border: 1px solid rgba(0, 0, 0, .2);
       display: inline-block;
+      height: 20px;
+      width: 20px;
     }
     
     @media (min-width: 600px) {
@@ -110,79 +171,12 @@
       }
     }
     
+    .scoring {
+      /* display: inline-block; */
+    }
+
     .scoring input {
       max-width: 4em;
-    }
-    
-    .scoring {
-      margin: 1em 0;
-      min-width: 300px;
-      display: inline-block;
-    }
-    
-    [data-th='Color'] {
-      margin-top: 1em;
-    }
-    
-    .scoring th {
-      position: absolute;
-      left: -10000px;
-    }
-    
-    .scoring td {
-      display: block;
-    }
-    
-    .scoring td:first-child {
-      padding-top: .1em;
-    }
-    
-    .scoring td:last-child {
-      padding-bottom: .1em;
-    }
-    
-    .scoring td:before {
-      content: attr(data-th) ": ";
-      font-weight: bold;
-      display: inline;
-    }
-    
-    @media (min-width: 600px) {
-      .scoring td:before {
-        display: none;
-      }
-    }
-    
-    .scoring th,
-    .scoring td {
-      text-align: left;
-    }
-    
-    @media (min-width: 600px) {
-      .scoring th,
-      .scoring td {
-        display: table-cell;
-      }
-      .scoring th:first-child,
-      .scoring td:first-child {
-        padding-left: 0;
-      }
-      .scoring th:last-child,
-      .scoring td:last-child {
-        padding-right: 0;
-      }
-      [data-th='Color'] {
-        margin-top: 0;
-      }
-      .scoring th {
-        position: unset;
-        left: auto;
-      }
-    }
-    
-    .scoring th,
-    .scoring td:before {
-      color: #555;
     }
     
     .dark {
@@ -197,8 +191,8 @@
     }
     
     #stakeholder-list {
-      list-style: none;
       display: none;
+      list-style: none;
     }
     
     .stakeholder-value-list {
@@ -220,11 +214,11 @@
     }
     
     #table-stakeholders th {
+      background-color: #0071bc;
+      color: white;
       padding-top: 12px;
       padding-bottom: 12px;
       text-align: left;
-      background-color: #0071bc;
-      color: white;
     }
     
     #table-stakeholders {
@@ -233,10 +227,7 @@
     }
     
     table input {
-      width: calc(100% - 2em);
       text-align: right;
-      margin: .5em 1em;
-      padding: .2em;
     }
     
     table {
@@ -269,7 +260,6 @@
     }
     
     .invalid-text-input {
-      /* background-color: #e31c3d; */
       box-shadow: 0 0 5px #e31c3d;
       border: 1px solid #e31c3d;
     }
@@ -278,29 +268,12 @@
       display: none;
     }
     
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      font-size: 14px;
-    }
-    
-    #menu {
-      width: 15%;
-      position: fixed;
-      border-right: 1px solid #5b616b;
-      height: 100%;
-      background-color: #e4e2e0;
-      font-size: 18px;
-      min-width: 134px;
-    }
-    
     #menu-title {
       font-weight: bold;
     }
     
     #menu a {
-      color: #000;
+      color: #fff;
       text-decoration: none;
     }
     
@@ -319,16 +292,8 @@
       border-radius: 2px;
     }
     
-    #main-content {
-      width: 85%;
-      position: absolute;
-      right: 0;
-      margin: 0.5em -0.5em;
-    }
-    
     .active {
       font-weight: bold;
-      background-color: #aeb0b5;
     }
     
     .remove-stakeholder {
@@ -360,98 +325,180 @@
       margin: 0;
       text-rendering: optimizeLegibility;
     }
-  </style>
 
+    .wrapper {
+      background-color: #e4e2e0;
+      position: relative;
+    }
+
+    .wrapper > .inner {
+      max-width: 100%;
+      padding: 2.5em 2.5em 1.5em 2.5em;
+      width: 75em;
+    }
+
+    #sidebar {
+      padding: 2.5em 1.5em 0.5em 1.5em;
+      background: #494440;
+      color: #fff;
+      cursor: default;
+      height: 100vh;
+      left: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: fixed;
+      text-align: right;
+      top: 0;
+      width: 15em;
+      z-index: 10000;
+    }
+
+    #sidebar > .inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transform: translateY(0);
+      transition: opacity 1s ease;
+      min-height: 100%;
+      opacity: 1;
+      width: 100%;
+    }
+
+  #sidebar + #wrapper {
+    margin-left: 15em;
+  }
+
+  #sidebar::-webkit-scrollbar { 
+    display: none; 
+  }
+
+  #pie {
+    align-self: center;
+    margin: 5em;
+  }
+
+  #scoring-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  table input {
+    width: calc(100% - 2em);
+    text-align: right;
+    margin: .5em 1em;
+    padding: .2em;
+  }
+  </style>
 </head>
 
 <body>
-  <div id="main-content">
-    <h1 id="app-name">FEGS Scoping Tool</h1>
-
-    <h2>
-      Project Name:
-      <span id="show-name"></span>
-      <input id="input-name" type="text"></input>
-    </h2>
-    <button onclick="window.location.reload()">Dev Feature: Reload application</button>
-    <button onclick="fegsScopingView.editName()" id="change-name">Change the Project's Name</button>
-    <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name">Save this Name</button>
-
-    <!-- <button onclick="var view = new FEGSScopingView(); view.focusPage('section-scoring');">Paginate App</button> -->
-
-    <!-- <button id="restore" onclick="fegsScopingController.saveValidatedData();">Save Data</button> -->
-
-    Zoom: <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value="1.0"></input>
-
-    <div class="page" id="section-weighting">
-      <h3>Weights</h3>
-      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
-      <table class="scoring" id="table-scores">
-        <thead>
-          <tr>
-            <th>Color</th>
-            <th>Label</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-th="Color"><span class="legend magnitude"></span></td>
-            <td data-th="Label">Magnitude/Probability of impact</td>
-            <td data-th="Value"><input id="magnitude-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend influence"></span></td>
-            <td data-th="Label">Level of influence</td>
-            <td data-th="Value"><input id="influence-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend interest"></span></td>
-            <td data-th="Label">Level of interest</td>
-            <td data-th="Value"><input id="interest-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend urgency"></span></td>
-            <td data-th="Label">Urgency/ Temporal immediacy</td>
-            <td data-th="Value"><input id="urgency-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend proximity"></span></td>
-            <td data-th="Label">Proximity</td>
-            <td data-th="Value"><input id="proximity-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend economic-interest"></span></td>
-            <td data-th="Label">Economic interest</td>
-            <td data-th="Value"><input id="economic-interest-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend rights"></span></td>
-            <td data-th="Label">Rights</td>
-            <td data-th="Value"><input id="rights-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend fairness"></span></td>
-            <td data-th="Label">Fairness</td>
-            <td data-th="Value"><input id="fairness-score" type="number" /></td>
-          </tr>
-          <tr>
-            <td data-th="Color"><span class="legend representation"></span></td>
-            <td data-th="Label">Underrepresented/Underserved representation</td>
-            <td data-th="Value"><input id="representation-score" type="number" /></td>
-          </tr>
-        </tbody>
-      </table>
-      <span id="pie"></span>
+  <section id="sidebar">
+    <h2 id="menu-title">FEGS Scoping Tool</h2>
+    <div id="menu" class="inner">
+      Project name: <a href="#" onclick="fegsScopingView.editName()" id="show-name" title="Change project name" alt="Change project name"><span id="menu-project-name"></span><span id="unsaved-indicator" hidden>*</span></a>
+      <input class="form-text" id="input-name" type="text" hidden>
+      <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name" hidden>Save this name</button>
+      <nav>
+        <ul>
+          <li>
+            <a href="#section-weighting">Weights</a>
+            <div id="weighting-progress" class="progress-menu"></div>
+          </li>
+          <li>
+            <a href="#section-stakeholders">Stakeholders</a>
+            <div id="stakeholder-progress" class="progress-menu"></div>
+          </li>
+          <li>
+            <a href="#section-beneficiaries">Beneficiaries</a>
+            <div id="beneficiaries-progress" class="progress-menu"></div>
+          </li>
+          <li>
+            <a href="#section-attributes">Attributes</a>
+          </li>
+        </ul>
+      </nav>
+      <span id="zoomer" hidden>Zoom: <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value="1.0"></span>
     </div>
+    <button onclick="window.location.reload()">Dev Feature: Reload application</button>
+  </section>
 
+  <div id="wrapper">
+  <section class="wrapper">
+  <div id="main-content" class="inner">
+    <div class="page" id="section-weighting">
+      <h2>Weights</h2>
+      <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
+      <div id="scoring-inputs">
+        <div>
+          <table class="scoring" id="table-scores">
+            <thead>
+              <tr>
+                <th>Color</th>
+                <th>Label</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-th="Color"><span class="legend magnitude"></span></td>
+                <td data-th="Label">Magnitude & Probability of impact</td>
+                <td data-th="Value"><input id="magnitude-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend influence"></span></td>
+                <td data-th="Label">Level of influence</td>
+                <td data-th="Value"><input id="influence-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend interest"></span></td>
+                <td data-th="Label">Level of interest</td>
+                <td data-th="Value"><input id="interest-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend urgency"></span></td>
+                <td data-th="Label">Urgency & Temporal immediacy</td>
+                <td data-th="Value"><input id="urgency-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend proximity"></span></td>
+                <td data-th="Label">Proximity</td>
+                <td data-th="Value"><input id="proximity-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend economic-interest"></span></td>
+                <td data-th="Label">Economic interest</td>
+                <td data-th="Value"><input id="economic-interest-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend rights"></span></td>
+                <td data-th="Label">Rights</td>
+                <td data-th="Value"><input id="rights-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend fairness"></span></td>
+                <td data-th="Label">Fairness</td>
+                <td data-th="Value"><input id="fairness-score" type="number" /></td>
+              </tr>
+              <tr>
+                <td data-th="Color"><span class="legend representation"></span></td>
+                <td data-th="Label">Underrepresented & Underserved representation</td>
+                <td data-th="Value"><input id="representation-score" type="number" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="pie" hidden></div>
+      </div>
+    </div>
+    <hr />
     <div class="page" id="section-stakeholders">
-      <h3>Add Stakeholders</h3>
+      <h2>Stakeholders</h2>
       <p>Identify your stakeholder-groups.</p>
       <div id="stakeholder-prioritization">
         <div>
           <div class="light-gray">
-            <label>Stakeholder-group name <input type="text" id="stakeholder-group"/></label>
+            <label>Stakeholder-group name <input class="form-text" type="text" id="stakeholder-group"/></label>
             <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder-group</button>
             <ul id="stakeholder-list"></ul>
           </div>
@@ -463,7 +510,7 @@
           <p>Score each stakeholder-group for each of the 9 criteria.</p>
           <div>
             <div class="light-gray">
-              <h4>Magnitude/Probability of impact</h4>
+              <h4>Magnitude & Probability of impact</h4>
               <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?</p>
               <p>Please enter a number 0 to 100.</p>
               <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
@@ -499,7 +546,7 @@
           </div>
           <div>
             <div class="light-gray">
-              <h4>Urgency/Temporal immediacy</h4>
+              <h4>Urgency & Temporal immediacy</h4>
               <p>Does this stakeholder-group want an immediate decision/action on this issue?</p>
               <ul>
                 <li>100 = Yes, even if other actions/decisions must be postponed.</li>
@@ -565,7 +612,7 @@
           </div>
           <div>
             <div class="light-gray">
-              <h4>Underrepresented/Underserved representation</h4>
+              <h4>Underrepresented & Underserved representation</h4>
               <p>Does this stakeholder-group represent underserved or underrepresented groups?</p>
               <ul>
                 <li>100 = Yes.</li>
@@ -584,38 +631,32 @@
             <tr>
               <th></th>
               <th>Stakeholder-group</th>
-              <th>Magnitude/Probability of impact</th>
+              <th>Magnitude & Probability of impact</th>
               <th>Level of influence</th>
               <th>Level of interest</th>
-              <th>Urgency/Temporal immediacy</th>
+              <th>Urgency & Temporal immediacy</th>
               <th>Proximity</th>
               <th>Economic interest</th>
               <th>Rights</th>
               <th>Fairness</th>
-              <th>Underrepresented/Underserved representation</th>
+              <th>Underrepresented & Underserved representation</th>
             </tr>
           </thead>
           <tbody>
           </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="11"></td>
-            </tr>
-          </tfoot>
         </table>
       </div>
+      <h4>Stakeholder Prioritization</h4>
       <div id="stakeholder-barchart"></div>
     </div>
+    <hr />
     <div class="page" id="section-beneficiaries">
-      <h3>Beneficiaries</h3>
+      <h2>Beneficiaries</h2>
 
-      <label for="select-stakeholder">
-        Identify the types of beneficiaries making up each stakeholder-group by percentage.     
-        <br />
-        <select id="select-stakeholder" onchange="selectStakeholderToSlice()">
-          <option selected="selected" disabled="disabled">Select a Stakeholder-Group</option>
-        </select>
-      </label>
+      <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder-group by percentage.</label>
+      <select class="form-select" id="select-stakeholder" onchange="selectStakeholderToSlice()">
+        <option selected="selected" disabled="disabled">Select a Stakeholder-Group</option>
+      </select>
 
       <table id="table-beneficiaries">
         <thead>
@@ -747,10 +788,10 @@
           </tr>
         </tbody>
       </table>
-
     </div>
+    <hr />
     <div class="page" id="section-attributes">
-      <h3>Attributes</h3>
+      <h2>Attributes</h2>
       <h3 id="table-attributes-header">Score Attributes for each Beneficiary</h3>
 
       <table id="table-attributes">
@@ -2678,28 +2719,14 @@
 
     </div>
   </div>
-  <div id="menu">
-    <div id="menu-title">Menu</div>
-    <ul>
-      <li><a href="#section-weighting">Weights</a>
-        <div id="weighting-progress" class="progress-menu"></div>
-      </li>
-      <li><a href="#section-stakeholders">Stakeholders</a>
-        <div id="stakeholder-progress" class="progress-menu"></div>
-      </li>
-      <li><a href="#section-beneficiaries">Beneficiaries</a>
-        <div id="beneficiaries-progress" class="progress-menu"></div>
-      </li>
-      <li><a href="#section-attributes">Attributes</a></li>
-    </ul>
-  </div>
-
+</section>
+</div>
   <script>
     window.addEventListener("scroll", onScroll);
 
     function onScroll(event) {
       var scrollPos = window.scrollY;
-      var menuItems = document.getElementById("menu").getElementsByTagName('a');
+      var menuItems = document.querySelectorAll('#menu > nav a');
       for (var i = 0; i < menuItems.length; i++) {
         var currentItem = menuItems[i];
         var hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
@@ -2835,7 +2862,6 @@
       };
 
       this.clearOtherAttributes = function(beneficiaries) {
-        console.log("clearOtherAttributes")
         for (var i = 0; i < fegsScopingData.fegsBeneficiaries.length; i++) {
           if (beneficiaries.indexOf(fegsScopingData.fegsBeneficiaries[i]) < 0) {
             for (var attribute in fegsScopingData.attributes[fegsScopingData.fegsBeneficiaries[i]]) {
@@ -3273,6 +3299,13 @@
 
         d3.select('#' + domEle + '>*').remove();
 
+        for (var prop in pie) {
+          if (pie[prop].value) {
+            document.getElementById(domEle).removeAttribute("hidden");
+            break;
+          }
+        }
+
         var svg = d3.select("#" + domEle)
           .append("svg")
           .attr("width", width)
@@ -3300,6 +3333,22 @@
             .value(function(d) {
               return d.value;
             })(data);
+            
+          function checkD3Data(chart) {
+            for (var prop in chart) {
+              if (pie[prop].value) {
+                return true;
+              }
+            }
+            return false;
+          }
+
+          if (checkD3Data(pie)) {
+            document.getElementById(domEle).removeAttribute("hidden");
+          } else {
+            document.getElementById(domEle).setAttribute("hidden", "");
+          }
+
           path = d3.select("#" + domEle).selectAll("path").data(pie);
           path.transition().duration(500).attrTween("d", arcTween); // Smooth transition with arcTween
         }
@@ -3467,6 +3516,7 @@
       updateStakeholderProgress();
       document.getElementById('stakeholder-table-container').style.display = "block";
       fegsScopingView.indicateUnsaved();
+      document.getElementById("stakeholder-table-container").scrollIntoView();
     }
 
     function clearStakeholderScores() {
@@ -3653,7 +3703,7 @@
         for (var i = 1, length = cells.length; i < length; i++) {
           var cell = cells[i];
           var text = cell.innerHTML;
-          cell.innerHTML = '<input data-original-value="' + text + '" type="text" value="' + text + '"/>'; // create an input with the cell value
+          cell.innerHTML = '<input class="form-text" data-original-value="' + text + '" type="text" value="' + text + '"/>'; // create an input with the cell value
         }
       });
 
@@ -3775,9 +3825,7 @@
         xScale.domain(data.map(function(d) {
           return d.stakeholder;
         }));
-        yScale.domain([0, d3.max(layers[layers.length - 1], function(d) {
-          return d[0] + d[1];
-        })]).nice();
+        yScale.domain([0, 100]);
 
         var layer = svg.selectAll(".layer")
           .data(layers)
@@ -4660,20 +4708,20 @@
       /** initialize the view of the application */
       this.initializeView = function() {
         this.showName.style.display = 'inline-block';
-        this.changeNameButton.style.display = 'inline-block';
-        this.inputName.style.display = 'none';
+        //this.changeNameButton.style.display = 'inline-block';
+        //this.inputName.style.display = 'none';
         this.saveNameButton.style.display = 'none';
         this.projectName = fegsScopingData.projectName;
-        this.showName.innerHTML = this.projectName;
+        this.projectNameMenu.innerHTML = this.projectName;
       };
 
       /** update name displayed in titlebar and header */
       this.updateName = function(name) {
-        this.showName.innerHTML = name; // update the name shown
+        this.projectNameMenu.innerHTML = name; // update the name shown
         this.projectName = name; // update the name of the view
         this.title = name; // call the name a title, too
-        this.showName.style.display = 'block';
-        this.changeNameButton.style.display = 'inline-block';
+        this.showName.style.display = 'inline-block';
+        //this.changeNameButton.style.display = 'inline-block';
         this.inputName.style.display = 'none';
         this.saveNameButton.style.display = 'none';
       };
@@ -4681,10 +4729,10 @@
       /** input the name of this project */
       this.editName = function() {
         this.showName.style.display = 'none';
-        this.changeNameButton.style.display = 'none';
+        //this.changeNameButton.style.display = 'none';
         this.inputName.style.display = 'inline-block';
         this.saveNameButton.style.display = 'inline-block';
-        this.inputName.value = this.showName.innerText;
+        this.inputName.value = this.projectNameMenu.innerText;
       };
 
       /** save the name of this project */
@@ -4693,7 +4741,7 @@
         this.saveNameButton.style.display = 'none';
         this.showName.style.display = 'inline-block';
         this.changeName.style.display = 'inline-block';
-        this.showName.innerText = inputName.value;
+        this.projectNameMenu.innerText = inputName.value;
         fegsScopingController.saveValidatedData();
         this.projectName = inputName.value;
       };
@@ -4721,13 +4769,13 @@
       /** indicate saved status */
       this.indicateSaved = function() {
         document.title = fegsScopingData.projectName;
-        document.getElementById('menu').style.border = 'none';
+        document.getElementById('unsaved-indicator').setAttribute("hidden" , "");
       };
 
       /** indicate unsaved status */
       this.indicateUnsaved = function() {
         document.title = fegsScopingData.projectName + '*';
-        document.getElementById('menu').style.border = '1px solid red';
+        document.getElementById('unsaved-indicator').removeAttribute("hidden");
       };
 
       /** save view's state: each input stores its own data */
@@ -4856,12 +4904,11 @@
           } else {
             table.showColumn(columnNames[i]);
           }
-          cell.innerText = cellValue;
+          cell.innerText = cellValue.toFixed(2);
         }
       };
 
       this.restoreAttributes = function() {
-        console.log("restoreAttributes");
         var table = tableAttributes;
         var rowNames = table.rowHeaders;
         var columnNames = table.columnHeaders;
@@ -4893,6 +4940,7 @@
 
       this.inputName = document.getElementById('input-name');
       this.showName = document.getElementById('show-name');
+      this.projectNameMenu = document.getElementById('menu-project-name');
       this.saveNameButton = document.getElementById('save-name');
       this.changeNameButton = document.getElementById('change-name');
       this.initializeView();
@@ -4916,14 +4964,6 @@
 
       document.body.removeChild(element);
     }
-
-    var indicatePageZoom = function(event) {
-      document.querySelector('#page-zoom-indicator').innerText = parseInt(event.target.value * 100) + "%";
-    };
-
-    var pageZoomChange = function(event) {
-      document.body.style.fontSize = (event.target.value * 14) + 'px';
-    };
 
     ////////// PAGE-PROCESS //////////////////////////////////////
     var fegsScopingData = new FEGSScopingData();
@@ -4959,10 +4999,21 @@
   <script>
     var userAgent = navigator.userAgent.toLowerCase();
     if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
+      document.getElementById('zoomer').removeAttribute('hidden');
       var {
         ipcRenderer,
         remote
       } = require('electron');
+
+      var webFrame = require('electron').webFrame
+
+      var indicatePageZoom = function(event) {
+        document.querySelector('#page-zoom-indicator').innerText = parseInt(event.target.value * 100) + "%";
+      };
+
+      var pageZoomChange = function(event) {
+        webFrame.setZoomFactor(+event.target.value);
+      };
 
       if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === ".fegs") {
         fegsScopingView.restoreView(remote.process.argv[1]);
