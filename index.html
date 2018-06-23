@@ -171,10 +171,6 @@
       }
     }
     
-    .scoring {
-      /* display: inline-block; */
-    }
-
     .scoring input {
       max-width: 4em;
     }
@@ -364,31 +360,31 @@
       width: 100%;
     }
 
-  #sidebar + #wrapper {
-    margin-left: 15em;
-  }
+    #sidebar + #wrapper {
+      margin-left: 15em;
+    }
 
-  #sidebar::-webkit-scrollbar { 
-    display: none; 
-  }
+    #sidebar::-webkit-scrollbar { 
+      display: none; 
+    }
 
-  #pie {
-    align-self: center;
-    margin: 5em;
-  }
+    .pie {
+      align-self: center;
+      margin: 5em;
+    }
 
-  #scoring-inputs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  table input {
-    width: calc(100% - 2em);
-    text-align: right;
-    margin: .5em 1em;
-    padding: .2em;
-  }
+    table input {
+      width: calc(100% - 2em);
+      text-align: right;
+      margin: .5em 1em;
+      padding: .2em;
+    }
   </style>
 </head>
 
@@ -429,7 +425,7 @@
     <div class="page" id="section-weighting">
       <h2>Weights</h2>
       <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
-      <div id="scoring-inputs">
+      <div id="scoring-inputs" class="flex-container">
         <div>
           <table class="scoring" id="table-scores">
             <thead>
@@ -488,7 +484,7 @@
             </tbody>
           </table>
         </div>
-        <div id="pie" hidden></div>
+        <div id="pie" class="pie" hidden></div>
       </div>
     </div>
     <hr />
@@ -645,9 +641,12 @@
           <tbody>
           </tbody>
         </table>
+        <h4>Stakeholder Prioritization</h4>
+        <div class="flex-container">
+          <div id="stakeholder-barchart"></div>
+          <div class="pie"></div>
+        </div>
       </div>
-      <h4>Stakeholder Prioritization</h4>
-      <div id="stakeholder-barchart"></div>
     </div>
     <hr />
     <div class="page" id="section-beneficiaries">
@@ -3297,7 +3296,7 @@
           .outerRadius(radius - 10)
           .innerRadius(0);
 
-        d3.select('#' + domEle + '>*').remove();
+        d3.selectAll('.' + domEle + ' > *').remove();
 
         for (var prop in pie) {
           if (pie[prop].value) {
@@ -3306,7 +3305,7 @@
           }
         }
 
-        var svg = d3.select("#" + domEle)
+        var svg = d3.selectAll("." + domEle)
           .append("svg")
           .attr("width", width)
           .attr("height", height)
@@ -3349,7 +3348,7 @@
             document.getElementById(domEle).setAttribute("hidden", "");
           }
 
-          path = d3.select("#" + domEle).selectAll("path").data(pie);
+          path = d3.selectAll("." + domEle).selectAll("path").data(pie);
           path.transition().duration(500).attrTween("d", arcTween); // Smooth transition with arcTween
         }
 
