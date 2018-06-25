@@ -167,7 +167,7 @@
     
     @media (min-width: 600px) {
       .legend {
-        margin: 35%;
+        margin: 1em;
       }
     }
     
@@ -377,6 +377,10 @@
       margin: 5em;
     }
 
+    #stakeholder-barchart {
+      align-self: center;
+    }
+
     .flex-container {
       display: flex;
       flex-wrap: wrap;
@@ -388,6 +392,10 @@
       text-align: right;
       margin: .5em 1em;
       padding: .2em;
+    }
+
+    .scoring [data-th="Color"] {
+      padding: 0;
     }
   </style>
 </head>
@@ -441,48 +449,48 @@
             </thead>
             <tbody>
               <tr>
-                <td data-th="Color"><span class="legend magnitude"></span></td>
-                <td data-th="Label">Magnitude & Probability of impact</td>
+                <th data-th="Color"><span class="legend magnitude"></span></th>
+                <th data-th="Label">Magnitude & Probability of impact</th>
                 <td data-th="Value"><input id="magnitude-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend influence"></span></td>
-                <td data-th="Label">Level of influence</td>
+                <th data-th="Color"><span class="legend influence"></span></th>
+                <th data-th="Label">Level of influence</th>
                 <td data-th="Value"><input id="influence-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend interest"></span></td>
-                <td data-th="Label">Level of interest</td>
+                <th data-th="Color"><span class="legend interest"></span></th>
+                <th data-th="Label">Level of interest</th>
                 <td data-th="Value"><input id="interest-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend urgency"></span></td>
-                <td data-th="Label">Urgency & Temporal immediacy</td>
+                <th data-th="Color"><span class="legend urgency"></span></th>
+                <th data-th="Label">Urgency & Temporal immediacy</th>
                 <td data-th="Value"><input id="urgency-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend proximity"></span></td>
-                <td data-th="Label">Proximity</td>
+                <th data-th="Color"><span class="legend proximity"></span></th>
+                <th data-th="Label">Proximity</th>
                 <td data-th="Value"><input id="proximity-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend economic-interest"></span></td>
-                <td data-th="Label">Economic interest</td>
+                <th data-th="Color"><span class="legend economic-interest"></span></th>
+                <th data-th="Label">Economic interest</th>
                 <td data-th="Value"><input id="economic-interest-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend rights"></span></td>
-                <td data-th="Label">Rights</td>
+                <th data-th="Color"><span class="legend rights"></span></th>
+                <th data-th="Label">Rights</th>
                 <td data-th="Value"><input id="rights-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend fairness"></span></td>
-                <td data-th="Label">Fairness</td>
+                <th data-th="Color"><span class="legend fairness"></span></th>
+                <th data-th="Label">Fairness</th>
                 <td data-th="Value"><input id="fairness-score" type="number" /></td>
               </tr>
               <tr>
-                <td data-th="Color"><span class="legend representation"></span></td>
-                <td data-th="Label">Underrepresented & Underserved representation</td>
+                <th data-th="Color"><span class="legend representation"></span></th>
+                <th data-th="Label">Underrepresented & Underserved representation</th>
                 <td data-th="Value"><input id="representation-score" type="number" /></td>
               </tr>
             </tbody>
