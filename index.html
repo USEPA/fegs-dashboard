@@ -406,6 +406,14 @@
     .scoring [data-th="Color"] {
       padding: 0;
     }
+
+    .accessible-notification {
+      background-color: pink;
+      bottom: 0;
+      padding: .5em;
+      position: fixed;
+      z-index: 10001;
+    }
   </style>
 </head>
 
@@ -4308,10 +4316,6 @@
       var textNode = document.createTextNode(text);
       clearNotices();
       notice.appendChild(textNode);
-      notice.style.position = 'fixed';
-      notice.style.bottom = '0';
-      notice.style.padding = '.5em';
-      notice.style['background-color'] = 'pink';
       notice.setAttribute('aria-live', 'polite');
       notice.addEventListener('click', function() {
         this.remove()
