@@ -161,8 +161,16 @@
     .legend {
       border: 1px solid rgba(0, 0, 0, .2);
       display: inline-block;
-      height: 20px;
-      width: 20px;
+      height: 1em;
+      width: 1em;
+    }
+
+    .key {
+      border: 1px solid rgba(0, 0, 0, .2);
+      display: inline-block;
+      height: 1em;
+      width: 1em;
+      margin: 1em 1em 0 1em;
     }
     
     @media (min-width: 600px) {
@@ -180,8 +188,9 @@
     }
     
     .light-gray {
-      background-color: #d6d7d9;
+      background-color: #f1f1f1;
       border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, .2);
       padding: 1em 1em 1em 1em;
       margin-bottom: .4em;
     }
@@ -374,7 +383,7 @@
 
     .pie {
       align-self: center;
-      margin: 5em;
+      margin: 0 4em 0 4em;
     }
 
     #stakeholder-barchart {
@@ -498,7 +507,6 @@
         </div>
         <div id="pie" class="pie" hidden></div>
       </div>
-    </div>
     <hr />
     <div class="page" id="section-stakeholders">
       <h2>Stakeholders</h2>
@@ -654,10 +662,45 @@
           </tbody>
         </table>
         <h4>Stakeholder Prioritization</h4>
-        <div class="flex-container">
+        <div class="flex-container light-gray">
           <div id="stakeholder-barchart"></div>
           <div class="pie"></div>
         </div>
+        <div class="flex-container light-gray">
+          <div>
+            <span class="key magnitude"></span><span>Magnitude & Probability of impact</span>
+          </div>
+          <div>
+            <span class="key influence"></span><span>Level of influence</span>
+          </div>
+          <div>
+            <span class="key interest"></span><span>Level of interest</span>
+          </div>
+          <div>
+            <span class="key urgency"></span>
+            <span>Urgency & Temporal immediacy</span>
+          </div>
+          <div>
+            <span class="key proximity"></span>
+            <span>Proximity</span>
+          </div>
+          <div>
+            <span class="key economic-interest"></span>
+            <span>Economic interest</span>
+          </div>
+          <div>
+            <span class="key rights"></span>
+            <span>Rights</span>
+          </div>
+          <div>
+            <th data-th="Color"><span class="key fairness"></span>
+              <span>Fairness</span>
+          </div>
+          <div>
+            <span class="key representation"></span>
+            <span>Underrepresented & Underserved representation</span>
+          </div>
+       </div>
       </div>
     </div>
     <hr />
