@@ -308,7 +308,7 @@
     .remove-stakeholder {
       background-color: #cd2026;
       color: #fff;
-      margin: 0 0 0 10px;
+      margin: .25em 0 0 10px;
       padding: 0.25em .5em;
       cursor: pointer;
     }
@@ -413,6 +413,21 @@
       padding: .5em;
       position: fixed;
       z-index: 10001;
+    }
+    .inline-block {
+      display: inline-block;
+    }
+
+    .stakeholder-score-input {
+      margin: 0 0 .25em .25em;
+    }
+
+    #table-stakeholders button {
+      margin: 0 0 .5em;
+    }
+
+    #add-stakeholder {
+      margin: 0;
     }
   </style>
 </head>
@@ -522,7 +537,7 @@
       <div id="stakeholder-prioritization">
         <div>
           <div class="light-gray">
-            <label>Stakeholder-group name <input class="form-text" type="text" id="stakeholder-group"/></label>
+            <label class="inline-block">Stakeholder-group name <input class="form-text" type="text" id="stakeholder-group"/></label>
             <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder-group</button>
             <ul id="stakeholder-list"></ul>
           </div>
