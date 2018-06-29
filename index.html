@@ -436,7 +436,7 @@
   <section id="sidebar">
     <h2 id="menu-title">FEGS Scoping Tool</h2>
     <div id="menu" class="inner">
-      Project name: <a href="#" onclick="fegsScopingView.editName()" id="show-name" title="Change project name" alt="Change project name"><span id="menu-project-name"></span><span id="unsaved-indicator" hidden>*</span></a>
+      Project name: <a href="#" onclick="fegsScopingView.editName()" id="show-name" title="Change project name"><span id="menu-project-name"></span><span id="unsaved-indicator" hidden>*</span></a>
       <input class="form-text" id="input-name" type="text" hidden>
       <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name" hidden>Save this name</button>
       <nav>
@@ -553,7 +553,7 @@
               <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?</p>
               <p>Please enter a number 0 to 100.</p>
               <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
-              <img src="img/probabilitymagnitude.PNG" width="250">
+              <img src="img/probabilitymagnitude.PNG" width="250" alt="Probability and magnitude matrix">
             </div>
           </div>
           <div>
@@ -691,13 +691,16 @@
         </div>
         <div class="flex-container light-gray">
           <div>
-            <span class="key magnitude"></span><span>Magnitude & Probability of impact</span>
+            <span class="key magnitude"></span>
+            <span>Magnitude & Probability of impact</span>
           </div>
           <div>
-            <span class="key influence"></span><span>Level of influence</span>
+            <span class="key influence"></span>
+            <span>Level of influence</span>
           </div>
           <div>
-            <span class="key interest"></span><span>Level of interest</span>
+            <span class="key interest"></span>
+            <span>Level of interest</span>
           </div>
           <div>
             <span class="key urgency"></span>
@@ -716,8 +719,8 @@
             <span>Rights</span>
           </div>
           <div>
-            <th data-th="Color"><span class="key fairness"></span>
-              <span>Fairness</span>
+            <span class="key fairness"></span>
+            <span>Fairness</span>
           </div>
           <div>
             <span class="key representation"></span>
@@ -2746,7 +2749,6 @@
           </tr>
         </tbody>
       </table>
-
     </div>
   </div>
 </section>
