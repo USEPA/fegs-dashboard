@@ -4315,7 +4315,7 @@
       var i;
       var select = document.getElementById(selectId);
       var stakeholderNames = Object.keys(fegsScopingData.stakeholders);
-      for (i = 1; i < select.options.length; i++) { // remove all options
+      for (i = select.options.length - 1; i > 0; i--) { // remove all options
         select.options[i].remove();
       }
       for (i = 0; i < stakeholderNames.length; i++) { // add option for each stakeholder
