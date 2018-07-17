@@ -3666,7 +3666,7 @@
               change();
               initStackedBarChart.draw({
                 data: formatStakeholderData(),
-                key: fegsScopingData.fegsCriteria,
+                key: fegsScopingData.criteria,
                 element: 'stakeholder-barchart',
                 header: 'stakeholder',
                 colors: criteriaColors
@@ -3849,7 +3849,7 @@
       clearStakeholderScores();
       initStackedBarChart.draw({
         data: formatStakeholderData(),
-        key: fegsScopingData.fegsCriteria,
+        key: fegsScopingData.criteria,
         element: 'stakeholder-barchart',
         header: 'stakeholder',
         colors: criteriaColors
@@ -4049,7 +4049,7 @@
         removeOptionFromSelect('select-stakeholder', stakeholder);
         initStackedBarChart.draw({
           data: formatStakeholderData(),
-          key: fegsScopingData.fegsCriteria,
+          key: fegsScopingData.criteria,
           element: 'stakeholder-barchart',
           header: 'stakeholder',
           colors: criteriaColors
@@ -4103,7 +4103,7 @@
         updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
         initStackedBarChart.draw({
           data: formatStakeholderData(),
-          key: fegsScopingData.fegsCriteria,
+          key: fegsScopingData.criteria,
           legend: fegsScopingData.fegsCriteria,
           element: 'stakeholder-barchart',
           header: 'stakeholder',
