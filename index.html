@@ -901,7 +901,7 @@
             <thead>
               <tr>
                 <th style="width: 10em;">Category</th>
-                <th style="width: 10em;">Subcategory <br /><a id="table-beneficiaries-toggle" href="#" onclick="toggleTableDefinitions('table-beneficiaries'); return false;">Hide definitions</a></th>
+                <th style="width: 10em;">Subcategory <br /><a id="table-beneficiaries-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-beneficiaries'); return false;">Hide definitions</a></th>
                 <th style="width: 15em;" class="definition">Definition</th>
               </tr>
             </thead>
@@ -5459,13 +5459,14 @@
     }; ////////////// END PROTOTYPE FEGSScopingView /////////////////////
 
     function toggleTableDefinitions(tableID) {
+    function toggleTableDefinitions(event, tableID) {
       for (var i = 0; i < document.querySelectorAll('#' + tableID + ' .definition').length; i++) {
         var element = document.querySelectorAll('#' + tableID + ' .definition')[i];
         if (element.hasAttribute('hidden')) {
-          document.getElementById('table-beneficiaries-toggle').innerHTML = 'Hide definitions';
+          event.target.innerHTML = 'Hide definitions';
           element.removeAttribute('hidden');
         } else {
-          document.getElementById('table-beneficiaries-toggle').innerHTML = 'Show definitions';
+          event.target.innerHTML = 'Show definitions';
           element.setAttribute('hidden', true);
         }
       }
