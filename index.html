@@ -613,6 +613,7 @@
           </li>
           <li>
             <a href="#section-attributes">Attributes</a>
+            <div id="attributes-progress" class="progress-menu"></div>
           </li>
         </ul>
       </nav>
@@ -3867,7 +3868,7 @@
         input.setAttribute('class', 'stakeholder-score-input');
         input.setAttribute('id', stakeholderGroup + '-' + ul.getAttribute('data-criterion'));
         input.setAttribute('data-criterion', ul.getAttribute('data-criterion'));
-        input.oninput = validateStakeholderScore;
+        input.oninput = function(){validateStakeholderScore(this);updateStakeholderProgress();};
         li.appendChild(input);
         ul.appendChild(li);
       }
@@ -3941,15 +3942,15 @@
       return stakeholdersToAdd;
     }
 
-    function validateStakeholderScore() {
+    function validateStakeholderScore(that) {
       clearNotices();
-      var value = parseInt(this.value, 10);
+      var value = parseInt(that.value, 10);
       var isValid = validateInput(value, 0, 100);
       if (!isValid) {
         accessiblyNotify("Please enter a value between 0 and 100")
-        this.classList.add('invalid-text-input');
+        that.classList.add('invalid-text-input');
       } else {
-        this.classList.remove('invalid-text-input');
+        that.classList.remove('invalid-text-input');
         clearNotices();
       }
     }
@@ -3960,17 +3961,28 @@
         document.getElementById('stakeholder-progress').innerHTML = "Add a stakeholder";
         return;
       }
-      var completeCount = stakeholderCount;
+      var newText = '';
       for (var stakeholder in fegsScopingData.stakeholders) {
+        var completeCount = 0;
+        var added = false;
         for (var criterion in fegsScopingData.stakeholders[stakeholder].scores) {
-          var score = fegsScopingData.stakeholders[stakeholder].scores[criterion];
-          if (score === "" || score > 100 || score < 0) {
-            completeCount--;
+          if (fegsScopingData.stakeholders[stakeholder].scores[criterion]) {
+            newText += stakeholder + ': added<br />';
+            added = true;
             break;
+          } else {
+            var inputScore = document.getElementById(stakeholder + '-' + criterion).value;
+            if (inputScore !== "" && inputScore <= 100 && inputScore > 0) {
+              completeCount++;
+            }
           }
         }
+        if (!added) {
+          newText += stakeholder + ': ' + completeCount + '/' + Object.keys(fegsScopingData.stakeholders[stakeholder].scores).length + ' criteria entered<br />';
+        }
       }
-      document.getElementById('stakeholder-progress').innerHTML = completeCount + " of " + stakeholderCount + " stakeholders completed";
+
+      document.getElementById('stakeholder-progress').innerHTML = newText;
       updateBeneficiaryProgress();
     }
 
@@ -3997,7 +4009,25 @@
           completeCount--;
         }
       }
-      document.getElementById('beneficiaries-progress').innerHTML = completeCount + " of " + stakeholderCount + " beneficiaries completed";
+      document.getElementById('beneficiaries-progress').innerHTML = completeCount + " of " + stakeholderCount + " stakeholders completed";
+    }
+
+    function updateAttributeProgress() {
+      var beneficiaryCount = fegsScopingData.extantBeneficiaries().length;
+      if (beneficiaryCount === 0) {
+        document.getElementById('attributes-progress').innerHTML = "Add a beneficiary";
+        return;
+      }
+      var completeCount = 0;
+      for (var beneficiary in fegsScopingData.attributes) {
+        for (var attribute in fegsScopingData.attributes[beneficiary]) {
+          if (fegsScopingData.attributes[beneficiary][attribute].percentageOfBeneficiary !== "") {
+            completeCount++;
+            break;
+          }
+        }
+      }
+      document.getElementById('attributes-progress').innerHTML = completeCount + " of " + beneficiaryCount + " beneficiaries completed";
     }
 
     function updateWeightingProgress() {
@@ -5168,6 +5198,7 @@
             }
           }
         }
+        updateAttributeProgress();
       };
 
       for (var i = 0; i < rowNames.length; i++) {
@@ -5274,6 +5305,7 @@
         updateStakeholderProgress();
         updateWeightingProgress();
         updateBeneficiaryProgress();
+        updateAttributeProgress();
 
         //TODO FIXME LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
         fegsScopingView.indicateSaved();
@@ -5511,6 +5543,7 @@
     updateStakeholderProgress();
     updateWeightingProgress();
     updateBeneficiaryProgress();
+    updateAttributeProgress();
 
     function round(number, precision) {
       var shift = function(number, precision, reverseShift) {
