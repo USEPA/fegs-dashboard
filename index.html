@@ -5353,7 +5353,7 @@
         updateAttributeProgress();
         initPieChart.draw({
           data: getAttributeScoresForPieChart(),
-          colors: beneficiaryColors,
+          colors: d3.schemeSet3,
           element: 'attribute-pie'
         });
 
@@ -5464,7 +5464,7 @@
 
         initPieChart.draw({
           data: getAttributeScoresForPieChart(),
-          colors: beneficiaryColors,
+          colors: d3.schemeSet3,
           element: 'attribute-pie'
         });
 
