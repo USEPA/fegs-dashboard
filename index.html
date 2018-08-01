@@ -3662,8 +3662,13 @@
         var tip = d3.tip()
           .attr('class', 'd3-tip')
           .offset([50, 0])
-          .html(function(d) { 
-            return d.data.label + ": " + d.data.value + "%";
+          .html(function(d) {
+            var index = fegsScopingData.criteria.indexOf(d.data.label);
+            var label = d.data.label;
+            if (index >= 0) {
+              label = fegsScopingData.fegsCriteria[index];
+            }
+            return label + ": " + round(d.data.value, 1);
           });
 
         var arc = d3.arc()
