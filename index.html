@@ -4345,10 +4345,11 @@
 
         var tip = d3.tip()
           .attr('class', 'd3-tip')
-          .offset([50, 0])
-          .html(function(d) { 
-            return (d[1] - d[0]);
-          });
+          .offset([-10, 0])
+          .html(function(d) {
+            return "<div><span>Value:</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
+          })
+        svg.call(tip); 
 
         var stack = d3.stack()
           .keys(stackKey)
@@ -4362,7 +4363,7 @@
         xScale.domain(data.map(function(d) {
           return d[header];
         }));
-        yScale.domain([0, 100]);
+        yScale.domain([0, d3.max(data, function(d) { return Object.values(d).reduce(function(acc, val) { return acc + (isNaN(val) ? 0 : val); }, 0); })]);
 
         var layer = svg.selectAll(".layer")
           .data(layers)
@@ -4392,8 +4393,8 @@
             d3.selectAll('.bar').classed('selected', false);
             d3.select(this).classed('selected', true);
           })
-          // .on('mouseover', tip.show)
-          // .on('mouseout', tip.hide);
+          .on('mouseover', tip.show)
+          .on('mouseout', tip.hide);
 
         svg.append("g")
           .attr("class", "axis axis--x")
