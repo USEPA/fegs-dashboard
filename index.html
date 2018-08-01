@@ -3663,7 +3663,6 @@
           .attr('class', 'd3-tip')
           .offset([50, 0])
           .html(function(d) { 
-            console.log("init tip")
             return d.data.label + ": " + d.data.value + "%";
           });
 
@@ -3863,8 +3862,6 @@
       var data = [];
       var sumOfBeneficiaryScores = 0;
       for (var i = 0; i < fegsScopingData.extantBeneficiaries().length; i++) {
-        console.log(fegsScopingData.extantBeneficiaries()[i]);
-        console.log(fegsScopingData.beneficiaryScore(fegsScopingData.extantBeneficiaries()[i]));
         sumOfBeneficiaryScores += fegsScopingData.beneficiaryScore(fegsScopingData.extantBeneficiaries()[i]);
       }
       for (var i = 0; i < fegsScopingData.fegsAttributes.length; i++) {
@@ -4335,7 +4332,6 @@
         if (data.length === 0) {
           return; // if there's no data to display don't display anything!
         }
-        console.log(data)
         var svg = container.append("svg")
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + 10 + margin.bottom + 10 + 30)
@@ -4501,7 +4497,6 @@
         if (data.length === 0) {
           return; // if there's no data to display don't display anything!
         }
-        console.log(data)
         xScale.domain(data.map(function(d) { return d.label; }));
         yScale.domain([0, d3.max(data, function(d) { return d.value; })]);
 
