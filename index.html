@@ -4096,7 +4096,7 @@
             percentageSum += +inputs[j].value;
           }
           if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
-            completeCount--;
+            //completeCount--; // Don't want to decrease count just because they entered data
           }
         }
       }
@@ -4631,6 +4631,7 @@
      * Validate data-entry by notifying when sum of inputs > 100.
      */
     var selectStakeholderToSlice = function() {
+      clearNotices();
       var table = document.getElementById('table-beneficiaries');
       var select = document.getElementById('select-stakeholder');
       var stakeholderName = select.value;
@@ -4639,6 +4640,7 @@
 
       var beneficiaryPercentageOfStakeholderInputValidator = function() { // validate sum of percentages is 100 +- 0.05 then save
         console.log("beneficiaryPercentageOfStakeholderInputValidator")
+        clearNotices();
         var percentageSum = 0;
         var j, inputs, input;
         inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
@@ -4654,7 +4656,6 @@
             inputs[j].parentElement.style = 'background-color: red';
           }
         } else { // update data with valid input
-          clearNotices();
           for (j = 0; j < inputs.length; j++) {
             inputs[j].parentElement.style = 'background-color: initial';
             beneficiaryNameForInput = inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 2].innerText;
@@ -4682,7 +4683,6 @@
             colors: beneficiaryColors,
             element: 'beneficiary-pie'
           });
-
           updateAttributeProgress();
           fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
         }
