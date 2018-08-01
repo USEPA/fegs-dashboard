@@ -3043,6 +3043,7 @@
           </table>
           <div id="attribute-charts">
           <div class="flex-container light-gray">
+            <svg id="chart"></svg>
             <div id="attribute-barchart"></div>
             <div class="attribute-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
           </div>
@@ -4466,71 +4467,63 @@
     /** stacked bar-chart */
     var initBarChart = {
       draw: function(config) {
-        var me = this;
-        var domEle = config.element;
-        var stackKey = config.key;
-        var legendKey = config.legend;
         var data = config.data;
-        var header = config.header;
         var colors = config.colors;
-        var margin = {
-          top: 20,
-          right: 20,
-          bottom: 30,
-          left: 50
-        };
-        var width = (data.length * 60 > 1200 ? 1200 : data.length * 50) - margin.left - margin.right;
-        var height = 400 - margin.top - margin.bottom;
-        var xScale = d3.scaleBand().range([0, width]).padding(0.3);
-        var yScale = d3.scaleLinear().range([height, 0]);
-        var color = d3.scaleOrdinal(colors);
-        var xAxis = d3.axisBottom(xScale);
+        var margin = {top: 20, right: 20, bottom: 50, left: 100},
+        width = parseInt(d3.select("#chart").style("width")) - margin.left - margin.right,
+        height = parseInt(d3.select("#chart").style("height")) - margin.top - margin.bottom;
+    
+        var yScale = d3.scaleBand().range([height, 0]).padding(0.3);
+        var xScale = d3.scaleLinear().range([0, width]);
         var yAxis = d3.axisLeft(yScale);
-        var container = d3.select("#" + domEle);
+        var xAxis = d3.axisBottom(xScale);
+        var colorScale = d3.scaleOrdinal(colors);
 
-        container.selectAll('svg').remove();
+       d3.select("#chart").html('');
 
-        //
-        var svg = container.append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + 10 + margin.bottom + 10 + 30)
+        var svg = d3.select("#chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
           .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        var g = svg.append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+              return "<div><span>Attribute:</span> <span style='color:white'>" + d.label + "</span></div>" +
+                    "<div><span>Value:</span> <span style='color:white'>" + d.value + "</span></div>";
+            })
 
-        if (data.length === 0) {
-          return; // if there's no data to display don't display anything!
-        }
-        xScale.domain(data.map(function(d) { return d.label; }));
-        yScale.domain([0, d3.max(data, function(d) { return d.value; })]);
+        svg.call(tip); 
 
-        g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale))
+        yScale.domain(data.map(function(d) { return d["label"]; }));
+        xScale.domain([0, d3.max(data, function(d) { return d["value"]; })]);
+        colorScale.domain(data.map(function(d) { return d["label"]; }));
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
             .selectAll(".tick text")
-            .call(wrap, xScale.bandwidth());
+              .call(wrap, yScale.bandwidth());
 
-        g.append("g")
-            .attr("class", "axis axis--y")
-            .call(d3.axisLeft(yScale))
-          .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", "0.71em")
-            .attr("text-anchor", "end")
-            .text("Attribute Score");
+        d3.selectAll('#chart .y line').remove()
 
-        g.selectAll(".bar")
-          .data(data)
+        svg.append("g")
+            .attr("class", "x axis")
+            .call(xAxis)
+            .attr("transform", "translate(0," + height + ")");
+
+        svg.selectAll(".bar")
+            .data(data)
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return xScale(d.label); })
-            .attr("y", function(d) { return yScale(d.value); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return height - yScale(d.value); });
+            .attr("width", function(d) { return xScale(d["value"]); })
+            .attr("y", function(d) { return yScale(d["label"]); })
+            .attr("height", yScale.bandwidth())
+            .attr("fill", function (d){ return colorScale(d["label"])})
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
       }
     };
 
