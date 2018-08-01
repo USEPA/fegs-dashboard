@@ -4089,11 +4089,13 @@
         var percentageSum = 0;
         var j, inputs, input;
         inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
-        for (j = 0; j < inputs.length; j++) {
-          percentageSum += +inputs[j].value;
-        }
-        if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
-          completeCount--;
+		    if (inputs.length) {
+          for (j = 0; j < inputs.length; j++) {
+            percentageSum += +inputs[j].value;
+          }
+          if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
+            completeCount--;
+          }
         }
       }
       document.getElementById('beneficiaries-progress').innerHTML = completeCount + " of " + stakeholderCount + " stakeholders completed";
