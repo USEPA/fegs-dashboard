@@ -1119,6 +1119,7 @@
           <table id="table-attributes">
             <colgroup>
               <col class="row-labels" span="2" />
+              <col class="row-labels" span="1" />
               <col class="definition" span="1" />
               <col class="agricultural" span="7" />
               <col class="commercial" span="8" />
@@ -1133,6 +1134,7 @@
             <thead>
               <tr class="column-name-labels">
                 <th colspan="2" class="row-label-header"></th>
+                <th colspan="1" class="row-label-header"></th>
                 <th colspan="1" rowspan="3" class="definition">Definition</th>
                 <th colspan="7">Agricultural</th>
                 <th colspan="8">Commercial/ Industrial</th>
@@ -1145,7 +1147,8 @@
                 <th colspan="2">Non-Use</th>
               </tr>
               <tr class="column-names">
-                <th colspan="2"></th>
+                <th colspan="3"><a id="table-attributes-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-attributes'); return false;">Show definitions</a></th>
+                <th aria-hidden="true"></th>
                 <th aria-hidden="true"></th>
                 <th aria-hidden="true"></th>
                 <th>Irrigators</th>
@@ -1188,10 +1191,8 @@
               </tr>
               <tr class>
                 <th class="row-tier-1" aria-hidden="true"></th>
-                <th colspan="2" class="row-name">
-                  Beneficiary Score <br />
-                  <a id="table-attributes-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-attributes'); return false;">Show definitions</a>
-                </th>
+                <th colspan="3" class="row-name">Beneficiary Score</th>
+                <th aria-hidden="true" colspan="1"></th>
                 <th aria-hidden="true" colspan="1"></th>
                 <td></td>
                 <td></td>
@@ -1234,8 +1235,9 @@
             </thead>
             <tbody>
               <tr class="dark">
-                <th rowspan="3" class="row-tier-1">Water</th>
+                <th rowspan="3" class="row-tier-1" colspan="2">Water</th>
                 <th class="row-name">Water quality</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1278,6 +1280,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Water quantity</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1320,6 +1323,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Water movement</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1360,8 +1364,9 @@
                 <td></td>
               </tr>
               <tr>
-                <th rowspan="3" class="row-tier-1">Land</th>
+                <th rowspan="3" class="row-tier-1" colspan="2">Land</th>
                 <th class="row-name">Land quantity</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1404,6 +1409,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Land quality</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1446,6 +1452,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Land availability</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1486,8 +1493,9 @@
                 <td></td>
               </tr>
               <tr class="dark">
-                <th rowspan="5" class="row-tier-1">Atmosphere</th>
+                <th rowspan="5" class="row-tier-1" colspan="2">Atmosphere</th>
                 <th class="row-name">Wind strength / speed</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1530,6 +1538,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Wind predictability / consistency</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1572,6 +1581,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Air quality</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1614,6 +1624,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Weather predictability</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1656,6 +1667,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Frequency of extreme weather events</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1696,8 +1708,9 @@
                 <td></td>
               </tr>
               <tr>
-                <th rowspan="8" class="row-tier-1">Natural materials</th>
+                <th rowspan="8" class="row-tier-1" colspan="2">Natural materials</th>
                 <th class="row-name">Soil availability</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1740,6 +1753,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Soil quality</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1782,6 +1796,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Substrate quantity</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1824,6 +1839,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Substrate quality</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1866,6 +1882,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Fuel quantity</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1908,6 +1925,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Availability of fiber materials for use or subsistence</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1950,6 +1968,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Availability of minerals / chemicals</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -1992,6 +2011,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Availability of other natural materials for artistic use or consumption (e.g. shells, clay, acorns, honey)</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2032,8 +2052,9 @@
                 <td></td>
               </tr>
               <tr class="dark">
-                <th rowspan="9" class="row-tier-1">Flora / fungi</th>
+                <th rowspan="9" class="row-tier-1" colspan="2">Flora / fungi</th>
                 <th class="row-name">Flora community</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2076,6 +2097,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Edible flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2118,6 +2140,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Medicinal flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2160,6 +2183,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Structural flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2202,6 +2226,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Charismatic flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2244,6 +2269,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Aesthetic flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2286,6 +2312,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Rare flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2328,6 +2355,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Commercially important flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2370,6 +2398,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Spiritually / culturally important flora / fungi</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2410,8 +2439,9 @@
                 <td></td>
               </tr>
               <tr>
-                <th rowspan="11" class="row-tier-1">Fauna</th>
+                <th rowspan="11" class="row-tier-1" colspan="2">Fauna</th>
                 <th class="row-name">Fauna community</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2454,6 +2484,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Edible fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2496,6 +2527,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Medicinal fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2538,6 +2570,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Keystone fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2580,6 +2613,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Charismatic fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2622,6 +2656,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Aesthetic fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2664,6 +2699,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Rare fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2706,6 +2742,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Pollinating fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2748,6 +2785,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Pest / predator / depredator fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2790,6 +2828,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Commercially important fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2832,6 +2871,7 @@
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Spiritually / culturally important fauna</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2872,7 +2912,8 @@
                 <td></td>
               </tr>
               <tr class="dark">
-                <th rowspan="4" class="row-tier-1">Environmental aesthetics</th>
+                <th rowspan="4" class="row-tier-1">Composite</th>
+                <th rowspan="4" class="row-tier-2">Environmental aesthetics</th>
                 <th class="row-name">Sounds</th>
                 <th class="definition"></th>
                 <td></td>
@@ -2916,6 +2957,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Scents</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -2958,6 +3000,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Scents</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -3000,6 +3043,7 @@
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Phenomena (e.g. sunsets, northern lights, etc)</th>
+                <th aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
@@ -5263,7 +5307,7 @@
           this.showColumn(columnIndex);
           columnIndices.push(columnIndex);
         }
-        for (var i = 2; i < this.table.rows[1].cells.length; i++) {
+        for (var i = 3; i < this.table.rows[1].cells.length; i++) {
           if (columnIndices.indexOf(i) === -1) {
             this.clearColumn(i);
             this.hideColumn(i);
@@ -5302,7 +5346,7 @@
     /** instantiate a Table() for #table-attributes; perform specialized initializations */
     var tableAttributesCreator = function(tableId) {
       var rowOffset = 3; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
-      var columnOffset = 3; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
+      var columnOffset = 4; // introduce fragility by duplicating initializion via literal or break the callback's encapsulation?
       var rowNames = fegsScopingData.fegsAttributes;
       var columnNames = fegsScopingData.fegsBeneficiaries;
       var table = new Table(tableId, rowNames, columnNames, rowOffset, columnOffset);
