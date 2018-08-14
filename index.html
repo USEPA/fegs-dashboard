@@ -4244,6 +4244,8 @@
             .on('mouseout', tip.hide);
 
           path.transition().duration(500).attrTween("d", arcTween); // Smooth transition with arcTween
+          updateBeneficiaryView();
+          updateAttributeView();
         }
 
         if (domEle === "criteria-pie") {
@@ -4706,6 +4708,8 @@
         if (stakeholderCount === 0) {
           document.getElementById('stakeholder-table-container').style.display = "none";
         }
+        updateBeneficiaryView();
+        updateAttributeView();
       });
 
       editButton.addEventListener("click", function() {
@@ -4757,6 +4761,8 @@
           header: 'stakeholder',
           colors: criteriaColors
         });
+        updateBeneficiaryView();
+        updateAttributeView();
       });
       var newCell = newRow.insertCell(); // Insert a cell in the row at index 0
       var newText = document.createTextNode(rowData[0]); // Append a text node to the cell
@@ -6191,6 +6197,41 @@
       element.click();
 
       document.body.removeChild(element);
+    }
+
+    function updateBeneficiaryView() {
+      initStackedBarChart.draw({
+        data: formatBeneficiaryData(),
+        key: Object.keys(fegsScopingData.stakeholders),
+        legend: Object.keys(fegsScopingData.stakeholders),
+        element: 'beneficiary-barchart',
+        header: 'beneficiary',
+        colors: d3.schemeSet3
+      });
+
+      initPieChart.draw({
+        data: getBeneficiaryScoresForPieChart(),
+        colors: beneficiaryColors,
+        element: 'beneficiary-pie'
+      });
+    }
+
+    function updateAttributeView() {
+      fegsScopingView.displayBeneficiaryScores(); // table-attributes
+      fegsScopingView.restoreAttributes(); // table-attributes
+      tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); // table-attributes
+
+      initPieChart.draw({
+        data: getAttributeScoresForPieChart(), // attribute-pie
+        colors: d3.schemeSet3,
+        element: 'attribute-pie'
+      });
+
+      initBarChart.draw({
+        data: getAttributeScoresForPieChart(),
+        element: 'attribute-barchart', // attribute-barchart
+        colors: d3.schemeSet3
+      });
     }
 
     ////////// PAGE-PROCESS //////////////////////////////////////
