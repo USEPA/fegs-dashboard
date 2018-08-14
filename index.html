@@ -6058,6 +6058,9 @@
 
       this.showStakeholderScores = function() {
         console.log("showStakeholderScores")
+        for (var i = document.getElementById('table-stakeholders').rows.length - 1; i > 0; i--) {
+          document.getElementById('table-stakeholders').deleteRow(i);	
+        }
         for (var stakeholder in fegsScopingData.stakeholders) {
           addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]); // table name and array of values to insert
         }
