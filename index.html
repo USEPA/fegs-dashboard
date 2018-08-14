@@ -3625,6 +3625,20 @@
       };
 
       /**
+       * update a stakeholder and its criteria-scores
+       * @param {string} stakeholderName - name of stakeholder to add
+       * @param {Object <string>.<string>} stakeholderScores -
+       *  criteria are keys and respective scores for this
+       *  stakeholder are values
+       */
+       this.updateStakeholder = function(stakeholderName, stakeholderScores) {
+        this.stakeholders[stakeholderName] = {
+          scores: stakeholderScores,
+          beneficiaries: this.stakeholders[stakeholderName].beneficiaries
+        };
+      };
+
+      /**
        * rename oldStakeholderName to newStakeholderName
        * @param {string} oldStakeholderName - current name of the stakeholder
        * @param {string} newStakeholderName - new name of the stakeholder
@@ -4731,7 +4745,7 @@
         if (cells[1].innerText !== originalStakeholderName) {
           fegsScopingData.renameStakeholder(originalStakeholderName, cells[1].innerText);
         } else {
-          fegsScopingData.addStakeholder(originalStakeholderName, scores);
+          fegsScopingData.updateStakeholder(originalStakeholderName, scores);
         }
         fegsScopingData.stakeholders[cells[1].innerText].scores = scores;
         updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
