@@ -6286,10 +6286,11 @@
       var pageZoomChange = function(event) {
         webFrame.setZoomFactor(+event.target.value);
       };
-
-      if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === ".fegs") {
-        fegsScopingView.restoreView(remote.process.argv[1]);
-        fegsScopingView.indicateSaved();
+      if (remote.process.argv.length > 1) {
+        if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === ".fegs") {
+          fegsScopingView.restoreView(remote.process.argv[1]);
+          fegsScopingView.indicateSaved();
+        }
       }
 
       // Listen for save as from main process
