@@ -599,19 +599,19 @@
       <button onclick="fegsScopingController.updateName(document.getElementById('input-name').value)" id="save-name" hidden>Save this name</button>
       <nav>
         <ul>
-          <li>
+          <li id="nav-weighting">
             <a href="#section-weighting">Weights</a>
             <div id="weighting-progress" class="progress-menu"></div>
           </li>
-          <li>
+          <li id="nav-stakeholders">
             <a href="#section-stakeholders">Stakeholders</a>
             <div id="stakeholder-progress" class="progress-menu"></div>
           </li>
-          <li>
+          <li id="nav-beneficiaries">
             <a href="#section-beneficiaries">Beneficiaries</a>
             <div id="beneficiaries-progress" class="progress-menu"></div>
           </li>
-          <li>
+          <li id="nav-attributes">
             <a href="#section-attributes">Attributes</a>
             <div id="attributes-progress" class="progress-menu"></div>
           </li>
@@ -690,8 +690,8 @@
             <div id="criteria-pie" class="criteria-pie" hidden></div>
           </div>
         </div>
-        <hr />
         <div class="page" id="section-stakeholders">
+          <hr />
           <h2>Stakeholders</h2>
           <p>Identify your stakeholder-groups.</p>
           <div id="stakeholder-prioritization">
@@ -889,8 +889,8 @@
           </div>
           </div>
         </div>
-        <hr />
         <div class="page" id="section-beneficiaries">
+          <hr />
           <h2>Beneficiaries</h2>
 
           <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder-group by percentage.</label>
@@ -1112,8 +1112,8 @@
           </div>
         </div>
         </div>
-        <hr />
         <div class="page" id="section-attributes">
+          <hr />
           <h2>Attributes</h2>
           <h3 id="table-attributes-header">Score Attributes for each Beneficiary</h3>
 
@@ -4213,7 +4213,6 @@
           .attr('class', 'd3-tip')
           .offset([50, 0])
           .html(function(d) { 
-            console.log("change tip")
             return d.data.label + ": " + d.data.value;
           });
 
@@ -4252,18 +4251,34 @@
           d3.selectAll(".scoring input")
           .on("input", function() {
             clearNotices();
-            var value = parseInt(this.value, 10);
-            var isValid = validateInput(value, 1, 100);
-            if (isValid) {
-              this.classList.remove('invalid-text-input');
-              fegsScopingData.scores[this.id.replace('-score', '')] = value;
-              data = getScores();
-              change();
-              stakeholderBarchart();
-            } else {
-              this.classList.add('invalid-text-input');
-              accessiblyNotify('Enter a number between 1 and 100');
+            var inputs = document.querySelectorAll(".scoring input");
+            var allValid = true;
+            for (var i = 0; i < inputs.length; i++) {
+              var selected = false;
+              if (this === inputs[i]) {
+                selected = true;
+              }
+              var value = inputs[i].value;
+              var isValid = validateInput(value, 1, 100);
+              if (isValid) {
+                this.classList.remove('invalid-text-input');
+                fegsScopingData.scores[this.id.replace('-score', '')] = value;
+                data = getScores();
+                change();
+                stakeholderBarchart();
+              } else {
+                allValid = false;
+                if (selected) {
+                  this.classList.add('invalid-text-input');
+                  accessiblyNotify('Enter a number between 1 and 100');
+                }
+              }
             }
+
+            if (allValid && document.getElementById("section-stakeholders").hasAttribute('hidden')) {
+              showSection("stakeholders");
+            }
+
             updateWeightingProgress();
             fegsScopingView.indicateUnsaved();
           });
@@ -4454,6 +4469,9 @@
     function addStakeholderScores() {
       console.log('addStakeholderScores')
       var stakeholdersToAdd = scrapeAddStakeholders();
+      if (Object.keys(stakeholdersToAdd).length < 1) {
+        return;
+      }
       for (var stakeholder in stakeholdersToAdd) {
         fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
         addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]); // table name and array of values to insert
@@ -4468,6 +4486,8 @@
       document.getElementById('stakeholder-table-container').style.display = "block";
       fegsScopingView.indicateUnsaved();
       document.getElementById("stakeholder-table-container").scrollIntoView();
+
+      showSection("beneficiaries");
     }
 
     function clearStakeholderScores() {
@@ -4498,7 +4518,7 @@
           if (isValid) {
             stakeholdersToAdd[stakeholder][criterion] = value;
           } else {
-            accessiblyNotify("Invalid inputs. Please review your stakeholder weights.")
+            accessiblyNotify("Invalid inputs. Please review your stakeholder weights.");
             return {};
           }
           // } else if (criterion === "magnitude") {
@@ -4513,7 +4533,7 @@
 
     function validateStakeholderScore(that) {
       clearNotices();
-      var value = parseInt(that.value, 10);
+      var value = that.value;
       var isValid = validateInput(value, 0, 100);
       if (!isValid) {
         accessiblyNotify("Please enter a value between 0 and 100")
@@ -5155,11 +5175,13 @@
           beneficiaryPiechart();
           updateAttributeProgress();
           fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
+          tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
+          fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
+          showSection("attributes");
         }
 
-        updateBeneficiaryProgress();
-        tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
-        fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
+        //updateBeneficiaryProgress();
+        
       };
 
       for (i = tBody.rows[0].cells.length - 1; i > 2; i--) { // remove all data columns
@@ -6209,6 +6231,36 @@
       });
     }
 
+    function toggleSection(Id) {
+      var section = document.getElementById("section-" + Id);
+      var nav = document.getElementById("nav-" + Id);
+      if (section.hasAttribute('hidden')) {
+        section.removeAttribute('hidden');
+        nav.removeAttribute('hidden');
+      } else {
+        section.setAttribute('hidden', true);
+        nav.setAttribute('hidden', true);
+      }
+    }
+
+    function showSection(Id) {
+      var section = document.getElementById("section-" + Id);
+      var nav = document.getElementById("nav-" + Id);
+      if (section.hasAttribute('hidden')) {
+        section.removeAttribute('hidden');
+        nav.removeAttribute('hidden');
+      }
+    }
+
+    function hideSection(Id) {
+      var section = document.getElementById("section-" + Id);
+      var nav = document.getElementById("nav-" + Id);
+      if (!section.hasAttribute('hidden')) {
+        section.setAttribute('hidden', true);
+        nav.setAttribute('hidden', true);
+      }
+    }
+
     ////////// PAGE-PROCESS //////////////////////////////////////
     var fegsScopingData = new FEGSScopingData();
     var fegsScopingView = new FEGSScopingView();
@@ -6223,6 +6275,11 @@
         fegsScopingController.importData();
       }
     });
+
+    hideSection("stakeholders");
+    hideSection("beneficiaries");
+    hideSection("attributes");
+
     updateStakeholderProgress();
     updateWeightingProgress();
     updateBeneficiaryProgress();
