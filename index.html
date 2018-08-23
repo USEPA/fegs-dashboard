@@ -3877,6 +3877,26 @@
         return numerator / denominator;
       };
 
+      /**
+       * return the sum of beneficiary-scores for all stakeholders
+       * @param {string} beneficiary - beneficiary whose
+       *  scores are summed
+       */
+       this.beneficiaryScoreForStakeholder = function(beneficiary, stakeholder) {
+        var numerator = 0;
+        var denominator = 0;
+        if (Object.keys(this.stakeholders[stakeholder].beneficiaries).length) {
+          var percentageOfStakeholder = parseFloat(this.stakeholders[stakeholder].beneficiaries[beneficiary].percentageOfStakeholder);
+          if (isNaN(percentageOfStakeholder)) {
+            console.log("percent of stakeholder is 0")
+            return 0;
+          }
+          numerator += percentageOfStakeholder * this.stakeholderPrioritizationScoreSum(stakeholder);
+        }
+        denominator += this.sumOfStakeholderPrioritizationScores();
+        return numerator / denominator;
+      };
+
       this.calculateAttributeScores = function() {
         var attributeScores = {};
         for (var i = 0; i < this.fegsAttributes.length; i++) {
@@ -3884,15 +3904,31 @@
           for (var beneficiary in this.attributes) {
             var percentage = parseInt(this.attributes[beneficiary][this.fegsAttributes[i]].percentageOfBeneficiary);
             if (Number.isInteger(percentage) && percentage !== 0) {
-              console.log("Beneficiary: " + beneficiary);
-              console.log("Percentage: " + percentage);
+              //console.log("Beneficiary: " + beneficiary);
+              //console.log("Percentage: " + percentage);
               sum += percentage * this.beneficiaryScore(beneficiary);
             }
           }
           if (sum !== 0) {
-            console.log("Attribute: " + this.fegsAttributes[i]);
-            console.log("Sum: " + sum);
-            attributeScores[this.fegsAttributes[i]] = sum;
+            //console.log("Attribute: " + this.fegsAttributes[i]);
+            //console.log("Sum: " + sum);
+            attributeScores[this.fegsAttributes[i]] = sum / 100;
+          }
+        }
+        return attributeScores;
+      };
+
+      this.calculateAttributeScoresTier1 = function(attribute) {
+        var attributeScores = {};
+        attributeScores.attribute = attribute;
+        var sum = 0;
+        for (var beneficiary in this.attributes) {
+          if (!attributeScores.hasOwnProperty(fegsScopingData.fegsBeneficiariesTier1[beneficiary])) {
+            attributeScores[fegsScopingData.fegsBeneficiariesTier1[beneficiary]] = 0;
+          }
+          var percentage = parseInt(this.attributes[beneficiary][attribute].percentageOfBeneficiary);
+          if (Number.isInteger(percentage) && percentage !== 0) {
+            attributeScores[fegsScopingData.fegsBeneficiariesTier1[beneficiary]] += percentage * this.beneficiaryScore(beneficiary) / 100;
           }
         }
         return attributeScores;
@@ -3949,10 +3985,33 @@
        *  scores are summed
        */
       this.stakeholderPrioritizationScores = function(stakeholder) {
+        var scores = {};
+        var overallScore = this.calculateOverallScore(); // sum of relative weights
+        for (var i = 0; i < fegsScopingData.criteria.length; i++) {
+          var criterion = fegsScopingData.criteria[i];
+          scores[criterion] = fegsScopingData.stakeholders[stakeholder].scores[criterion] * fegsScopingData.scores[criterion] / this.calculateOverallScore();
+        }
+        return scores;
+      };
+
+      this.stakeholderPrioritizationScoreSum = function(stakeholder) {
         var score = 0;
         var overallScore = this.calculateOverallScore(); // sum of relative weights
+        for (var i = 0; i < fegsScopingData.criteria.length; i++) {
+          var criterion = fegsScopingData.criteria[i];
+          score += fegsScopingData.stakeholders[stakeholder].scores[criterion] * fegsScopingData.scores[criterion] / this.calculateOverallScore();
+        }
         return score;
       };
+
+      this.sumOfStakeholderPrioritizationScores = function() {
+        var sum = 0;
+        for (var i = 0; i < Object.keys(fegsScopingData.stakeholders).length; i++) {
+          var stakeholder = Object.keys(fegsScopingData.stakeholders)[i];
+          sum += this.stakeholderPrioritizationScoreSum(stakeholder);
+        }
+        return sum;
+      }      
 
       /**
        * return the overall score (sum of relative weights)
@@ -4000,6 +4059,7 @@
       this.attributes = {};
       this.fegsAttributes = ["Water quality", "Water quantity", "Water movement", "Air quality", "Wind strength / speed", "Precipitation", "Sunlight", "Temperature", "Soil quantity", "Soil quality", "Substrate quantity", "Substrate quality", "Fuel quality", "Fuel quantity", "Fiber material quantity", "Fiber material quality", "Mineral / chemical quantity", "Mineral / chemical quality", "Presence of other natural materials for artistic use or consumption (e.g. shells, acorns, honey)", "Flora community", "Edible flora", "Medicinal flora", "Keystone flora", "Charismatic flora", "Rare flora", "Commercially important flora", "Spiritually / culturally important flora", "Fungal community", "Edible fungi", "Medicinal fungi", "Rare fungi", "Commercially important fungi", "Spiritually/culturally important fungi", "Fauna community", "Edible fauna", "Medicinal fauna", "Keystone fauna", "Charismatic fauna", "Rare fauna", "Pollinating fauna", "Pest predator / depredator fauna", "Commercially important fauna", "Spiritually / culturally important fauna", "Risk of flooding", "Risk of fire", "Risk of extreme weather events", "Risk of earthquakes", "Sounds", "Scents", "Viewscapes", "Phenomena (e.g. sunsets, northern lights, etc)", "Ecological condition", "Acreage"];
       this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber / Fiber / Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource dependent businesses', 'Pharmaceutical / Food supplement suppliers', 'Fur / Hide trappers / hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military / Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber / Fiber / Fur / Hide subsisters', 'Building material subsisters', 'Experiencers / viewers', 'Food pickers / gatherers', 'Hunters', 'Anglers', 'Waders / Swimmers / Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
+      this.fegsBeneficiariesTier1 = {'Irrigators' : "Agricultural", 'CAFO Operators' : "Agricultural", 'Livestock grazers' : "Agricultural", 'Agricultural processors' : "Agricultural", 'Aquaculturalists' : "Agricultural", 'Farmers' : "Agricultural", 'Foresters' : "Agricultural", 'Food extractors' : "Commercial / Industrial", 'Timber / Fiber / Ornamental extractors' : "Commercial / Industrial", 'Industrial processors' : "Commercial / Industrial", 'Industrial dischargers' : "Commercial / Industrial", 'Energy generators' : "Commercial / Industrial", 'Resource dependent businesses' : "Commercial / Industrial", 'Pharmaceutical / Food supplement suppliers' : "Commercial / Industrial", 'Fur / Hide trappers / hunters' : "Commercial / Industrial", 'Municipal drinking water plant operators' : "Governmental / Municipal / Residential", 'Wastewater treatment plant operators' : "Governmental / Municipal / Residential", 'Residential property owners' : "Governmental / Municipal / Residential", 'Military / Coast Guard' : "Governmental / Municipal / Residential", 'Transporters of goods' : "Commercial / Military Transportation", 'Transporters of people' : "Commercial / Military Transportation", 'Water subsisters' : "Subsistence", 'Food subsisters' : "Subsistence", 'Timber / Fiber / Fur / Hide subsisters' : "Subsistence", 'Building material subsisters' : "Subsistence", 'Experiencers / viewers' : "Recreational", 'Food pickers / gatherers' : "Recreational", 'Hunters' : "Recreational", 'Anglers' : "Recreational", 'Waders / Swimmers / Divers' : "Recreational", 'Boaters' : "Recreational", 'Spiritual and ceremonial participants' : "Inspirational", 'Artists' : "Inspirational", 'Students and educators' : "Learning", 'Researchers' : "Learning", 'People who care (existence)' : "Non-Use", 'People who care (option, bequest)' : "Non-Use"};
     }; //////// END PROTOTYPE FEGScopingData ////////
 
     /** Prototype controller of communication between data and view */
@@ -4652,7 +4712,7 @@
         var beneficiaryName = fegsScopingData.fegsBeneficiaries[i];
         for (var stakeholder in fegsScopingData.stakeholders) {
           if(fegsScopingData.stakeholders[stakeholder].beneficiaries.hasOwnProperty(beneficiaryName) && fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiaryName].percentageOfStakeholder != '') {
-            beneficiary[stakeholder] = fegsScopingData.beneficiaryScore(beneficiaryName);
+            beneficiary[stakeholder] = fegsScopingData.beneficiaryScoreForStakeholder(beneficiaryName, stakeholder);
           }
         }
         if (Object.keys(beneficiary).length !== 0) {
@@ -4662,6 +4722,14 @@
       }
       return data;
     };
+
+    var formatAttributeData = function() {
+      var data = [];
+      for (var attribute in fegsScopingData.calculateAttributeScores()) {
+        data.push(fegsScopingData.calculateAttributeScoresTier1(attribute));
+      }
+      return data;
+    }
 
     /**
      * Gets the checked value of a specified name of ratio inputs.
@@ -4808,9 +4876,9 @@
         var colors = config.colors;
         var margin = {
           top: 20,
-          right: 160,
-          bottom: 35,
-          left: 30
+          right: 275,
+          bottom: 200,
+          left: 50
         };
 
         var divWidth = document.getElementById('beneficiary-charts').offsetWidth;
@@ -4899,7 +4967,10 @@
           .attr("transform", "translate(0," + (height + 5) + ")")
           .call(xAxis)
           .selectAll(".tick text")
-          .call(wrap, xScale.bandwidth());
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)");
 
         svg.append("g")
           .attr("class", "axis axis--y")
@@ -6202,15 +6273,30 @@
         legend: Object.keys(fegsScopingData.stakeholders),
         element: 'beneficiary-barchart',
         header: 'beneficiary',
-        colors: d3.schemeSet3
+        colors: ["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#d2f53c", "#fabebe", "#008080", "#e6beff", "#aa6e28", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000080", "#808080", "#000000"]
       });
     }
 
+    function attributeBarChartBeneficiaries() {
+      var arr = [];
+      var benes = fegsScopingData.extantBeneficiaries();
+      for (var i = 0; i < benes.length; i++) {
+          if (arr.indexOf(fegsScopingData.fegsBeneficiariesTier1[benes[i]]) < 0) {
+            arr.push(fegsScopingData.fegsBeneficiariesTier1[benes[i]]);
+          }
+      }
+
+      return arr;
+    }
+
     function attributeBarchart() {
-      initBarChart.draw({
-        data: getAttributeScoresForPieChart(),
+      initStackedBarChart.draw({
+        data: formatAttributeData(),
+        key: attributeBarChartBeneficiaries(),
+        legend: attributeBarChartBeneficiaries(),
         element: 'attribute-barchart', // attribute-barchart
-        colors: d3.schemeSet3
+        header: 'attribute',
+        colors: ["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#d2f53c", "#fabebe", "#008080", "#e6beff", "#aa6e28", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000080", "#808080", "#000000"]
       });
     }
 
@@ -6275,9 +6361,9 @@
       }
     });
 
-    hideSection("stakeholders");
-    hideSection("beneficiaries");
-    hideSection("attributes");
+    //hideSection("stakeholders");
+    //hideSection("beneficiaries");
+    //hideSection("attributes");
 
     updateStakeholderProgress();
     updateWeightingProgress();
