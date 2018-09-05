@@ -3561,10 +3561,7 @@
     }
     document.addEventListener ("keydown", function (zEvent) {
       if (zEvent.ctrlKey && zEvent.key === "+") {
-          console.log("+");
           var element = document.querySelector('#page-zoom');
-          console.log(+element.value)
-          console.log(+element.value + .05)
           element.value = (+element.value + .05 > 2 ? +element.value : +element.value + .05);
           var change = new Event('change');
           var input = new Event('input');
@@ -3575,10 +3572,7 @@
 
     document.addEventListener ("keydown", function (zEvent) {
       if (zEvent.ctrlKey && zEvent.key === "-") {
-        console.log("-");
         var element = document.querySelector('#page-zoom');
-        console.log(+element.value)
-        console.log(+element.value - .05)
         element.value = (+element.value - .05 < .25 ? +element.value : +element.value - .05);
         var change = new Event('change');
         var input = new Event('input');
