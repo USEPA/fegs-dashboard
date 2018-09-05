@@ -587,6 +587,23 @@
       border-radius: 2px;
       pointer-events: none;
     }
+    .toast-close-button {
+      border: none;
+      display: inline-block;
+      outline: 0;
+      /* padding: 8px 16px; */
+      vertical-align: middle;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      background-color: inherit;
+      text-align: center;
+      cursor: pointer;
+      white-space: nowrap;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
   </style>
 </head>
 
@@ -5540,7 +5557,6 @@
 
     /** return HTMLElement of accessible notice of text */
     var accessiblyNotify = function(text) {
-      var notices = document.getElementsByClassName('accessible-notification');
       var notice = document.createElement('div');
       var textNode = document.createTextNode(text);
       clearNotices();
@@ -5550,6 +5566,12 @@
         this.remove()
       });
       notice.className = 'accessible-notification';
+      var span = document.createElement('span');
+      textNode = document.createTextNode('×');
+      span.appendChild(textNode);
+      span.setAttribute('role', 'button');
+      span.className = 'toast-close-button';
+      notice.appendChild(span);
       document.getElementsByTagName('body')[0].appendChild(notice);
       return notice;
     };
