@@ -6009,6 +6009,7 @@
         this.projectNameMenu.innerHTML = name; // update the name shown
         this.projectName = name; // update the name of the view
         this.title = name; // call the name a title, too
+        document.title = name + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
         this.showName.style.display = 'inline-block';
         //this.changeNameButton.style.display = 'inline-block';
         this.inputName.style.display = 'none';
@@ -6043,6 +6044,7 @@
         }
         var criterion;
         fegsScopingData = fegsScopingController.importData(filename);
+        fegsScopingData.filePath = filename;
         fegsScopingController.updateName(fegsScopingData.projectName);
         for (i = 0; i < fegsScopingData.criteria.length; i++) {
           criterion = fegsScopingData.criteria[i];
@@ -6072,13 +6074,13 @@
 
       /** indicate saved status */
       this.indicateSaved = function() {
-        document.title = fegsScopingData.projectName;
+        document.title = fegsScopingData.projectName + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').setAttribute("hidden" , "");
       };
 
       /** indicate unsaved status */
       this.indicateUnsaved = function() {
-        document.title = fegsScopingData.projectName + '*';
+        document.title = fegsScopingData.projectName + '*' + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').removeAttribute("hidden");
       };
 
