@@ -634,7 +634,7 @@
           </li>
         </ul>
       </nav>
-      <span id="zoomer" hidden><label for="page-zoom">Zoom:</label> <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.01" type="range" value="1.0"></span>
+      <span id="zoomer" hidden><label for="page-zoom">Zoom:</label> <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" onchange="pageZoomChange(event)" oninput="indicatePageZoom(event)" step="0.05" type="range" value="1.0"></span>
     </div>
   </section>
 
@@ -3559,6 +3559,33 @@
         }
       }
     }
+    document.addEventListener ("keydown", function (zEvent) {
+      if (zEvent.ctrlKey && zEvent.key === "+") {
+          console.log("+");
+          var element = document.querySelector('#page-zoom');
+          console.log(+element.value)
+          console.log(+element.value + .05)
+          element.value = (+element.value + .05 > 2 ? +element.value : +element.value + .05);
+          var change = new Event('change');
+          var input = new Event('input');
+          element.dispatchEvent(change);
+          element.dispatchEvent(input);
+      }
+    });
+
+    document.addEventListener ("keydown", function (zEvent) {
+      if (zEvent.ctrlKey && zEvent.key === "-") {
+        console.log("-");
+        var element = document.querySelector('#page-zoom');
+        console.log(+element.value)
+        console.log(+element.value - .05)
+        element.value = (+element.value - .05 < .25 ? +element.value : +element.value - .05);
+        var change = new Event('change');
+        var input = new Event('input');
+        element.dispatchEvent(change);
+        element.dispatchEvent(input);
+      }
+    });
     var getDocument = function() {
       var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
       return documentText;
