@@ -4400,7 +4400,7 @@
      * @return {bool} - A bool
      */
     var validateInput = function(value, min, max) {
-      if (!isNaN(value)) {
+      if (!isNaN(value) && value !== '') {
         if (value > max || value < min) {
           return false;
         } else {
