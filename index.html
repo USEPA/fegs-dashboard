@@ -4376,7 +4376,7 @@
             }
 
             if (allValid && document.getElementById("section-stakeholders").hasAttribute('hidden')) {
-              showSection("stakeholders");
+              //showSection("stakeholders");
             }
 
             updateWeightingProgress();
@@ -4587,7 +4587,7 @@
       fegsScopingView.indicateUnsaved();
       document.getElementById("stakeholder-table-container").scrollIntoView();
 
-      showSection("beneficiaries");
+      //showSection("beneficiaries");
     }
 
     function clearStakeholderScores() {
@@ -5288,7 +5288,7 @@
           fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
           tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
           fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
-          showSection("attributes");
+          //showSection("attributes");
         }
 
         //updateBeneficiaryProgress();
@@ -6006,7 +6006,7 @@
         this.projectNameMenu.innerHTML = name; // update the name shown
         this.projectName = name; // update the name of the view
         this.title = name; // call the name a title, too
-        document.title = name + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
+        //document.title = name + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
         this.showName.style.display = 'inline-block';
         //this.changeNameButton.style.display = 'inline-block';
         this.inputName.style.display = 'none';
@@ -6060,8 +6060,8 @@
         fegsScopingView.restoreAttributes();
         tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
 
-        updateStakeholderProgress();
         updateWeightingProgress();
+        updateStakeholderProgress();
         updateBeneficiaryProgress();
         updateAttributeProgress();
 
