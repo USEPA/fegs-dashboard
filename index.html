@@ -4362,7 +4362,7 @@
               var isValid = validateInput(value, 0, 100);
               if (isValid) {
                 this.classList.remove('invalid-text-input');
-                fegsScopingData.scores[this.id.replace('-score', '')] = value;
+                fegsScopingData.scores[inputs[i].id.replace('-score', '')] = value;
                 data = getScores();
                 change();
                 stakeholderBarchart();
