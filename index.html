@@ -6070,15 +6070,20 @@
       };
 
       /** indicate saved status */
-      this.indicateSaved = function() {
+      this.indicateSaved = function(filename) {
+        filename = (typeof filename !== 'undefined') ?  filename : null;
         document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled' ) + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').setAttribute("hidden" , "");
+        if (filename !== null) {
+          ipcRenderer.send('has-been-saved', filename);
+        }
       };
 
       /** indicate unsaved status */
       this.indicateUnsaved = function() {
         document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled' ) + '*' + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').removeAttribute("hidden");
+        ipcRenderer.send('has-been-changed');
       };
 
       /** save view's state: each input stores its own data */
