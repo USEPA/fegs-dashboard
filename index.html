@@ -644,6 +644,7 @@
         <div class="page" id="section-weighting">
           <h2>Weights</h2>
           <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
+          <p>Once you enter the 9 criteria proceed to the Stakeholder page.</p>
           <div id="scoring-inputs" class="flex-container">
             <div>
               <table class="scoring" id="table-scores">
@@ -651,7 +652,7 @@
                   <tr>
                     <th>Color</th>
                     <th>Criterion</th>
-                    <th>Value</th>
+                    <th>Weight</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -709,12 +710,12 @@
         <div class="page" id="section-stakeholders">
           <hr />
           <h2>Stakeholders</h2>
-          <p>Identify your stakeholder-groups.</p>
+          <p>Identify your stakeholder groups. Enter the name of the group and press <strong>Add stakeholder group</strong>.</p>
           <div id="stakeholder-prioritization">
             <div>
               <div class="light-gray">
-                <label class="inline-block">Stakeholder-group name <input class="form-text" type="text" id="stakeholder-group"/></label>
-                <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder-group</button>
+                <label class="inline-block">Stakeholder group name <input class="form-text" type="text" id="stakeholder-group"/></label>
+                <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder group</button>
                 <ul id="stakeholder-list"></ul>
               </div>
             </div>
@@ -722,7 +723,8 @@
             <br />
             <div id="set-stakeholder-values">
               <h3>Score Stakeholders</h3>
-              <p>Score each stakeholder-group for each of the 9 criteria.</p>
+              <p>Score each stakeholder group for each of the 9 criteria. When you have scored them all press <strong>Add stakeholder scores</strong>.</p>
+              <p>Once you have entered your stakeholder data proceed to the Beneficiary page.</p>
               <div>
                 <div class="light-gray">
                   <h4>Magnitude & Probability of impact</h4>
@@ -910,6 +912,8 @@
           <h2>Beneficiaries</h2>
 
           <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder-group by percentage.</label>
+          <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder must have beneficiary percentages which sum to 100.</p>
+          <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
           <select class="form-select" id="select-stakeholder" onchange="selectStakeholderToSlice()">
             <option selected="selected" disabled="disabled">Select a Stakeholder-Group</option>
           </select>
@@ -1131,8 +1135,7 @@
         <div class="page" id="section-attributes">
           <hr />
           <h2>Attributes</h2>
-          <h3 id="table-attributes-header">Score Attributes for each Beneficiary</h3>
-
+          <p>Score Attributes for each Beneficiary. Each beneficary must have attributes which sum to 100.</p>
           <table id="table-attributes">
             <colgroup>
               <col class="row-labels" span="2" />
