@@ -6071,13 +6071,13 @@
 
       /** indicate saved status */
       this.indicateSaved = function() {
-        document.title = fegsScopingData.projectName + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
+        document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled' ) + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').setAttribute("hidden" , "");
       };
 
       /** indicate unsaved status */
       this.indicateUnsaved = function() {
-        document.title = fegsScopingData.projectName + '*' + (fegsScopingData.filePath !== '' ? ' (' + fegsScopingData.filePath + ')' : '' ) + ' - FEGS Scoping Tool'; // Set application title
+        document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled' ) + '*' + ' - FEGS Scoping Tool'; // Set application title
         document.getElementById('unsaved-indicator').removeAttribute("hidden");
       };
 
