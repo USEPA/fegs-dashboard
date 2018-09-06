@@ -643,7 +643,7 @@
       <div id="main-content" class="inner">
         <div class="page" id="section-weighting">
           <h2>Weights</h2>
-          <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion.</p>
+          <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0 and 100.</p>
           <p>Once you enter the 9 criteria proceed to the Stakeholder page.</p>
           <div id="scoring-inputs" class="flex-container">
             <div>
@@ -714,7 +714,7 @@
           <div id="stakeholder-prioritization">
             <div>
               <div class="light-gray">
-                <label class="inline-block">Stakeholder group name <input class="form-text" type="text" id="stakeholder-group"/></label>
+                <label class="inline-block">Stakeholder group name <input class="form-text" type="text" id="stakeholder group"/></label>
                 <button id="add-stakeholder" onclick="addStakeholder();">Add stakeholder group</button>
                 <ul id="stakeholder-list"></ul>
               </div>
@@ -730,14 +730,14 @@
                   <h4>Magnitude & Probability of impact</h4>
                   <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?</p>
                   <p>Please enter a number 0 to 100.</p>
-                  <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
                   <img src="img/probabilitymagnitude.PNG" width="250" alt="Probability and magnitude matrix">
+                  <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
                 </div>
               </div>
               <div>
                 <div class="light-gray">
                   <h4>Level of influence</h4>
-                  <p>Does this stakeholder-group have any formal or informal influence over the decision making process?</p>
+                  <p>Does this stakeholder group have any formal or informal influence over the decision making process?</p>
                   <p>Please enter a number 0 to 100.</p>
                   <ul>
                     <li>100 = This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</li>
@@ -750,7 +750,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Level of interest</h4>
-                  <p>What is this stakeholder-group's level of interest in this decision/action?</p>
+                  <p>What is this stakeholder group's level of interest in this decision/action?</p>
                   <p>Please enter a number 0 to 100.</p>
                   <ul>
                     <li>100 = High.</li>
@@ -764,7 +764,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Urgency & Temporal immediacy</h4>
-                  <p>Does this stakeholder-group want an immediate decision/action on this issue?</p>
+                  <p>Does this stakeholder group want an immediate decision/action on this issue?</p>
                   <ul>
                     <li>100 = Yes, even if other actions/decisions must be postponed.</li>
                     <li>80 = Yes, as long as it does not delay current commitments.</li>
@@ -779,7 +779,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Proximity</h4>
-                  <p>How frequently does this stakeholder-group come into contact with the area subject to this decision?</p>
+                  <p>How frequently does this stakeholder group come into contact with the area subject to this decision?</p>
                   <ul>
                     <li>100 = They are constantly in direct contact with the area.</li>
                     <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</li>
@@ -794,7 +794,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Economic interest</h4>
-                  <p>Does this stakeholder-group have an economic interest in the outcome of this decision?</p>
+                  <p>Does this stakeholder group have an economic interest in the outcome of this decision?</p>
                   <ul>
                     <li>100 = Yes.</li>
                     <li>0 = No.</li>
@@ -805,7 +805,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Rights</h4>
-                  <p>Does this stakeholder-group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services
+                  <p>Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services
                     that will be impacted by the decision?</p>
                   <ul>
                     <li>100 = Yes, all 3.</li>
@@ -819,7 +819,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Fairness</h4>
-                  <p>If this stakeholder-group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
+                  <p>If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
                   <ul>
                     <li>100 = Yes.</li>
                     <li>0 = No.</li>
@@ -830,7 +830,7 @@
               <div>
                 <div class="light-gray">
                   <h4>Underrepresented & Underserved representation</h4>
-                  <p>Does this stakeholder-group represent underserved or underrepresented groups?</p>
+                  <p>Does this stakeholder group represent underserved or underrepresented groups?</p>
                   <ul>
                     <li>100 = Yes.</li>
                     <li>0 = No.</li>
@@ -847,7 +847,7 @@
               <thead>
                 <tr>
                   <th></th>
-                  <th>Stakeholder-group</th>
+                  <th>stakeholder group</th>
                   <th>Magnitude & Probability of impact</th>
                   <th>Level of influence</th>
                   <th>Level of interest</th>
@@ -911,11 +911,11 @@
           <hr />
           <h2>Beneficiaries</h2>
 
-          <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder-group by percentage.</label>
+          <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder group by percentage.</label>
           <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder must have beneficiary percentages which sum to 100.</p>
           <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
           <select class="form-select" id="select-stakeholder" onchange="selectStakeholderToSlice()">
-            <option selected="selected" disabled="disabled">Select a Stakeholder-Group</option>
+            <option selected="selected" disabled="disabled">Select a Stakeholder Group</option>
           </select>
 
           <table id="table-beneficiaries">
