@@ -659,47 +659,47 @@
                   <tr>
                     <th data-th="Color"><span class="legend magnitude"></span></th>
                     <th data-th="Label"><label for="magnitude-score">Magnitude & Probability of Impact</label></th>
-                    <td data-th="Value"><input id="magnitude-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="magnitude-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend influence"></span></th>
                     <th data-th="Label"><label for="influence-score">Level of Influence</label></th>
-                    <td data-th="Value"><input id="influence-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="influence-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend interest"></span></th>
                     <th data-th="Label"><label for="interest-score">Level of Interest</label></th>
-                    <td data-th="Value"><input id="interest-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend urgency"></span></th>
                     <th data-th="Label"><label for="urgency-score">Urgency & Temporal Immediacy</label></th>
-                    <td data-th="Value"><input id="urgency-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="urgency-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend proximity"></span></th>
                     <th data-th="Label"><label for="proximity-score">Proximity</label></th>
-                    <td data-th="Value"><input id="proximity-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="proximity-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend economic-interest"></span></th>
                     <th data-th="Label"><label for="economic-interest-score">Economic Interest</label></th>
-                    <td data-th="Value"><input id="economic-interest-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="economic-interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend rights"></span></th>
                     <th data-th="Label"><label for="rights-score">Rights</label></th>
-                    <td data-th="Value"><input id="rights-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="rights-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend fairness"></span></th>
                     <th data-th="Label"><label for="fairness-score">Fairness</label></th>
-                    <td data-th="Value"><input id="fairness-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="fairness-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend representation"></span></th>
                     <th data-th="Label"><label for="representation-score">Underrepresented & Underserved Representation</label></th>
-                    <td data-th="Value"><input id="representation-score" type="number" min="1" max="100" /></td>
+                    <td data-th="Value"><input id="representation-score" type="number" min="0" max="100" /></td>
                   </tr>
                 </tbody>
               </table>
@@ -4359,7 +4359,7 @@
                 selected = true;
               }
               var value = inputs[i].value;
-              var isValid = validateInput(value, 1, 100);
+              var isValid = validateInput(value, 0, 100);
               if (isValid) {
                 this.classList.remove('invalid-text-input');
                 fegsScopingData.scores[this.id.replace('-score', '')] = value;
@@ -4370,7 +4370,7 @@
                 allValid = false;
                 if (selected) {
                   this.classList.add('invalid-text-input');
-                  accessiblyNotify('Enter a number between 1 and 100');
+                  accessiblyNotify('Enter a number between 0 and 100');
                 }
               }
             }
