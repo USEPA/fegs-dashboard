@@ -1,6 +1,6 @@
 {
   "name": "FEGS-Scoping-Tool",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
@@ -15,7 +15,6 @@
     "Final Ecosystem Goods and Services"
   ],
   "author": "EPA",
-  "license": "Unlicense",
   "devDependencies": {
     "@types/mocha": "^2.2.48",
     "chai": "^4.1.2",
@@ -31,6 +30,7 @@
   },
   "build": {
     "appId": "FEGS-Scoping-Tool",
+    "productName": "FEGS Scoping Tool",
     "mac": {
       "category": "public.app-category.utilities"
     },
