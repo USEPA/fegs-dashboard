@@ -115,7 +115,15 @@ function createWindow () {
           click: () => {
             const {BrowserWindow} = require('electron')
             let win = new BrowserWindow({width: 800, height: 600, frame: true})
+            win.setMenu(null);
             win.show()
+            // and load the index.html of the app.
+            win.loadURL(url.format({
+              pathname: path.join(__dirname, 'methods.html'),
+              protocol: 'file:',
+              slashes: true,
+              autoHideMenuBar: true
+            }));
           }
         }
       ]
