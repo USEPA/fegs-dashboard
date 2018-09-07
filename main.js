@@ -13,6 +13,9 @@ const {ipcMain} = require('electron');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let saved = true;
+let savedFileName = "New Project";
+let projectName = "New Project";
 
 function createWindow () {
   // Create the browser window.
@@ -35,33 +38,50 @@ function createWindow () {
       label: 'File',
       submenu: [
         {
-          label: 'Open File...',
+          label: 'New Project',
+          click: () => {
+            console.log("newFile")
+            if (!saved) { // Check if unsaved
+              verifyIntention(function () {
+                
+              });
+            } else {
+              mainWindow.webContents.reloadIgnoringCache();
+              savedFileName = "New Project";
+              saved = true;
+            }
+          }
+        },
+        {
+          label: 'Open Project...',
           click: () => {
             openFile();
+
           }
         }, {
-          label: 'Save',
+          label: 'Save Project',
           click: () => {
             saveFile();
           }
         }, {
-          label: 'Save As...',
+          label: 'Save Project As...',
           click: () => {
             saveFileAs();
           }
         }, {
           type: 'separator'
         }, {
-          label: 'About ...',
-          click: () => {
-            console.log('About Clicked');
-          }
-        }, {
           type: 'separator'
         }, {
           label: 'Quit',
           click: () => {
-            app.quit();
+            if (!saved) { // Check if unsaved
+              verifyIntention(function () {
+                quit();
+              });
+            } else {
+              quit();
+            }
           }
         }
       ]
@@ -71,7 +91,17 @@ function createWindow () {
       click: () => {
         mainWindow.webContents.toggleDevTools();
       }
-    }
+    }, {
+      label: 'About FEGS Scoping Tool',
+      click: () => {
+        const {dialog} = require('electron');
+        dialog.showMessageBox(mainWindow, {
+          title: "FEGS Scoping Tool",
+          message: "MESSAGE",
+          detail: "DETAIL"
+        });
+      }
+    },
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
@@ -82,6 +112,7 @@ function createWindow () {
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
+    console.log("closed")
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -89,13 +120,42 @@ function createWindow () {
   });
 }
 
+function newFile() {
+  console.log("newFile")
+  if (!saved) { // Check if unsaved
+    verifyIntention(function () {
+      console.log("newFile reload")
+      mainWindow.webContents.reloadIgnoringCache();
+      savedFileName = "New Project";
+      saved = true;
+    });
+  } else {
+    mainWindow.webContents.reloadIgnoringCache();
+    savedFileName = "New Project";
+    saved = true;
+  }
+}
+
 function openFile() {
   const {dialog} = require('electron');
-  dialog.showOpenDialog(function (fileNames) {
+  dialog.showOpenDialog({filters: [
+    {name: 'Custom File Type', extensions: ['fegs']}
+  ]},
+  function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
     } else {
-      mainWindow.webContents.send('open-file', fileNames);
+      if (!saved) { // Check if unsaved
+        verifyIntention(function () {
+          mainWindow.webContents.send('open-file', fileNames);
+          savedFileName = fileNames;
+          saved = true;
+        });
+      } else {
+        mainWindow.webContents.send('open-file', fileNames);
+        savedFileName = fileNames;
+        saved = true;
+      }
     }
   });
 }
@@ -105,12 +165,23 @@ function saveFile() {
 }
 
 function saveFileAs() {
+  var nameToUse = savedFileName;
+  console.log(projectName)
+  console.log(savedFileName)
+  if (projectName !== 'New Project' && savedFileName === "New Project") {
+    nameToUse = projectName;
+  }
   const {dialog} = require('electron');
-  dialog.showSaveDialog
-  ({filters: [
-    {name: 'Custom File Type', extensions: ['fegs']},
-    {name: 'All Files', extensions: ['*']}
-  ]}, 
+  dialog.showSaveDialog(
+  {
+    defaultPath: nameToUse,
+    filters: [
+      {
+        name: 'Custom File Type', 
+        extensions: ['fegs']
+      }
+    ]
+  }, 
   function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
@@ -125,7 +196,26 @@ function saveFileAs() {
 
 // Saves the file when the renderer returns the data
 ipcMain.on('save-as', function(event, arg) {
-  saveFileAs();
+  saveFileAs(arg);
+});
+
+// Updates the project name when the renderer tells us to.
+ipcMain.on('update-project-name', function(event, arg) {
+  console.log('update-project-name')
+  console.log(arg)
+  projectName = arg;
+});
+
+ipcMain.on('has-been-saved', function(event, arg) {
+  console.log("has-been-saved");
+  console.log(arg);
+  savedFileName = arg;
+  saved = true;
+});
+
+ipcMain.on('has-been-changed', function(event, arg) {
+  console.log("has-been-changed");
+  saved = false;
 });
 
 // This method will be called when Electron has finished
@@ -133,14 +223,45 @@ ipcMain.on('save-as', function(event, arg) {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
+// 
+function verifyIntention(action) {
+  console.log("verifyIntention");
+  const {dialog} = require('electron');
+  dialog.showMessageBox(mainWindow,
+   {
+     type: 'question',
+     buttons: ["Save", "Don't Save", "Cancel"],
+     title: 'FEGS Scoping Tool',
+     message: 'Do you want to save your changes to ' + savedFileName + '?'
+   },
+  function (response) {
+    console.log(response);
+    if (response == 0) {
+      console.log("Save and Quit");
+      mainWindow.webContents.send('save-and-refresh');
+    } else if (response == 2) {
+      console.log("Cancel");
+      return;
+    }
+    action();
+  });
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
+  console.log("window-all-closed");
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  quit();
+});
+
+function quit() {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
-});
+}
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the

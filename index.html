@@ -517,7 +517,6 @@
       justify-content: center;
       transform: translateY(0);
       transition: opacity 1s ease;
-      min-height: 100%;
       opacity: 1;
       width: 100%;
     }
@@ -658,47 +657,47 @@
                 <tbody>
                   <tr>
                     <th data-th="Color"><span class="legend magnitude"></span></th>
-                    <th data-th="Label"><label for="magnitude-score">Magnitude & Probability of Impact</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="magnitude-score">Magnitude & Probability of Impact</label></th>
                     <td data-th="Value"><input id="magnitude-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend influence"></span></th>
-                    <th data-th="Label"><label for="influence-score">Level of Influence</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="influence-score">Level of Influence</label></th>
                     <td data-th="Value"><input id="influence-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend interest"></span></th>
-                    <th data-th="Label"><label for="interest-score">Level of Interest</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="interest-score">Level of Interest</label></th>
                     <td data-th="Value"><input id="interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend urgency"></span></th>
-                    <th data-th="Label"><label for="urgency-score">Urgency & Temporal Immediacy</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="urgency-score">Urgency & Temporal Immediacy</label></th>
                     <td data-th="Value"><input id="urgency-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend proximity"></span></th>
-                    <th data-th="Label"><label for="proximity-score">Proximity</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="proximity-score">Proximity</label></th>
                     <td data-th="Value"><input id="proximity-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend economic-interest"></span></th>
-                    <th data-th="Label"><label for="economic-interest-score">Economic Interest</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="economic-interest-score">Economic Interest</label></th>
                     <td data-th="Value"><input id="economic-interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend rights"></span></th>
-                    <th data-th="Label"><label for="rights-score">Rights</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="rights-score">Rights</label></th>
                     <td data-th="Value"><input id="rights-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend fairness"></span></th>
-                    <th data-th="Label"><label for="fairness-score">Fairness</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="fairness-score">Fairness</label></th>
                     <td data-th="Value"><input id="fairness-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend representation"></span></th>
-                    <th data-th="Label"><label for="representation-score">Underrepresented & Underserved Representation</label></th>
+                    <th data-th="Label"><label onclick="accessiblyNotify('T')" style="cursor: help;" for="representation-score">Underrepresented & Underserved Representation</label></th>
                     <td data-th="Value"><input id="representation-score" type="number" min="0" max="100" /></td>
                   </tr>
                 </tbody>
@@ -1088,7 +1087,9 @@
           </table>
           <div id="beneficiary-charts" hidden>
             <div class="flex-container light-gray">
+              <h2>Beneficiary Composition</h2>
               <div id="beneficiary-barchart"></div>
+              <h2>Beneficiary Percentage</h2>
               <div class="beneficiary-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
             </div>
             <div class="flex-container light-gray">
@@ -1167,8 +1168,8 @@
                 <th colspan="2">Non-Use</th>
               </tr>
               <tr class="column-names">
-                <th colspan="3"><!--<a id="table-attributes-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-attributes'); return false;">Show definitions</a>--></th>
-                <th aria-hidden="true"></th>
+                <th colspan="2">Attribute Tier 1<!--<a id="table-attributes-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-attributes'); return false;">Show definitions</a>--></th>
+                <th>Attribute Tier 2</th>
                 <th aria-hidden="true"></th>
                 <th aria-hidden="true"></th>
                 <th>Irrigators</th>
@@ -4087,6 +4088,7 @@
 
       this.updateName = function(name) {
         this.projectName = name;
+        ipcRenderer.send('update-project-name', this.projectName);
       };
 
       this.appName = 'FEGS Scoping Tool';
@@ -4124,7 +4126,7 @@
           filename = 'data.json'
         }
         this.saveJSON(filename, fegsScopingData);
-        fegsScopingView.indicateSaved();
+        fegsScopingView.indicateSaved(filename);
       };
 
       /** update name of an instance of the app */
@@ -4187,6 +4189,7 @@
           jsonText = jsonToBeSaved;
         }
         fs.writeFileSync(savePath, jsonText);
+        ipcRenderer.send('has-been-saved', savePath);
       };
 
       /** download given text to given filename; works in BROWSER */
@@ -4239,6 +4242,7 @@
         var width = 400;
         var height = 480;
         var radius = Math.min(width, height) / 2;
+        var legendKey = config.legend;
 
         var legendRectSize = 18;
         var legendSpacing = 4;
@@ -4281,17 +4285,18 @@
           .append("svg")
           .attr("width", width)
           .attr("height", height)
-          .append("g")
+        
+        var g = svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // Moving the center point. 1/2 the width and 1/2 the height
 
-        svg.call(tip);
+        g.call(tip);
 
-        var g = svg.selectAll("arc")
+        var arcg = g.selectAll("arc")
           .data(pie)
           .enter().append("g")
           .attr("class", "arc");
 
-        g.append("path")
+        arcg.append("path")
           .attr("d", arc)
           .style("fill", function(d) {
             return color(d.index);
@@ -4301,6 +4306,34 @@
           .each(function(d) {
             this._current = d;
           }); // store the initial angles
+
+        if (legendKey) {
+          console.log("legend")
+          var legend = svg.append("g")
+          .attr("font-family", "sans-serif")
+          .attr("font-size", 10)
+          .selectAll("g")
+          .data(legendKey)
+          .enter().append("g")
+          .attr("transform", function(d, i) {
+            return "translate(30," + i * 19 + ")";
+          });
+
+        legend.append("rect")
+          .attr("x", width - 18)
+          .attr("width", 18)
+          .attr("height", 18)
+          .attr("fill", function(d, i) {return colors[i];});
+
+        legend.append("text")
+          .attr("x", width + 5)
+          .attr("y", 9)
+          .attr("dy", "0.35em")
+          .attr("text-anchor", "start")
+          .text(function(d) {
+              return d;
+          });
+        }
 
         //update
         function change() {
@@ -4316,7 +4349,7 @@
             return d.data.label + ": " + d.data.value;
           });
 
-          svg.call(tip);
+          g.call(tip);
             
           function checkD3Data(chart) {
             for (var prop in chart) {
@@ -4990,9 +5023,20 @@
             return xScale(d.data[header]);
           })
           .attr("y", function(d) {
+            if (isNaN(d[1])) {
+              return yScale(0);
+            }
             return yScale(d[1]);
           })
           .attr("height", function(d) {
+            if (isNaN(d[0])) {
+              //console.log('d0 is nan')
+              return yScale(0) - yScale(0);
+            }
+            if (isNaN(d[1])) {
+              //console.log('d1 is nan')
+              return yScale(0) - yScale(0);
+            }
             return yScale(d[0]) - yScale(d[1]);
           })
           .attr("width", xScale.bandwidth())
@@ -6064,9 +6108,9 @@
         updateStakeholderProgress();
         updateBeneficiaryProgress();
         updateAttributeProgress();
-
+        
         //TODO FIXME LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
-        fegsScopingView.indicateSaved();
+        fegsScopingView.indicateSaved(filename);
       };
 
       /** indicate saved status */
@@ -6121,13 +6165,16 @@
         var navigation;
         var back;
         var forward;
-        if (!document.getElementById(pageId).querySelector('.navigation')) {
+        if (!document.getElementById("sidebar").querySelector('.navigation')) {
           navigation = document.createElement('div');
           navigation.setAttribute('class', 'navigation');
           back = document.createElement('button');
           forward = document.createElement('button');
-          back.innerHTML = 'back';
-          forward.innerHTML = 'forward';
+          back.id = 'back-nav-button'
+          forward.id = 'forward-nav-button';
+          back.innerHTML = 'Back';
+          forward.innerHTML = 'Forward';
+          back.style = 'margin-right: .2em;'
           back.onclick = function() {
             var pages = document.querySelectorAll('.page');
             var pageIndex;
@@ -6137,6 +6184,16 @@
                 currentPageIndex = pageIndex;
                 break;
               }
+            }
+            if (currentPageIndex - 1 === 0) {
+              document.getElementById("back-nav-button").setAttribute("disabled", "");
+            } else {
+              document.getElementById("back-nav-button").removeAttribute("disabled");
+            }
+            if (currentPageIndex - 1 === pages.length - 1) {
+              document.getElementById("forward-nav-button").setAttribute("disabled", "");
+            } else {
+              document.getElementById("forward-nav-button").removeAttribute("disabled");
             }
             if (currentPageIndex > 0) {
               self.focusPage(pages[currentPageIndex - 1].id)
@@ -6155,6 +6212,16 @@
                 break;
               }
             }
+            if (currentPageIndex + 1 === 0) {
+              document.getElementById("back-nav-button").setAttribute("disabled", "");
+            } else {
+              document.getElementById("back-nav-button").removeAttribute("disabled");
+            }
+            if (currentPageIndex + 1 === pages.length - 1) {
+              document.getElementById("forward-nav-button").setAttribute("disabled", "");
+            } else {
+              document.getElementById("forward-nav-button").removeAttribute("disabled");
+            }
             if (currentPageIndex < pages.length - 1) {
               self.focusPage(pages[currentPageIndex + 1].id)
             } else {
@@ -6163,7 +6230,13 @@
           };
           navigation.appendChild(back);
           navigation.appendChild(forward);
-          document.getElementById(pageId).appendChild(navigation);
+          document.getElementById("sidebar").appendChild(navigation);
+        }
+        if (pageId === 'section-weighting') {
+          document.getElementById("back-nav-button").setAttribute("disabled", "");
+        }
+        if (pageId === 'section-attributes') {
+          document.getElementById("forward-nav-button").setAttribute("disabled", "");
         }
       };
 
@@ -6357,7 +6430,8 @@
       initPieChart.draw({
         data: getBeneficiaryScoresForPieChart(),
         colors: beneficiaryColors,
-        element: 'beneficiary-pie'
+        element: 'beneficiary-pie',
+        legend: fegsScopingData.extantBeneficiaries()
       });
     }
 
@@ -6414,9 +6488,7 @@
       }
     });
 
-    //hideSection("stakeholders");
-    //hideSection("beneficiaries");
-    //hideSection("attributes");
+
 
     updateStakeholderProgress();
     updateWeightingProgress();
@@ -6455,7 +6527,7 @@
       if (remote.process.argv.length > 1) {
         if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === ".fegs") {
           fegsScopingView.restoreView(remote.process.argv[1]);
-          fegsScopingView.indicateSaved();
+          fegsScopingView.indicateSaved(remote.process.argv[1]);
         }
       }
 
@@ -6463,25 +6535,25 @@
       ipcRenderer.on('save-as', (event, arg) => {
         fegsScopingData.filePath = arg;
         fegsScopingController.saveJSON(arg, fegsScopingData);
-        fegsScopingView.indicateSaved();
+        fegsScopingView.indicateSaved(arg);
       });
 
       // Listen for save from main process
       ipcRenderer.on('save', (event, arg) => {
         if (fegsScopingData.filePath != '') {
           fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
-          fegsScopingView.indicateSaved();
+          fegsScopingView.indicateSaved(fegsScopingData.filePath);
         } else {
-          ipcRenderer.send('save-as');
+          ipcRenderer.send('save-as', fegsScopingData.projectName);
         }
       });
 
       // Listen for open file from main process
       ipcRenderer.on('open-file', (event, arg) => {
         fegsScopingView.restoreView(arg[0]);
-        fegsScopingView.indicateSaved();
+        fegsScopingView.indicateSaved(arg[0]);
       });
-    }
+}
 
     var APP = (function () {
       function debounce(func, wait, immediate) {
