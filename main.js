@@ -97,15 +97,28 @@ function createWindow () {
         mainWindow.webContents.toggleDevTools();
       }
     }, {
-      label: 'About FEGS Scoping Tool',
-      click: () => {
-        const {dialog} = require('electron');
-        dialog.showMessageBox(mainWindow, {
-          title: "FEGS Scoping Tool",
-          message: "MESSAGE",
-          detail: "DETAIL"
-        });
-      }
+      label: 'About',
+      submenu: [
+        {
+          label: 'Tool Purpose',
+          click: () => {
+            const {dialog} = require('electron');
+            dialog.showMessageBox(mainWindow, {
+              title: "FEGS Scoping Tool",
+              message: "Tool Purpose",
+              detail: "The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives."
+            });
+          }
+        },
+        {
+          label: 'Tool Methods',
+          click: () => {
+            const {BrowserWindow} = require('electron')
+            let win = new BrowserWindow({width: 800, height: 600, frame: true})
+            win.show()
+          }
+        }
+      ]
     },
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
