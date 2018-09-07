@@ -4427,7 +4427,12 @@
           .attr('class', 'd3-tip')
           .offset([50, 0])
           .html(function(d) { 
-            return d.data.label + ": " + d.data.value;
+            var index = fegsScopingData.criteria.indexOf(d.data.label);
+            var label = d.data.label;
+            if (index >= 0) {
+              label = fegsScopingData.fegsCriteria[index];
+            }
+            return label + ": " + d.data.value;
           });
 
           g.call(tip);
@@ -5070,10 +5075,12 @@
           .attr('class', 'd3-tip')
           .offset([-10, 0])
           .html(function(d, i) {
-            console.log(i)
-            console.log(data)
-            console.log(d)
-            return "<div><span>Value:</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
+            var index = fegsScopingData.criteria.indexOf(this.parentNode.getAttribute('data-label'));
+            var label = this.parentNode.getAttribute('data-label');
+            if (index >= 0) {
+              label = fegsScopingData.fegsCriteria[index];
+            }
+            return "<div><span>" + label + ":</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
           })
         svg.call(tip); 
 
@@ -5096,9 +5103,10 @@
           .enter().append("g")
           .attr("class", "layer")
           .style("fill", function(d, i) {
-            console.log (d)
-            console.log (i)
             return color(i);
+          })
+          .attr("data-label", function(d, i) {
+            return stackKey[i];
           });
 
         layer.selectAll("rect")
