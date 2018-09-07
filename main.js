@@ -52,13 +52,17 @@ function createWindow () {
               function (response) {
                 if (response == 0) {
                   mainWindow.webContents.send('save-and-refresh');
-                } else if (response == 2) {
-                  return;
+                } else if (response == 1) {
+                  mainWindow.webContents.reloadIgnoringCache();
+                  savedFileName = "New Project";
+                  projectName = "New Project";
+                  saved = true;
                 }
               });
             } else {
               mainWindow.webContents.reloadIgnoringCache();
               savedFileName = "New Project";
+              projectName = "New Project";
               saved = true;
             }
           }
@@ -115,7 +119,15 @@ function createWindow () {
           click: () => {
             const {BrowserWindow} = require('electron')
             let win = new BrowserWindow({width: 800, height: 600, frame: true})
+            win.setMenu(null);
             win.show()
+            // and load the index.html of the app.
+            win.loadURL(url.format({
+              pathname: path.join(__dirname, 'methods.html'),
+              protocol: 'file:',
+              slashes: true,
+              autoHideMenuBar: true
+            }));
           }
         }
       ]
