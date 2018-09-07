@@ -40,10 +40,21 @@ function createWindow () {
         {
           label: 'New Project',
           click: () => {
-            console.log("newFile")
             if (!saved) { // Check if unsaved
-              verifyIntention(function () {
-                
+              const {dialog} = require('electron');
+              dialog.showMessageBox(mainWindow,
+              {
+                type: 'question',
+                buttons: ["Save", "Don't Save", "Cancel"],
+                title: 'FEGS Scoping Tool',
+                message: 'Do you want to save your changes to ' + savedFileName + '?'
+              },
+              function (response) {
+                if (response == 0) {
+                  mainWindow.webContents.send('save-and-refresh');
+                } else if (response == 2) {
+                  return;
+                }
               });
             } else {
               mainWindow.webContents.reloadIgnoringCache();
@@ -75,13 +86,7 @@ function createWindow () {
         }, {
           label: 'Quit',
           click: () => {
-            if (!saved) { // Check if unsaved
-              verifyIntention(function () {
-                quit();
-              });
-            } else {
-              quit();
-            }
+            quit();
           }
         }
       ]
@@ -111,32 +116,45 @@ function createWindow () {
   // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    console.log("closed")
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
+  mainWindow.on('close', function(e) {
+    if (saved) {
+      var choice = require('electron').dialog.showMessageBox(this,
+        {
+          type: 'question',
+          buttons: ['Yes', 'No'],
+          title: 'FEGS Scoping Tool',
+          message: 'Are you sure you want to quit?'
+        });
+      if (choice == 1) {
+        e.preventDefault();
+      }
+    } else {
+      const {dialog} = require('electron');
+      var choice = dialog.showMessageBox(this,
+        {
+          type: 'question',
+          buttons: ["Save", "Don't Save", "Cancel"],
+          title: 'FEGS Scoping Tool',
+          message: 'Do you want to save your changes to ' + savedFileName + '?'
+        });
+        console.log(choice);
+        if (choice == 0) {
+          console.log("Save and Quit");
+          e.preventDefault();
+          mainWindow.webContents.send('save-and-quit');
+        } else if (choice == 2) {
+          console.log("Cancel quit");
+          e.preventDefault();
+          return;
+        } else {
+          console.log("just quit")
+        }
+      }    
   });
 }
 
-function newFile() {
-  console.log("newFile")
-  if (!saved) { // Check if unsaved
-    verifyIntention(function () {
-      console.log("newFile reload")
-      mainWindow.webContents.reloadIgnoringCache();
-      savedFileName = "New Project";
-      saved = true;
-    });
-  } else {
-    mainWindow.webContents.reloadIgnoringCache();
-    savedFileName = "New Project";
-    saved = true;
-  }
-}
-
 function openFile() {
+  console.log("open file")
   const {dialog} = require('electron');
   dialog.showOpenDialog({filters: [
     {name: 'Custom File Type', extensions: ['fegs']}
@@ -146,12 +164,32 @@ function openFile() {
       console.log("No file selected");
     } else {
       if (!saved) { // Check if unsaved
-        verifyIntention(function () {
-          mainWindow.webContents.send('open-file', fileNames);
-          savedFileName = fileNames;
-          saved = true;
+        console.log("not saved")
+        const {dialog} = require('electron');
+        dialog.showMessageBox(mainWindow,
+        {
+          type: 'question',
+          buttons: ["Save", "Don't Save", "Cancel"],
+          title: 'FEGS Scoping Tool',
+          message: 'Do you want to save your changes to ' + savedFileName + '?'
+        },
+        function (response) {
+          console.log(response);
+          if (response == 0) {
+            console.log("Save and Open");
+            mainWindow.webContents.send('save-and-open', fileNames);
+          } else if (response == 2) {
+            console.log("Cancel");
+            return;
+          } else {
+            console.log("Just open");
+            mainWindow.webContents.send('open-file', fileNames);
+            savedFileName = fileNames;
+            saved = true;
+          }
         });
       } else {
+        console.log("saved")
         mainWindow.webContents.send('open-file', fileNames);
         savedFileName = fileNames;
         saved = true;
@@ -194,8 +232,118 @@ function saveFileAs() {
   });
 }
 
+function saveFileAsAndRefresh() {
+  var nameToUse = savedFileName;
+  console.log(projectName)
+  console.log(savedFileName)
+  if (projectName !== 'New Project' && savedFileName === "New Project") {
+    nameToUse = projectName;
+  }
+  const {dialog} = require('electron');
+  dialog.showSaveDialog(
+  {
+    defaultPath: nameToUse,
+    filters: [
+      {
+        name: 'Custom File Type', 
+        extensions: ['fegs']
+      }
+    ]
+  }, 
+  function (fileNames) {
+    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
+      console.log("No file selected");
+    } else {
+      if(!fileNames.endsWith(".fegs")) {
+        fileNames += ".fegs";
+      }
+      mainWindow.webContents.send('save-as-and-refresh', fileNames);
+    }
+  });
+}
+
+function saveFileAsAndOpen(saveName, openName) {
+  var nameToUse = savedFileName;
+  console.log(projectName)
+  console.log(savedFileName)
+  if (projectName !== 'New Project' && savedFileName === "New Project") {
+    nameToUse = projectName;
+  }
+  const {dialog} = require('electron');
+  dialog.showSaveDialog(
+  {
+    defaultPath: nameToUse,
+    filters: [
+      {
+        name: 'Custom File Type', 
+        extensions: ['fegs']
+      }
+    ]
+  }, 
+  function (fileNames) {
+    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
+      console.log("No file selected");
+    } else {
+      if(!fileNames.endsWith(".fegs")) {
+        fileNames += ".fegs";
+      }
+      mainWindow.webContents.send('save-as-and-open', fileNames, openName);
+    }
+  });
+}
+
+function saveFileAsAndQuit() {
+  var nameToUse = savedFileName;
+  console.log(projectName)
+  console.log(savedFileName)
+  if (projectName !== 'New Project' && savedFileName === "New Project") {
+    nameToUse = projectName;
+  }
+  const {dialog} = require('electron');
+  dialog.showSaveDialog(
+  {
+    defaultPath: nameToUse,
+    filters: [
+      {
+        name: 'Custom File Type', 
+        extensions: ['fegs']
+      }
+    ]
+  }, 
+  function (fileNames) {
+    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
+      console.log("No file selected");
+    } else {
+      if(!fileNames.endsWith(".fegs")) {
+        fileNames += ".fegs";
+      }
+      mainWindow.webContents.send('save-as-and-quit', fileNames);
+    }
+  });
+}
+
 // Saves the file when the renderer returns the data
 ipcMain.on('save-as', function(event, arg) {
+  saveFileAs(arg);
+});
+
+// Saves the file then refresh when the renderer returns the data
+ipcMain.on('save-as-and-refresh', function(event, arg) {
+  saveFileAsAndRefresh(arg);
+});
+
+// Saves the file then open when the renderer returns the data
+ipcMain.on('save-as-and-open', function(event, saveName, openName) {
+  saveFileAsAndOpen(saveName, openName);
+});
+
+// Saves the file then quit when the renderer returns the data
+ipcMain.on('save-as-and-quit', function(event, saveName) {
+  saveFileAsAndQuit(saveName);
+});
+
+// Saves the file then refreshes when the renderer returns the data
+ipcMain.on('save-and-refresh', function(event, arg) {
   saveFileAs(arg);
 });
 
@@ -216,6 +364,10 @@ ipcMain.on('has-been-saved', function(event, arg) {
 ipcMain.on('has-been-changed', function(event, arg) {
   console.log("has-been-changed");
   saved = false;
+});
+
+ipcMain.on('quit', function(event, arg) {
+  quit();
 });
 
 // This method will be called when Electron has finished

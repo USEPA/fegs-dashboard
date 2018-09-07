@@ -841,12 +841,11 @@
             </div>
           </div>
           <div id="stakeholder-table-container">
-            <h3>Stakeholders</h3>
             <table id="table-stakeholders">
               <thead>
                 <tr>
                   <th></th>
-                  <th>stakeholder group</th>
+                  <th>Stakeholder Group</th>
                   <th>Magnitude & Probability of impact</th>
                   <th>Level of influence</th>
                   <th>Level of interest</th>
@@ -861,12 +860,9 @@
               <tbody>
               </tbody>
             </table>
-            <h4>Stakeholder Prioritization</h4>
             <div class="flex-container light-gray">
+              <h2>Stakeholder Prioritization</h2>
               <div id="stakeholder-barchart"></div>
-              <div class="criteria-pie"></div>
-            </div>
-            <div class="flex-container light-gray">
               <div>
                 <span class="key magnitude"></span>
                 <span>Magnitude & Probability of impact</span>
@@ -903,7 +899,9 @@
                 <span class="key representation"></span>
                 <span>Underrepresented & Underserved representation</span>
               </div>
-          </div>
+              <h2 style="margin-top: 1em">Relative Weights: Stakeholder Prioritization Criteria</h2>
+              <div class="criteria-pie"></div>
+            </div>
           </div>
         </div>
         <div class="page" id="section-beneficiaries">
@@ -1089,8 +1087,8 @@
             <div class="flex-container light-gray">
               <h2>Beneficiary Composition</h2>
               <div id="beneficiary-barchart"></div>
-              <h2>Beneficiary Percentage</h2>
-              <div class="beneficiary-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
+              <h2>Beneficiary Percentages</h2>
+              <div class="beneficiary-pie"></div>
             </div>
             <div class="flex-container light-gray">
               <div><span class="key irrigators"></span><span>Irrigators</span></div>
@@ -1130,8 +1128,8 @@
               <div><span class="key researchers"></span><span>Researchers</span></div>
               <div><span class="key people-who-care-existence"></span><span>People who care (existence)</span></div>
               <div><span class="key people-who-care-option-bequest"></span><span>People who care (option, bequest)</span></div>
+            </div>
           </div>
-        </div>
         </div>
         <div class="page" id="section-attributes">
           <hr />
@@ -3539,7 +3537,9 @@
           </table>
           <div id="attribute-charts">
             <div class="flex-container light-gray">
+              <h2>Beneficiary Composition of Attributes</h2>
               <div id="attribute-barchart"></div>
+              <h2>Attribute Percentages</h2>
               <div class="attribute-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
             </div>
           </div>
@@ -4101,6 +4101,61 @@
       this.stakeholders = {};
       this.attributes = {};
       this.fegsAttributes = ["Water quality", "Water quantity", "Water movement", "Air quality", "Wind strength / speed", "Precipitation", "Sunlight", "Temperature", "Soil quantity", "Soil quality", "Substrate quantity", "Substrate quality", "Fuel quality", "Fuel quantity", "Fiber material quantity", "Fiber material quality", "Mineral / chemical quantity", "Mineral / chemical quality", "Presence of other natural materials for artistic use or consumption (e.g. shells, acorns, honey)", "Flora community", "Edible flora", "Medicinal flora", "Keystone flora", "Charismatic flora", "Rare flora", "Commercially important flora", "Spiritually / culturally important flora", "Fungal community", "Edible fungi", "Medicinal fungi", "Rare fungi", "Commercially important fungi", "Spiritually/culturally important fungi", "Fauna community", "Edible fauna", "Medicinal fauna", "Keystone fauna", "Charismatic fauna", "Rare fauna", "Pollinating fauna", "Pest predator / depredator fauna", "Commercially important fauna", "Spiritually / culturally important fauna", "Risk of flooding", "Risk of fire", "Risk of extreme weather events", "Risk of earthquakes", "Sounds", "Scents", "Viewscapes", "Phenomena (e.g. sunsets, northern lights, etc)", "Ecological condition", "Acreage"];
+      this.fegsAttributesTier1 = {
+        "Water quality" : "Water",
+        "Water quantity" : "Water",
+        "Water movement" : "Water",
+        "Air quality" : "Air",
+        "Wind strength / speed" : "Weather",
+        "Precipitation" : "Weather",
+        "Sunlight" : "Weather",
+        "Temperature" : "Weather",
+        "Soil quantity" : "Soil & Substrate",
+        "Soil quality" : "Soil & Substrate",
+        "Substrate quantity" : "Soil & Substrate",
+        "Substrate quality" : "Soil & Substrate",
+        "Fuel quality" : "Natural materials",
+        "Fuel quantity" : "Natural materials",
+        "Fiber material quantity" : "Natural materials",
+        "Fiber material quality" : "Natural materials",
+        "Mineral / chemical quantity" : "Natural materials",
+        "Mineral / chemical quality" : "Natural materials",
+        "Presence of other natural materials for artistic use or consumption (e.g. shells, acorns, honey)" : "Natural materials",
+        "Flora community" : "Flora",
+        "Edible flora" : "Flora",
+        "Medicinal flora" : "Flora",
+        "Keystone flora" : "Flora",
+        "Charismatic flora" : "Flora",
+        "Rare flora" : "Flora",
+        "Commercially important flora" : "Flora",
+        "Spiritually / culturally important flora" : "Flora",
+        "Fungal community" : "Fungi",
+        "Edible fungi" : "Fungi",
+        "Medicinal fungi" : "Fungi",
+        "Rare fungi" : "Fungi",
+        "Commercially important fungi" : "Fungi",
+        "Spiritually/culturally important fungi" : "Fungi",
+        "Fauna community" : "Fauna",
+        "Edible fauna" : "Fauna",
+        "Medicinal fauna" : "Fauna",
+        "Keystone fauna" : "Fauna",
+        "Charismatic fauna" : "Fauna",
+        "Rare fauna" : "Fauna",
+        "Pollinating fauna" : "Fauna",
+        "Pest predator / depredator fauna" : "Fauna",
+        "Commercially important fauna" : "Fauna",
+        "Spiritually / culturally important fauna" : "Fauna",
+        "Risk of flooding" : "Extreme Events",
+        "Risk of fire" : "Extreme Events",
+        "Risk of extreme weather events" : "Extreme Events",
+        "Risk of earthquakes" : "Extreme Events",
+        "Sounds" : "Composite",
+        "Scents" : "Composite",
+        "Viewscapes" : "Composite",
+        "Phenomena (e.g. sunsets, northern lights, etc)" : "Composite",
+        "Ecological condition" : "Composite",
+        "Acreage" : "Composite",
+      };
       this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock grazers', 'Agricultural processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food extractors', 'Timber / Fiber / Ornamental extractors', 'Industrial processors', 'Industrial dischargers', 'Energy generators', 'Resource dependent businesses', 'Pharmaceutical / Food supplement suppliers', 'Fur / Hide trappers / hunters', 'Municipal drinking water plant operators', 'Wastewater treatment plant operators', 'Residential property owners', 'Military / Coast Guard', 'Transporters of goods', 'Transporters of people', 'Water subsisters', 'Food subsisters', 'Timber / Fiber / Fur / Hide subsisters', 'Building material subsisters', 'Experiencers / viewers', 'Food pickers / gatherers', 'Hunters', 'Anglers', 'Waders / Swimmers / Divers', 'Boaters', 'Spiritual and ceremonial participants', 'Artists', 'Students and educators', 'Researchers', 'People who care (existence)', 'People who care (option, bequest)'];
       this.fegsBeneficiariesTier1 = {'Irrigators' : "Agricultural", 'CAFO Operators' : "Agricultural", 'Livestock grazers' : "Agricultural", 'Agricultural processors' : "Agricultural", 'Aquaculturalists' : "Agricultural", 'Farmers' : "Agricultural", 'Foresters' : "Agricultural", 'Food extractors' : "Commercial / Industrial", 'Timber / Fiber / Ornamental extractors' : "Commercial / Industrial", 'Industrial processors' : "Commercial / Industrial", 'Industrial dischargers' : "Commercial / Industrial", 'Energy generators' : "Commercial / Industrial", 'Resource dependent businesses' : "Commercial / Industrial", 'Pharmaceutical / Food supplement suppliers' : "Commercial / Industrial", 'Fur / Hide trappers / hunters' : "Commercial / Industrial", 'Municipal drinking water plant operators' : "Governmental / Municipal / Residential", 'Wastewater treatment plant operators' : "Governmental / Municipal / Residential", 'Residential property owners' : "Governmental / Municipal / Residential", 'Military / Coast Guard' : "Governmental / Municipal / Residential", 'Transporters of goods' : "Commercial / Military Transportation", 'Transporters of people' : "Commercial / Military Transportation", 'Water subsisters' : "Subsistence", 'Food subsisters' : "Subsistence", 'Timber / Fiber / Fur / Hide subsisters' : "Subsistence", 'Building material subsisters' : "Subsistence", 'Experiencers / viewers' : "Recreational", 'Food pickers / gatherers' : "Recreational", 'Hunters' : "Recreational", 'Anglers' : "Recreational", 'Waders / Swimmers / Divers' : "Recreational", 'Boaters' : "Recreational", 'Spiritual and ceremonial participants' : "Inspirational", 'Artists' : "Inspirational", 'Students and educators' : "Learning", 'Researchers' : "Learning", 'People who care (existence)' : "Non-Use", 'People who care (option, bequest)' : "Non-Use"};
     }; //////// END PROTOTYPE FEGScopingData ////////
@@ -4191,6 +4246,21 @@
         fs.writeFileSync(savePath, jsonText);
         ipcRenderer.send('has-been-saved', savePath);
       };
+      
+      /** save json to file, then refresh; requires ELECTRON */
+      this.saveJSONAndRefresh = function(savePath, jsonToBeSaved) {
+        console.log("saveJSON")
+        var fs = require('fs');
+        var jsonText;
+        if (typeof(jsonToBeSaved) !== 'string') {
+          jsonText = JSON.stringify(jsonToBeSaved);
+        } else {
+          jsonText = jsonToBeSaved;
+        }
+        fs.writeFileSync(savePath, jsonText);
+        ipcRenderer.send('has-been-saved', savePath);
+        location.reload(true);
+      };
 
       /** download given text to given filename; works in BROWSER */
       this.downloadText = function(filename, text) {
@@ -4239,7 +4309,7 @@
         var domEle = config.element;
         var data = config.data;
         var colors = config.colors;
-        var width = 400;
+        var width = 620;
         var height = 480;
         var radius = Math.min(width, height) / 2;
         var legendKey = config.legend;
@@ -4250,6 +4320,17 @@
         var color = d3.scaleOrdinal(colors); // Set the colors
 
         var pie = d3.pie().value(function(d) {
+          var keyName = d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase();
+          var element = document.querySelector('.key.' + keyName);
+          if (element) {
+            if (d.value !== 0) {
+              document.querySelector('.key.' + keyName).parentElement.removeAttribute('hidden');
+            } else {
+              document.querySelector('.key.' + keyName).parentElement.setAttribute('hidden', '');
+            }
+          } else {
+            console.log("couldnt find: " + d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase())
+          }       
           return d.value;
         })(data);
 
@@ -4307,33 +4388,33 @@
             this._current = d;
           }); // store the initial angles
 
-        if (legendKey) {
-          console.log("legend")
-          var legend = svg.append("g")
-          .attr("font-family", "sans-serif")
-          .attr("font-size", 10)
-          .selectAll("g")
-          .data(legendKey)
-          .enter().append("g")
-          .attr("transform", function(d, i) {
-            return "translate(30," + i * 19 + ")";
-          });
+        // if (legendKey) {
+        //   console.log("legend")
+        //   var legend = svg.append("g")
+        //   .attr("font-family", "sans-serif")
+        //   .attr("font-size", 10)
+        //   .selectAll("g")
+        //   .data(legendKey)
+        //   .enter().append("g")
+        //   .attr("transform", function(d, i) {
+        //     return "translate(30," + i * 19 + ")";
+        //   });
 
-        legend.append("rect")
-          .attr("x", width - 18)
-          .attr("width", 18)
-          .attr("height", 18)
-          .attr("fill", function(d, i) {return colors[i];});
+        // legend.append("rect")
+        //   .attr("x", width - 18)
+        //   .attr("width", 18)
+        //   .attr("height", 18)
+        //   .attr("fill", function(d, i) {return colors[i];});
 
-        legend.append("text")
-          .attr("x", width + 5)
-          .attr("y", 9)
-          .attr("dy", "0.35em")
-          .attr("text-anchor", "start")
-          .text(function(d) {
-              return d;
-          });
-        }
+        // legend.append("text")
+        //   .attr("x", width + 5)
+        //   .attr("y", 9)
+        //   .attr("dy", "0.35em")
+        //   .attr("text-anchor", "start")
+        //   .text(function(d) {
+        //       return d;
+        //   });
+        // }
 
         //update
         function change() {
@@ -4955,6 +5036,8 @@
           left: 50
         };
 
+        console.log(data)
+
         var divWidth = document.getElementById('beneficiary-charts').offsetWidth;
         if (divWidth > 1000) {
           divWidth = 1000;
@@ -4986,7 +5069,10 @@
         var tip = d3.tip()
           .attr('class', 'd3-tip')
           .offset([-10, 0])
-          .html(function(d) {
+          .html(function(d, i) {
+            console.log(i)
+            console.log(data)
+            console.log(d)
             return "<div><span>Value:</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
           })
         svg.call(tip); 
@@ -5010,6 +5096,8 @@
           .enter().append("g")
           .attr("class", "layer")
           .style("fill", function(d, i) {
+            console.log (d)
+            console.log (i)
             return color(i);
           });
 
@@ -6385,7 +6473,6 @@
       initStackedBarChart.draw({
         data: formatStakeholderData(),
         key: fegsScopingData.criteria,
-        legend: fegsScopingData.fegsCriteria,
         element: 'stakeholder-barchart',
         header: 'stakeholder',
         colors: criteriaColors
@@ -6536,6 +6623,72 @@
         fegsScopingData.filePath = arg;
         fegsScopingController.saveJSON(arg, fegsScopingData);
         fegsScopingView.indicateSaved(arg);
+      });
+
+      // Listen for save as from main process
+      ipcRenderer.on('save-as-and-refresh', (event, arg) => {
+        fegsScopingData.filePath = arg;
+        fegsScopingController.saveJSON(arg, fegsScopingData);
+        fegsScopingView.indicateSaved(arg);
+        location.reload(true);
+      });
+
+      // Listen for save as from main process
+      ipcRenderer.on('save-as-and-open', (event, saveName, openName) => {
+        console.log('save-as-and-open')
+        console.log(saveName)
+        console.log(openName)
+        fegsScopingData.filePath = saveName;
+        fegsScopingController.saveJSON(saveName, fegsScopingData);
+        fegsScopingView.indicateSaved(saveName);
+        
+        fegsScopingView.restoreView(openName);
+        fegsScopingView.indicateSaved(openName);
+      });
+
+      // Listen for save as from main process then quit
+      ipcRenderer.on('save-as-and-quit', (event, saveName) => {
+        console.log('save-as-and-open')
+        console.log(saveName)
+        fegsScopingData.filePath = saveName;
+        fegsScopingController.saveJSON(saveName, fegsScopingData);
+        fegsScopingView.indicateSaved(saveName);
+        
+        ipcRenderer.send('quit');
+      });
+
+      // Listen for save from main process and refresh
+      ipcRenderer.on('save-and-refresh', (event, arg) => {
+        if (fegsScopingData.filePath != '') {
+          fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
+          fegsScopingView.indicateSaved(fegsScopingData.filePath);
+          location.reload(true);
+        } else {
+          ipcRenderer.send('save-as-and-refresh', fegsScopingData.projectName);
+        }
+      });
+
+      // Listen for save from main process and quit
+      ipcRenderer.on('save-and-quit', (event, arg) => {
+        if (fegsScopingData.filePath != '') {
+          fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
+          fegsScopingView.indicateSaved(fegsScopingData.filePath);
+          ipcRenderer.send('quit');
+        } else {
+          ipcRenderer.send('save-as-and-quit', fegsScopingData.projectName);
+        }
+      });
+
+      // Listen for save from main process and open
+      ipcRenderer.on('save-and-open', (event, arg) => {
+        if (fegsScopingData.filePath != '') {
+          fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
+          fegsScopingView.indicateSaved(fegsScopingData.filePath);
+          fegsScopingView.restoreView(arg[0]);
+          fegsScopingView.indicateSaved(arg[0]);
+        } else {
+          ipcRenderer.send('save-as-and-open', fegsScopingData.projectName, arg[0]);
+        }
       });
 
       // Listen for save from main process
