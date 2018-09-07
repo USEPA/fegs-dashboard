@@ -52,13 +52,17 @@ function createWindow () {
               function (response) {
                 if (response == 0) {
                   mainWindow.webContents.send('save-and-refresh');
-                } else if (response == 2) {
-                  return;
+                } else if (response == 1) {
+                  mainWindow.webContents.reloadIgnoringCache();
+                  savedFileName = "New Project";
+                  projectName = "New Project";
+                  saved = true;
                 }
               });
             } else {
               mainWindow.webContents.reloadIgnoringCache();
               savedFileName = "New Project";
+              projectName = "New Project";
               saved = true;
             }
           }
