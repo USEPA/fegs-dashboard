@@ -3641,7 +3641,7 @@
     document.addEventListener ("keydown", function (zEvent) {
       if (zEvent.ctrlKey && zEvent.key === "+") {
           var element = document.querySelector('#page-zoom');
-          element.value = (+element.value + .05 > 2 ? +element.value : +element.value + .05);
+          element.value = (+element.value + 0.05 > 2 ? +element.value : +element.value + 0.05);
           var change = new Event('change');
           var input = new Event('input');
           element.dispatchEvent(change);
@@ -3652,7 +3652,7 @@
     document.addEventListener ("keydown", function (zEvent) {
       if (zEvent.ctrlKey && zEvent.key === "-") {
         var element = document.querySelector('#page-zoom');
-        element.value = (+element.value - .05 < .25 ? +element.value : +element.value - .05);
+        element.value = (+element.value - 0.05 < 0.25 ? +element.value : +element.value - 0.05);
         var change = new Event('change');
         var input = new Event('input');
         element.dispatchEvent(change);
@@ -3662,7 +3662,7 @@
     var getDocument = function() {
       var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
       return documentText;
-    }
+    };
 
     var downloadText = function(filename, text) {
       var element = document.createElement('a');
@@ -3675,7 +3675,7 @@
       element.click();
 
       document.body.removeChild(element);
-    }
+    };
   </script>
   <!-- FIXME: integrate code between comment flags into application -->
   <script src="./js/d3.v5.min.js"></script>
@@ -3790,7 +3790,7 @@
           this.attributes = {};
         }
         this.attributes[beneficiaryName] = {};
-        var keys = Object.keys(attributes)
+        var keys = Object.keys(attributes);
         for (i = 0; i < keys.length; i++) {
           this.attributes[beneficiaryName][keys[i]] = {
             percentageOfBeneficiary: attributes[keys[i]]
@@ -3906,7 +3906,7 @@
                     .percentageOfStakeholder;
             }
         }
-        console.log(sum)
+        console.log(sum);
       };
 
       /**
@@ -3934,7 +3934,7 @@
             sum += +this.attributes[beneficiaryNames[j]][attributeArray[k]].percentageOfBeneficiary;
           }
         }
-        console.log(sum)
+        console.log(sum);
       };
 
       /**
@@ -3945,7 +3945,7 @@
         var percentages = {};
         var beneficiaryNames = Object.keys(this.stakeholders[stakeholderName].beneficiaries);
         for (i = 0; i < beneficiaryNames.length; i++) {
-          percentages[beneficiaryNames[i]] = this.stakeholders[stakeholderName].beneficiaries[beneficiaryNames[i]].percentageOfStakeholder
+          percentages[beneficiaryNames[i]] = this.stakeholders[stakeholderName].beneficiaries[beneficiaryNames[i]].percentageOfStakeholder;
         }
         return percentages;
       };
@@ -3988,8 +3988,8 @@
               parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
           }
         }
-        for (var i = 0; i < stakeholders.length; i++) {
-          denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
+        for (var j = 0; j < stakeholders.length; j++) {
+          denominator += parseFloat(this.scoresTimesScoresSum(stakeholders[j]));
         }
         return numerator / denominator;
       };
@@ -4005,7 +4005,7 @@
         if (Object.keys(this.stakeholders[stakeholder].beneficiaries).length) {
           var percentageOfStakeholder = parseFloat(this.stakeholders[stakeholder].beneficiaries[beneficiary].percentageOfStakeholder);
           if (isNaN(percentageOfStakeholder)) {
-            console.log("percent of stakeholder is 0")
+            
             return 0;
           }
           numerator += percentageOfStakeholder * this.stakeholderPrioritizationScoreSum(stakeholder);
@@ -4071,11 +4071,11 @@
           attributeScores[this.fegsAttributes[i]] = attributeSum;
           totalSum += attributeSum;
         }
-        console.log("Total: " + totalSum)
+        console.log("Total: " + totalSum);
 
         for (var attribute in attributeScores) {
           attributeScores[attribute] = attributeScores[attribute] / totalSum * 100;
-          console.log(attribute + ": " + attributeScores[attribute] / totalSum * 100)
+          console.log(attribute + ": " + attributeScores[attribute] / totalSum * 100);
         }
       };
 
@@ -4128,7 +4128,7 @@
           sum += this.stakeholderPrioritizationScoreSum(stakeholder);
         }
         return sum;
-      }      
+      };
 
       /**
        * return the overall score (sum of relative weights)
@@ -4254,7 +4254,7 @@
       /** save validated data */
       this.saveValidatedData = function(filename) {
         if (!filename) {
-          filename = 'data.json'
+          filename = 'data.json';
         }
         this.saveJSON(filename, fegsScopingData);
         fegsScopingView.indicateSaved(filename);
@@ -4272,7 +4272,7 @@
 
       /** scrape state of page */
       this.scrapePage = function() {
-        console.log("scrapePage")
+        console.log("scrapePage");
         var scrapedValues;
         var scores = {};
         var beneficiaries = {};
@@ -4311,7 +4311,7 @@
 
       /** save json to file; requires ELECTRON */
       this.saveJSON = function(savePath, jsonToBeSaved) {
-        console.log("saveJSON")
+        console.log("saveJSON");
         var fs = require('fs');
         var jsonText;
         if (typeof(jsonToBeSaved) !== 'string') {
@@ -4325,7 +4325,7 @@
       
       /** save json to file, then refresh; requires ELECTRON */
       this.saveJSONAndRefresh = function(savePath, jsonToBeSaved) {
-        console.log("saveJSON")
+        console.log("saveJSON");
         var fs = require('fs');
         var jsonText;
         if (typeof(jsonToBeSaved) !== 'string') {
@@ -4340,7 +4340,7 @@
 
       /** download given text to given filename; works in BROWSER */
       this.downloadText = function(filename, text) {
-        console.log("FEGSScopingController downloadText")
+        console.log("FEGSScopingController downloadText");
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
@@ -4348,7 +4348,7 @@
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
-      }
+      };
 
       /** read data-model from disk; requires ELECTRON */
       this.importData = function(filename) {
@@ -4357,7 +4357,7 @@
           return;
         }
         if (typeof(filename) === 'undefined') {
-          filename = 'data.json'
+          filename = 'data.json';
         }
         importedData = require('fs').readFileSync(filename);
         importedData = JSON.parse(importedData);
@@ -4376,7 +4376,7 @@
         }
       }
       return sum;
-    }
+    };
 
     /** pie chart */
     var initPieChart = {
@@ -4399,16 +4399,16 @@
           var keyName = d.label.replace(/\s*([/])\s*/g, '$1').replace(/[&,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase();
           var element = document.querySelector('.key.' + keyName);
           if (element) {
-            console.log(d.value)
+            console.log(d.value);
             if (d.value !== 0) {
-              console.log("show ",keyName)
+              console.log("show ",keyName);
               document.querySelector('.key.' + keyName).parentElement.removeAttribute('hidden');
             } else {
-              console.log("hide ",keyName)
+              console.log("hide ",keyName);
               document.querySelector('.key.' + keyName).parentElement.setAttribute('hidden', '');
             }
           } else {
-            console.log("couldnt find: " + d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase())
+            console.log("couldnt find: " + d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase());
           }       
           return d.value;
         })(data);
@@ -4444,7 +4444,7 @@
         var svg = d3.selectAll("." + domEle)
           .append("svg")
           .attr("width", width)
-          .attr("height", height)
+          .attr("height", height);
         
         var g = svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // Moving the center point. 1/2 the width and 1/2 the height
@@ -4788,7 +4788,7 @@
     }
 
     function addStakeholderScores() {
-      console.log('addStakeholderScores')
+      console.log('addStakeholderScores');
       var stakeholdersToAdd = scrapeAddStakeholders();
       if (Object.keys(stakeholdersToAdd).length < 1) {
         return;
@@ -4857,7 +4857,7 @@
       var value = that.value;
       var isValid = validateInput(value, 0, 100);
       if (!isValid) {
-        accessiblyNotify("Please enter a value between 0 and 100")
+        accessiblyNotify("Please enter a value between 0 and 100");
         that.classList.add('invalid-text-input');
       } else {
         that.classList.remove('invalid-text-input');
@@ -5029,7 +5029,7 @@
       newCell.appendChild(removeButton);
 
       removeButton.addEventListener("click", function() { // create listeners for the buttons
-      console.log("click remove")
+      console.log("click remove");
         var stakeholder = this.parentNode.nextSibling.innerHTML;
         fegsScopingData.removeStakeholders([stakeholder]);
         this.parentNode.parentNode.remove();
@@ -5056,7 +5056,7 @@
       });
 
       saveButton.addEventListener("click", function() {
-        console.log("click save")
+        console.log("click save");
         this.setAttribute("aria-hidden", "true"); // hide the save button
         var row = this.parentNode.parentNode;
         row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
@@ -5076,7 +5076,7 @@
           cell.id = cells[1].innerText + '-' + fegsScopingData.criteria[j];
         }
         scores = fegsScopingData.makeCriteriaObject(scores);
-        var inputStakeholderValue = document.getElementById(originalStakeholderName + '-' + fegsScopingData.criteria[j])
+        var inputStakeholderValue = document.getElementById(originalStakeholderName + '-' + fegsScopingData.criteria[j]);
         if (cells[1].innerText !== originalStakeholderName) {
           fegsScopingData.renameStakeholder(originalStakeholderName, cells[1].innerText);
         } else {
@@ -5143,7 +5143,7 @@
           left: 50
         };
 
-        console.log(data)
+        console.log(data);
 
         var divWidth = document.getElementById('beneficiary-charts').offsetWidth;
         if (divWidth > 1000) {
@@ -5183,7 +5183,7 @@
               label = fegsScopingData.fegsCriteria[index];
             }
             return "<div><span>" + label + ":</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
-          })
+          });
         svg.call(tip); 
 
         var stack = d3.stack()
@@ -5493,7 +5493,7 @@
       var rowIndex, cell, input, cellText, rowspan, numberOfBeneficiaryColumnsInRow;
 
       var beneficiaryPercentageOfStakeholderInputValidator = function() { // validate sum of percentages is 100 +- 0.05 then save
-        console.log("beneficiaryPercentageOfStakeholderInputValidator")
+        console.log("beneficiaryPercentageOfStakeholderInputValidator");
         clearNotices();
         var percentageSum = 0;
         var j, inputs, input;
@@ -5829,7 +5829,7 @@
       notice.appendChild(textNode);
       notice.setAttribute('aria-live', 'polite');
       notice.addEventListener('click', function() {
-        this.remove()
+        this.remove();
       });
       notice.className = 'accessible-notification';
       var span = document.createElement('span');
@@ -6278,7 +6278,7 @@
 
       /** restore view's state: each input with a stored value restores that value */
       this.restoreView = function(filename) {
-        console.log("restoreView")
+        console.log("restoreView");
         if (typeof(filename) === 'undefined') {
           filename = 'data.json'
         }
@@ -6396,7 +6396,7 @@
               document.getElementById("forward-nav-button").removeAttribute("disabled");
             }
             if (currentPageIndex > 0) {
-              self.focusPage(pages[currentPageIndex - 1].id)
+              self.focusPage(pages[currentPageIndex - 1].id);
             } else {
               console.log('there is no page before the first page');
             }
@@ -6423,7 +6423,7 @@
               document.getElementById("forward-nav-button").removeAttribute("disabled");
             }
             if (currentPageIndex < pages.length - 1) {
-              self.focusPage(pages[currentPageIndex + 1].id)
+              self.focusPage(pages[currentPageIndex + 1].id);
             } else {
               console.log('there is no page after the last page');
             }
@@ -6441,7 +6441,7 @@
       };
 
       this.showStakeholderScores = function() {
-        console.log("showStakeholderScores")
+        console.log("showStakeholderScores");
         for (var i = document.getElementById('table-stakeholders').rows.length - 1; i > 0; i--) {
           document.getElementById('table-stakeholders').deleteRow(i);	
         }
@@ -6546,7 +6546,7 @@
     }
 
     var downloadText = function(filename, text) {
-      console.log("downloadText")
+      console.log("downloadText");
       var element = document.createElement('a');
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
       element.setAttribute('download', filename);
@@ -6723,7 +6723,7 @@
         remote
       } = require('electron');
 
-      var webFrame = require('electron').webFrame
+      var webFrame = require('electron').webFrame;
 
       var indicatePageZoom = function(event) {
         document.querySelector('#page-zoom-indicator').innerText = parseInt(event.target.value * 100) + "%";
@@ -6756,9 +6756,9 @@
 
       // Listen for save as from main process
       ipcRenderer.on('save-as-and-open', (event, saveName, openName) => {
-        console.log('save-as-and-open')
-        console.log(saveName)
-        console.log(openName)
+        console.log('save-as-and-open');
+        console.log(saveName);
+        console.log(openName);
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
@@ -6769,8 +6769,8 @@
 
       // Listen for save as from main process then quit
       ipcRenderer.on('save-as-and-quit', (event, saveName) => {
-        console.log('save-as-and-open')
-        console.log(saveName)
+        console.log('save-as-and-open');
+        console.log(saveName);
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
@@ -6850,7 +6850,6 @@
       }};
       return me;
     })();
-    var bodyEl = document.getElementsByTagName('body')[0];
     APP.onResize(function() {
       stakeholderBarchart();
       beneficiaryBarchart();
