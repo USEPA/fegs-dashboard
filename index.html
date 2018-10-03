@@ -23,7 +23,7 @@
     *:after {
       box-sizing: border-box;
     }
-    
+
     section {
       display: block;
     }
@@ -82,79 +82,79 @@
       display: inline-block;
       width: 3em;
     }
-    
+
     [aria-hidden="true"] {
       display: none;
     }
-    
+
     .magnitude {
       background: #4f81bd;
     }
-    
+
     .influence {
       background: #c0504d;
     }
-    
+
     .interest {
       background: #9bbb59;
     }
-    
+
     .urgency {
       background: #8064a2;
     }
-    
+
     .proximity {
       background: #4bacc6;
     }
-    
+
     .economic-interest {
       background: #f79646;
     }
-    
+
     .rights {
       background: #2c4d75;
     }
-    
+
     .fairness {
       background: #772c2a;
     }
-    
+
     .representation {
       background: #5f7530;
     }
-    
+
     .agricultural {
       background: #DDD9C4;
     }
-    
+
     .commercial {
       background: #C5D9F1;
     }
-    
+
     .governmental {
       background: #E4DFEC;
     }
-    
+
     .transportation {
       background: #F2DCDB;
     }
-    
+
     .subsistence {
       background: #F9FDD1;
     }
-    
+
     .recreational {
       background: #DAEEF3;
     }
-    
+
     .inspirational {
       background: #EBF1DE;
     }
-    
+
     .learning {
       background: #FDE9D9;
     }
-    
+
     .nonuse {
       background: #F2F2F2;
     }
@@ -352,21 +352,21 @@
       width: 1em;
       margin: 1em 1em 0 1em;
     }
-    
+
     @media (min-width: 600px) {
       .legend {
         margin: 1em;
       }
     }
-    
+
     .scoring input {
       max-width: 4em;
     }
-    
+
     .dark {
       background: rgba(128, 128, 128, .25);
     }
-    
+
     .light-gray {
       background-color: #f1f1f1;
       border-radius: 3px;
@@ -374,30 +374,30 @@
       padding: 1em 1em 1em 1em;
       margin-bottom: .4em;
     }
-    
+
     #stakeholder-list {
       display: none;
       list-style: none;
     }
-    
+
     .stakeholder-value-list {
       list-style: none;
     }
-    
+
     #table-stakeholders td,
     #table-stakeholders th {
       border: 1px solid #d6d7d9;
       padding: 8px;
     }
-    
+
     #stakeholder-table-container {
       display: none;
     }
-    
+
     #table-stakeholders tr:nth-child(even) {
       background-color: #f1f1f1;
     }
-    
+
     #table-stakeholders th {
       background-color: #0071bc;
       color: white;
@@ -405,21 +405,21 @@
       padding-bottom: 12px;
       text-align: left;
     }
-    
+
     #table-stakeholders {
       border-collapse: collapse;
       width: 100%;
     }
-    
+
     table input {
       text-align: right;
     }
-    
+
     table {
       border-collapse: collapse;
       margin-bottom: 1em;
     }
-    
+
     table th {
       text-align: center;
     }
@@ -427,64 +427,64 @@
     table td {
       text-align: center;
     }
-    
+
     table th {
       padding: .5em;
     }
-    
+
     td {
       padding: .3em;
     }
-    
+
     .column-name-labels {
       border-bottom: 1px dashed darkgrey;
     }
-    
+
     .column-names th {
       border-bottom: 1px solid black;
     }
-    
+
     .row-name {
       border-right: 1px solid black;
     }
-    
+
     .invalid-text-input {
       box-shadow: 0 0 5px #e31c3d;
       border: 1px solid #e31c3d;
     }
-    
+
     .display-none {
       display: none;
     }
-    
+
     #menu-title {
       font-weight: bold;
     }
-    
+
     #menu a {
       color: #fff;
       text-decoration: none;
     }
-    
+
     #menu a:hover {
       text-decoration: underline;
     }
-    
+
     #menu ul {
       list-style: none;
       padding-left: 10px;
     }
-    
+
     #menu li {
       margin: 10px;
       padding: 5px;
       border-radius: 2px;
     }
-    
+
     .active {
       font-weight: bold;
     }
-    
+
     .remove-stakeholder {
       background-color: #cd2026;
       color: #fff;
@@ -492,20 +492,20 @@
       padding: 0.25em .5em;
       cursor: pointer;
     }
-    
+
     #show-only-these-columns {
       display: inline;
     }
-    
+
     .progress-menu {
       font-weight: normal;
       font-size: 15px;
     }
-    
+
     #set-stakeholder-values {
       display: none;
     }
-    
+
     #show-name {
       display: inline;
       font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
@@ -556,8 +556,8 @@
       margin-left: 15em;
     }
 
-    #sidebar::-webkit-scrollbar { 
-      display: none; 
+    #sidebar::-webkit-scrollbar {
+      display: none;
     }
 
     .pie {
@@ -4005,7 +4005,7 @@
         if (Object.keys(this.stakeholders[stakeholder].beneficiaries).length) {
           var percentageOfStakeholder = parseFloat(this.stakeholders[stakeholder].beneficiaries[beneficiary].percentageOfStakeholder);
           if (isNaN(percentageOfStakeholder)) {
-            
+
             return 0;
           }
           numerator += percentageOfStakeholder * this.stakeholderPrioritizationScoreSum(stakeholder);
@@ -4322,7 +4322,7 @@
         fs.writeFileSync(savePath, jsonText);
         ipcRenderer.send('has-been-saved', savePath);
       };
-      
+
       /** save json to file, then refresh; requires ELECTRON */
       this.saveJSONAndRefresh = function(savePath, jsonToBeSaved) {
         console.log("saveJSON");
@@ -4409,7 +4409,7 @@
             }
           } else {
             console.log("couldnt find: " + d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase());
-          }       
+          }
           return d.value;
         })(data);
 
@@ -4445,7 +4445,7 @@
           .append("svg")
           .attr("width", width)
           .attr("height", height);
-        
+
         var g = svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // Moving the center point. 1/2 the width and 1/2 the height
 
@@ -4505,7 +4505,7 @@
           var tip = d3.tip()
           .attr('class', 'd3-tip')
           .offset([50, 0])
-          .html(function(d) { 
+          .html(function(d) {
             var index = fegsScopingData.criteria.indexOf(d.data.label);
             var label = d.data.label;
             if (index >= 0) {
@@ -4515,7 +4515,7 @@
           });
 
           g.call(tip);
-            
+
           function checkD3Data(chart) {
             for (var prop in chart) {
               if (pie[prop].value) {
@@ -4524,7 +4524,7 @@
             }
             return false;
           }
-          
+
           var element = document.getElementById(domEle);
           if (element) {
             if (checkD3Data(pie)) {
@@ -4612,7 +4612,7 @@
     /**
      * Get the data for the global scores and return them in a JSON object.
      * @function
-     * @return {object} - A JSON object containing the criteria and their scores. 
+     * @return {object} - A JSON object containing the criteria and their scores.
      */
     function getScores() {
       var data = [];
@@ -5184,7 +5184,7 @@
             }
             return "<div><span>" + label + ":</span> <span style='color:white'>" + round(d[1] - d[0], 1) + "</span></div>";
           });
-        svg.call(tip); 
+        svg.call(tip);
 
         var stack = d3.stack()
           .keys(stackKey)
@@ -5355,7 +5355,7 @@
                      "<div><span>Value:</span> <span style='color:white'>" + round(d.value, 2) + "</span></div>";
             });
 
-        svg.call(tip); 
+        svg.call(tip);
 
         yScale.domain(data.map(function(d) { return d["label"]; }));
         xScale.domain([0, d3.max(data, function(d) { return d["value"]; })]);
@@ -5521,10 +5521,8 @@
               .percentageOfStakeholder = inputs[j].value;
             fegsScopingView.indicateUnsaved();
           }
-
           document.getElementById("beneficiary-charts").removeAttribute('hidden');
           beneficiaryBarchart();
-
           beneficiaryPiechart();
           updateAttributeProgress();
           fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
@@ -5532,9 +5530,7 @@
           fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
           //showSection("attributes");
         }
-
         //updateBeneficiaryProgress();
-        
       };
 
       for (i = tBody.rows[0].cells.length - 1; i > 2; i--) { // remove all data columns
@@ -6308,7 +6304,7 @@
         updateStakeholderProgress();
         updateBeneficiaryProgress();
         updateAttributeProgress();
-        
+
         //TODO FIXME LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
         fegsScopingView.indicateSaved(filename);
       };
@@ -6696,8 +6692,6 @@
       }
     });
 
-
-
     updateStakeholderProgress();
     updateWeightingProgress();
     updateBeneficiaryProgress();
@@ -6762,7 +6756,7 @@
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
-        
+
         fegsScopingView.restoreView(openName);
         fegsScopingView.indicateSaved(openName);
       });
@@ -6774,7 +6768,7 @@
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
-        
+
         ipcRenderer.send('quit');
       });
 

@@ -4,10 +4,8 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
-
 const path = require('path');
 const url = require('url');
-
 const {ipcMain} = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -71,7 +69,6 @@ function createWindow () {
           label: 'Open Project...',
           click: () => {
             openFile();
-
           }
         }, {
           label: 'Save Project',
@@ -135,7 +132,6 @@ function createWindow () {
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
-  //**
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -174,7 +170,7 @@ function createWindow () {
         } else {
           console.log("just quit")
         }
-      }    
+      }
   });
 }
 
@@ -240,11 +236,11 @@ function saveFileAs() {
     defaultPath: nameToUse,
     filters: [
       {
-        name: 'Custom File Type', 
+        name: 'Custom File Type',
         extensions: ['fegs']
       }
     ]
-  }, 
+  },
   function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
@@ -270,11 +266,11 @@ function saveFileAsAndRefresh() {
     defaultPath: nameToUse,
     filters: [
       {
-        name: 'Custom File Type', 
+        name: 'Custom File Type',
         extensions: ['fegs']
       }
     ]
-  }, 
+  },
   function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
@@ -300,11 +296,11 @@ function saveFileAsAndOpen(saveName, openName) {
     defaultPath: nameToUse,
     filters: [
       {
-        name: 'Custom File Type', 
+        name: 'Custom File Type',
         extensions: ['fegs']
       }
     ]
-  }, 
+  },
   function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
@@ -330,11 +326,11 @@ function saveFileAsAndQuit() {
     defaultPath: nameToUse,
     filters: [
       {
-        name: 'Custom File Type', 
+        name: 'Custom File Type',
         extensions: ['fegs']
       }
     ]
-  }, 
+  },
   function (fileNames) {
     if (fileNames === undefined) { // fileNames is an array that contains all the selected files
       console.log("No file selected");
@@ -400,7 +396,7 @@ ipcMain.on('quit', function(event, arg) {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
-// 
+//
 function verifyIntention(action) {
   console.log("verifyIntention");
   const {dialog} = require('electron');
