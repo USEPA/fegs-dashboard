@@ -4051,34 +4051,6 @@
         return attributeScores;
       };
 
-      this.calculateAttributeScoresNew = function() {
-        var totalSum = 0;
-        var attributeScores = {};
-        for (var i = 0; i < this.fegsAttributes.length; i++) {
-          var attributeSum = 0;
-          for (var beneficiary in this.attributes) {
-            var percentage = parseInt(this.attributes[beneficiary][this.fegsAttributes[i]].percentageOfBeneficiary);
-            if (Number.isInteger(percentage) && percentage !== 0) {
-              //console.log("Beneficiary: " + beneficiary);
-              //console.log("Percentage: " + percentage);
-              attributeSum += percentage * this.beneficiaryScore(beneficiary);
-            }
-          }
-          if (attributeSum !== 0) {
-            //console.log("Attribute: " + this.fegsAttributes[i]);
-            //console.log("attributeSum: " + attributeSum);	
-          }
-          attributeScores[this.fegsAttributes[i]] = attributeSum;
-          totalSum += attributeSum;
-        }
-        console.log("Total: " + totalSum);
-
-        for (var attribute in attributeScores) {
-          attributeScores[attribute] = attributeScores[attribute] / totalSum * 100;
-          console.log(attribute + ": " + attributeScores[attribute] / totalSum * 100);
-        }
-      };
-
       this.calculateAttributeScore = function(attribute) {
         var sum = 0;
         for (var beneficiary in this.attributes) {
@@ -4399,12 +4371,9 @@
           var keyName = d.label.replace(/\s*([/])\s*/g, '$1').replace(/[&,()]/g,"").replace(/\s+|[\/]/g, "-").toLowerCase();
           var element = document.querySelector('.key.' + keyName);
           if (element) {
-            console.log(d.value);
             if (d.value !== 0) {
-              console.log("show ",keyName);
               document.querySelector('.key.' + keyName).parentElement.removeAttribute('hidden');
             } else {
-              console.log("hide ",keyName);
               document.querySelector('.key.' + keyName).parentElement.setAttribute('hidden', '');
             }
           } else {
@@ -5143,8 +5112,6 @@
           left: 50
         };
 
-        console.log(data);
-
         var divWidth = document.getElementById('beneficiary-charts').offsetWidth;
         if (divWidth > 1000) {
           divWidth = 1000;
@@ -5764,7 +5731,7 @@
       return fegsScopingData;
     };
 
-    var testy = function() {
+    var runTest = function() {
       var select = document.getElementById('select-stakeholder');
       var stakeholdersArray;
       populateDevData();
@@ -6437,7 +6404,6 @@
       };
 
       this.showStakeholderScores = function() {
-        console.log("showStakeholderScores");
         for (var i = document.getElementById('table-stakeholders').rows.length - 1; i > 0; i--) {
           document.getElementById('table-stakeholders').deleteRow(i);	
         }
@@ -6542,7 +6508,6 @@
     }
 
     var downloadText = function(filename, text) {
-      console.log("downloadText");
       var element = document.createElement('a');
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
       element.setAttribute('download', filename);
@@ -6750,9 +6715,6 @@
 
       // Listen for save as from main process
       ipcRenderer.on('save-as-and-open', (event, saveName, openName) => {
-        console.log('save-as-and-open');
-        console.log(saveName);
-        console.log(openName);
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
@@ -6763,8 +6725,6 @@
 
       // Listen for save as from main process then quit
       ipcRenderer.on('save-as-and-quit', (event, saveName) => {
-        console.log('save-as-and-open');
-        console.log(saveName);
         fegsScopingData.filePath = saveName;
         fegsScopingController.saveJSON(saveName, fegsScopingData);
         fegsScopingView.indicateSaved(saveName);
