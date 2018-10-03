@@ -67,7 +67,7 @@ describe('Tests which require spectron to test electron', function() {
   });
 
   it('allows users to change project name where it\'s shown', function() {
-    return this.app.client.click('#change-name').element('#input-name').setValue('42').click('#save-name').getTitle().should.eventually.equal('42');
+    return this.app.client.click('#menu-project-name').element('#input-name').setValue('42').click('#save-name').getTitle().should.eventually.equal('42');
   });
 
   it('hides unrepresented beneficiaries automatically', function() {
