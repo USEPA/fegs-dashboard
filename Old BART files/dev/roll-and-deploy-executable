@@ -1,7 +1,0 @@
-#!/bin/bash
-pwd > ~/.pwd
-cd ~/fegs-dashboard
-eval 'python setup.py py2exe'
-cp -r dist /L/Public/kthom02/
-cd `cat ~/.pwd`
-rm ~/.pwd
