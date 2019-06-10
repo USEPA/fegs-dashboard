@@ -25,13 +25,13 @@ There are seven steps in a generic MCDA process. Different methods will approach
 <p>The FEGS Scoping Tool, however, does not merely prioritize the stakeholder groups. It uses that initial prioritization to subsequently also prioritize beneficiary groups, and then environmental attributes. It does this by taking an approach we are calling a tiered MCDA. This approach uses the output from the stakeholder prioritization MCDA as input in a beneficiary prioritization MCDA, and then the output from the beneficiary prioritization as input in an environmental attribute prioritization. This is described in Table 1.</p>
 <p><strong>Table 1. The MCDA steps in each of the three tiers of the FEGS Scoping Tool. The colored boxes indicate how the output of one tier is used as an input in the next.</strong> The output from Tier 1 (red box) is used as an input in Tier 2 (red box). The output from Tier 2 (orange box) is used as an input in Tier 3 (orange box). </p>
  
-<img src="table1.png" width="800" class="center"/>
+<img src="./img/methods/table1.png" width="800" class="center"/>
 
 <p>The FEGS Scoping Tool uses calculates a value for each alternative by using summing the weighted scores for each alternative. The value, <em>y(i)</em>, of an alternative, <em>i</em>, is calculated as:</p>
-<img src="eq1.PNG" width="142" height="58" class="center"/>
+<img src="./img/methods/eq1.PNG" width="142" height="58" class="center"/>
 
 <p>where <em>M</em> is the number of possible metrics for which <em>i</em> can be scored, <em>w<sub>m</sub></em> is the weight given to each criteria, and <em>z<sub>i</sub></em> is the score of alternative <em>i</em> on metric <em>m</em>. The value, <em>y(i)</em>, is then normalized, <em>n(i)</em>, to a 0 – 100 scale by dividing <em>y(i)</em> by the sum of all weights:</p>
-<img src="eq2.PNG" width="134" height="61" class="center"/>
+<img src="./img/methods/eq2.PNG" width="134" height="61" class="center"/>
 <p>The same calculations are used for each tier of the FEGS Scoping Tool. The output values, <em>n(i)</em>, from Tier 1 are then used as the weights, <em>w<sub>m</sub></em>, for Tier 2. Subsequently, the output values, <em>n(i)</em>, from Tier 2 are used as the weights, <em>w<sub>m</sub></em>, for Tier 3.</p>
 <p><em>Reference</em></p>
 <p>Stewart, T.J. (1992). A critical survey of the status of multiple criteria decision making theory and practice. <em>Omega</em> 20:569-586.</p>
