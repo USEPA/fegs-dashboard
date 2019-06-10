@@ -3049,10 +3049,6 @@
       document.body.removeChild(element);
     };
   </script>
-  <!-- FIXME: integrate code between comment flags into application -->
-  <script src="./js/d3.v5.min.js"></script>
-  <script src="./js/d3.tip.js"></script>
-
   <script>
     /** Prototype data-model and its CRUD-methods. */
     var FEGSScopingData = function() {
@@ -6181,7 +6177,9 @@
       beneficiaryBarchart();
       attributeBarchart();
     });
+    const d3 = require('d3');
+    d3.tip = require('d3-tip');
+    require('./js/render.js');
   </script>
 </body>
-
 </html>
