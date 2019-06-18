@@ -2088,7 +2088,8 @@ var removeOptionFromSelect = function(selectId, optionText) {
       select.options[i].remove();
     }
   }
-  select.onchange(); // fire select's onchange callback
+  let event = new Event('change');
+  select.dispatchEvent(event);
 };
 
 /** refresh select-box from data */
@@ -2729,7 +2730,8 @@ var FEGSScopingView = function() {
     stakeholderBarchart();
 
     updateSelectStakeholder('select-stakeholder');
-    document.getElementById('select-stakeholder').onchange();
+    let            event = new Event('change');
+    document.getElementById('select-stakeholder').dispatchEvent(event);
     updateStakeholderProgress();
     document.getElementById('stakeholder-table-container').style.display = "block";
     fegsScopingView.indicateUnsaved();
@@ -2965,6 +2967,36 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.body.getAttribute('data-restore') === 'true') {
     fegsScopingController.importData();
   }
+
+  document.getElementById("show-name").addEventListener("click", () => {
+    fegsScopingView.editName();
+  });
+
+  document.getElementById("save-name").addEventListener("click", () => {
+    fegsScopingController.updateName(document.getElementById('input-name').value);
+  });
+
+  document.getElementById("add-stakeholder").addEventListener("click", () => {
+    addStakeholder();
+  });
+
+  document.getElementById("table-beneficiaries-toggle").addEventListener("click", event => {
+    toggleTableDefinitions(event, 'table-beneficiaries');
+    return false;
+  });
+
+  document.getElementById("page-zoom").addEventListener("change", event => {
+    pageZoomChange(event);
+  });
+
+  document.getElementById("page-zoom").addEventListener("input", event => {
+    indicatePageZoom(event);
+  });
+
+  document.getElementById("select-stakeholder").addEventListener("change", () => {
+    selectStakeholderToSlice();
+  });
+
 });
 
 updateStakeholderProgress();
