@@ -18,13 +18,12 @@ let projectName = "New Project";
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 1024,
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true
     }
-    //frame: false
   });
 
   // and load the index.html of the app.
