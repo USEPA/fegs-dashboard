@@ -13,6 +13,7 @@ function onScroll(event) {
     }
   }
 }
+
 document.addEventListener ("keydown", function (zEvent) {
   if (zEvent.ctrlKey && zEvent.key === "+") {
       var element = document.querySelector('#page-zoom');
@@ -34,6 +35,7 @@ document.addEventListener ("keydown", function (zEvent) {
     element.dispatchEvent(input);
   }
 });
+
 var getDocument = function() {
   var documentText = '<!DOCTYPE html>' + '\n' + document.documentElement.outerHTML;
   return documentText;
@@ -51,10 +53,8 @@ var downloadText = function(filename, text) {
 
   document.body.removeChild(element);
 };
-// </script>
+
 // <!-- FIXME: integrate code between comment flags into application -->
-// <script src="./js/d3.v5.min.js"></script>
-// <script src="./js/d3.tip.js"></script>
 
 //<script>
 /** Prototype data-model and its CRUD-methods. */
@@ -717,17 +717,16 @@ var sum = function(obj) {
 /** pie chart */
 var initPieChart = {
   draw: function(config) {
-    var me = this;
+    Array.from(document.getElementsByClassName('d3-tip ' + config.element)).forEach((element) => {
+      element.parentNode.removeChild(element);  
+    }); 
+    
     var domEle = config.element;
     var data = config.data;
     var colors = config.colors;
     var width = 620;
     var height = 480;
     var radius = Math.min(width, height) / 2;
-    var legendKey = config.legend;
-
-    var legendRectSize = 18;
-    var legendSpacing = 4;
 
     var color = d3.scaleOrdinal(colors); // Set the colors
 
@@ -747,7 +746,7 @@ var initPieChart = {
     })(data);
 
     var tip = d3.tip()
-      .attr('class', 'd3-tip')
+      .attr('class', 'd3-tip ' + config.element)
       .offset([50, 0])
       .html(function(d) {
         var index = fegsScopingData.criteria.indexOf(d.data.label);
@@ -775,7 +774,12 @@ var initPieChart = {
     }
 
     var svg = d3.selectAll("." + domEle)
+      .append("div")  
+      .classed("svg-container", true) //container class to make it responsive
       .append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", "0 0 " + width + " " + width)
+      .classed("svg-content-responsive", true)
       .attr("width", width)
       .attr("height", height);
 
@@ -806,20 +810,6 @@ var initPieChart = {
         .value(function(d) {
           return d.value;
         })(data);
-
-      var tip = d3.tip()
-      .attr('class', 'd3-tip')
-      .offset([50, 0])
-      .html(function(d) {
-        var index = fegsScopingData.criteria.indexOf(d.data.label);
-        var label = d.data.label;
-        if (index >= 0) {
-          label = fegsScopingData.fegsCriteria[index];
-        }
-        return label + ": " + d.data.value;
-      });
-
-      g.call(tip);
 
       function checkD3Data(chart) {
         for (var prop in chart) {
@@ -866,9 +856,6 @@ var initPieChart = {
           if (isValid) {
             this.classList.remove('invalid-text-input');
             fegsScopingData.scores[inputs[i].id.replace('-score', '')] = value;
-            data = getScores();
-            change();
-            stakeholderBarchart();
           } else {
             allValid = false;
             if (selected) {
@@ -877,6 +864,10 @@ var initPieChart = {
             }
           }
         }
+
+        data = getScores();
+        change();
+        stakeholderBarchart();
 
         if (allValid && document.getElementById("section-stakeholders").hasAttribute('hidden')) {
           //showSection("stakeholders");
@@ -1101,7 +1092,9 @@ function addStakeholderScores() {
   clearStakeholderScores();
   stakeholderBarchart();
   updateSelectStakeholder('select-stakeholder');
-  document.getElementById('select-stakeholder').onchange();
+  let event = new Event('input');
+  document.getElementById('select-stakeholder').dispatchEvent(event);
+
   updateStakeholderProgress();
   document.getElementById('stakeholder-table-container').style.display = "block";
   fegsScopingView.indicateUnsaved();
@@ -1437,6 +1430,10 @@ var initStackedBarChart = {
       left: 50
     };
 
+    Array.from(document.getElementsByClassName('d3-tip ' + config.element)).forEach((element) => {
+      element.parentNode.removeChild(element);  
+    }); 
+
     var divWidth = document.getElementById('beneficiary-charts').offsetWidth;
     if (divWidth > 1000) {
       divWidth = 1000;
@@ -1466,7 +1463,7 @@ var initStackedBarChart = {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var tip = d3.tip()
-      .attr('class', 'd3-tip')
+      .attr('class', 'd3-tip stacked-bar-chart')
       .offset([-10, 0])
       .html(function(d, i) {
         var index = fegsScopingData.criteria.indexOf(this.parentNode.getAttribute('data-label'));
@@ -1638,7 +1635,7 @@ var initBarChart = {
     var colorScale = d3.scaleOrdinal(colors);
 
     var tip = d3.tip()
-        .attr('class', 'd3-tip')
+        .attr('class', 'd3-tip bar-chart')
         .offset([-10, 0])
         .html(function(d) {
           return "<div><span>Attribute:</span> <span style='color:white'>" + d.label + "</span></div>" +
@@ -2288,7 +2285,7 @@ var Table = function(tableId, rowHeaders, columnHeaders, rowOffset, columnOffset
     if (isNaN(columnIndicator) || Number('1') !== Math.round(Number('1'))) { // assume the argument is a heading-string if not coercible to NaN
       unshiftedColumnIndex = this.columnHeaders.indexOf(columnIndicator);
       if (unshiftedColumnIndex === -1) {
-        throw new Error('columnIndicator not found: ' + columnIndicator + 'in Table-instance ', this);
+        throw new Error('columnIndicator not found: ' + columnIndicator + ' in Table-instance ', this);
       }
       return unshiftedColumnIndex + this.columnOffset;
     } else { // assume a numerical index was supplied if not coerced to NaN
@@ -2730,7 +2727,7 @@ var FEGSScopingView = function() {
     stakeholderBarchart();
 
     updateSelectStakeholder('select-stakeholder');
-    let            event = new Event('change');
+    let event = new Event('change');
     document.getElementById('select-stakeholder').dispatchEvent(event);
     updateStakeholderProgress();
     document.getElementById('stakeholder-table-container').style.display = "block";
@@ -2997,6 +2994,15 @@ document.addEventListener('DOMContentLoaded', function() {
     selectStakeholderToSlice();
   });
 
+  document.getElementById("add-stakeholder-scores").addEventListener("click", () => {
+    addStakeholderScores();
+  });
+  
+  Array.from(document.querySelectorAll('#table-scores label')).forEach((element) => {
+    element.addEventListener('click', (event) => {
+      accessiblyNotify(event.target.dataset.title);
+    });
+  });
 });
 
 updateStakeholderProgress();
@@ -3151,3 +3157,16 @@ APP.onResize(function() {
   beneficiaryBarchart();
   attributeBarchart();
 });
+
+ // Removes an element from the document
+function removeElementById(elementId) {
+  var element = document.getElementById(elementId);
+  element.parentNode.removeChild(element);
+}
+
+// Removes an element from the document
+function removeElementsByClassName(className) {
+  Array.from(document.getElementsByClassName(className)).forEach((element) => {
+    element.parentNode.removeChild(element);  
+  });
+}
