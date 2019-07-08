@@ -2978,8 +2978,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   document.getElementById("table-beneficiaries-toggle").addEventListener("click", event => {
+    event.preventDefault();
     toggleTableDefinitions(event, 'table-beneficiaries');
-    return false;
   });
 
   document.getElementById("page-zoom").addEventListener("change", event => {
