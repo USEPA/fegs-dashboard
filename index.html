@@ -61,47 +61,47 @@
                 <tbody>
                   <tr>
                     <th data-th="Color"><span class="legend magnitude"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('The likelihood and degree of potential impact to the stakeholder group as a result of the decision.')" style="cursor: help;" for="magnitude-score">Magnitude & Probability of Impact</label></th>
+                    <th data-th="Label"><label data-title="The likelihood and degree of potential impact to the stakeholder group as a result of the decision." for="magnitude-score">Magnitude & Probability of Impact</label></th>
                     <td data-th="Value"><input id="magnitude-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend influence"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('The level of influence that the stakeholder group has over the decision-making process.')" style="cursor: help;" for="influence-score">Level of Influence</label></th>
+                    <th data-th="Label"><label data-title="The level of influence that the stakeholder group has over the decision-making process." for="influence-score">Level of Influence</label></th>
                     <td data-th="Value"><input id="influence-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend interest"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('The level of interest that the stakeholder group has in the decision-making process or outcome.')" style="cursor: help;" for="interest-score">Level of Interest</label></th>
+                    <th data-th="Label"><label data-title="The level of interest that the stakeholder group has in the decision-making process or outcome." for="interest-score">Level of Interest</label></th>
                     <td data-th="Value"><input id="interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend urgency"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('The degree to which the stakeholder group would like to see a decision made or action taken.')" style="cursor: help;" for="urgency-score">Urgency & Temporal Immediacy</label></th>
+                    <th data-th="Label"><label data-title="The degree to which the stakeholder group would like to see a decision made or action taken." for="urgency-score">Urgency & Temporal Immediacy</label></th>
                     <td data-th="Value"><input id="urgency-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend proximity"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('How frequently the stakeholder group comes into contact with the environment for which a decision is being made.')" style="cursor: help;" for="proximity-score">Proximity</label></th>
+                    <th data-th="Label"><label data-title="How frequently the stakeholder group comes into contact with the environment for which a decision is being made." for="proximity-score">Proximity</label></th>
                     <td data-th="Value"><input id="proximity-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend economic-interest"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('Whether or not the stakeholder group has an economic interest in the outcome of the decision-making process (i.e., would their livelihoods or assets be impacted by the decision outcome).')" style="cursor: help;" for="economic-interest-score">Economic Interest</label></th>
+                    <th data-th="Label"><label data-title="Whether or not the stakeholder group has an economic interest in the outcome of the decision-making process (i.e., would their livelihoods or assets be impacted by the decision outcome)." for="economic-interest-score">Economic Interest</label></th>
                     <td data-th="Value"><input id="economic-interest-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend rights"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('Whether the stakeholder group has an legal, property, consumer, or user rights associated with the decision-making process, the decision outcome, or the environment for which a decision is being made.')" style="cursor: help;" for="rights-score">Rights</label></th>
+                    <th data-th="Label"><label data-title="Whether the stakeholder group has an legal, property, consumer, or user rights associated with the decision-making process, the decision outcome, or the environment for which a decision is being made." for="rights-score">Rights</label></th>
                     <td data-th="Value"><input id="rights-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend fairness"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('Whether the exclusion of the stakeholder group from the decision-making process would lead to the process as being viewed as unfair by the community.')" style="cursor: help;" for="fairness-score">Fairness</label></th>
+                    <th data-th="Label"><label data-title="Whether the exclusion of the stakeholder group from the decision-making process would lead to the process as being viewed as unfair by the community." for="fairness-score">Fairness</label></th>
                     <td data-th="Value"><input id="fairness-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend representation"></span></th>
-                    <th data-th="Label"><label onclick="accessiblyNotify('Whether the stakeholder group includes any underrepresented or underserved populations.')" style="cursor: help;" for="representation-score">Underrepresented & Underserved Representation</label></th>
+                    <th data-th="Label"><label data-title="Whether the stakeholder group includes any underrepresented or underserved populations." for="representation-score">Underrepresented & Underserved Representation</label></th>
                     <td data-th="Value"><input id="representation-score" type="number" min="0" max="100" /></td>
                   </tr>
                 </tbody>
@@ -241,7 +241,7 @@
                   <ul data-criterion="representation" class="stakeholder-value-list"></ul>
                 </div>
               </div>
-              <button onclick="addStakeholderScores();">Add stakeholder scores</button>
+              <button id="add-stakeholder-scores">Add stakeholder scores</button>
             </div>
           </div>
           <div id="stakeholder-table-container">
