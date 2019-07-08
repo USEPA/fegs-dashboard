@@ -1,6 +1,6 @@
 {
   "name": "fegs-scoping-tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
