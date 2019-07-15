@@ -2097,17 +2097,49 @@ var removeOptionFromSelect = function(selectId, optionText) {
 };
 
 /** refresh select-box from data */
-var updateSelectStakeholder = function(selectId) {
-  var i;
-  var select = document.getElementById(selectId);
-  var stakeholderNames = Object.keys(fegsScopingData.stakeholders);
-  for (i = select.options.length - 1; i > 0; i--) { // remove all options
+const updateSelectStakeholder = function (selectId) {
+  const select = document.getElementById(selectId);
+  const stakeholderNames = Object.keys(fegsScopingData.stakeholders);
+
+  for (let i = select.options.length - 1; i >= 0; i--) { // remove all options
     select.options[i].remove();
   }
   for (i = 0; i < stakeholderNames.length; i++) { // add option for each stakeholder
     addOption(selectId, stakeholderNames[i], stakeholderNames[i]);
   }
   selectStakeholderToSlice();
+};
+
+const showSelectedBeneficiary = function (element) {
+  const value = element.value
+  let beneficiariesToShow = [];
+
+  fegsScopingData.extantBeneficiaries().forEach(beneficiary => {
+    if (fegsScopingData.fegsBeneficiariesTier1[beneficiary] === value) {
+      beneficiariesToShow.push(beneficiary);
+    }
+  });
+
+  tableAttributes.showOnlyTheseColumns(beneficiariesToShow);
+}
+
+const updateSelectBeneficiary = function (selectId) {
+  const select = document.getElementById(selectId);
+  const beneficiaries = fegsScopingData.extantBeneficiaries();
+  let tier1Beneficiaries = [];
+  
+  for (let i = select.options.length - 1; i >= 0; i--) { // remove all options
+    select.options[i].remove();
+  }
+
+  for (let i = 0; i < beneficiaries.length; i++) { // add option for each stakeholder
+    let tier1Beneficiary = fegsScopingData.fegsBeneficiariesTier1[beneficiaries[i]];
+    
+    if (!tier1Beneficiaries.includes(tier1Beneficiary)) {
+      tier1Beneficiaries.push(tier1Beneficiary);
+      addOption(selectId, tier1Beneficiary, tier1Beneficiary);
+    }
+  }
 };
 
 /** return HTMLElement of accessible notice of text */
@@ -2410,7 +2442,7 @@ var Table = function(tableId, rowHeaders, columnHeaders, rowOffset, columnOffset
     }
     for (var i = 3; i < this.table.rows[1].cells.length; i++) {
       if (columnIndices.indexOf(i) === -1) {
-        this.clearColumn(i);
+        //this.clearColumn(i);
         this.hideColumn(i);
       }
     }
@@ -2486,7 +2518,8 @@ var tableAttributesCreator = function(tableId) {
           attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
         }
         fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
-        tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); // update beneficiaries shown in #table-attributes
+        updateSelectBeneficiary('select-beneficiary');
+        showSelectedBeneficiary(document.getElementById("select-beneficiary"));
         fegsScopingView.indicateUnsaved();
       } else { // notify of incorrect normalization
         accessiblyNotify('The percentages for beneficiary ' + beneficiaryName + ' sum to ' + sum + '.  Percentages must sum to 100.');
@@ -2582,7 +2615,8 @@ var FEGSScopingView = function() {
     fegsScopingView.showStakeholderScores();
     fegsScopingView.displayBeneficiaryScores();
     fegsScopingView.restoreAttributes();
-    tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
+    updateSelectBeneficiary('select-beneficiary');
+    showSelectedBeneficiary(document.getElementById("select-beneficiary"));
 
     updateWeightingProgress();
     updateStakeholderProgress();
@@ -2846,7 +2880,8 @@ function updateBeneficiaryView() {
 function updateAttributeView() {
   fegsScopingView.displayBeneficiaryScores(); // table-attributes
   fegsScopingView.restoreAttributes(); // table-attributes
-  tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries()); // table-attributes
+  updateSelectBeneficiary('select-beneficiary');
+  showSelectedBeneficiary(document.getElementById("select-beneficiary"));
 
   attributePiechartTier1();
   attributeBarchart();
@@ -2965,7 +3000,8 @@ var fegsScopingController = new FEGSScopingController();
 var criteriaColors = ["#4f81bd", "#c0504d", "#9bbb59", "#8064a2", "#4bacc6", "#f79646", "#2c4d75", "#772c2a", "#5f7530"];
 var beneficiaryColors = ["#DDD9C3", "#C4BD97", "#948A54", "#948A54", "#4A452A", "#1E1C11", "#050503", "#DCE6F2", "#C6D9F1", "#8EB4E3", "#558ED5", "#376092", "#1F497D", "#254061", "#10253F", "#CCC1DA", "#B3A2C7", "#604A7B", "#403152", "#D99694", "#953735", "#F9FDD1", "#F9F383", "#F5F018", "#FFFF00", "#DBEEF4", "#B7DEE8", "#93CDDD", "#4BACC6", "#31859C", "#215968", "#C3D69B", "#77933C", "#FAC090", "#E46C0A", "#D9D9D9", "#A6A6A6"];
 var tableAttributes = tableAttributesCreator('table-attributes');
-tableAttributes.showOnlyTheseColumns();
+updateSelectBeneficiary('select-beneficiary');
+showSelectedBeneficiary(document.getElementById("select-beneficiary"));
 document.addEventListener('DOMContentLoaded', function() {
   criteriaPiechart();
   if (document.body.getAttribute('data-restore') === 'true') {
@@ -2985,8 +3021,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   document.getElementById("table-beneficiaries-toggle").addEventListener("click", event => {
-    event.preventDefault();
     toggleTableDefinitions(event, 'table-beneficiaries');
+  });
+
+  document.getElementById("table-attributes-toggle").addEventListener("click", event => {
+    toggleTableDefinitions(event, 'table-attributes');
   });
 
   document.getElementById("page-zoom").addEventListener("change", event => {
@@ -2999,6 +3038,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById("select-stakeholder").addEventListener("change", () => {
     selectStakeholderToSlice();
+  });
+
+  document.getElementById("select-beneficiary").addEventListener("change", (e) => {
+    showSelectedBeneficiary(e.target);
   });
 
   document.getElementById("add-stakeholder-scores").addEventListener("click", () => {
