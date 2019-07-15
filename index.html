@@ -14,9 +14,9 @@
   <section id="sidebar">
     <h1 id="menu-title">FEGS Scoping Tool</h1>
     <div id="menu" class="inner">
-      Project name: <a href="#" id="show-name" title="Change project name"><span id="menu-project-name"></span><span id="unsaved-indicator" hidden>*</span></a>
+      Project name <a href="#" id="show-name" title="Change project name"><span id="menu-project-name"></span><span id="unsaved-indicator" hidden>*</span></a>
       <input class="form-text" id="input-name" type="text" hidden>
-      <button id="save-name" hidden>Save this name</button>
+      <button id="save-name" hidden>Save Name</button>
       <nav>
         <ul>
           <li id="nav-weighting">
@@ -37,7 +37,7 @@
           </li>
         </ul>
       </nav>
-      <span id="zoomer" hidden><label for="page-zoom">Zoom:</label> <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" step="0.05" type="range" value="1.0"></span>
+      <span id="zoomer" hidden><label for="page-zoom">Zoom</label> <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" step="0.05" type="range" value="1.0"></span>
     </div>
   </section>
 
@@ -118,7 +118,7 @@
             <div>
               <div class="light-gray">
                 <label class="inline-block">Stakeholder group name <input class="form-text" type="text" id="stakeholder-group"/></label>
-                <button id="add-stakeholder">Add stakeholder group</button>
+                <button id="add-stakeholder">Add Stakeholder Group</button>
                 <ul id="stakeholder-list"></ul>
               </div>
             </div>
@@ -241,7 +241,7 @@
                   <ul data-criterion="representation" class="stakeholder-value-list"></ul>
                 </div>
               </div>
-              <button id="add-stakeholder-scores">Add stakeholder scores</button>
+              <button id="add-stakeholder-scores">Add Stakeholder Scores</button>
             </div>
           </div>
           <div id="stakeholder-table-container">
@@ -315,15 +315,16 @@
           <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder group by percentage.</label>
           <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder must have beneficiary percentages which sum to 100.</p>
           <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
+          <label for="select-stakeholder">Select a Stakeholder Group</label>
           <select class="form-select" id="select-stakeholder">
-            <option selected="selected" disabled="disabled">Select a Stakeholder Group</option>
+            
           </select>
 
           <table id="table-beneficiaries">
             <thead>
               <tr>
                 <th style="width: 10em;">Category</th>
-                <th style="width: 10em;">Subcategory <br /><a id="table-beneficiaries-toggle" href="#">Hide definitions</a></th>
+                <th style="width: 10em;">Subcategory <br /><button id="table-beneficiaries-toggle">Hide Definitions</button></th>
                 <th style="width: 15em;" class="definition">Definition</th>
               </tr>
             </thead>
@@ -538,7 +539,11 @@
         <div class="page" id="section-attributes">
           <hr />
           <h2>Attributes</h2>
+          <label for="select-beneficiary">Identify the types of attributes making up each beneficiary group by percentage.</label>
           <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage. Each beneficary group must have attributes which sum to 100.</p>
+          <label for="select-beneficiary">Select a Beneficiary Group</label>
+          <select class="form-select" id="select-beneficiary">
+          </select>
           <table id="table-attributes">
             <colgroup>
               <col class="row-labels" span="2" />
@@ -570,7 +575,7 @@
                 <th colspan="2">Non-Use</th>
               </tr>
               <tr class="column-names">
-                <th colspan="2">Attribute Tier 1<!--<a id="table-attributes-toggle" href="#" onclick="toggleTableDefinitions(event, 'table-attributes'); return false;">Show definitions</a>--></th>
+                <th colspan="2">Attribute Tier 1 <br /><button id="table-attributes-toggle">Show Definitions</button></th>
                 <th>Attribute Tier 2</th>
                 <th aria-hidden="true"></th>
                 <th aria-hidden="true"></th>
