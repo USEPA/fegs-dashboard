@@ -1819,7 +1819,8 @@ var selectStakeholderToSlice = function() {
       beneficiaryPiechart();
       updateAttributeProgress();
       fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
-      tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
+      updateSelectBeneficiary('select-beneficiary');
+      showSelectedBeneficiary(document.getElementById("select-beneficiary"));
       fegsScopingData.clearOtherAttributes(fegsScopingData.extantBeneficiaries());
       //showSection("attributes");
     }
@@ -1827,9 +1828,6 @@ var selectStakeholderToSlice = function() {
 
   for (i = tBody.rows[0].cells.length - 1; i > 2; i--) { // remove all data columns
     removeLastColumnFromTable(table.id);
-  }
-  if (select.selectedIndex === 0) { // default selection => do nothing further
-    return;
   }
   addTableColumn(table.id, stakeholderName, fegsScopingData.fegsBeneficiaries); // add a column to house the data
   for (rowIndex = 0; rowIndex < tBody.rows.length; rowIndex++) {
@@ -1862,7 +1860,9 @@ var selectStakeholderToSlice = function() {
     input.oninput = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
     cell.appendChild(input);
   }
-  tableAttributes.showOnlyTheseColumns(fegsScopingData.extantBeneficiaries());
+
+  updateSelectBeneficiary('select-beneficiary');
+  showSelectedBeneficiary(document.getElementById("select-beneficiary"));
   updateBeneficiaryProgress();
 };
 
