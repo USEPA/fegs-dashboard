@@ -1699,11 +1699,18 @@ var getStakeholderPrioritizationsFromTable = function() {
  * @param {string} dataArray - array whose elements will populate
  *  the columns where column i + 1 gets ith element of the array
  */
-var addTableColumn = function(tableId, columnName, dataArray) {
-  var table = document.getElementById(tableId);
-  table.tHead.rows[0].innerHTML += '<th>' + columnName + '</th>';
-  for (var i = 0; i < dataArray.length; i++) {
-    table.tBodies[0].rows[i].innerHTML += '<td>' + dataArray[i] + '</td>';
+const addTableColumn = function (tableId, columnName, dataArray) {
+  const table = document.getElementById(tableId);
+  const tHead = table.tHead.children[0];
+  const th = document.createElement('th');
+
+  th.innerHTML = columnName;
+  tHead.appendChild(th);
+
+  for (let i = 0; i < dataArray.length; i++) {
+    const td = document.createElement('td');
+    td.innerHTML = dataArray[i];
+    table.tBodies[0].rows[i].appendChild(td);
   }
 };
 
