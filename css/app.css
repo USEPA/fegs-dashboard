@@ -590,7 +590,7 @@ table input {
 #table-stakeholders button {
   margin: 0 0 .5em;
 }
-#add-stakeholder {
+.btn-no-margin {
   margin: 0;
 }
 .d3-tip {
