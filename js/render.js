@@ -2138,7 +2138,8 @@ const updateSelectBeneficiary = function (selectId) {
   const select = document.getElementById(selectId);
   const beneficiaries = fegsScopingData.extantBeneficiaries();
   let tier1Beneficiaries = [];
-  
+  const selectedValue = select.value;
+
   for (let i = select.options.length - 1; i >= 0; i--) { // remove all options
     select.options[i].remove();
   }
@@ -2149,6 +2150,10 @@ const updateSelectBeneficiary = function (selectId) {
     if (!tier1Beneficiaries.includes(tier1Beneficiary)) {
       tier1Beneficiaries.push(tier1Beneficiary);
       addOption(selectId, tier1Beneficiary, tier1Beneficiary);
+      
+      if (tier1Beneficiary === selectedValue) {
+        select.selectedIndex = tier1Beneficiaries.length - 1;
+      }
     }
   }
 };
@@ -2853,11 +2858,11 @@ function toggleTableDefinitions(event, tableID) {
   for (let i = 0; i < document.querySelectorAll('#' + tableID + ' .definition').length; i++) {
     var element = document.querySelectorAll('#' + tableID + ' .definition')[i];
     if (element.hasAttribute('hidden') || element.classList.contains('display-none')) {
-      event.target.innerHTML = 'Hide definitions';
+      event.target.innerHTML = 'Hide Definitions';
       element.removeAttribute('hidden');
       element.classList.remove('display-none');
     } else {
-      event.target.innerHTML = 'Show definitions';
+      event.target.innerHTML = 'Show Definitions';
       element.setAttribute('hidden', true);
       element.classList.add('display-none');
     }
