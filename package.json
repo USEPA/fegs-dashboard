@@ -1,6 +1,6 @@
 {
   "name": "fegs-scoping-tool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "FEGS",
     "Final Ecosystem Goods and Services"
   ],
-  "author": "EPA",
+  "author": "Seth Jenkins",
   "devDependencies": {
     "@types/mocha": "^2.2.48",
     "chai": "^4.1.2",

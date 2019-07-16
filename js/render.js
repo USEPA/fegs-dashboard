@@ -1801,13 +1801,21 @@ const selectStakeholderToSlice = function () {
     var inputs, input;
     inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
     for (let j = 0; j < inputs.length; j++) {
-      if (isNaN(parseFloat(inputs[j].value))) {
+      let value = parseFloat(inputs[j].value);
+
+      if (value > 100 || value < 1) {
+        inputs[j].parentElement.style = 'background-color: #ffcccc';
+        accessiblyNotify('Values must be between 1 and 100. The current value is ' + value + '.');
+        return;
+      }
+
+      if (isNaN(value)) {
         inputs[j].parentElement.style = 'background-color: #ffcccc';
       }
-      percentageSum += +inputs[j].value;
+      percentageSum += Number(inputs[j].value);
     }
     if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
-      accessiblyNotify('Percentages must sum to 100. The current sum is ' + percentageSum);
+      accessiblyNotify('Percentages must sum to 100. The current sum is ' + percentageSum + '.');
       for (let j = 0; j < inputs.length; j++) {
         inputs[j].parentElement.style = 'background-color: #ffcccc';
       }
