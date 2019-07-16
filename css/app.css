@@ -575,10 +575,13 @@ table input {
   padding: 0;
 }
 .accessible-notification {
-  background-color: #fdb81e;
-  bottom: 0;
-  padding: .5em;
+  background-color: #000;
+  color: #fff;
+  padding: 1em;
   position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
   z-index: 10001;
 }
 .inline-block {
@@ -606,7 +609,7 @@ table input {
   border: none;
   display: inline-block;
   outline: 0;
-  /* padding: 8px 16px; */
+  padding: 8px 16px;
   vertical-align: middle;
   overflow: hidden;
   text-decoration: none;

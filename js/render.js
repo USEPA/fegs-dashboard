@@ -1793,14 +1793,14 @@ var selectStakeholderToSlice = function() {
     inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
     for (j = 0; j < inputs.length; j++) {
       if (isNaN(parseFloat(inputs[j].value))) {
-        inputs[j].parentElement.style = 'background-color: red';
+        inputs[j].parentElement.style = 'background-color: #ffcccc';
       }
       percentageSum += +inputs[j].value;
     }
     if (percentageSum < 99.95 || percentageSum > 100.05) { // inform user of unnormalized percentages
       accessiblyNotify('Percentages must sum to 100. The current sum is ' + percentageSum);
       for (j = 0; j < inputs.length; j++) {
-        inputs[j].parentElement.style = 'background-color: red';
+        inputs[j].parentElement.style = 'background-color: #ffcccc';
       }
     } else { // update data with valid input
       for (j = 0; j < inputs.length; j++) {
