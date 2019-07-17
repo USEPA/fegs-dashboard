@@ -2158,7 +2158,7 @@ const updateSelectBeneficiary = function (selectId) {
     if (!tier1Beneficiaries.includes(tier1Beneficiary)) {
       tier1Beneficiaries.push(tier1Beneficiary);
       addOption(selectId, tier1Beneficiary, tier1Beneficiary);
-      
+
       if (tier1Beneficiary === selectedValue) {
         select.selectedIndex = tier1Beneficiaries.length - 1;
       }
@@ -2518,12 +2518,12 @@ var tableAttributesCreator = function (tableId) {
     var rows = this.parentElement.parentElement.parentElement.rows;
     var rowIndex;
     var input;
-    if (this.value < 0 || this.value > 100) { // value is invalid after change
+    if (this.value < 1 || this.value > 100) { // value is invalid after change
       for (let i = 0; i < rows.length; i++) {
         rows[i].cells[columnIndex].classList.remove('invalid-text-input');
       }
       this.parentElement.classList.add('invalid-text-input');
-      accessiblyNotify('Attribute ' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + ' was input as ' + this.value + ' percent of beneficiary-group ' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '. Percentages must be between 0 and 100.');
+      accessiblyNotify('Attribute <em>' + rows[this.parentElement.parentElement.rowIndex].cells[0].innerText + '</em> was input as ' + this.value + ' percent of beneficiary-group <em>' + document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText + '</em>. Percentages must be between 1 and 100.');
     } else { // individual input is valid
       for (let i = 0; i < rows.length; i++) { // loop through values in column
         if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
