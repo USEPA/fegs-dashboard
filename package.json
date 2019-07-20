@@ -20,7 +20,6 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "devtron": "^1.4.0",
-    "electron": "^5.0.0",
     "electron-builder": "^20.42.0",
     "electron-chromedriver": "^1.8.0",
     "electron-debug": "^1.5.0",
@@ -50,6 +49,7 @@
   },
   "dependencies": {
     "d3": "^5.9.2",
-    "d3-tip": "^0.9.1"
+    "d3-tip": "^0.9.1",
+    "electron": "^5.0.0"
   }
 }
