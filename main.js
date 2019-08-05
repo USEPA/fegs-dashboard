@@ -7,6 +7,7 @@ const { app } = electron;
 const { BrowserWindow } = electron;
 const { Menu } = electron;
 const { ipcMain } = electron;
+const { dialog } = electron;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -14,6 +15,7 @@ let mainWindow;
 let saved = true;
 let savedFileName = 'New Project';
 let projectName = 'New Project';
+const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 
 function openFile() {
   // console.log("open file")
@@ -33,7 +35,7 @@ function openFile() {
         {
           type: 'question',
           buttons: ['Save', "Don't Save", 'Cancel'],
-          title: 'FEGS Scoping Tool',
+          title: appTitle,
           message: `Do you want to save your changes to ${savedFileName}?`,
         },
         (response) => {
@@ -71,7 +73,6 @@ function saveFileAs() {
   if (projectName !== 'New Project' && savedFileName === 'New Project') {
     nameToUse = projectName;
   }
-  const { dialog } = electron;
   dialog.showSaveDialog(
     {
       defaultPath: nameToUse,
@@ -103,7 +104,6 @@ function saveFileAsAndRefresh() {
   if (projectName !== 'New Project' && savedFileName === 'New Project') {
     nameToUse = projectName;
   }
-  const { dialog } = electron;
   dialog.showSaveDialog(
     {
       defaultPath: nameToUse,
@@ -135,7 +135,6 @@ function saveFileAsAndOpen(saveName, openName) {
   if (projectName !== 'New Project' && savedFileName === 'New Project') {
     nameToUse = projectName;
   }
-  const { dialog } = electron;
   dialog.showSaveDialog(
     {
       defaultPath: nameToUse,
@@ -167,7 +166,6 @@ function saveFileAsAndQuit() {
   if (projectName !== 'New Project' && savedFileName === 'New Project') {
     nameToUse = projectName;
   }
-  const { dialog } = electron;
   dialog.showSaveDialog(
     {
       defaultPath: nameToUse,
@@ -210,6 +208,7 @@ function createWindow() {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
     },
+    title: appTitle,
   });
 
   // and load the index.html of the app.
@@ -227,12 +226,11 @@ function createWindow() {
           label: 'New Project',
           click: () => {
             if (!saved) { // Check if unsaved
-              const { dialog } = electron;
               dialog.showMessageBox(mainWindow,
                 {
                   type: 'question',
                   buttons: ['Save', "Don't Save", 'Cancel'],
-                  title: 'FEGS Scoping Tool',
+                  title: appTitle,
                   message: `Do you want to save your changes to ${savedFileName}?`,
                 },
                 (response) => {
@@ -291,9 +289,8 @@ function createWindow() {
         {
           label: 'Tool Purpose',
           click: () => {
-            const { dialog } = electron;
             dialog.showMessageBox(mainWindow, {
-              title: 'FEGS Scoping Tool',
+              title: appTitle,
               message: 'Tool Purpose',
               detail: 'The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives.',
             });
@@ -302,7 +299,12 @@ function createWindow() {
         {
           label: 'Tool Methods',
           click: () => {
-            const win = new BrowserWindow({ width: 800, height: 600, frame: true });
+            const win = new BrowserWindow({
+              width: 800,
+              height: 600,
+              frame: true,
+              title: `Tool Methods - ${appTitle}`,
+            });
             win.setMenu(null);
             win.show();
             // and load the index.html of the app.
@@ -330,19 +332,18 @@ function createWindow() {
         {
           type: 'question',
           buttons: ['Yes', 'No'],
-          title: 'FEGS Scoping Tool',
+          title: appTitle,
           message: 'Are you sure you want to quit?',
         });
       if (choice === 1) {
         e.preventDefault();
       }
     } else {
-      const { dialog } = electron;
       const choice = dialog.showMessageBox(mainWindow,
         {
           type: 'question',
           buttons: ['Save', "Don't Save", 'Cancel'],
-          title: 'FEGS Scoping Tool',
+          title: appTitle,
           message: `Do you want to save your changes to ${savedFileName}?`,
         });
         // // console.log(choice);
