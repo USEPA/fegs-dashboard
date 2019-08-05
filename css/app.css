@@ -628,3 +628,6 @@ table input {
 #table-scores {
   width: 20em;
 }
+#table-scores th {
+  width: 1em;
+}
