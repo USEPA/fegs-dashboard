@@ -622,6 +622,9 @@ table input {
   right: 0;
   top: 0;
 }
-#table-scores label{
+#table-scores label {
   cursor: help;
+}
+#table-scores {
+  width: 20em;
 }
