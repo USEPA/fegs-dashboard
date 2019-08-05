@@ -359,32 +359,15 @@ function createWindow() {
       }
     }
   });
-}
 
-// function verifyIntention(action) {
-//   // console.log("verifyIntention");
-//   const { dialog } = electron;
-//   dialog.showMessageBox(
-//     mainWindow,
-//     {
-//       type: 'question',
-//       buttons: ['Save', "Don't Save", 'Cancel'],
-//       title: 'FEGS Scoping Tool',
-//       message: `Do you want to save your changes to ${savedFileName}?`,
-//     },
-//     (response) => {
-//       // console.log(response);
-//       if (response === 0) {
-//         // console.log("Save and Quit");
-//         mainWindow.webContents.send('save-and-refresh');
-//       } else if (response === 2) {
-//         // console.log("Cancel");
-//         return;
-//       }
-//       action();
-//     },
-//   );
-// }
+  mainWindow.webContents.on('crashed', () => {
+    console.log('crashed');
+  });
+
+  mainWindow.on('unresponsive', () => {
+    console.log('unresponsive');
+  });
+}
 
 // Saves the file when the renderer returns the data
 ipcMain.on('save-as', (event, arg) => {
@@ -453,4 +436,8 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+process.on('uncaughtException', () => {
+  console.log('uncaughtException');
 });
