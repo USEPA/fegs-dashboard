@@ -5,22 +5,24 @@ const { app } = electron.remote;
 const d3 = require('d3');
 d3.tip = require('d3-tip');
 
+let fegsScopingData;
+let fegsScopingView;
+let fegsScopingController;
+let tableAttributes;
+
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 
-const {
-  ipcRenderer,
-  remote,
-  webFrame,
-} = electron;
+const { ipcRenderer, remote, webFrame } = electron;
 
 const round = function round(number, precision) {
   const shift = function shift(number, precision, reverseShift) {
     if (reverseShift) {
       precision = -precision;
     }
-    const numArray = ('' + number).split('e');
-    return +(numArray[0] + 'e' + (numArray[1] ? (+numArray[1] + precision) : precision));
+    const numArray = number.toString().split('e');
+    return +`${numArray[0]}e${numArray[1] ? +numArray[1] + precision : precision}`;
   };
+
   return shift(Math.round(shift(number, precision, false)), precision, true);
 };
 
@@ -55,9 +57,56 @@ const accessiblyNotify = function accessiblyNotify(text) {
 
 // PAGE PROCESS
 
-const criteriaColors = ['#4f81bd', '#c0504d', '#9bbb59', '#8064a2', '#4bacc6', '#f79646', '#2c4d75', '#772c2a', '#5f7530'];
-const beneficiaryColors = ['#DDD9C3', '#C4BD97', '#948A54', '#948A54', '#4A452A', '#1E1C11', '#050503', '#DCE6F2', '#C6D9F1', '#8EB4E3', '#558ED5', '#376092', '#1F497D', '#254061', '#10253F', '#CCC1DA', '#B3A2C7', '#604A7B', '#403152', '#D99694', '#953735', '#F9FDD1', '#F9F383', '#F5F018', '#FFFF00', '#DBEEF4', '#B7DEE8', '#93CDDD', '#4BACC6', '#31859C', '#215968', '#C3D69B', '#77933C', '#FAC090', '#E46C0A', '#D9D9D9', '#A6A6A6'];
-
+const criteriaColors = [
+  '#4f81bd',
+  '#c0504d',
+  '#9bbb59',
+  '#8064a2',
+  '#4bacc6',
+  '#f79646',
+  '#2c4d75',
+  '#772c2a',
+  '#5f7530'
+];
+const beneficiaryColors = [
+  '#DDD9C3',
+  '#C4BD97',
+  '#948A54',
+  '#948A54',
+  '#4A452A',
+  '#1E1C11',
+  '#050503',
+  '#DCE6F2',
+  '#C6D9F1',
+  '#8EB4E3',
+  '#558ED5',
+  '#376092',
+  '#1F497D',
+  '#254061',
+  '#10253F',
+  '#CCC1DA',
+  '#B3A2C7',
+  '#604A7B',
+  '#403152',
+  '#D99694',
+  '#953735',
+  '#F9FDD1',
+  '#F9F383',
+  '#F5F018',
+  '#FFFF00',
+  '#DBEEF4',
+  '#B7DEE8',
+  '#93CDDD',
+  '#4BACC6',
+  '#31859C',
+  '#215968',
+  '#C3D69B',
+  '#77933C',
+  '#FAC090',
+  '#E46C0A',
+  '#D9D9D9',
+  '#A6A6A6'
+];
 
 /**
  * Get the data for the global scores and return them in a JSON object.
@@ -66,10 +115,10 @@ const beneficiaryColors = ['#DDD9C3', '#C4BD97', '#948A54', '#948A54', '#4A452A'
  */
 const getScores = function getScores() {
   const data = [];
-  Object.entries(fegsScopingData.scores).forEach((row) => {
+  Object.entries(fegsScopingData.scores).forEach(row => {
     data.push({
       label: row[0],
-      value: row[1],
+      value: row[1]
     });
   });
   return data;
@@ -79,7 +128,7 @@ const getScores = function getScores() {
 const sum = function sum(obj) {
   let total = 0;
   const keys = Object.keys(obj);
-  keys.forEach((el) => {
+  keys.forEach(el => {
     total += parseFloat(obj[el]);
   });
   return total;
@@ -88,13 +137,13 @@ const sum = function sum(obj) {
 const formatStakeholderData = function formatStakeholderData() {
   const data = [];
 
-  Object.entries(fegsScopingData.stakeholders).forEach((entry) => {
+  Object.entries(fegsScopingData.stakeholders).forEach(entry => {
     const stakeholder = {};
     [stakeholder.stakeholder] = entry;
 
-    Object.entries(entry[1].scores).forEach((criterion) => {
-      stakeholder[criterion[0]] = +criterion[1]
-      * (+fegsScopingData.scores[criterion[0]] / sum(fegsScopingData.scores));
+    Object.entries(entry[1].scores).forEach(criterion => {
+      stakeholder[criterion[0]] =
+        +criterion[1] * (+fegsScopingData.scores[criterion[0]] / sum(fegsScopingData.scores));
     });
 
     data.push(stakeholder);
@@ -105,7 +154,7 @@ const formatStakeholderData = function formatStakeholderData() {
 /** pie chart */
 const initPieChart = {
   draw(config) {
-    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach((element) => {
+    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
       element.parentNode.removeChild(element);
     });
 
@@ -118,8 +167,12 @@ const initPieChart = {
 
     const color = d3.scaleOrdinal(colors); // Set the colors
 
-    const pie = d3.pie().value((d) => {
-      const keyName = d.label.replace(/\s*([/])\s*/g, '$1').replace(/[&,()]/g, '').replace(/\s+|[/]/g, '-').toLowerCase();
+    const pie = d3.pie().value(d => {
+      const keyName = d.label
+        .replace(/\s*([/])\s*/g, '$1')
+        .replace(/[&,()]/g, '')
+        .replace(/\s+|[/]/g, '-')
+        .toLowerCase();
       const element = document.querySelector(`.key.${keyName}`);
       if (element) {
         if (d.value !== 0) {
@@ -134,10 +187,11 @@ const initPieChart = {
       return d.value;
     })(data);
 
-    const tip = d3.tip()
+    const tip = d3
+      .tip()
       .attr('class', `d3-tip ${config.element}`)
       .offset([50, 0])
-      .html((d) => {
+      .html(d => {
         const index = fegsScopingData.criteria.indexOf(d.data.label);
         let { label } = d.data;
         if (index >= 0) {
@@ -146,13 +200,14 @@ const initPieChart = {
         return `${label}: ${round(d.data.value, 1)}`;
       });
 
-    const arc = d3.arc()
+    const arc = d3
+      .arc()
       .outerRadius(radius - 10)
       .innerRadius(0);
 
     d3.selectAll(`.${domEle} > *`).remove();
 
-    Object.values(pie).forEach((prop) => {
+    Object.values(pie).forEach(prop => {
       if (prop.value) {
         const element = document.getElementById(domEle);
         if (element) {
@@ -162,7 +217,8 @@ const initPieChart = {
       }
     });
 
-    const svg = d3.selectAll(`.${domEle}`)
+    const svg = d3
+      .selectAll(`.${domEle}`)
       .append('div')
       .classed('svg-container', true) // container class to make it responsive
       .append('svg')
@@ -172,19 +228,21 @@ const initPieChart = {
       .attr('width', width)
       .attr('height', height);
 
-    const g = svg.append('g')
-      .attr('transform', `translate(${width / 2}, ${height / 2})`); // Moving the center point. 1/2 the width and 1/2 the height
+    const g = svg.append('g').attr('transform', `translate(${width / 2}, ${height / 2})`); // Moving the center point. 1/2 the width and 1/2 the height
 
     g.call(tip);
 
-    const arcg = g.selectAll('arc')
+    const arcg = g
+      .selectAll('arc')
       .data(pie)
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('class', 'arc');
 
-    arcg.append('path')
+    arcg
+      .append('path')
       .attr('d', arc)
-      .style('fill', (d) => {
+      .style('fill', d => {
         return color(d.index);
       })
       .on('mouseover', tip.show)
@@ -195,12 +253,14 @@ const initPieChart = {
 
     // update
     function change() {
-      const updatedPie = d3.pie().sort(null)
+      const updatedPie = d3
+        .pie()
+        .sort(null)
         .value(d => d.value)(data);
 
       function checkD3Data(chart) {
-        for (const prop in chart) {
-          if (updatedPie[prop].value) {
+        for (let i = 0; i < Object.keys(chart).length; i += 1) {
+          if (updatedPie[Object.keys(chart)[i]].value) {
             return true;
           }
         }
@@ -216,53 +276,56 @@ const initPieChart = {
         }
       }
 
-      const path = d3.selectAll(`.${domEle}`)
+      const path = d3
+        .selectAll(`.${domEle}`)
         .selectAll('path')
         .data(updatedPie)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
 
-      path.transition().duration(500).attrTween('d', arcTween); // Smooth transition with arcTween
+      path
+        .transition()
+        .duration(500)
+        .attrTween('d', arcTween); // Smooth transition with arcTween
       updateBeneficiaryView();
       updateAttributeView();
     }
 
     if (domEle === 'criteria-pie') {
-      d3.selectAll('.scoring input')
-        .on('input', function criteriaPieInput() {
-          clearNotices();
-          const inputs = document.querySelectorAll('.scoring input');
-          let allValid = true;
-          for (let i = 0; i < inputs.length; i += 1) {
-            let selected = false;
-            if (this === inputs[i]) {
-              selected = true;
-            }
-            const { value } = inputs[i];
-            const isValid = validateInput(value, 0, 100);
-            if (isValid) {
-              inputs[i].classList.remove('invalid-text-input');
-              fegsScopingData.scores[inputs[i].id.replace('-score', '')] = value;
-            } else {
-              allValid = false;
-              if (selected) {
-                inputs[i].classList.add('invalid-text-input');
-                accessiblyNotify('Enter a number between 0 and 100');
-              }
+      d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
+        clearNotices();
+        const inputs = document.querySelectorAll('.scoring input');
+        let allValid = true;
+        for (let i = 0; i < inputs.length; i += 1) {
+          let selected = false;
+          if (this === inputs[i]) {
+            selected = true;
+          }
+          const { value } = inputs[i];
+          const isValid = validateInput(value, 0, 100);
+          if (isValid) {
+            inputs[i].classList.remove('invalid-text-input');
+            fegsScopingData.scores[inputs[i].id.replace('-score', '')] = value;
+          } else {
+            allValid = false;
+            if (selected) {
+              inputs[i].classList.add('invalid-text-input');
+              accessiblyNotify('Enter a number between 0 and 100');
             }
           }
+        }
 
-          data = getScores();
-          change();
-          stakeholderBarchart();
+        data = getScores();
+        change();
+        stakeholderBarchart();
 
-          if (allValid && document.getElementById('section-stakeholders').hasAttribute('hidden')) {
+        if (allValid && document.getElementById('section-stakeholders').hasAttribute('hidden')) {
           // showSection('stakeholders');
-          }
+        }
 
-          updateWeightingProgress();
-          fegsScopingView.indicateUnsaved();
-        });
+        updateWeightingProgress();
+        fegsScopingView.indicateUnsaved();
+      });
     }
 
     function arcTween(a) {
@@ -272,7 +335,7 @@ const initPieChart = {
         return arc(i(t));
       };
     }
-  },
+  }
 };
 
 /** stacked bar-chart */
@@ -288,10 +351,10 @@ const initStackedBarChart = {
       top: 20,
       right: 275,
       bottom: 200,
-      left: 50,
+      left: 50
     };
 
-    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach((element) => {
+    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
       element.parentNode.removeChild(element);
     });
 
@@ -304,7 +367,10 @@ const initStackedBarChart = {
     const width = divWidth - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    const xScale = d3.scaleBand().range([0, width]).padding(0.1);
+    const xScale = d3
+      .scaleBand()
+      .range([0, width])
+      .padding(0.1);
     const yScale = d3.scaleLinear().range([height, 0]);
     const color = d3.scaleOrdinal(colors);
     const xAxis = d3.axisBottom(xScale);
@@ -314,7 +380,7 @@ const initStackedBarChart = {
     container.selectAll('svg').remove();
 
     if (data.length === 0) {
-      return; // if there's no data to display don't display anything!
+      return null; // if there's no data to display don't display anything!
     }
     const svg = container
       .append('svg')
@@ -323,7 +389,8 @@ const initStackedBarChart = {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const tip = d3.tip()
+    const tip = d3
+      .tip()
       .attr('class', 'd3-tip stacked-bar-chart')
       .offset([-10, 0])
       .html(function tooltipHtml(d) {
@@ -336,47 +403,61 @@ const initStackedBarChart = {
       });
     svg.call(tip);
 
-    const stack = d3.stack()
+    const stack = d3
+      .stack()
       .keys(stackKey)
       .order(d3.stackOrderNone)
       .offset(d3.stackOffsetNone);
 
     const layers = stack(data);
-    data.sort(function (a, b) {
+    data.sort(function(a, b) {
       return b.total - a.total;
     });
-    xScale.domain(data.map(function (d) {
-      return d[header];
-    }));
-    yScale.domain([0, d3.max(data, function (d) { return Object.values(d).reduce(function (acc, val) { return acc + (isNaN(val) ? 0 : val); }, 0); })]);
+    xScale.domain(
+      data.map(function(d) {
+        return d[header];
+      })
+    );
+    yScale.domain([
+      0,
+      d3.max(data, function(d) {
+        return Object.values(d).reduce(function(acc, val) {
+          return acc + (isNaN(val) ? 0 : val);
+        }, 0);
+      })
+    ]);
 
-    const layer = svg.selectAll('.layer')
+    const layer = svg
+      .selectAll('.layer')
       .data(layers)
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('class', 'layer')
-      .style('fill', function (d, i) {
+      .style('fill', function(d, i) {
         return color(i);
       })
-      .attr('data-label', function (d, i) {
+      .attr('data-label', function(d, i) {
         return stackKey[i];
       });
 
-    layer.selectAll('rect')
-      .data(function (d) {
+    layer
+      .selectAll('rect')
+      .data(function(d) {
         return d;
       })
-      .enter().append('rect')
+      .enter()
+      .append('rect')
       .attr('class', 'bar')
-      .attr('x', function (d) {
+      .attr('x', function(d) {
         return xScale(d.data[header]);
       })
-      .attr('y', function (d) {
+      .attr('y', function(d) {
         if (isNaN(d[1])) {
           return yScale(0);
         }
         return yScale(d[1]);
       })
-      .attr('height', function (d) {
+      .attr('height', function(d) {
         if (isNaN(d[0])) {
           return yScale(0) - yScale(0);
         }
@@ -386,16 +467,17 @@ const initStackedBarChart = {
         return yScale(d[0]) - yScale(d[1]);
       })
       .attr('width', xScale.bandwidth())
-      .on('click', function () {
+      .on('click', function() {
         d3.selectAll('.bar').classed('selected', false);
         d3.select(this).classed('selected', true);
       })
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide);
 
-    svg.append('g')
+    svg
+      .append('g')
       .attr('class', 'axis axis--x')
-      .attr('transform', 'translate(0,' + (height + 5) + ')')
+      .attr('transform', `translate(0,${height + 5})`)
       .call(xAxis)
       .selectAll('.tick text')
       .style('text-anchor', 'end')
@@ -403,43 +485,47 @@ const initStackedBarChart = {
       .attr('dy', '.15em')
       .attr('transform', 'rotate(-65)');
 
-    svg.append('g')
+    svg
+      .append('g')
       .attr('class', 'axis axis--y')
       .attr('transform', 'translate(0,0)')
       .call(yAxis);
 
     if (legendKey) {
-      const legend = svg.append('g')
+      const legend = svg
+        .append('g')
         .attr('font-family', 'sans-serif')
         .attr('font-size', 10)
         .selectAll('g')
         .data(legendKey)
         .enter()
         .append('g')
-        .attr('transform', function (d, i) {
+        .attr('transform', function(d, i) {
           return `translate(30,${i * 19})`;
         });
 
-      legend.append('rect')
+      legend
+        .append('rect')
         .attr('x', width - 18)
         .attr('width', 18)
         .attr('height', 18)
-        .attr('fill', function (d, i) { 
+        .attr('fill', function(d, i) {
           return colors[i];
         });
 
-      legend.append('text')
+      legend
+        .append('text')
         .attr('x', width + 5)
         .attr('y', 9)
         .attr('dy', '0.35em')
         .attr('text-anchor', 'start')
-        .text(function (d) {
+        .text(function(d) {
           return d;
         });
     }
 
     return container;
-  },
+  }
 };
 
 function stakeholderBarchart() {
@@ -448,21 +534,30 @@ function stakeholderBarchart() {
     key: fegsScopingData.criteria,
     element: 'stakeholder-barchart',
     header: 'stakeholder',
-    colors: criteriaColors,
+    colors: criteriaColors
   });
 }
 
 const formatBeneficiaryData = function formatBeneficiaryData() {
   const data = [];
+  const stakeholders = Object.entries(fegsScopingData.stakeholders);
   for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) {
     const beneficiary = {};
     const beneficiaryName = fegsScopingData.fegsBeneficiaries[i];
-    for (const stakeholder in fegsScopingData.stakeholders) {
-      if (fegsScopingData.stakeholders[stakeholder].beneficiaries.hasOwnProperty(beneficiaryName)
-      && fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiaryName].percentageOfStakeholder !== '') {
-        beneficiary[stakeholder] = fegsScopingData.beneficiaryScoreForStakeholder(beneficiaryName, stakeholder);
+
+    for (let j = 0; j < stakeholders.length; j += 1) {
+      const stakeholder = stakeholders[j];
+      if (
+        Object.prototype.hasOwnProperty.call(stakeholder[1].beneficiaries, beneficiaryName) &&
+        stakeholder[1].beneficiaries[beneficiaryName].percentageOfStakeholder !== ''
+      ) {
+        beneficiary[stakeholder[0]] = fegsScopingData.beneficiaryScoreForStakeholder(
+          beneficiaryName,
+          stakeholder[0]
+        );
       }
     }
+
     if (Object.keys(beneficiary).length !== 0) {
       beneficiary.beneficiary = beneficiaryName;
       data.push(beneficiary);
@@ -473,9 +568,14 @@ const formatBeneficiaryData = function formatBeneficiaryData() {
 
 function formatAttributeData() {
   const data = [];
-  for (const attribute in fegsScopingData.calculateAttributeScores()) {
+
+  Object.keys(fegsScopingData.calculateAttributeScores()).forEach(attribute => {
     data.push(fegsScopingData.calculateAttributeScoresTier1(attribute));
-  }
+  });
+
+  // for (const attribute in fegsScopingData.calculateAttributeScores()) {
+  //   data.push(fegsScopingData.calculateAttributeScoresTier1(attribute));
+  // }
   return data;
 }
 
@@ -486,7 +586,29 @@ const beneficiaryBarchart = function beneficiaryBarchart() {
     legend: Object.keys(fegsScopingData.stakeholders),
     element: 'beneficiary-barchart',
     header: 'beneficiary',
-    colors: ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#d2f53c', '#fabebe', '#008080', '#e6beff', '#aa6e28', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000080', '#808080', '#000000'],
+    colors: [
+      '#e6194b',
+      '#3cb44b',
+      '#ffe119',
+      '#0082c8',
+      '#f58231',
+      '#911eb4',
+      '#46f0f0',
+      '#f032e6',
+      '#d2f53c',
+      '#fabebe',
+      '#008080',
+      '#e6beff',
+      '#aa6e28',
+      '#fffac8',
+      '#800000',
+      '#aaffc3',
+      '#808000',
+      '#ffd8b1',
+      '#000080',
+      '#808080',
+      '#000000'
+    ]
   });
 };
 
@@ -506,7 +628,7 @@ function beneficiaryPiechart() {
     data: getBeneficiaryScoresForPieChart(),
     colors: beneficiaryColors,
     element: 'beneficiary-pie',
-    legend: fegsScopingData.getExtantBeneficiaries(),
+    legend: fegsScopingData.getExtantBeneficiaries()
   });
 }
 
@@ -530,11 +652,13 @@ const updateSelectBeneficiary = function updateSelectBeneficiary(selectId) {
   const tier1Beneficiaries = [];
   const selectedValue = select.value;
 
-  for (let i = select.options.length - 1; i >= 0; i -= 1) { // remove all options
+  for (let i = select.options.length - 1; i >= 0; i -= 1) {
+    // remove all options
     select.options[i].remove();
   }
 
-  for (let i = 0; i < beneficiaries.length; i += 1) { // add option for each stakeholder
+  for (let i = 0; i < beneficiaries.length; i += 1) {
+    // add option for each stakeholder
     const tier1Beneficiary = fegsScopingData.fegsBeneficiariesTier1[beneficiaries[i]];
 
     if (!tier1Beneficiaries.includes(tier1Beneficiary)) {
@@ -548,11 +672,11 @@ const updateSelectBeneficiary = function updateSelectBeneficiary(selectId) {
   }
 };
 
-const showSelectedBeneficiary = (element) => {
+const showSelectedBeneficiary = element => {
   const { value } = element;
   const beneficiariesToShow = [];
 
-  fegsScopingData.getExtantBeneficiaries().forEach((beneficiary) => {
+  fegsScopingData.getExtantBeneficiaries().forEach(beneficiary => {
     if (fegsScopingData.fegsBeneficiariesTier1[beneficiary] === value) {
       beneficiariesToShow.push(beneficiary);
     }
@@ -565,16 +689,27 @@ function getAttributeScoresForPieChart() {
   const data = [];
   let sumOfBeneficiaryScores = 0;
   for (let i = 0; i < fegsScopingData.getExtantBeneficiaries().length; i += 1) {
-    sumOfBeneficiaryScores += fegsScopingData.beneficiaryScore(fegsScopingData.getExtantBeneficiaries()[i]);
+    sumOfBeneficiaryScores += fegsScopingData.beneficiaryScore(
+      fegsScopingData.getExtantBeneficiaries()[i]
+    );
   }
+
   for (let i = 0; i < fegsScopingData.fegsAttributes.length; i += 1) {
     let total = 0;
-    for (const beneficiary in fegsScopingData.attributes) {
-      const percentage = parseInt(fegsScopingData.attributes[beneficiary][fegsScopingData.fegsAttributes[i]].percentageOfBeneficiary, 10);
+
+    for (let j = 0; j < Object.keys(fegsScopingData.attributes).length; j += 1) {
+      const beneficiary = Object.keys(fegsScopingData.attributes)[j];
+      const percentage = parseInt(
+        fegsScopingData.attributes[beneficiary][fegsScopingData.fegsAttributes[i]]
+          .percentageOfBeneficiary,
+        10
+      );
+
       if (Number.isInteger(percentage) && percentage !== 0) {
         total += percentage * fegsScopingData.beneficiaryScore(beneficiary);
       }
     }
+
     if (total !== 0) {
       const datum = {};
       datum.label = fegsScopingData.fegsAttributes[i];
@@ -589,7 +724,12 @@ function getTier1AttributeScoresForPieChart() {
   const temp = {};
   const attributeData = getAttributeScoresForPieChart();
   for (let i = 0; i < attributeData.length; i += 1) {
-    if (!temp.hasOwnProperty(fegsScopingData.fegsAttributesTier1[attributeData[i].label])) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        temp,
+        fegsScopingData.fegsAttributesTier1[attributeData[i].label]
+      )
+    ) {
       temp[fegsScopingData.fegsAttributesTier1[attributeData[i].label]] = attributeData[i].value;
     } else {
       temp[fegsScopingData.fegsAttributesTier1[attributeData[i].label]] += attributeData[i].value;
@@ -597,7 +737,7 @@ function getTier1AttributeScoresForPieChart() {
   }
   const tier1 = [];
   for (let i = 0; i < fegsScopingData.tier1.length; i += 1) {
-    if (temp.hasOwnProperty(fegsScopingData.tier1[i])) {
+    if (Object.prototype.hasOwnProperty.call(temp, fegsScopingData.tier1[i])) {
       tier1.push({ label: fegsScopingData.tier1[i], value: temp[fegsScopingData.tier1[i]] });
     } else {
       tier1.push({ label: fegsScopingData.tier1[i], value: 0 });
@@ -624,7 +764,29 @@ function attributeBarchart() {
     legend: attributeBarChartBeneficiaries(),
     element: 'attribute-barchart', // attribute-barchart
     header: 'attribute',
-    colors: ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#d2f53c', '#fabebe', '#008080', '#e6beff', '#aa6e28', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000080', '#808080', '#000000'],
+    colors: [
+      '#e6194b',
+      '#3cb44b',
+      '#ffe119',
+      '#0082c8',
+      '#f58231',
+      '#911eb4',
+      '#46f0f0',
+      '#f032e6',
+      '#d2f53c',
+      '#fabebe',
+      '#008080',
+      '#e6beff',
+      '#aa6e28',
+      '#fffac8',
+      '#800000',
+      '#aaffc3',
+      '#808000',
+      '#ffd8b1',
+      '#000080',
+      '#808080',
+      '#000000'
+    ]
   });
 }
 
@@ -632,7 +794,7 @@ function attributePiechartTier1() {
   initPieChart.draw({
     data: getTier1AttributeScoresForPieChart(), // attribute-pie
     colors: d3.schemeCategory10,
-    element: 'tier1-attribute-pie',
+    element: 'tier1-attribute-pie'
   });
 }
 
@@ -653,22 +815,29 @@ function updateAttributeProgress() {
     return;
   }
   let completeCount = 0;
-  for (const beneficiary in fegsScopingData.attributes) {
-    for (const attribute in fegsScopingData.attributes[beneficiary]) {
+
+  for (let i = 0; i < Object.keys(fegsScopingData.attributes).length; i += 1) {
+    const beneficiary = Object.keys(fegsScopingData.attributes)[i];
+    const attributes = Object.keys(fegsScopingData.attributes[beneficiary]);
+    for (let j = 0; j < attributes.length; j += 1) {
+      const attribute = attributes[j];
       if (fegsScopingData.attributes[beneficiary][attribute].percentageOfBeneficiary !== '') {
         completeCount += 1;
         break;
       }
     }
   }
-  document.getElementById('attributes-progress').innerHTML = `${completeCount} of ${beneficiaryCount} beneficiaries completed`;
+
+  document.getElementById(
+    'attributes-progress'
+  ).innerHTML = `${completeCount} of ${beneficiaryCount} beneficiaries completed`;
 }
 
 function criteriaPiechart() {
   initPieChart.draw({
     data: getScores(), // Get the score data
     colors: criteriaColors,
-    element: 'criteria-pie',
+    element: 'criteria-pie'
   });
 }
 
@@ -679,35 +848,44 @@ function updateStakeholderProgress() {
     return;
   }
   let newText = '';
-  for (const stakeholder in fegsScopingData.stakeholders) {
+
+  const stakeholders = Object.entries(fegsScopingData.stakeholders);
+
+  stakeholders.forEach(stakeholder => {
     let completeCount = 0;
     let added = false;
-    for (const criterion in fegsScopingData.stakeholders[stakeholder].scores) {
-      if (fegsScopingData.stakeholders[stakeholder].scores[criterion]) {
-        newText += stakeholder + ': added<br />';
+    const criteria = Object.keys(fegsScopingData.stakeholders[stakeholder[0]].scores);
+
+    for (let i = 0; i < criteria.length; i += 1) {
+      const criterion = criteria[i];
+      if (stakeholder[1].scores[criterion]) {
+        newText += `${stakeholder[0]}: added<br />`;
         added = true;
         break;
       } else {
-        const inputScore = document.getElementById(stakeholder + '-' + criterion).value;
+        const inputScore = document.getElementById(`${stakeholder[0]}-${criterion}`).value;
         if (inputScore !== '' && inputScore <= 100 && inputScore > 0) {
           completeCount += 1;
         }
       }
     }
+
     if (!added) {
-      newText += stakeholder + ': ' + completeCount + '/' + Object.keys(fegsScopingData.stakeholders[stakeholder].scores).length + ' criteria entered<br />';
+      newText += `${stakeholder[0]}: ${completeCount}/${
+        Object.keys(fegsScopingData.stakeholders[stakeholder[0]].scores).length
+      } criteria entered<br />`;
     }
-  }
+  });
 
   document.getElementById('stakeholder-progress').innerHTML = newText;
   updateBeneficiaryProgress();
 }
 
-document.addEventListener('keydown', (zEvent) => {
+document.addEventListener('keydown', zEvent => {
   if (zEvent.ctrlKey && zEvent.key === '+') {
     const element = document.querySelector('#page-zoom');
-    element.value = (Number(element.value) + 0.05 > 2
-      ? Number(element.value) : Number(element.value) + 0.05);
+    element.value =
+      Number(element.value) + 0.05 > 2 ? Number(element.value) : Number(element.value) + 0.05;
     const change = new Event('change');
     const input = new Event('input');
     element.dispatchEvent(change);
@@ -715,11 +893,11 @@ document.addEventListener('keydown', (zEvent) => {
   }
 });
 
-document.addEventListener('keydown', (zEvent) => {
+document.addEventListener('keydown', zEvent => {
   if (zEvent.ctrlKey && zEvent.key === '-') {
     const element = document.querySelector('#page-zoom');
-    element.value = (+element.value - 0.05 < 0.25
-      ? Number(element.value) : Number(element.value) - 0.05);
+    element.value =
+      +element.value - 0.05 < 0.25 ? Number(element.value) : Number(element.value) - 0.05;
     const change = new Event('change');
     const input = new Event('input');
     element.dispatchEvent(change);
@@ -748,7 +926,8 @@ const FEGSScopingData = function FEGSScopingData() {
         valuesObject[this.criteria[i]] = values;
       }
       return valuesObject;
-    } else if (typeof values === 'object') {
+    }
+    if (typeof values === 'object') {
       if (values.length) {
         throw Error('Argument values should be an object or a string but values is neither.');
       }
@@ -767,9 +946,8 @@ const FEGSScopingData = function FEGSScopingData() {
         }
       }
       return valuesObject;
-    } else {
-      throw Error('expected values to be an object or a string but was neither');
     }
+    throw Error('expected values to be an object or a string but was neither');
   };
 
   /**
@@ -779,10 +957,10 @@ const FEGSScopingData = function FEGSScopingData() {
    *  criteria are keys and respective scores for this
    *  stakeholder are values
    */
-  this.addStakeholder = function addStakeholder(stakeholderName, stakeholderScores) {
+  this.addStakeholder = function addStakeholderToFEGSData(stakeholderName, stakeholderScores) {
     this.stakeholders[stakeholderName] = {
       scores: stakeholderScores,
-      beneficiaries: {},
+      beneficiaries: {}
     };
   };
 
@@ -796,7 +974,7 @@ const FEGSScopingData = function FEGSScopingData() {
   this.updateStakeholder = function updateStakeholder(stakeholderName, stakeholderScores) {
     this.stakeholders[stakeholderName] = {
       scores: stakeholderScores,
-      beneficiaries: this.stakeholders[stakeholderName].beneficiaries,
+      beneficiaries: this.stakeholders[stakeholderName].beneficiaries
     };
   };
 
@@ -814,11 +992,14 @@ const FEGSScopingData = function FEGSScopingData() {
    * add a beneficiary and its percentage of its stakeholder
    * @param {string} stakeholderName - owner of beneficiary
    */
-  this.addBeneficiary = function addBeneficiary(stakeholderName, beneficiaryName, percentageOfStakeholder = '') {
-    this.stakeholders[stakeholderName]
-      .beneficiaries[beneficiaryName] = {
-        percentageOfStakeholder,
-      };
+  this.addBeneficiary = function addBeneficiary(
+    stakeholderName,
+    beneficiaryName,
+    percentageOfStakeholder = ''
+  ) {
+    this.stakeholders[stakeholderName].beneficiaries[beneficiaryName] = {
+      percentageOfStakeholder
+    };
   };
 
   /**
@@ -836,7 +1017,7 @@ const FEGSScopingData = function FEGSScopingData() {
     const keys = Object.keys(attributes);
     for (let i = 0; i < keys.length; i += 1) {
       this.attributes[beneficiaryName][keys[i]] = {
-        percentageOfBeneficiary: attributes[keys[i]],
+        percentageOfBeneficiary: attributes[keys[i]]
       };
     }
   };
@@ -844,8 +1025,12 @@ const FEGSScopingData = function FEGSScopingData() {
   this.clearOtherAttributes = function clearOtherAttributes(beneficiaries) {
     for (let i = 0; i < this.fegsBeneficiaries.length; i += 1) {
       if (beneficiaries.indexOf(this.fegsBeneficiaries[i]) < 0) {
-        for (const attribute in this.attributes[this.fegsBeneficiaries[i]]) {
-          this.attributes[this.fegsBeneficiaries[i]][attribute].percentageOfBeneficiary = '';
+        const attributes = this.attributes[this.fegsBeneficiaries[i]];
+
+        if (attributes) {
+          attributes.forEach(attribute => {
+            this.attributes[this.fegsBeneficiaries[i]][attribute].percentageOfBeneficiary = '';
+          });
         }
       }
     }
@@ -872,13 +1057,14 @@ const FEGSScopingData = function FEGSScopingData() {
    *  beneficiaries to be removed specified as an object like
    *  {stakeholderName: [beneficiaryName]}
    */
-  this.removeBeneficiariesFromStakeholder = function removeBeneficiariesFromStakeholder(beneficiariesObject) {
+  this.removeBeneficiariesFromStakeholder = function removeBeneficiariesFromStakeholder(
+    beneficiariesObject
+  ) {
     const stakeholdersArray = Object.keys(beneficiariesObject);
     for (let i = 0; i < stakeholdersArray.length; i += 1) {
       const beneficiariesArray = beneficiariesObject[stakeholdersArray[i]];
       for (let j = 0; j < beneficiariesArray.length; j += 1) {
-        delete this.stakeholders[stakeholdersArray[i]]
-          .beneficiaries[beneficiariesArray[j]];
+        delete this.stakeholders[stakeholdersArray[i]].beneficiaries[beneficiariesArray[j]];
       }
     }
   };
@@ -895,8 +1081,7 @@ const FEGSScopingData = function FEGSScopingData() {
     const stakeholdersArray = Object.keys(this.stakeholders);
     for (let i = 0; i < stakeholdersArray.length; i += 1) {
       for (let j = 0; j < beneficiariesArray.length; j += 1) {
-        delete this.stakeholders[stakeholdersArray[i]]
-          .beneficiaries[beneficiariesArray[j]];
+        delete this.stakeholders[stakeholdersArray[i]].beneficiaries[beneficiariesArray[j]];
         delete this.attributes[beneficiariesArray[j]];
       }
     }
@@ -932,8 +1117,10 @@ const FEGSScopingData = function FEGSScopingData() {
    * @param {Array.<string>} beneficiariesArray - names of
    *  beneficiaries over whom to sum; sum over all if undefined
    */
-  this.sumBeneficiaryPercentages = (stakeholderNames,
-    beneficiaryNames = Object.keys(this.stakeholders)) => {
+  this.sumBeneficiaryPercentages = (
+    stakeholderNames,
+    beneficiaryNames = Object.keys(this.stakeholders)
+  ) => {
     let beneficiaryArray = [];
     if (typeof beneficiaryNames === 'undefined') {
       beneficiaryArray = this.fegsBeneficiaries;
@@ -943,12 +1130,11 @@ const FEGSScopingData = function FEGSScopingData() {
     let total = 0;
     for (let i = 0; i < stakeholderNames.length; i += 1) {
       for (let j = 0; j < beneficiaryArray.length; j += 1) {
-        total += +this.stakeholders[stakeholderNames[i]]
-          .beneficiaries[beneficiaryArray[j]]
+        total += +this.stakeholders[stakeholderNames[i]].beneficiaries[beneficiaryArray[j]]
           .percentageOfStakeholder;
       }
     }
-    // console.log(total);
+    return total;
   };
 
   /**
@@ -961,8 +1147,10 @@ const FEGSScopingData = function FEGSScopingData() {
    * @param {Array.<string>} attributeNames - names of
    *  attributes over which to sum; sum over all if undefined
    */
-  this.sumAttributePercentages = function sumAttributePercentages(beneficiaryNames = Object.keys(this.attributes),
-    attributeNames) {
+  this.sumAttributePercentages = function sumAttributePercentages(
+    beneficiaryNames = Object.keys(this.attributes),
+    attributeNames
+  ) {
     let total = 0;
     let attributeArray = [];
     for (let j = 0; j < beneficiaryNames.length; j += 1) {
@@ -975,7 +1163,7 @@ const FEGSScopingData = function FEGSScopingData() {
         total += +this.attributes[beneficiaryNames[j]][attributeArray[k]].percentageOfBeneficiary;
       }
     }
-    // console.log(total);
+    return total;
   };
 
   /**
@@ -986,8 +1174,9 @@ const FEGSScopingData = function FEGSScopingData() {
     const percentages = {};
     const beneficiaryNames = Object.keys(this.stakeholders[stakeholderName].beneficiaries);
     for (let i = 0; i < beneficiaryNames.length; i += 1) {
-      percentages[beneficiaryNames[i]] = this.stakeholders[stakeholderName]
-        .beneficiaries[beneficiaryNames[i]].percentageOfStakeholder;
+      percentages[beneficiaryNames[i]] = this.stakeholders[stakeholderName].beneficiaries[
+        beneficiaryNames[i]
+      ].percentageOfStakeholder;
     }
     return percentages;
   };
@@ -1005,8 +1194,9 @@ const FEGSScopingData = function FEGSScopingData() {
       if (typeof this.stakeholders[stakeholder].scores[criteria[k]] === 'undefined') {
         accessiblyNotify(`${stakeholder} has no score for ${criteria[k]}`);
       } else {
-        total += parseFloat(this.scores[criteria[k]])
-          * parseFloat(this.stakeholders[stakeholder].scores[criteria[k]]);
+        total +=
+          parseFloat(this.scores[criteria[k]]) *
+          parseFloat(this.stakeholders[stakeholder].scores[criteria[k]]);
       }
     }
     return total;
@@ -1024,11 +1214,12 @@ const FEGSScopingData = function FEGSScopingData() {
 
     for (let i = 0; i < stakeholders.length; i += 1) {
       if (Object.keys(this.stakeholders[stakeholders[i]].beneficiaries).length) {
-        const percentageOfStakeholder = parseFloat(this.stakeholders[stakeholders[i]]
-          .beneficiaries[beneficiary].percentageOfStakeholder);
+        const percentageOfStakeholder = parseFloat(
+          this.stakeholders[stakeholders[i]].beneficiaries[beneficiary].percentageOfStakeholder
+        );
         if (!Number.isNaN(Number.parseFloat(percentageOfStakeholder))) {
-          numerator += percentageOfStakeholder
-            * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
+          numerator +=
+            percentageOfStakeholder * parseFloat(this.scoresTimesScoresSum(stakeholders[i]));
         }
       }
     }
@@ -1043,12 +1234,16 @@ const FEGSScopingData = function FEGSScopingData() {
    * @param {string} beneficiary - beneficiary whose
    *  scores are summed
    */
-  this.beneficiaryScoreForStakeholder = function beneficiaryScoreForStakeholder(beneficiary, stakeholder) {
+  this.beneficiaryScoreForStakeholder = function beneficiaryScoreForStakeholder(
+    beneficiary,
+    stakeholder
+  ) {
     let numerator = 0;
     let denominator = 0;
     if (Object.keys(this.stakeholders[stakeholder].beneficiaries).length) {
-      const percentageOfStakeholder = parseFloat(this.stakeholders[stakeholder]
-        .beneficiaries[beneficiary].percentageOfStakeholder);
+      const percentageOfStakeholder = parseFloat(
+        this.stakeholders[stakeholder].beneficiaries[beneficiary].percentageOfStakeholder
+      );
       if (Number.isNaN(Number.parseFloat(percentageOfStakeholder))) {
         return 0;
       }
@@ -1062,8 +1257,12 @@ const FEGSScopingData = function FEGSScopingData() {
     const attributeScores = {};
     for (let i = 0; i < this.fegsAttributes.length; i += 1) {
       let total = 0;
-      for (const beneficiary in this.attributes) {
-        const percentage = parseInt(this.attributes[beneficiary][this.fegsAttributes[i]].percentageOfBeneficiary, 10);
+      for (let j = 0; j < Object.keys(this.attributes).length; j += 1) {
+        const beneficiary = Object.keys(this.attributes)[j];
+        const percentage = parseInt(
+          this.attributes[beneficiary][this.fegsAttributes[i]].percentageOfBeneficiary,
+          10
+        );
         if (Number.isInteger(percentage) && percentage !== 0) {
           total += percentage * this.beneficiaryScore(beneficiary);
         }
@@ -1078,13 +1277,24 @@ const FEGSScopingData = function FEGSScopingData() {
   this.calculateAttributeScoresTier1 = function calculateAttributeScoresTier1(attribute) {
     const attributeScores = {};
     attributeScores.attribute = attribute;
-    for (const beneficiary in this.attributes) {
-      if (!attributeScores.hasOwnProperty(fegsScopingData.fegsBeneficiariesTier1[beneficiary])) {
+
+    for (let j = 0; j < Object.keys(this.attributes).length; j += 1) {
+      const beneficiary = Object.keys(this.attributes)[j];
+      if (
+        !Object.prototype.hasOwnProperty.call(
+          attributeScores,
+          fegsScopingData.fegsBeneficiariesTier1[beneficiary]
+        )
+      ) {
         attributeScores[fegsScopingData.fegsBeneficiariesTier1[beneficiary]] = 0;
       }
-      const percentage = parseInt(this.attributes[beneficiary][attribute].percentageOfBeneficiary, 10);
+      const percentage = parseInt(
+        this.attributes[beneficiary][attribute].percentageOfBeneficiary,
+        10
+      );
       if (Number.isInteger(percentage) && percentage !== 0) {
-        attributeScores[fegsScopingData.fegsBeneficiariesTier1[beneficiary]] += percentage * this.beneficiaryScore(beneficiary) / 100;
+        attributeScores[fegsScopingData.fegsBeneficiariesTier1[beneficiary]] +=
+          (percentage * this.beneficiaryScore(beneficiary)) / 100;
       }
     }
     return attributeScores;
@@ -1092,8 +1302,13 @@ const FEGSScopingData = function FEGSScopingData() {
 
   this.calculateAttributeScore = function calculateAttributeScore(attribute) {
     let total = 0;
-    for (const beneficiary in this.attributes) {
-      const percentage = parseInt(this.attributes[beneficiary][attribute].percentageOfBeneficiary, 10);
+
+    for (let j = 0; Object.keys(this.attributes).length; j += 1) {
+      const beneficiary = Object.keys(this.attributes)[j];
+      const percentage = parseInt(
+        this.attributes[beneficiary][attribute].percentageOfBeneficiary,
+        10
+      );
       if (Number.isInteger(percentage) && percentage !== 0) {
         total += percentage * this.beneficiaryScore(beneficiary);
       }
@@ -1111,8 +1326,9 @@ const FEGSScopingData = function FEGSScopingData() {
     const scores = {};
     for (let i = 0; i < this.criteria.length; i += 1) {
       const criterion = this.criteria[i];
-      scores[criterion] = this.stakeholders[stakeholder].scores[criterion]
-        * this.scores[criterion] / this.calculateOverallScore();
+      scores[criterion] =
+        (this.stakeholders[stakeholder].scores[criterion] * this.scores[criterion]) /
+        this.calculateOverallScore();
     }
     return scores;
   };
@@ -1121,8 +1337,9 @@ const FEGSScopingData = function FEGSScopingData() {
     let score = 0;
     for (let i = 0; i < this.criteria.length; i += 1) {
       const criterion = this.criteria[i];
-      score += this.stakeholders[stakeholder].scores[criterion]
-        * this.scores[criterion] / this.calculateOverallScore();
+      score +=
+        (this.stakeholders[stakeholder].scores[criterion] * this.scores[criterion]) /
+        this.calculateOverallScore();
     }
     return score;
   };
@@ -1155,8 +1372,11 @@ const FEGSScopingData = function FEGSScopingData() {
     for (let i = 0; i < extantStakeholders.length; i += 1) {
       const beneficiaries = Object.keys(this.stakeholders[extantStakeholders[i]].beneficiaries);
       for (let j = 0; j < beneficiaries.length; j += 1) {
-        if (extantBeneficiaries.indexOf(beneficiaries[j]) === -1
-          && this.stakeholders[extantStakeholders[i]].beneficiaries[beneficiaries[j]].percentageOfStakeholder !== '') {
+        if (
+          extantBeneficiaries.indexOf(beneficiaries[j]) === -1 &&
+          this.stakeholders[extantStakeholders[i]].beneficiaries[beneficiaries[j]]
+            .percentageOfStakeholder !== ''
+        ) {
           extantBeneficiaries.push(beneficiaries[j]);
         }
       }
@@ -1169,16 +1389,94 @@ const FEGSScopingData = function FEGSScopingData() {
     ipcRenderer.send('update-project-name', this.projectName);
   };
 
+  this.updateDescription = function updateDescription(description) {
+    this.projectDescription = description;
+  };
+
   this.appName = appTitle;
   this.version = '1.0.0';
   this.projectName = 'New Project';
   this.filePath = '';
-  this.criteria = ['magnitude', 'influence', 'interest', 'urgency', 'proximity', 'economic-interest', 'rights', 'fairness', 'representation'];
-  this.fegsCriteria = ['Magnitude & Probability of Impact', 'Level of influence', 'Level of Interest', 'Urgency & Temporal immediacy', 'Proximity', 'Economic interest', 'Rights', 'Fairness', 'Underrepresented & Underserved representation'];
+  this.criteria = [
+    'magnitude',
+    'influence',
+    'interest',
+    'urgency',
+    'proximity',
+    'economic-interest',
+    'rights',
+    'fairness',
+    'representation'
+  ];
+  this.fegsCriteria = [
+    'Magnitude & Probability of Impact',
+    'Level of influence',
+    'Level of Interest',
+    'Urgency & Temporal immediacy',
+    'Proximity',
+    'Economic interest',
+    'Rights',
+    'Fairness',
+    'Underrepresented & Underserved representation'
+  ];
   this.scores = this.makeCriteriaObject('0');
   this.stakeholders = {};
   this.attributes = {};
-  this.fegsAttributes = ['Water Quality', 'Water Quantity', 'Water Movement', 'Air Quality', 'Wind Strength / Speed', 'Precipitation', 'Sunlight', 'Temperature', 'Soil Quantity', 'Soil Quality', 'Substrate Quantity', 'Substrate Quality', 'Fuel Quality', 'Fuel Quantity', 'Fiber Material Quantity', 'Fiber Material Quality', 'Mineral / Chemical Quantity', 'Mineral / Chemical Quality', 'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)', 'Flora Community', 'Edible Flora', 'Medicinal Flora', 'Keystone Flora', 'Charismatic Flora', 'Rare Flora', 'Commercially Important Flora', 'Spiritually / Culturally Important Flora', 'Fungal Community', 'Edible Fungi', 'Medicinal Fungi', 'Rare Fungi', 'Commercially Important Fungi', 'Spiritually/culturally Important Fungi', 'Fauna Community', 'Edible Fauna', 'Medicinal Fauna', 'Keystone Fauna', 'Charismatic Fauna', 'Rare Fauna', 'Pollinating Fauna', 'Pest Predator / Depredator Fauna', 'Commercially Important Fauna', 'Spiritually / Culturally Important Fauna', 'Risk of Flooding', 'Risk of Fire', 'Risk of Extreme Weather Events', 'Risk of Earthquakes', 'Sounds', 'Scents', 'Viewscapes', 'Phenomena (e.g. Sunsets, Northern Lights, etc)', 'Ecological Condition', 'Acreage'];
+  this.fegsAttributes = [
+    'Water Quality',
+    'Water Quantity',
+    'Water Movement',
+    'Air Quality',
+    'Wind Strength / Speed',
+    'Precipitation',
+    'Sunlight',
+    'Temperature',
+    'Soil Quantity',
+    'Soil Quality',
+    'Substrate Quantity',
+    'Substrate Quality',
+    'Fuel Quality',
+    'Fuel Quantity',
+    'Fiber Material Quantity',
+    'Fiber Material Quality',
+    'Mineral / Chemical Quantity',
+    'Mineral / Chemical Quality',
+    'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)',
+    'Flora Community',
+    'Edible Flora',
+    'Medicinal Flora',
+    'Keystone Flora',
+    'Charismatic Flora',
+    'Rare Flora',
+    'Commercially Important Flora',
+    'Spiritually / Culturally Important Flora',
+    'Fungal Community',
+    'Edible Fungi',
+    'Medicinal Fungi',
+    'Rare Fungi',
+    'Commercially Important Fungi',
+    'Spiritually/culturally Important Fungi',
+    'Fauna Community',
+    'Edible Fauna',
+    'Medicinal Fauna',
+    'Keystone Fauna',
+    'Charismatic Fauna',
+    'Rare Fauna',
+    'Pollinating Fauna',
+    'Pest Predator / Depredator Fauna',
+    'Commercially Important Fauna',
+    'Spiritually / Culturally Important Fauna',
+    'Risk of Flooding',
+    'Risk of Fire',
+    'Risk of Extreme Weather Events',
+    'Risk of Earthquakes',
+    'Sounds',
+    'Scents',
+    'Viewscapes',
+    'Phenomena (e.g. Sunsets, Northern Lights, etc)',
+    'Ecological Condition',
+    'Acreage'
+  ];
   this.fegsAttributesTier1 = {
     'Water Quality': 'Water',
     'Water Quantity': 'Water',
@@ -1198,7 +1496,8 @@ const FEGSScopingData = function FEGSScopingData() {
     'Fiber Material Quality': 'Natural Materials',
     'Mineral / Chemical Quantity': 'Natural Materials',
     'Mineral / Chemical Quality': 'Natural Materials',
-    'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)': 'Natural Materials',
+    'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)':
+      'Natural Materials',
     'Flora Community': 'Flora',
     'Edible Flora': 'Flora',
     'Medicinal Flora': 'Flora',
@@ -1232,34 +1531,118 @@ const FEGSScopingData = function FEGSScopingData() {
     Viewscapes: 'Composite',
     'Phenomena (e.g. Sunsets, Northern Lights, etc)': 'Composite',
     'Ecological Condition': 'Composite',
-    Acreage: 'Composite',
+    Acreage: 'Composite'
   };
-  this.tier1 = ['Water', 'Air', 'Weather', 'Soil & Substrate', 'Natural Materials', 'Flora', 'Fungi', 'Fauna', 'Extreme Events', 'Composite'];
-  this.fegsBeneficiaries = ['Irrigators', 'CAFO Operators', 'Livestock Grazers', 'Agricultural Processors', 'Aquaculturalists', 'Farmers', 'Foresters', 'Food Extractors', 'Timber / Fiber / Ornamental Extractors', 'Industrial Processors', 'Industrial Dischargers', 'Energy Generators', 'Resource Dependent Businesses', 'Pharmaceutical / Food Supplement Suppliers', 'Fur / Hide Trappers / Hunters', 'Municipal Drinking Water Plant Operators', 'Wastewater Treatment Plant Operators', 'Residential Property Owners', 'Military / Coast Guard', 'Transporters of Goods', 'Transporters of People', 'Water Subsisters', 'Food Subsisters', 'Timber / Fiber / Fur / Hide Subsisters', 'Building Material Subsisters', 'Experiencers / Viewers', 'Food Pickers / Gatherers', 'Hunters', 'Anglers', 'Waders / Swimmers / Divers', 'Boaters', 'Spiritual and Ceremonial Participants', 'Artists', 'Students and Educators', 'Researchers', 'People Who Care (Existence)', 'People Who Care (Option, Bequest)'];
+  this.tier1 = [
+    'Water',
+    'Air',
+    'Weather',
+    'Soil & Substrate',
+    'Natural Materials',
+    'Flora',
+    'Fungi',
+    'Fauna',
+    'Extreme Events',
+    'Composite'
+  ];
+  this.fegsBeneficiaries = [
+    'Irrigators',
+    'CAFO Operators',
+    'Livestock Grazers',
+    'Agricultural Processors',
+    'Aquaculturalists',
+    'Farmers',
+    'Foresters',
+    'Food Extractors',
+    'Timber / Fiber / Ornamental Extractors',
+    'Industrial Processors',
+    'Industrial Dischargers',
+    'Energy Generators',
+    'Resource Dependent Businesses',
+    'Pharmaceutical / Food Supplement Suppliers',
+    'Fur / Hide Trappers / Hunters',
+    'Municipal Drinking Water Plant Operators',
+    'Wastewater Treatment Plant Operators',
+    'Residential Property Owners',
+    'Military / Coast Guard',
+    'Transporters of Goods',
+    'Transporters of People',
+    'Water Subsisters',
+    'Food Subsisters',
+    'Timber / Fiber / Fur / Hide Subsisters',
+    'Building Material Subsisters',
+    'Experiencers / Viewers',
+    'Food Pickers / Gatherers',
+    'Hunters',
+    'Anglers',
+    'Waders / Swimmers / Divers',
+    'Boaters',
+    'Spiritual and Ceremonial Participants',
+    'Artists',
+    'Students and Educators',
+    'Researchers',
+    'People Who Care (Existence)',
+    'People Who Care (Option, Bequest)'
+  ];
   this.fegsBeneficiariesTier1 = {
-    Irrigators: 'Agricultural', 'CAFO Operators': 'Agricultural', 'Livestock Grazers': 'Agricultural', 'Agricultural Processors': 'Agricultural', Aquaculturalists: 'Agricultural', Farmers: 'Agricultural', Foresters: 'Agricultural', 'Food Extractors': 'Commercial / Industrial', 'Timber / Fiber / Ornamental Extractors': 'Commercial / Industrial', 'Industrial Processors': 'Commercial / Industrial', 'Industrial Dischargers': 'Commercial / Industrial', 'Energy Generators': 'Commercial / Industrial', 'Resource Dependent Businesses': 'Commercial / Industrial', 'Pharmaceutical / Food Supplement Suppliers': 'Commercial / Industrial', 'Fur / Hide Trappers / Hunters': 'Commercial / Industrial', 'Municipal Drinking Water Plant Operators': 'Governmental / Municipal / Residential', 'Wastewater Treatment Plant Operators': 'Governmental / Municipal / Residential', 'Residential Property Owners': 'Governmental / Municipal / Residential', 'Military / Coast Guard': 'Governmental / Municipal / Residential', 'Transporters of Goods': 'Commercial / Military Transportation', 'Transporters of People': 'Commercial / Military Transportation', 'Water Subsisters': 'Subsistence', 'Food Subsisters': 'Subsistence', 'Timber / Fiber / Fur / Hide Subsisters': 'Subsistence', 'Building Material Subsisters': 'Subsistence', 'Experiencers / Viewers': 'Recreational', 'Food Pickers / Gatherers': 'Recreational', Hunters: 'Recreational', Anglers: 'Recreational', 'Waders / Swimmers / Divers': 'Recreational', Boaters: 'Recreational', 'Spiritual and Ceremonial Participants': 'Inspirational', Artists: 'Inspirational', 'Students and Educators': 'Learning', Researchers: 'Learning', 'People Who Care (Existence)': 'Non-Use', 'People Who Care (Option, Bequest)': 'Non-Use',
+    Irrigators: 'Agricultural',
+    'CAFO Operators': 'Agricultural',
+    'Livestock Grazers': 'Agricultural',
+    'Agricultural Processors': 'Agricultural',
+    Aquaculturalists: 'Agricultural',
+    Farmers: 'Agricultural',
+    Foresters: 'Agricultural',
+    'Food Extractors': 'Commercial / Industrial',
+    'Timber / Fiber / Ornamental Extractors': 'Commercial / Industrial',
+    'Industrial Processors': 'Commercial / Industrial',
+    'Industrial Dischargers': 'Commercial / Industrial',
+    'Energy Generators': 'Commercial / Industrial',
+    'Resource Dependent Businesses': 'Commercial / Industrial',
+    'Pharmaceutical / Food Supplement Suppliers': 'Commercial / Industrial',
+    'Fur / Hide Trappers / Hunters': 'Commercial / Industrial',
+    'Municipal Drinking Water Plant Operators': 'Governmental / Municipal / Residential',
+    'Wastewater Treatment Plant Operators': 'Governmental / Municipal / Residential',
+    'Residential Property Owners': 'Governmental / Municipal / Residential',
+    'Military / Coast Guard': 'Governmental / Municipal / Residential',
+    'Transporters of Goods': 'Commercial / Military Transportation',
+    'Transporters of People': 'Commercial / Military Transportation',
+    'Water Subsisters': 'Subsistence',
+    'Food Subsisters': 'Subsistence',
+    'Timber / Fiber / Fur / Hide Subsisters': 'Subsistence',
+    'Building Material Subsisters': 'Subsistence',
+    'Experiencers / Viewers': 'Recreational',
+    'Food Pickers / Gatherers': 'Recreational',
+    Hunters: 'Recreational',
+    Anglers: 'Recreational',
+    'Waders / Swimmers / Divers': 'Recreational',
+    Boaters: 'Recreational',
+    'Spiritual and Ceremonial Participants': 'Inspirational',
+    Artists: 'Inspirational',
+    'Students and Educators': 'Learning',
+    Researchers: 'Learning',
+    'People Who Care (Existence)': 'Non-Use',
+    'People Who Care (Option, Bequest)': 'Non-Use'
   };
 }; // END PROTOTYPE FEGScopingData
 
 /** Prototype controller of communication between data and view */
 const FEGSScopingController = function FEGSScopingController() {
   /** scrape data from the page and save the data */
-  this.saveView = function saveView(filename = 'data.json') {
+  this.saveView = function saveView() {
     let returnValue;
     const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.indexOf(' electron/') > -1) { // true if in NODE's ELECTRON
+    if (userAgent.indexOf(' electron/') > -1) {
+      // true if in NODE's ELECTRON
       returnValue = this.saveJSON('data.json', fegsScopingView.scrapePage());
-    } else { // else is selected if this instance appears to be running in the browser
+    } else {
+      // else is selected if this instance appears to be running in the browser
       returnValue = this.downloadText('data.json', JSON.stringify(fegsScopingView.scrapePage()));
     }
     return returnValue;
   };
 
   /** save validated data */
-  this.saveValidatedData = function saveValidatedData(filename) {
-    if (!filename) {
-      filename = 'data.json';
-    }
+  this.saveValidatedData = function saveValidatedData(filename = 'data.json') {
     this.saveJSON(filename, fegsScopingData);
     fegsScopingView.indicateSaved(filename);
   };
@@ -1268,6 +1651,11 @@ const FEGSScopingController = function FEGSScopingController() {
   this.updateName = function updateName(name) {
     fegsScopingView.updateName(name);
     fegsScopingData.updateName(name);
+  };
+
+  this.updateDescription = function updateDescription(description) {
+    fegsScopingView.updateDescription(description);
+    fegsScopingData.updateDescription(description);
   };
 
   this.getCurrentStakeholder = function getCurrentStakeholder() {
@@ -1280,34 +1668,50 @@ const FEGSScopingController = function FEGSScopingController() {
     const beneficiaries = {};
     const attributes = {};
 
-    for (let i = 0; i < fegsScopingData.criteria.length; i += 1) { // save view-state of #table-scores
-      scores[`${fegsScopingData.criteria[i]}-score`] = document.getElementById(`${fegsScopingData.criteria[i]}-score`).value;
+    for (let i = 0; i < fegsScopingData.criteria.length; i += 1) {
+      // save view-state of #table-scores
+      scores[`${fegsScopingData.criteria[i]}-score`] = document.getElementById(
+        `${fegsScopingData.criteria[i]}-score`
+      ).value;
     }
-    if (document.getElementById('table-beneficiaries').rows[0].cells.length > 2) { // scrape #table-beneficiaries conditioned upon whether table-beneficiaries is populated
-      for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) { // loop through each row of the table
-        if (+(document.getElementById('table-beneficiaries').rows[i + 1].cells.length) < 3) { // does the row have two th-elements?
-          beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById('table-beneficiaries').rows[i + 1].cells[1].firstChild.value; // scrape this beneficiary's value
-        } else { // the row appears to have only one th as a label
-          beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById('table-beneficiaries').rows[i + 1].cells[2].firstChild.value; // scrape this beneficiary's value
+    if (document.getElementById('table-beneficiaries').rows[0].cells.length > 2) {
+      // scrape #table-beneficiaries conditioned upon whether table-beneficiaries is populated
+      for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) {
+        // loop through each row of the table
+        if (+document.getElementById('table-beneficiaries').rows[i + 1].cells.length < 3) {
+          // does the row have two th-elements?
+          beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById(
+            'table-beneficiaries'
+          ).rows[i + 1].cells[1].firstChild.value; // scrape this beneficiary's value
+        } else {
+          // the row appears to have only one th as a label
+          beneficiaries[fegsScopingData.fegsBeneficiaries[i]] = document.getElementById(
+            'table-beneficiaries'
+          ).rows[i + 1].cells[2].firstChild.value; // scrape this beneficiary's value
         }
       }
-    } else { // no beneficiaries are populated into #table-beneficiaries
+    } else {
+      // no beneficiaries are populated into #table-beneficiaries
       // console.log('no attributes recorded from view');
     }
     for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) {
       attributes[fegsScopingData.fegsBeneficiaries[i]] = {};
       for (let j = 0; j < fegsScopingData.fegsAttributes.length; j += 1) {
-        attributes[fegsScopingData.fegsBeneficiaries[i]][fegsScopingData
-          .fegsAttributes[j]] = tableAttributes
-          .cellInputValue(tableAttributes.cell(fegsScopingData.fegsAttributes[j],
-            fegsScopingData.fegsBeneficiaries[i]));
+        attributes[fegsScopingData.fegsBeneficiaries[i]][
+          fegsScopingData.fegsAttributes[j]
+        ] = tableAttributes.cellInputValue(
+          tableAttributes.cell(
+            fegsScopingData.fegsAttributes[j],
+            fegsScopingData.fegsBeneficiaries[i]
+          )
+        );
       }
     }
 
     const scrapedValues = {
       scores,
       beneficiaries,
-      attributes,
+      attributes
     };
     return scrapedValues;
   };
@@ -1353,7 +1757,7 @@ const FEGSScopingController = function FEGSScopingController() {
     let fileName = filename;
     if (typeof process === 'undefined' || !process.versions.electron) {
       // console.log('electron is needed for importing data');
-      return;
+      return null;
     }
     if (typeof fileName === 'undefined') {
       fileName = 'data.json';
@@ -1385,6 +1789,14 @@ const FEGSScopingView = function FEGSScopingView() {
     this.saveNameButton.style.display = 'none';
   };
 
+  /** update name displayed in titlebar and header */
+  this.updateDescription = function updateDescription(description) {
+    this.projectDescription = description; // update the description of the view
+    this.showDescription.style.display = 'inline-block';
+    this.inputDescription.style.display = 'none';
+    this.saveDescriptionButton.style.display = 'none';
+  };
+
   /** input the name of this project */
   this.editName = function editName() {
     this.showName.style.display = 'none';
@@ -1399,16 +1811,32 @@ const FEGSScopingView = function FEGSScopingView() {
     this.saveNameButton.style.display = 'none';
     this.showName.style.display = 'inline-block';
     this.changeName.style.display = 'inline-block';
-    this.projectNameMenu.innerText = inputName.value;
+    this.projectNameMenu.innerText = this.inputName.value;
     fegsScopingController.saveValidatedData();
-    this.projectName = inputName.value;
+    this.projectName = this.inputName.value;
+  };
+
+  /** input the name of this project */
+  this.editDescription = function editDescription() {
+    // this.showDescription.style.display = 'none';
+    this.inputDescription.style.display = 'inline-block';
+    this.saveDescriptionButton.style.display = 'inline-block';
+    // this.inputDescription.value = this.projectDescriptionMenu.innerText;
+  };
+
+  /** save the name of this project */
+  this.saveDescriptionButton = function saveDescriptionButton() {
+    this.inputDescription.style.display = 'none';
+    this.saveDescriptionButton.style.display = 'none';
+    this.showDescription.style.display = 'inline-block';
+    this.changeDescription.style.display = 'inline-block';
+    // this.projectDescriptionMenu.innerText = this.inputDescription.value;
+    fegsScopingController.saveValidatedData();
+    this.projectDescription = this.inputDescription.value;
   };
 
   /** restore view's state: each input with a stored value restores that value */
-  this.restoreView = function restoreView(filename) {
-    if (typeof filename === 'undefined') {
-      filename = 'data.json';
-    }
+  this.restoreView = function restoreView(filename = 'data.json') {
     let criterion;
     fegsScopingData = fegsScopingController.importData(filename);
     fegsScopingData.filePath = filename;
@@ -1441,9 +1869,16 @@ const FEGSScopingView = function FEGSScopingView() {
   };
 
   /** indicate saved status */
-  this.indicateSaved = function indicateSaved(filename) {
-    filename = (typeof filename !== 'undefined') ? filename : null;
-    document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled') + ' - ' + appTitle; // Set application title
+  this.indicateSaved = function indicateSaved(filename = null) {
+    // Set application title
+    document.title = `${
+      fegsScopingData.filePath !== ''
+        ? fegsScopingData.filePath.slice(
+            fegsScopingData.filePath.lastIndexOf('\\') + 1,
+            fegsScopingData.filePath.length
+          )
+        : 'Untitled'
+    } - ${appTitle}`;
     document.getElementById('unsaved-indicator').setAttribute('hidden', '');
     if (filename !== null) {
       ipcRenderer.send('has-been-saved', filename);
@@ -1452,7 +1887,15 @@ const FEGSScopingView = function FEGSScopingView() {
 
   /** indicate unsaved status */
   this.indicateUnsaved = function indicateUnsaved() {
-    document.title = (fegsScopingData.filePath !== '' ? fegsScopingData.filePath.slice(fegsScopingData.filePath.lastIndexOf('\\') + 1, fegsScopingData.filePath.length) : 'Untitled') + '*' + ' - ' + appTitle; // Set application title
+    // Set application title
+    document.title = `${
+      fegsScopingData.filePath !== ''
+        ? fegsScopingData.filePath.slice(
+            fegsScopingData.filePath.lastIndexOf('\\') + 1,
+            fegsScopingData.filePath.length
+          )
+        : 'Untitled'
+    }* - ${appTitle}`;
     document.getElementById('unsaved-indicator').removeAttribute('hidden');
     ipcRenderer.send('has-been-changed');
   };
@@ -1570,7 +2013,7 @@ const FEGSScopingView = function FEGSScopingView() {
     for (let i = document.getElementById('table-stakeholders').rows.length - 1; i > 0; i -= 1) {
       document.getElementById('table-stakeholders').deleteRow(i);
     }
-    Object.keys(fegsScopingData.stakeholders).forEach((stakeholder) => {
+    Object.keys(fegsScopingData.stakeholders).forEach(stakeholder => {
       addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]);
     });
     document.getElementById('set-stakeholder-values').style.display = 'none';
@@ -1626,7 +2069,7 @@ const FEGSScopingView = function FEGSScopingView() {
 
     for (let i = 0; i < rowNames.length; i += 1) {
       for (let j = 0; j < columnNames.length; j += 1) {
-        if (fegsScopingData.attributes.hasOwnProperty(columnNames[j])) {
+        if (Object.prototype.hasOwnProperty.call(fegsScopingData.attributes, columnNames[j])) {
           table.showColumn(columnNames[j]);
           cell = table.cell(rowNames[i], columnNames[j]);
           if (cell.querySelector('input') === null) {
@@ -1636,7 +2079,8 @@ const FEGSScopingView = function FEGSScopingView() {
           } else {
             input = cell.querySelector('input');
           }
-          input.value = fegsScopingData.attributes[columnNames[j]][rowNames[i]].percentageOfBeneficiary;
+          input.value =
+            fegsScopingData.attributes[columnNames[j]][rowNames[i]].percentageOfBeneficiary;
         }
       }
     }
@@ -1649,6 +2093,11 @@ const FEGSScopingView = function FEGSScopingView() {
   this.projectNameMenu = document.getElementById('menu-project-name');
   this.saveNameButton = document.getElementById('save-name');
   this.changeNameButton = document.getElementById('change-name');
+
+  this.inputDescription = document.getElementById('input-description');
+  this.showDescription = document.getElementById('show-description');
+  this.saveDescriptionButton = document.getElementById('save-description');
+
   this.initializeView();
 }; // END PROTOTYPE FEGSScopingView
 
@@ -1698,14 +2147,27 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
     const columnHeaderRowNumber = 1;
     const errors = [];
 
-    for (let i = 0; i < rowHeaders.length; i += 1) { // test rowHeaders
+    for (let i = 0; i < rowHeaders.length; i += 1) {
+      // test rowHeaders
       if (rowHeaders[i] !== this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText) {
-        errors.push(new Error(`rowHeaders mismatch: ${rowHeaders[i]} does not match ${this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText}`));
+        errors.push(
+          new Error(
+            `rowHeaders mismatch: ${rowHeaders[i]} does not match ${this.table.rows[i + rowOffset].cells[rowHeaderColumnNumber].innerText}`
+          )
+        );
       }
     }
-    for (let i = 0; i < columnHeaders.length; i += 1) { // test columnHeaders
-      if (columnHeaders[i] !== this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText) {
-        errors.push(new Error(`columnHeaders mismatch: ${columnHeaders[i]} does not match ${this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText}`));
+    for (let i = 0; i < columnHeaders.length; i += 1) {
+      // test columnHeaders
+      if (
+        columnHeaders[i] !==
+        this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText
+      ) {
+        errors.push(
+          new Error(
+            `columnHeaders mismatch: ${columnHeaders[i]} does not match ${this.table.rows[columnHeaderRowNumber].cells[columnOffset + i].innerText}`
+          )
+        );
       }
     }
     return errors;
@@ -1742,13 +2204,18 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
   /** get index of indicated column assuming numerical args are indices */
   this.getColumnIndex = function getColumnIndex(columnIndicator) {
     let val;
-    if (Number.isNaN(Number.parseFloat(columnIndicator)) || Number('1') !== Math.round(Number('1'))) { // assume the argument is a heading-string if not coercible to NaN
+    if (
+      Number.isNaN(Number.parseFloat(columnIndicator)) ||
+      Number('1') !== Math.round(Number('1'))
+    ) {
+      // assume the argument is a heading-string if not coercible to NaN
       const unshiftedColumnIndex = this.columnHeaders.indexOf(columnIndicator);
       if (unshiftedColumnIndex === -1) {
         throw new Error(`columnIndicator not found: ${columnIndicator} in Table-instance `, this);
       }
       val = unshiftedColumnIndex + this.columnOffset;
-    } else { // assume a numerical index was supplied if not coerced to NaN
+    } else {
+      // assume a numerical index was supplied if not coerced to NaN
       val = columnIndicator;
     }
     return val;
@@ -1756,8 +2223,9 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
 
   /** true if the indicated column is hidden else false */
   this.isHidden = function isHidden(columnIndicator) {
-    return this.table.rows[1].cells[this.getColumnIndex(columnIndicator)]
-      .classList.contains(this.hiddenClassName);
+    return this.table.rows[1].cells[this.getColumnIndex(columnIndicator)].classList.contains(
+      this.hiddenClassName
+    );
   };
 
   /** true if the indicated col is hidden else false */
@@ -1778,13 +2246,15 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
     let colIndex = 0;
     let colSpanIndex = 0;
     for (colIndex = 0; colIndex < this.cols.length; colIndex += 1) {
-      currentColOriginalSpan = parseFloat(this.cols[colIndex].getAttribute(this.colSpanOriginalValuePropertyName));
+      currentColOriginalSpan = parseFloat(
+        this.cols[colIndex].getAttribute(this.colSpanOriginalValuePropertyName)
+      );
       if (colSpanIndex + currentColOriginalSpan > columnIndex) {
         return colIndex; // colIndex was the index of the col containing the indicated column
-      } else {
-        colSpanIndex += currentColOriginalSpan;
       }
+      colSpanIndex += currentColOriginalSpan;
     }
+    return null;
   };
 
   /** get name of indicated column */
@@ -1824,7 +2294,8 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
     if (this.cols[colIndex].span === 1) {
       this.cols[colIndex].classList.add(this.hiddenClassName);
       this.colCells[colIndex].classList.add(this.hiddenClassName);
-    } else { // decrement span and colspan
+    } else {
+      // decrement span and colspan
       this.cols[colIndex].span -= 1;
       this.colCells[colIndex].colSpan -= 1;
     }
@@ -1838,10 +2309,12 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
     let rowIndex;
     const columnIndex = this.getColumnIndex(columnIndicator);
     const colIndex = this.getColIndex(columnIndex);
-    if (!this.isHidden(columnIndex)) { // do nothing if already shown
+    if (!this.isHidden(columnIndex)) {
+      // do nothing if already shown
       return;
     }
-    if (!this.isColHidden(colIndex)) { // increment span and colspan
+    if (!this.isColHidden(colIndex)) {
+      // increment span and colspan
       this.cols[colIndex].span += 1;
       this.colCells[colIndex].colSpan += 1;
     }
@@ -1874,7 +2347,10 @@ const Table = function Table(tableId, rowHeaders, columnHeaders, rowOffset, colu
   this.showAttributeScores = function showAttributeScores() {
     this.showColumn('Attribute Score');
     for (let i = 0; i < this.rowHeaders.length; i += 1) {
-      this.cell(this.rowHeaders[i], 'Attribute Score').innerHTML = fegsScopingData.calculateAttributeScore(this.rowHeaders[i]);
+      this.cell(
+        this.rowHeaders[i],
+        'Attribute Score'
+      ).innerHTML = fegsScopingData.calculateAttributeScore(this.rowHeaders[i]);
     }
   };
 
@@ -1916,35 +2392,55 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     let total = 0; // sum all cells to see if sum is correctly normalized
     const { rows } = this.parentElement.parentElement.parentElement;
     let rowIndex;
-    if (this.value < 1 || this.value > 100) { // value is invalid after change
+    if (this.value < 1 || this.value > 100) {
+      // value is invalid after change
       for (let i = 0; i < rows.length; i += 1) {
         rows[i].cells[columnIndex].classList.remove('invalid-text-input');
       }
       this.parentElement.classList.add('invalid-text-input');
-      accessiblyNotify(`Attribute <em>${rows[this.parentElement.parentElement.rowIndex].cells[0].innerText}</em> was input as ${this.value} percent of beneficiary-group <em>' + ${document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex].innerText}</em>. Percentages must be between 1 and 100.`);
-    } else { // individual input is valid
-      for (let i = 0; i < rows.length; i += 1) { // loop through values in column
-        if (allBlank === true && rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== '') {
+      accessiblyNotify(
+        `Attribute <em>${
+          rows[this.parentElement.parentElement.rowIndex].cells[0].innerText
+        }</em> was input as ${this.value} percent of beneficiary-group <em>' + ${
+          document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex]
+            .innerText
+        }</em>. Percentages must be between 1 and 100.`
+      );
+    } else {
+      // individual input is valid
+      for (let i = 0; i < rows.length; i += 1) {
+        // loop through values in column
+        if (
+          allBlank === true &&
+          rows[i].cells[columnIndex].getElementsByTagName('input')[0].value !== ''
+        ) {
           allBlank = false;
         }
         total += +rows[i].cells[columnIndex].getElementsByTagName('input')[0].value;
       }
-      if (allBlank === true || String(total) === '100') { // pecentages are correctly normalized
+      if (allBlank === true || String(total) === '100') {
+        // pecentages are correctly normalized
         clearNotices(); // clear notices which describe bad input
-        for (let i = 0; i < rows.length; i += 1) { // clear styling indicating bad input
+        for (let i = 0; i < rows.length; i += 1) {
+          // clear styling indicating bad input
           rows[i].cells[columnIndex].classList.remove('invalid-text-input');
         }
         for (rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
           rows[rowIndex].cells[columnIndex].classList.remove('invalid-text-input');
           const attributeName = fegsScopingData.fegsAttributes[rowIndex];
-          attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName('input')[0].value;
+          attributesObject[attributeName] = rows[rowIndex].cells[columnIndex].getElementsByTagName(
+            'input'
+          )[0].value;
         }
         fegsScopingData.addAttributes(beneficiaryName, attributesObject); // save
         updateSelectBeneficiary('select-beneficiary');
         showSelectedBeneficiary(document.getElementById('select-beneficiary'));
         fegsScopingView.indicateUnsaved();
-      } else { // notify of incorrect normalization
-        accessiblyNotify(`The percentages for beneficiary ${beneficiaryName} sum to ${total}. Percentages must sum to 100.`);
+      } else {
+        // notify of incorrect normalization
+        accessiblyNotify(
+          `The percentages for beneficiary ${beneficiaryName} sum to ${total}. Percentages must sum to 100.`
+        );
         for (let i = 0; i < rows.length; i += 1) {
           rows[i].cells[columnIndex].classList.add('invalid-text-input');
         }
@@ -1977,7 +2473,7 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
 };
 
 /** clean trailing empty cells from each row then remove last cell from each row */
-const removeLastColumnFromTable = (tableId) => {
+const removeLastColumnFromTable = tableId => {
   const table = document.getElementById(tableId);
   for (let i = 0; i < table.rows.length; i += 1) {
     for (let j = 0; j < table.rows[i].cells.length; j += 1) {
@@ -1992,11 +2488,12 @@ const removeLastColumnFromTable = (tableId) => {
 /** remove options with text of optionText from selectid */
 const removeOptionFromSelect = (selectId, optionText) => {
   const select = document.getElementById(selectId);
-  if (select.options[select.selectedIndex].text
-    === optionText) { // is the option to be removed selected?
+  if (select.options[select.selectedIndex].text === optionText) {
+    // is the option to be removed selected?
     select.selectedIndex = 0; // if selected => select default option
   }
-  for (let i = 0; i < select.options.length; i += 1) { // remove option
+  for (let i = 0; i < select.options.length; i += 1) {
+    // remove option
     if (optionText === select.options[i].text) {
       select.options[i].remove();
     }
@@ -2006,25 +2503,27 @@ const removeOptionFromSelect = (selectId, optionText) => {
 };
 
 /** refresh select-box from data */
-const updateSelectStakeholder = (selectId) => {
+const updateSelectStakeholder = selectId => {
   const select = document.getElementById(selectId);
   const stakeholderNames = Object.keys(fegsScopingData.stakeholders);
 
-  for (let i = select.options.length - 1; i >= 0; i -= 1) { // remove all options
+  for (let i = select.options.length - 1; i >= 0; i -= 1) {
+    // remove all options
     select.options[i].remove();
   }
 
-  for (let i = 0; i < stakeholderNames.length; i += 1) { // add option for each stakeholder
+  for (let i = 0; i < stakeholderNames.length; i += 1) {
+    // add option for each stakeholder
     addOption(selectId, stakeholderNames[i], stakeholderNames[i]);
   }
 
   selectStakeholderToSlice();
 };
 
-let fegsScopingData = new FEGSScopingData();
-const fegsScopingView = new FEGSScopingView();
-const fegsScopingController = new FEGSScopingController();
-const tableAttributes = tableAttributesCreator('table-attributes');
+fegsScopingData = new FEGSScopingData();
+fegsScopingView = new FEGSScopingView();
+fegsScopingController = new FEGSScopingController();
+tableAttributes = tableAttributesCreator('table-attributes');
 
 updateSelectBeneficiary('select-beneficiary');
 showSelectedBeneficiary(document.getElementById('select-beneficiary'));
@@ -2039,6 +2538,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fegsScopingView.editName();
   });
 
+  document.getElementById('show-description').addEventListener('click', () => {
+    fegsScopingView.editDescription();
+  });
+
+  document.getElementById('save-description').addEventListener('click', () => {
+    fegsScopingController.updateDescription(document.getElementById('input-description').value);
+  });
+
   document.getElementById('save-name').addEventListener('click', () => {
     fegsScopingController.updateName(document.getElementById('input-name').value);
   });
@@ -2047,19 +2554,19 @@ document.addEventListener('DOMContentLoaded', () => {
     addStakeholder();
   });
 
-  document.getElementById('table-beneficiaries-toggle').addEventListener('click', (event) => {
+  document.getElementById('table-beneficiaries-toggle').addEventListener('click', event => {
     toggleTableDefinitions(event, 'table-beneficiaries');
   });
 
-  document.getElementById('table-attributes-toggle').addEventListener('click', (event) => {
+  document.getElementById('table-attributes-toggle').addEventListener('click', event => {
     toggleTableDefinitions(event, 'table-attributes');
   });
 
-  document.getElementById('page-zoom').addEventListener('change', (event) => {
+  document.getElementById('page-zoom').addEventListener('change', event => {
     pageZoomChange(event);
   });
 
-  document.getElementById('page-zoom').addEventListener('input', (event) => {
+  document.getElementById('page-zoom').addEventListener('input', event => {
     indicatePageZoom(event);
   });
 
@@ -2067,7 +2574,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectStakeholderToSlice();
   });
 
-  document.getElementById('select-beneficiary').addEventListener('change', (e) => {
+  document.getElementById('select-beneficiary').addEventListener('change', e => {
     showSelectedBeneficiary(e.target);
   });
 
@@ -2075,8 +2582,8 @@ document.addEventListener('DOMContentLoaded', () => {
     addStakeholderScores();
   });
 
-  Array.from(document.querySelectorAll('#table-scores label')).forEach((element) => {
-    element.addEventListener('click', (event) => {
+  Array.from(document.querySelectorAll('#table-scores label')).forEach(element => {
+    element.addEventListener('click', event => {
       accessiblyNotify(event.target.dataset.title);
     });
   });
@@ -2090,7 +2597,10 @@ updateAttributeProgress();
 document.getElementById('zoomer').removeAttribute('hidden');
 
 const indicatePageZoom = function indicatePageZoom(event) {
-  document.querySelector('#page-zoom-indicator').innerText = `${parseInt(event.target.value * 100, 10)}%`;
+  document.querySelector('#page-zoom-indicator').innerText = `${parseInt(
+    event.target.value * 100,
+    10
+  )}%`;
 };
 
 const pageZoomChange = function pageZoomChange(event) {
@@ -2203,15 +2713,19 @@ const APP = (function APP() {
     };
   }
   const me = {
-    onResize: (callback) => {
+    onResize: callback => {
       callback();
-      window.addEventListener('resize', debounce(() => {
-        callback();
-      }, 60), false);
-    },
+      window.addEventListener(
+        'resize',
+        debounce(() => {
+          callback();
+        }, 60),
+        false
+      );
+    }
   };
   return me;
-}());
+})();
 
 APP.onResize(() => {
   stakeholderBarchart();
@@ -2238,8 +2752,10 @@ window.addEventListener('scroll', () => {
   for (let i = 0; i < menuItems.length; i += 1) {
     const currentItem = menuItems[i];
     const hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
-    if (hrefElement.offsetTop <= (scrollPos + 1)
-      && hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos) {
+    if (
+      hrefElement.offsetTop <= scrollPos + 1 &&
+      hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos
+    ) {
       currentItem.parentNode.classList.add('active');
     } else {
       currentItem.parentNode.classList.remove('active');
@@ -2263,7 +2779,7 @@ const validateInput = function validateInput(value, min, max) {
   return false;
 };
 
-document.getElementById('stakeholder-group').addEventListener('keyup', (event) => {
+document.getElementById('stakeholder-group').addEventListener('keyup', event => {
   event.preventDefault();
   if (event.keyCode === 13) {
     document.getElementById('add-stakeholder').click();
@@ -2302,7 +2818,8 @@ function addStakeholder() {
   button.setAttribute('aria-label', 'remove stakeholder');
   button.innerHTML = '&#215;';
 
-  button.addEventListener('click', function removeStakeholderOnClick() { // create listeners for the remove stakeholder button
+  button.addEventListener('click', function removeStakeholderOnClick() {
+    // create listeners for the remove stakeholder button
     const stakeholder = this.parentNode.getAttribute('data-stakeholder');
     const elementsToRemove = document.querySelectorAll(`[data-stakeholder="${stakeholder}"]`);
     for (let i = 0, { length } = elementsToRemove; i < length; i += 1) {
@@ -2320,7 +2837,8 @@ function addStakeholder() {
 
   const lists = document.getElementsByClassName('stakeholder-value-list');
 
-  for (let i = 0; i < lists.length; i += 1) { // Create the score inputs for the added stakeholder
+  for (let i = 0; i < lists.length; i += 1) {
+    // Create the score inputs for the added stakeholder
     const ul = lists[i];
     li = document.createElement('li');
     li.setAttribute('class', 'stakeholder-score-item');
@@ -2348,13 +2866,17 @@ function addStakeholder() {
 
 function addStakeholderScores() {
   const stakeholdersToAdd = scrapeAddStakeholders();
-  if (Object.keys(stakeholdersToAdd).length < 1) {
+  const stakeholders = Object.keys(stakeholdersToAdd);
+  if (stakeholders.length < 1) {
     return;
   }
-  for (const stakeholder in stakeholdersToAdd) {
+
+  for (let i = 0; i < stakeholders.length; i += 1) {
+    const stakeholder = stakeholders[i];
     fegsScopingData.addStakeholder(stakeholder, stakeholdersToAdd[stakeholder]);
     addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]); // table name and array of values to insert
   }
+
   document.getElementById('set-stakeholder-values').style.display = 'none';
   document.getElementById('stakeholder-list').style.display = 'none';
   clearStakeholderScores();
@@ -2392,7 +2914,8 @@ function scrapeAddStakeholders() {
   for (let i = 0; i < stakeholderScoreInputs.length; i += 1) {
     const stakeholder = stakeholderScoreInputs[i].parentNode.getAttribute('data-stakeholder');
     const criterion = stakeholderScoreInputs[i].getAttribute('data-criterion');
-    if (!stakeholdersToAdd.hasOwnProperty(stakeholder)) {
+
+    if (!Object.prototype.hasOwnProperty.call(stakeholdersToAdd, stakeholder)) {
       stakeholdersToAdd[stakeholder] = {};
       const value = parseInt(stakeholderScoreInputs[i].value, 10);
       const isValid = validateInput(value, 0, 100);
@@ -2423,17 +2946,21 @@ function validateStakeholderScore(that) {
 }
 
 function updateBeneficiaryProgress() {
-  const stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
+  const stakeholders = Object.keys(fegsScopingData.stakeholders);
+  const stakeholderCount = stakeholders.length;
   if (stakeholderCount === 0) {
     document.getElementById('beneficiaries-progress').innerHTML = 'Add a stakeholder';
     return;
   }
   let completeCount = stakeholderCount;
-  for (const stakeholder in fegsScopingData.stakeholders) {
+
+  for (let i = 0; i < stakeholderCount; i += 1) {
+    const stakeholder = stakeholders[i];
     if (!Object.keys(fegsScopingData.stakeholders[stakeholder].beneficiaries).length) {
       completeCount -= 1;
     }
   }
+
   if (completeCount > 0) {
     let percentageSum = 0;
     const inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
@@ -2447,7 +2974,9 @@ function updateBeneficiaryProgress() {
       }
     }
   }
-  document.getElementById('beneficiaries-progress').innerHTML = `${completeCount} of ${stakeholderCount} stakeholders completed`;
+  document.getElementById(
+    'beneficiaries-progress'
+  ).innerHTML = `${completeCount} of ${stakeholderCount} stakeholders completed`;
 }
 
 function updateWeightingProgress() {
@@ -2459,7 +2988,8 @@ function updateWeightingProgress() {
       emptyInputs.push(inputs[i]);
     }
   }
-  document.getElementById('weighting-progress').innerHTML = `${inputs.length - emptyInputs.length} of ${inputs.length} criteria completed`;
+  document.getElementById('weighting-progress').innerHTML = `${inputs.length -
+    emptyInputs.length} of ${inputs.length} criteria completed`;
 }
 
 /**
@@ -2511,7 +3041,8 @@ function addRow(tableID, rowData) {
   newCell.appendChild(saveButton);
   newCell.appendChild(removeButton);
 
-  removeButton.addEventListener('click', function clickRemoveStakeholder() { // create listeners for the buttons
+  removeButton.addEventListener('click', function clickRemoveStakeholder() {
+    // create listeners for the buttons
     const stakeholder = this.parentNode.nextSibling.innerHTML;
     fegsScopingData.removeStakeholders([stakeholder]);
     this.parentNode.parentNode.remove();
@@ -2556,7 +3087,9 @@ function addRow(tableID, rowData) {
 
     let scores = {};
     for (let j = 0; j < fegsScopingData.criteria.length; j += 1) {
-      const cell = document.getElementById(`${originalStakeholderName}-${fegsScopingData.criteria[j]}`);
+      const cell = document.getElementById(
+        `${originalStakeholderName}-${fegsScopingData.criteria[j]}`
+      );
       scores[fegsScopingData.criteria[j]] = cell.innerHTML;
       cell.id = `${cells[1].innerText}-${fegsScopingData.criteria[j]}`;
     }
@@ -2605,15 +3138,21 @@ function toggleVisibility(id) {
 function wrap(text, width) {
   text.each(function wrapText() {
     text = d3.select(this);
-    const words = text.text().split(/\s+/).reverse();
+    const words = text
+      .text()
+      .split(/\s+/)
+      .reverse();
     let line = [];
     let word;
     let lineNumber = 0;
     const lineHeight = 1.1; // ems
     const y = text.attr('y');
     const dy = parseFloat(text.attr('dy'));
-    let tspan = text.text(null).append('tspan')
-      .attr('x', 0).attr('y', y)
+    let tspan = text
+      .text(null)
+      .append('tspan')
+      .attr('x', 0)
+      .attr('y', y)
       .attr('dy', `${dy}em`);
     while (words.length) {
       word = words.pop();
@@ -2623,7 +3162,8 @@ function wrap(text, width) {
         line.pop();
         tspan.text(line.join(' '));
         line = [word];
-        tspan = text.append('tspan')
+        tspan = text
+          .append('tspan')
           .attr('x', 0)
           .attr('y', y)
           .attr('dy', `${(lineNumber += 1) * lineHeight + dy}em`)
@@ -2771,10 +3311,7 @@ const getTableCell = function getTableCell(table, x, y) {
           m[ty][tx] = true;
         }
       }
-      if (xx <= x
-        && x < xx + cell.colSpan
-        && yyy <= y
-        && y < yyy + cell.rowSpan) {
+      if (xx <= x && x < xx + cell.colSpan && yyy <= y && y < yyy + cell.rowSpan) {
         return cell;
       }
     }
@@ -2801,7 +3338,7 @@ function attributePiechart() {
   initPieChart.draw({
     data: getAttributeScoresForPieChart(), // attribute-pie
     colors: d3.schemeSet3,
-    element: 'attribute-pie',
+    element: 'attribute-pie'
   });
 }
 
@@ -2820,16 +3357,16 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   let rowIndex;
   let cell;
   let input;
-  let cellText;
-  let rowspan;
-  let numberOfBeneficiaryColumnsInRow;
+  // let cellText;
+  // let rowspan;
+  // let numberOfBeneficiaryColumnsInRow;
 
   // validate sum of percentages is 100 +- 0.05 then save
   const beneficiaryPercentageOfStakeholderInputValidator = function beneficiaryPercentageOfStakeholderInputValidator() {
     clearNotices();
     let percentageSum = 0;
-    let input;
-    let inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
+    // let input;
+    const inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
     for (let j = 0; j < inputs.length; j += 1) {
       const value = parseFloat(inputs[j].value);
 
@@ -2850,19 +3387,22 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
       for (let j = 0; j < inputs.length; j += 1) {
         inputs[j].parentElement.style = 'background-color: #ffcccc';
       }
-    } else { // update data with valid input
+    } else {
+      // update data with valid input
       for (let j = 0; j < inputs.length; j += 1) {
         inputs[j].parentElement.style = 'background-color: initial';
-        const beneficiaryNameForInput = inputs[j].parentElement.parentElement
-          .cells[inputs[j].parentElement.cellIndex - 2].innerText;
-        if (!fegsScopingData.stakeholders[stakeholderName].beneficiaries
-          || !fegsScopingData.stakeholders[stakeholderName]
-            .beneficiaries[beneficiaryNameForInput]) {
+        const beneficiaryNameForInput =
+          inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 2]
+            .innerText;
+        if (
+          !fegsScopingData.stakeholders[stakeholderName].beneficiaries ||
+          !fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]
+        ) {
           fegsScopingData.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
         }
-        fegsScopingData.stakeholders[stakeholderName]
-          .beneficiaries[beneficiaryNameForInput]
-          .percentageOfStakeholder = inputs[j].value;
+        fegsScopingData.stakeholders[stakeholderName].beneficiaries[
+          beneficiaryNameForInput
+        ].percentageOfStakeholder = inputs[j].value;
         fegsScopingView.indicateUnsaved();
       }
       document.getElementById('beneficiary-charts').removeAttribute('hidden');
@@ -2877,7 +3417,8 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
     }
   };
 
-  for (let i = tBody.rows[0].cells.length - 1; i > 2; i -= 1) { // remove all data columns
+  for (let i = tBody.rows[0].cells.length - 1; i > 2; i -= 1) {
+    // remove all data columns
     removeLastColumnFromTable(table.id);
   }
   // add a column to house the data
@@ -2885,35 +3426,44 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   for (rowIndex = 0; rowIndex < tBody.rows.length; rowIndex += 1) {
     cell = tBody.rows[rowIndex].cells[tBody.rows[rowIndex].cells.length - 1];
     // create empty inputs for beneficiaries that are not scored for a stakeholder yet
-    if (!fegsScopingData.stakeholders[stakeholderName]
-      || !('beneficiaries' in fegsScopingData.stakeholders[stakeholderName])) {
+    if (
+      !fegsScopingData.stakeholders[stakeholderName] ||
+      !('beneficiaries' in fegsScopingData.stakeholders[stakeholderName])
+    ) {
       cell.innerHTML = '';
       input = document.createElement('input');
       input.type = 'number';
       input.className = 'beneficiary-percentage-of-stakeholder';
       cell.appendChild(input);
       input.oninput = beneficiaryPercentageOfStakeholderInputValidator;
-      continue;
-    }
-    if (tBody.rows[rowIndex].cells[0].getAttribute('rowspan') === null) { // check for spanned row-header
-      numberOfBeneficiaryColumnsInRow = 0;
     } else {
-      numberOfBeneficiaryColumnsInRow = 1;
+      // if (tBody.rows[rowIndex].cells[0].getAttribute('rowspan') === null) {
+      //   // check for spanned row-header
+      //   numberOfBeneficiaryColumnsInRow = 0;
+      // } else {
+      //   numberOfBeneficiaryColumnsInRow = 1;
+      // }
+      const beneficiaryName =
+        tBody.rows[rowIndex].cells[tBody.rows[rowIndex].cells.length - 1].innerText;
+      cell.innerHTML = '';
+      input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'beneficiary-percentage-of-stakeholder';
+      if (
+        fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName] &&
+        Object.prototype.hasOwnProperty.call(
+          fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName],
+          'percentageOfStakeholder'
+        )
+      ) {
+        input.value =
+          fegsScopingData.stakeholders[stakeholderName].beneficiaries[
+            beneficiaryName
+          ].percentageOfStakeholder;
+      }
+      input.oninput = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
+      cell.appendChild(input);
     }
-    const beneficiaryName = tBody.rows[rowIndex].cells[tBody.rows[rowIndex].cells.length - 1]
-      .innerText;
-    cell.innerHTML = '';
-    input = document.createElement('input');
-    input.type = 'number';
-    input.className = 'beneficiary-percentage-of-stakeholder';
-    if (fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName]
-      && fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryName].hasOwnProperty('percentageOfStakeholder')) {
-      input.value = fegsScopingData.stakeholders[stakeholderName]
-        .beneficiaries[beneficiaryName]
-        .percentageOfStakeholder;
-    }
-    input.oninput = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
-    cell.appendChild(input);
   }
 
   updateSelectBeneficiary('select-beneficiary');
