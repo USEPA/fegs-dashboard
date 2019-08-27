@@ -41,7 +41,7 @@ body {
 }
 
 .wrapper {
-  position: relative
+  position: relative;
 }
 
 .wrapper > .inner {
@@ -73,7 +73,7 @@ body {
   width: 3em;
 }
 
-[aria-hidden="true"] {
+[aria-hidden='true'] {
   display: none;
 }
 
@@ -114,63 +114,63 @@ body {
 }
 
 .agricultural {
-  background: #DDD9C4;
+  background: #ddd9c4;
 }
 
 .commercial {
-  background: #C5D9F1;
+  background: #c5d9f1;
 }
 
 .governmental {
-  background: #E4DFEC;
+  background: #e4dfec;
 }
 
 .transportation {
-  background: #F2DCDB;
+  background: #f2dcdb;
 }
 
 .subsistence {
-  background: #F9FDD1;
+  background: #f9fdd1;
 }
 
 .recreational {
-  background: #DAEEF3;
+  background: #daeef3;
 }
 
 .inspirational {
-  background: #EBF1DE;
+  background: #ebf1de;
 }
 
 .learning {
-  background: #FDE9D9;
+  background: #fde9d9;
 }
 
 .nonuse {
-  background: #F2F2F2;
+  background: #f2f2f2;
 }
 
 .irrigators {
-  background: #DDD9C3;
+  background: #ddd9c3;
 }
 
 .cafo-operators {
-  background: #C4BD97;
+  background: #c4bd97;
 }
 
 .livestock-grazers {
-  background: #948A54;
+  background: #948a54;
 }
 
 .agricultural-processors {
-  background: #948A54;
+  background: #948a54;
 }
 
 .aquaculturalists {
-  background: #4A452A;
+  background: #4a452a;
 }
 
 .farmers {
-  background: #1E1C11;
+  background: #1e1c11;
 }
 
 .foresters {
@@ -178,19 +178,19 @@ body {
 }
 
 .food-extractors {
-  background: #DCE6F2;
+  background: #dce6f2;
 }
 
 .timber-fiber-ornamental-extractors {
-  background: #C6D9F1;
+  background: #c6d9f1;
 }
 
 .industrial-processors {
-  background: #8EB4E3;
+  background: #8eb4e3;
 }
 
 .industrial-dischargers {
-  background: #558ED5;
+  background: #558ed5;
 }
 
 .energy-generators {
@@ -198,7 +198,7 @@ body {
 }
 
 .resource-dependent-businesses {
-  background: #1F497D;
+  background: #1f497d;
 }
 
 .pharmaceutical-food-supplement-suppliers {
@@ -206,19 +206,19 @@ body {
 }
 
 .fur-hide-trappers-hunters {
-  background: #10253F;
+  background: #10253f;
 }
 
 .municipal-drinking-water-plant-operators {
-  background: #CCC1DA;
+  background: #ccc1da;
 }
 
 .wastewater-treatment-plant-operators {
-  background: #B3A2C7;
+  background: #b3a2c7;
 }
 
 .residential-property-owners {
-  background: #604A7B;
+  background: #604a7b;
 }
 
 .military-coast-guard {
@@ -226,7 +226,7 @@ body {
 }
 
 .transporters-of-goods {
-  background: #D99694;
+  background: #d99694;
 }
 
 .transporters-of-people {
@@ -234,39 +234,39 @@ body {
 }
 
 .water-subsisters {
-  background: #F9FDD1;
+  background: #f9fdd1;
 }
 
 .food-subsisters {
-  background: #F9F383;
+  background: #f9f383;
 }
 
 .timber-fiber-fur-hide-subsisters {
-  background: #F5F018;
+  background: #f5f018;
 }
 
 .building-material-subsisters {
-  background: #FFFF00;
+  background: #ffff00;
 }
 
 .experiencers-viewers {
-  background: #DBEEF4;
+  background: #dbeef4;
 }
 
 .food-pickers-gatherers {
-  background: #B7DEE8;
+  background: #b7dee8;
 }
 
 .hunters {
-  background: #93CDDD;
+  background: #93cddd;
 }
 
 .anglers {
-  background: #4BACC6;
+  background: #4bacc6;
 }
 
 .waders-swimmers-divers {
-  background: #31859C;
+  background: #31859c;
 }
 
 .boaters {
@@ -274,27 +274,27 @@ body {
 }
 
 .spiritual-and-ceremonial-participants {
-  background: #C3D69B;
+  background: #c3d69b;
 }
 
 .artists {
-  background: #77933C;
+  background: #77933c;
 }
 
 .students-and-educators {
-  background: #FAC090;
+  background: #fac090;
 }
 
 .researchers {
-  background: #E46C0A;
+  background: #e46c0a;
 }
 
 .people-who-care-existence {
-  background: #D9D9D9;
+  background: #d9d9d9;
 }
 
 .people-who-care-option-bequest {
-  background: #A6A6A6;
+  background: #a6a6a6;
 }
 
 .water {
@@ -329,14 +329,14 @@ body {
 }
 
 .legend {
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
   height: 1em;
   width: 1em;
 }
 
 .key {
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
   height: 1em;
   width: 1em;
@@ -354,15 +354,15 @@ body {
 }
 
 .dark {
-  background: rgba(128, 128, 128, .25);
+  background: rgba(128, 128, 128, 0.25);
 }
 
 .light-gray {
   background-color: #f1f1f1;
   border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 1em 1em 1em 1em;
-  margin-bottom: .4em;
+  margin-bottom: 0.4em;
 }
 
 #stakeholder-list {
@@ -419,11 +419,11 @@ table td {
 }
 
 table th {
-  padding: .5em;
+  padding: 0.5em;
 }
 
 td {
-  padding: .3em;
+  padding: 0.3em;
 }
 
 .column-name-labels {
@@ -479,8 +479,8 @@ td {
 .remove-stakeholder {
   background-color: #cd2026;
   color: #fff;
-  margin: .25em 0 0 10px;
-  padding: 0.25em .5em;
+  margin: 0.25em 0 0 10px;
+  padding: 0.25em 0.5em;
   cursor: pointer;
 }
 
@@ -567,11 +567,11 @@ td {
 table input {
   width: 4em;
   text-align: right;
-  margin: .5em 1em;
-  padding: .2em;
+  margin: 0.5em 1em;
+  padding: 0.2em;
 }
 
-.scoring [data-th="Color"] {
+.scoring [data-th='Color'] {
   padding: 0;
 }
 .accessible-notification {
@@ -588,10 +588,10 @@ table input {
   display: inline-block;
 }
 .stakeholder-score-input {
-  margin: 0 0 .25em .25em;
+  margin: 0 0 0.25em 0.25em;
 }
 #table-stakeholders button {
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em;
 }
 .btn-no-margin {
   margin: 0;
