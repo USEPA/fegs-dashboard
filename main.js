@@ -20,46 +20,48 @@ const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 function openFile() {
   // console.log("open file")
   const { dialog } = electron;
-  dialog.showOpenDialog({
-    filters: [
-      { name: 'Custom File Type', extensions: ['fegs'] },
-    ],
-  },
-  (fileNames) => {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      // console.log("No file selected");
-    } else if (!saved) { // Check if unsaved
-      // console.log("not saved")
-      dialog.showMessageBox(
-        mainWindow,
-        {
-          type: 'question',
-          buttons: ['Save', "Don't Save", 'Cancel'],
-          title: appTitle,
-          message: `Do you want to save your changes to ${savedFileName}?`,
-        },
-        (response) => {
-          // console.log(response);
-          if (response === 0) {
-            // console.log("Save and Open");
-            mainWindow.webContents.send('save-and-open', fileNames);
-          } else if (response === 2) {
-            // console.log("Cancel");
-          } else {
-            // console.log("Just open");
-            mainWindow.webContents.send('open-file', fileNames);
-            savedFileName = fileNames;
-            saved = true;
+  dialog.showOpenDialog(
+    {
+      filters: [{ name: 'Custom File Type', extensions: ['fegs'] }]
+    },
+    fileNames => {
+      if (fileNames === undefined) {
+        // fileNames is an array that contains all the selected files
+        // console.log("No file selected");
+      } else if (!saved) {
+        // Check if unsaved
+        // console.log("not saved")
+        dialog.showMessageBox(
+          mainWindow,
+          {
+            type: 'question',
+            buttons: ['Save', "Don't Save", 'Cancel'],
+            title: appTitle,
+            message: `Do you want to save your changes to ${savedFileName}?`
+          },
+          response => {
+            // console.log(response);
+            if (response === 0) {
+              // console.log("Save and Open");
+              mainWindow.webContents.send('save-and-open', fileNames);
+            } else if (response === 2) {
+              // console.log("Cancel");
+            } else {
+              // console.log("Just open");
+              mainWindow.webContents.send('open-file', fileNames);
+              savedFileName = fileNames;
+              saved = true;
+            }
           }
-        },
-      );
-    } else {
-      // console.log("saved")
-      mainWindow.webContents.send('open-file', fileNames);
-      savedFileName = fileNames;
-      saved = true;
+        );
+      } else {
+        // console.log("saved")
+        mainWindow.webContents.send('open-file', fileNames);
+        savedFileName = fileNames;
+        saved = true;
+      }
     }
-  });
+  );
 }
 
 function saveFile() {
@@ -79,13 +81,14 @@ function saveFileAs() {
       filters: [
         {
           name: 'Custom File Type',
-          extensions: ['fegs'],
-        },
-      ],
+          extensions: ['fegs']
+        }
+      ]
     },
-    (fileNames) => {
+    fileNames => {
       let fileName = fileNames;
-      if (fileName === undefined) { // fileNames is an array that contains all the selected files
+      if (fileName === undefined) {
+        // fileNames is an array that contains all the selected files
         // console.log("No file selected");
       } else {
         if (!fileName.endsWith('.fegs')) {
@@ -93,7 +96,7 @@ function saveFileAs() {
         }
         mainWindow.webContents.send('save-as', fileName);
       }
-    },
+    }
   );
 }
 
@@ -110,13 +113,14 @@ function saveFileAsAndRefresh() {
       filters: [
         {
           name: 'Custom File Type',
-          extensions: ['fegs'],
-        },
-      ],
+          extensions: ['fegs']
+        }
+      ]
     },
-    (fileNames) => {
+    fileNames => {
       let fileName = fileNames;
-      if (fileNames === undefined) { // fileNames is an array that contains all the selected files
+      if (fileNames === undefined) {
+        // fileNames is an array that contains all the selected files
         // console.log("No file selected");
       } else {
         if (!fileName.endsWith('.fegs')) {
@@ -124,7 +128,7 @@ function saveFileAsAndRefresh() {
         }
         mainWindow.webContents.send('save-as-and-refresh', fileName);
       }
-    },
+    }
   );
 }
 
@@ -141,13 +145,14 @@ function saveFileAsAndOpen(saveName, openName) {
       filters: [
         {
           name: 'Custom File Type',
-          extensions: ['fegs'],
-        },
-      ],
+          extensions: ['fegs']
+        }
+      ]
     },
-    (fileNames) => {
+    fileNames => {
       let fileName = fileNames;
-      if (fileName === undefined) { // fileNames is an array that contains all the selected files
+      if (fileName === undefined) {
+        // fileNames is an array that contains all the selected files
         // console.log("No file selected");
       } else {
         if (!fileNames.endsWith('.fegs')) {
@@ -155,7 +160,7 @@ function saveFileAsAndOpen(saveName, openName) {
         }
         mainWindow.webContents.send('save-as-and-open', fileName, openName);
       }
-    },
+    }
   );
 }
 
@@ -172,13 +177,14 @@ function saveFileAsAndQuit() {
       filters: [
         {
           name: 'Custom File Type',
-          extensions: ['fegs'],
-        },
-      ],
+          extensions: ['fegs']
+        }
+      ]
     },
-    (fileNames) => {
+    fileNames => {
       let fileName = fileNames;
-      if (fileNames === undefined) { // fileNames is an array that contains all the selected files
+      if (fileNames === undefined) {
+        // fileNames is an array that contains all the selected files
         // console.log("No file selected");
       } else {
         if (!fileName.endsWith('.fegs')) {
@@ -186,7 +192,7 @@ function saveFileAsAndQuit() {
         }
         mainWindow.webContents.send('save-as-and-quit', fileName);
       }
-    },
+    }
   );
 }
 
@@ -198,7 +204,6 @@ function quit() {
   }
 }
 
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -206,17 +211,19 @@ function createWindow() {
     height: 1024,
     webPreferences: {
       nodeIntegration: true,
-      nodeIntegrationInWorker: true,
+      nodeIntegrationInWorker: true
     },
-    title: appTitle,
+    title: appTitle
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true,
-  }));
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
 
   const menuTemplate = [
     {
@@ -225,15 +232,17 @@ function createWindow() {
         {
           label: 'New Project',
           click: () => {
-            if (!saved) { // Check if unsaved
-              dialog.showMessageBox(mainWindow,
+            if (!saved) {
+              // Check if unsaved
+              dialog.showMessageBox(
+                mainWindow,
                 {
                   type: 'question',
                   buttons: ['Save', "Don't Save", 'Cancel'],
                   title: appTitle,
-                  message: `Do you want to save your changes to ${savedFileName}?`,
+                  message: `Do you want to save your changes to ${savedFileName}?`
                 },
-                (response) => {
+                response => {
                   if (response === 0) {
                     mainWindow.webContents.send('save-and-refresh');
                   } else if (response === 1) {
@@ -242,48 +251,56 @@ function createWindow() {
                     projectName = 'New Project';
                     saved = true;
                   }
-                });
+                }
+              );
             } else {
               mainWindow.webContents.reloadIgnoringCache();
               savedFileName = 'New Project';
               projectName = 'New Project';
               saved = true;
             }
-          },
+          }
         },
         {
           label: 'Open Project...',
           click: () => {
             openFile();
-          },
-        }, {
+          }
+        },
+        {
           label: 'Save Project',
           click: () => {
             saveFile();
-          },
-        }, {
+          }
+        },
+        {
           label: 'Save Project As...',
           click: () => {
             saveFileAs();
-          },
-        }, {
-          type: 'separator',
-        }, {
-          type: 'separator',
-        }, {
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Quit',
           click: () => {
             quit();
-          },
-        },
-      ],
-    }, {
+          }
+        }
+      ]
+    },
+    {
       label: 'Toggle DevTools',
       accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
       click: () => {
         mainWindow.webContents.toggleDevTools();
-      },
-    }, {
+      }
+    },
+    {
       label: 'About',
       submenu: [
         {
@@ -292,9 +309,10 @@ function createWindow() {
             dialog.showMessageBox(mainWindow, {
               title: appTitle,
               message: 'Tool Purpose',
-              detail: 'The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives.',
+              detail:
+                'The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives.'
             });
-          },
+          }
         },
         {
           label: 'Tool Methods',
@@ -303,21 +321,23 @@ function createWindow() {
               width: 800,
               height: 600,
               frame: true,
-              title: `Tool Methods - ${appTitle}`,
+              title: `Tool Methods - ${appTitle}`
             });
             win.setMenu(null);
             win.show();
             // and load the index.html of the app.
-            win.loadURL(url.format({
-              pathname: path.join(__dirname, 'methods.html'),
-              protocol: 'file:',
-              slashes: true,
-              autoHideMenuBar: true,
-            }));
-          },
-        },
-      ],
-    },
+            win.loadURL(
+              url.format({
+                pathname: path.join(__dirname, 'methods.html'),
+                protocol: 'file:',
+                slashes: true,
+                autoHideMenuBar: true
+              })
+            );
+          }
+        }
+      ]
+    }
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
@@ -326,27 +346,25 @@ function createWindow() {
   // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('close', (e) => {
+  mainWindow.on('close', e => {
     if (saved) {
-      const choice = electron.dialog.showMessageBox(mainWindow,
-        {
-          type: 'question',
-          buttons: ['Yes', 'No'],
-          title: appTitle,
-          message: 'Are you sure you want to quit?',
-        });
+      const choice = electron.dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        buttons: ['Yes', 'No'],
+        title: appTitle,
+        message: 'Are you sure you want to quit?'
+      });
       if (choice === 1) {
         e.preventDefault();
       }
     } else {
-      const choice = dialog.showMessageBox(mainWindow,
-        {
-          type: 'question',
-          buttons: ['Save', "Don't Save", 'Cancel'],
-          title: appTitle,
-          message: `Do you want to save your changes to ${savedFileName}?`,
-        });
-        // // console.log(choice);
+      const choice = dialog.showMessageBox(mainWindow, {
+        type: 'question',
+        buttons: ['Save', "Don't Save", 'Cancel'],
+        title: appTitle,
+        message: `Do you want to save your changes to ${savedFileName}?`
+      });
+      // // console.log(choice);
       if (choice === 0) {
         // // console.log("Save and Quit");
         e.preventDefault();
