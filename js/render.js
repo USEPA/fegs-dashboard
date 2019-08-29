@@ -1396,6 +1396,13 @@ const FEGSScopingData = function FEGSScopingData() {
   this.appName = appTitle;
   this.version = '1.0.0';
   this.projectName = 'New Project';
+  this.projectDescription = '';
+  this.notes = {
+    weights: '',
+    stakeholders: '',
+    beneficiaries: '',
+    attributes: ''
+  };
   this.filePath = '';
   this.criteria = [
     'magnitude',
@@ -1795,6 +1802,7 @@ const FEGSScopingView = function FEGSScopingView() {
     this.showDescription.style.display = 'inline-block';
     this.inputDescription.style.display = 'none';
     this.saveDescriptionButton.style.display = 'none';
+    this.inputDescription.value = description;
   };
 
   /** input the name of this project */
@@ -1818,10 +1826,8 @@ const FEGSScopingView = function FEGSScopingView() {
 
   /** input the name of this project */
   this.editDescription = function editDescription() {
-    // this.showDescription.style.display = 'none';
     this.inputDescription.style.display = 'inline-block';
     this.saveDescriptionButton.style.display = 'inline-block';
-    // this.inputDescription.value = this.projectDescriptionMenu.innerText;
   };
 
   /** save the name of this project */
@@ -1830,7 +1836,6 @@ const FEGSScopingView = function FEGSScopingView() {
     this.saveDescriptionButton.style.display = 'none';
     this.showDescription.style.display = 'inline-block';
     this.changeDescription.style.display = 'inline-block';
-    // this.projectDescriptionMenu.innerText = this.inputDescription.value;
     fegsScopingController.saveValidatedData();
     this.projectDescription = this.inputDescription.value;
   };
@@ -1841,10 +1846,16 @@ const FEGSScopingView = function FEGSScopingView() {
     fegsScopingData = fegsScopingController.importData(filename);
     fegsScopingData.filePath = filename;
     fegsScopingController.updateName(fegsScopingData.projectName);
+    fegsScopingController.updateDescription(fegsScopingData.projectDescription);
     for (let i = 0; i < fegsScopingData.criteria.length; i += 1) {
       criterion = fegsScopingData.criteria[i];
       document.querySelector(`#${criterion}-score`).value = fegsScopingData.scores[criterion];
     }
+
+    // restore notes
+    Object.keys(fegsScopingData.notes).forEach(note => {
+      document.querySelector(`#${note}-note`).value = fegsScopingData.notes[note];
+    });
 
     criteriaPiechart();
     document.getElementById('beneficiary-charts').removeAttribute('hidden');
@@ -2585,6 +2596,39 @@ document.addEventListener('DOMContentLoaded', () => {
   Array.from(document.querySelectorAll('#table-scores label')).forEach(element => {
     element.addEventListener('click', event => {
       accessiblyNotify(event.target.dataset.title);
+    });
+  });
+
+  document.querySelectorAll('.add-note-btn').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const notetype = event.target.dataset.noteId;
+      const label = document.querySelector(`#${notetype}-note-label`);
+      const note = document.querySelector(`#${notetype}-note`);
+      const btn = document.querySelector(`#${notetype}-save-btn`);
+      let hidden = false;
+
+      hidden = !label.hidden;
+      label.hidden = hidden;
+      note.hidden = hidden;
+      btn.hidden = hidden;
+    });
+  });
+
+  document.querySelectorAll('.save-note-btn').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const notetype = event.target.dataset.noteId;
+      const label = document.querySelector(`#${notetype}-note-label`);
+      const note = document.querySelector(`#${notetype}-note`);
+      const btn = document.querySelector(`#${notetype}-save-btn`);
+      const hidden = !label.hidden;
+
+      // save note
+      fegsScopingData.notes[`${notetype}`] = note.value;
+
+      // hide menu
+      label.hidden = hidden;
+      note.hidden = hidden;
+      btn.hidden = hidden;
     });
   });
 });

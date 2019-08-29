@@ -631,3 +631,6 @@ table input {
 #table-scores th {
   width: 1em;
 }
+.note {
+  width: 50%;
+}
