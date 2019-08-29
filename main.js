@@ -19,7 +19,6 @@ const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 
 function openFile() {
   // console.log("open file")
-  const { dialog } = electron;
   dialog.showOpenDialog(
     {
       filters: [{ name: 'Custom File Type', extensions: ['fegs'] }]
