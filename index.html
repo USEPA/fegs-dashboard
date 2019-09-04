@@ -52,7 +52,7 @@
         <div class="page" id="section-weighting">
           <h2>Weights</h2>
 
-          <button class="add-note-btn" data-note-id="weights">Note</button>
+          <button class="add-note-btn" aria-pressed="false" data-note-id="weights">Note</button>
           <label id="weights-note-label" for="weights-note" hidden>Note</label>
           <textarea class="form-text note" id="weights-note" hidden></textarea>
           <button class="save-note-btn" id="weights-save-btn" data-note-id="weights" hidden>Save Note</button>
@@ -125,7 +125,7 @@
           <hr />
           <h2>Stakeholders</h2>
 
-          <button class="add-note-btn" data-note-id="stakeholders">Note</button>
+          <button class="add-note-btn" aria-pressed="false" data-note-id="stakeholders">Note</button>
           <label id="stakeholders-note-label" for="stakeholders-note" hidden>Note</label>
           <textarea class="form-text note" id="stakeholders-note" hidden></textarea>
           <button class="save-note-btn" id="stakeholders-save-btn"  data-note-id="stakeholders"hidden>Save Note</button>
@@ -277,19 +277,7 @@
                   <th>Fairness</th>
                   <th>Underrepresented & Underserved representation</th>
                 </tr>
-                <tr>
-                  <th></th>
-                  <th></th>
-                  <th>Magnitude & Probability of impact</th>
-                  <th>Level of influence</th>
-                  <th>Level of interest</th>
-                  <th>Urgency & Temporal immediacy</th>
-                  <th>Proximity</th>
-                  <th>Economic interest</th>
-                  <th>Rights</th>
-                  <th>Fairness</th>
-                  <th>Underrepresented & Underserved representation</th>
-                </tr>
+    
               </thead>
               <tbody>
               </tbody>
@@ -342,7 +330,7 @@
           <hr />
           <h2>Beneficiaries</h2>
 
-          <button class="add-note-btn" data-note-id="beneficiaries">Note</button>
+          <button class="add-note-btn" aria-pressed="false" data-note-id="beneficiaries">Note</button>
           <label id="beneficiaries-note-label" for="beneficiaries-note" hidden>Note</label>
           <textarea class="form-text note" id="beneficiaries-note" hidden></textarea>
           <button class="save-note-btn" id="beneficiaries-save-btn" data-note-id="beneficiaries" hidden>Save Note</button>
@@ -575,7 +563,7 @@
           <hr />
           <h2>Attributes</h2>
 
-          <button class="add-note-btn" data-note-id="attributes">Note</button>
+          <button class="add-note-btn" aria-pressed="false" data-note-id="attributes">Note</button>
           <label id="attributes-note-label" for="attributes-note" hidden>Note</label>
           <textarea class="form-text note" id="attributes-note" hidden></textarea>
           <button class="save-note-btn" id="attributes-save-btn" data-note-id="attributes" hidden>Save Note</button>
@@ -583,8 +571,21 @@
           <label for="select-beneficiary">Identify the types of attributes making up each beneficiary group by percentage.</label>
           <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage. Each beneficary group must have attributes which sum to 100.</p>
           <label for="select-beneficiary">Select a Beneficiary Group</label>
-          <select class="form-select" id="select-beneficiary">
-          </select>
+          <select class="form-select" id="select-beneficiary"></select>
+          <br />
+          <label>Select Attributes</label>
+          <div id="toggle-attributes">
+            <button aria-pressed="false">Water</button>
+            <button aria-pressed="false">Air</button>
+            <button aria-pressed="false">Weather</button>
+            <button aria-pressed="false">Soil & Substrate</button>
+            <button aria-pressed="false">Natural Materials</button>
+            <button aria-pressed="false">Flora</button>
+            <button aria-pressed="false">Fungi</button>
+            <button aria-pressed="false">Fauna</button>
+            <button aria-pressed="false">Extreme Events</button>
+            <button aria-pressed="false">Composite</button>
+          </div>
           <table id="table-attributes">
             <colgroup>
               <col class="row-labels" span="2" />

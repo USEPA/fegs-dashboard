@@ -634,3 +634,7 @@ table input {
 .note {
   width: 50%;
 }
+
+button[aria-pressed='true'] {
+  background-color: #112e51;
+}

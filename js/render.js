@@ -1462,7 +1462,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Medicinal Fungi',
     'Rare Fungi',
     'Commercially Important Fungi',
-    'Spiritually/culturally Important Fungi',
+    'Spiritually / Culturally Important Fungi',
     'Fauna Community',
     'Edible Fauna',
     'Medicinal Fauna',
@@ -1470,7 +1470,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Charismatic Fauna',
     'Rare Fauna',
     'Pollinating Fauna',
-    'Pest Predator / Depredator Fauna',
+    'Pest / Predator / Depredator Fauna',
     'Commercially Important Fauna',
     'Spiritually / Culturally Important Fauna',
     'Risk of Flooding',
@@ -1518,7 +1518,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Medicinal Fungi': 'Fungi',
     'Rare Fungi': 'Fungi',
     'Commercially Important Fungi': 'Fungi',
-    'Spiritually/culturally Important Fungi': 'Fungi',
+    'Spiritually / Culturally Important Fungi': 'Fungi',
     'Fauna Community': 'Fauna',
     'Edible Fauna': 'Fauna',
     'Medicinal Fauna': 'Fauna',
@@ -1526,7 +1526,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Charismatic Fauna': 'Fauna',
     'Rare Fauna': 'Fauna',
     'Pollinating Fauna': 'Fauna',
-    'Pest Predator / Depredator Fauna': 'Fauna',
+    'Pest / Predator / Depredator Fauna': 'Fauna',
     'Commercially Important Fauna': 'Fauna',
     'Spiritually / Culturally Important Fauna': 'Fauna',
     'Risk of Flooding': 'Extreme Events',
@@ -2539,100 +2539,6 @@ tableAttributes = tableAttributesCreator('table-attributes');
 updateSelectBeneficiary('select-beneficiary');
 showSelectedBeneficiary(document.getElementById('select-beneficiary'));
 
-document.addEventListener('DOMContentLoaded', () => {
-  criteriaPiechart();
-  if (document.body.getAttribute('data-restore') === 'true') {
-    fegsScopingController.importData();
-  }
-
-  document.getElementById('show-name').addEventListener('click', () => {
-    fegsScopingView.editName();
-  });
-
-  document.getElementById('show-description').addEventListener('click', () => {
-    fegsScopingView.editDescription();
-  });
-
-  document.getElementById('save-description').addEventListener('click', () => {
-    fegsScopingController.updateDescription(document.getElementById('input-description').value);
-  });
-
-  document.getElementById('save-name').addEventListener('click', () => {
-    fegsScopingController.updateName(document.getElementById('input-name').value);
-  });
-
-  document.getElementById('add-stakeholder').addEventListener('click', () => {
-    addStakeholder();
-  });
-
-  document.getElementById('table-beneficiaries-toggle').addEventListener('click', event => {
-    toggleTableDefinitions(event, 'table-beneficiaries');
-  });
-
-  document.getElementById('table-attributes-toggle').addEventListener('click', event => {
-    toggleTableDefinitions(event, 'table-attributes');
-  });
-
-  document.getElementById('page-zoom').addEventListener('change', event => {
-    pageZoomChange(event);
-  });
-
-  document.getElementById('page-zoom').addEventListener('input', event => {
-    indicatePageZoom(event);
-  });
-
-  document.getElementById('select-stakeholder').addEventListener('change', () => {
-    selectStakeholderToSlice();
-  });
-
-  document.getElementById('select-beneficiary').addEventListener('change', e => {
-    showSelectedBeneficiary(e.target);
-  });
-
-  document.getElementById('add-stakeholder-scores').addEventListener('click', () => {
-    addStakeholderScores();
-  });
-
-  Array.from(document.querySelectorAll('#table-scores label')).forEach(element => {
-    element.addEventListener('click', event => {
-      accessiblyNotify(event.target.dataset.title);
-    });
-  });
-
-  document.querySelectorAll('.add-note-btn').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const notetype = event.target.dataset.noteId;
-      const label = document.querySelector(`#${notetype}-note-label`);
-      const note = document.querySelector(`#${notetype}-note`);
-      const btn = document.querySelector(`#${notetype}-save-btn`);
-      let hidden = false;
-
-      hidden = !label.hidden;
-      label.hidden = hidden;
-      note.hidden = hidden;
-      btn.hidden = hidden;
-    });
-  });
-
-  document.querySelectorAll('.save-note-btn').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const notetype = event.target.dataset.noteId;
-      const label = document.querySelector(`#${notetype}-note-label`);
-      const note = document.querySelector(`#${notetype}-note`);
-      const btn = document.querySelector(`#${notetype}-save-btn`);
-      const hidden = !label.hidden;
-
-      // save note
-      fegsScopingData.notes[`${notetype}`] = note.value;
-
-      // hide menu
-      label.hidden = hidden;
-      note.hidden = hidden;
-      btn.hidden = hidden;
-    });
-  });
-});
-
 updateStakeholderProgress();
 updateWeightingProgress();
 updateBeneficiaryProgress();
@@ -3544,3 +3450,154 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
 //     nav.setAttribute('hidden', true);
 //   }
 // }
+
+function toggleAttributeRow(attribute) {
+  Array.from(document.querySelector('#table-attributes').rows).forEach(row => {
+    let attribute2 = row.cells[1].innerHTML.replace('&amp;', '&');
+    let parent = fegsScopingData.fegsAttributesTier1[attribute2];
+
+    if (!parent) {
+      attribute2 = row.cells[2].innerHTML.replace('&amp;', '&');
+      parent = fegsScopingData.fegsAttributesTier1[attribute2];
+    }
+
+    if (parent === attribute) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+}
+
+function toggleAllAttributes() {
+  Array.from(document.querySelector('#table-attributes').rows).forEach(row => {
+    const attribute = row.cells[1].innerHTML.replace('&amp;', '&').trim();
+
+    if (fegsScopingData.fegsAttributesTier1[attribute]) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    } else if (row.cells[2].innerHTML.replace('&amp;', '&')) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  criteriaPiechart();
+  if (document.body.getAttribute('data-restore') === 'true') {
+    fegsScopingController.importData();
+  }
+
+  document.getElementById('show-name').addEventListener('click', () => {
+    fegsScopingView.editName();
+  });
+
+  document.getElementById('show-description').addEventListener('click', () => {
+    fegsScopingView.editDescription();
+  });
+
+  document.getElementById('save-description').addEventListener('click', () => {
+    fegsScopingController.updateDescription(document.getElementById('input-description').value);
+  });
+
+  document.getElementById('save-name').addEventListener('click', () => {
+    fegsScopingController.updateName(document.getElementById('input-name').value);
+  });
+
+  document.getElementById('add-stakeholder').addEventListener('click', () => {
+    addStakeholder();
+  });
+
+  document.getElementById('table-beneficiaries-toggle').addEventListener('click', event => {
+    toggleTableDefinitions(event, 'table-beneficiaries');
+  });
+
+  document.getElementById('table-attributes-toggle').addEventListener('click', event => {
+    toggleTableDefinitions(event, 'table-attributes');
+  });
+
+  document.getElementById('page-zoom').addEventListener('change', event => {
+    pageZoomChange(event);
+  });
+
+  document.getElementById('page-zoom').addEventListener('input', event => {
+    indicatePageZoom(event);
+  });
+
+  document.getElementById('select-stakeholder').addEventListener('change', () => {
+    selectStakeholderToSlice();
+  });
+
+  document.getElementById('select-beneficiary').addEventListener('change', e => {
+    showSelectedBeneficiary(e.target);
+  });
+
+  document.getElementById('add-stakeholder-scores').addEventListener('click', () => {
+    addStakeholderScores();
+  });
+
+  Array.from(document.querySelectorAll('#table-scores label')).forEach(element => {
+    element.addEventListener('click', event => {
+      accessiblyNotify(event.target.dataset.title);
+    });
+  });
+
+  document.querySelectorAll('.add-note-btn').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const notetype = event.target.dataset.noteId;
+      const label = document.querySelector(`#${notetype}-note-label`);
+      const note = document.querySelector(`#${notetype}-note`);
+      const saveBtn = document.querySelector(`#${notetype}-save-btn`);
+      const pressed = event.target.getAttribute('aria-pressed') === 'true';
+      let hidden = false;
+
+      event.target.setAttribute('aria-pressed', !pressed);
+
+      hidden = !label.hidden;
+      label.hidden = hidden;
+      note.hidden = hidden;
+      saveBtn.hidden = hidden;
+    });
+  });
+
+  document.querySelectorAll('.save-note-btn').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const notetype = event.target.dataset.noteId;
+      const label = document.querySelector(`#${notetype}-note-label`);
+      const note = document.querySelector(`#${notetype}-note`);
+      const saveBtn = document.querySelector(`#${notetype}-save-btn`);
+      const pressed = event.target.getAttribute('aria-pressed') === 'true';
+      const hidden = !label.hidden;
+
+      event.target.setAttribute('aria-pressed', !pressed);
+
+      // save note
+      fegsScopingData.notes[`${notetype}`] = note.value;
+
+      // hide menu
+      label.hidden = hidden;
+      note.hidden = hidden;
+      saveBtn.hidden = hidden;
+    });
+  });
+
+  document.querySelectorAll('#toggle-attributes button').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const element = event.target;
+      const pressed = element.getAttribute('aria-pressed') === 'true';
+      element.setAttribute('aria-pressed', !pressed);
+      toggleAttributeRow(element.innerText);
+    });
+  });
+
+  toggleAllAttributes();
+});
