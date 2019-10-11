@@ -16,6 +16,7 @@ let saved = true;
 let savedFileName = 'New Project';
 let projectName = 'New Project';
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
+const windows = [];
 
 function openFile() {
   // console.log("open file")
@@ -309,13 +310,15 @@ function createWindow() {
         {
           label: 'Tool Methods',
           click: () => {
-            const win = new BrowserWindow({
+            const id = windows.length;
+            let win = new BrowserWindow({
               width: 800,
               height: 600,
               frame: true,
               title: `Tool Methods - ${appTitle}`
             });
             win.setMenu(null);
+            windows[id] = win;
             win.show();
             // and load the index.html of the app.
             win.loadURL(
@@ -326,6 +329,12 @@ function createWindow() {
                 autoHideMenuBar: true
               })
             );
+
+            // garbage collection handle
+            win.on('closed', () => {
+              win = null;
+              windows[id] = null;
+            });
           }
         }
       ]
@@ -368,18 +377,20 @@ function createWindow() {
         title: appTitle,
         message: `Do you want to save your changes to ${savedFileName}?`
       });
-      // // console.log(choice);
       if (choice === 0) {
-        // // console.log("Save and Quit");
         e.preventDefault();
         mainWindow.webContents.send('save-and-quit');
       } else if (choice === 2) {
-        // // console.log("Cancel quit");
         e.preventDefault();
       } else {
-        // // console.log("just quit")
+        console.log('just quit');
       }
     }
+    windows.forEach(win => {
+      if (win) {
+        win.close();
+      }
+    });
   });
 
   mainWindow.webContents.on('crashed', () => {
