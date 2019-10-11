@@ -683,6 +683,7 @@ const showSelectedBeneficiary = element => {
   });
 
   tableAttributes.showOnlyTheseColumns(beneficiariesToShow);
+  displayAttributesforSelectedBeneficiary();
 };
 
 function getAttributeScoresForPieChart() {
@@ -3451,6 +3452,47 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
 //   }
 // }
 
+function toggleBeneficiaryRow(beneficiary) {
+  Array.from(document.querySelector('#table-beneficiaries').rows).forEach(row => {
+    let beneficiary2 = row.cells[0].innerHTML.replace('&amp;', '&');
+    let parent = fegsScopingData.fegsBeneficiariesTier1[beneficiary2];
+    if (!parent) {
+      beneficiary2 = row.cells[1].innerHTML.replace('&amp;', '&');
+      parent = fegsScopingData.fegsBeneficiariesTier1[beneficiary2];
+    }
+
+    if (parent === beneficiary) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+}
+
+function toggleAllBeneficiaries() {
+  Array.from(document.querySelector('#table-beneficiaries').rows).forEach(row => {
+    const beneficiary2 = row.cells[0].innerHTML.replace('&amp;', '&').trim();
+
+    if (fegsScopingData.fegsBeneficiariesTier1[beneficiary2]) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    } else if (
+      fegsScopingData.fegsBeneficiariesTier1[row.cells[1].innerHTML.replace('&amp;', '&')]
+    ) {
+      if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+}
+
 function toggleAttributeRow(attribute) {
   Array.from(document.querySelector('#table-attributes').rows).forEach(row => {
     let attribute2 = row.cells[1].innerHTML.replace('&amp;', '&');
@@ -3481,7 +3523,7 @@ function toggleAllAttributes() {
       } else {
         row.style.display = 'none';
       }
-    } else if (row.cells[2].innerHTML.replace('&amp;', '&')) {
+    } else if (fegsScopingData.fegsAttributesTier1[row.cells[2].innerHTML.replace('&amp;', '&')]) {
       if (row.style.display === 'none') {
         row.style.display = 'table-row';
       } else {
@@ -3535,20 +3577,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('select-stakeholder').addEventListener('change', () => {
     selectStakeholderToSlice();
+    displayBeneficiariesforSelectedStakeholder();
   });
 
-  document.getElementById('select-beneficiary').addEventListener('change', e => {
-    showSelectedBeneficiary(e.target);
+  document.getElementById('select-beneficiary').addEventListener('change', event => {
+    showSelectedBeneficiary(event.target);
   });
 
   document.getElementById('add-stakeholder-scores').addEventListener('click', () => {
     addStakeholderScores();
-  });
-
-  Array.from(document.querySelectorAll('#table-scores label')).forEach(element => {
-    element.addEventListener('click', event => {
-      accessiblyNotify(event.target.dataset.title);
-    });
   });
 
   document.querySelectorAll('.add-note-btn').forEach(ele => {
@@ -3600,4 +3637,65 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   toggleAllAttributes();
+
+  document.querySelectorAll('#toggle-beneficiaries button').forEach(ele => {
+    ele.addEventListener('click', event => {
+      const element = event.target;
+      const pressed = element.getAttribute('aria-pressed') === 'true';
+      element.setAttribute('aria-pressed', !pressed);
+      toggleBeneficiaryRow(element.innerText);
+    });
+  });
+
+  toggleAllBeneficiaries();
 });
+
+function displayAttributesforSelectedBeneficiary() {
+  document.querySelectorAll(`#toggle-attributes button[aria-pressed="true"]`).forEach(ele => {
+    ele.click();
+  });
+  const selected = document.getElementById('select-beneficiary').value;
+  const toggled = new Set();
+  Object.keys(fegsScopingData.attributes).forEach(beneficiary => {
+    const bene = fegsScopingData.fegsBeneficiariesTier1[beneficiary];
+    Object.keys(fegsScopingData.attributes[beneficiary]).forEach(at2 => {
+      if (
+        bene === selected &&
+        fegsScopingData.attributes[beneficiary][at2].percentageOfBeneficiary !== '' &&
+        !toggled.has(fegsScopingData.fegsAttributesTier1[at2])
+      ) {
+        document
+          .querySelector(
+            `#toggle-attributes button[data-attribute="${fegsScopingData.fegsAttributesTier1[at2]}"`
+          )
+          .click();
+        toggled.add(fegsScopingData.fegsAttributesTier1[at2]);
+      }
+    });
+  });
+}
+
+function displayBeneficiariesforSelectedStakeholder() {
+  document.querySelectorAll(`#toggle-beneficiaries button[aria-pressed="true"]`).forEach(ele => {
+    ele.click();
+  });
+  const selected = document.getElementById('select-stakeholder').value;
+  const toggled = new Set();
+  Object.keys(fegsScopingData.stakeholders).forEach(stakeholder => {
+    Object.keys(fegsScopingData.stakeholders[stakeholder].beneficiaries).forEach(beneficiary => {
+      if (
+        selected === stakeholder &&
+        fegsScopingData.stakeholders[stakeholder].beneficiaries[beneficiary]
+          .percentageOfStakeholder !== '' &&
+        !toggled.has(fegsScopingData.fegsBeneficiariesTier1[beneficiary])
+      ) {
+        document
+          .querySelector(
+            `#toggle-beneficiaries button[data-beneficiary="${fegsScopingData.fegsBeneficiariesTier1[beneficiary]}"`
+          )
+          .click();
+        toggled.add(fegsScopingData.fegsBeneficiariesTier1[beneficiary]);
+      }
+    });
+  });
+}

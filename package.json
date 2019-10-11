@@ -1,6 +1,6 @@
 {
   "name": "fegs-scoping-tool",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "description": "Describe utilization of Final Ecosystem Goods and Services(FEGS).",
   "main": "main.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "devtron": "^1.4.0",
-    "electron": "^6.0.10",
+    "electron": "^6.0.12",
     "electron-builder": "^21.2.0",
     "electron-chromedriver": "^6.0.0",
     "electron-debug": "^3.0.1",

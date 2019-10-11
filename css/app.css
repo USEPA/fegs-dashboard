@@ -14,6 +14,16 @@ body {
   box-sizing: border-box;
 }
 
+th {
+  background-color: #f1f3f4;
+  border: 1px solid #e5e5e5;
+  font-weight: 500;
+}
+
+td {
+  border: 1px solid #e5e5e5;
+}
+
 section {
   display: block;
 }
@@ -358,9 +368,8 @@ body {
 }
 
 .light-gray {
-  background-color: #f1f1f1;
-  border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: #f1f3f4;
+  border: 1px solid #e5e5e5;
   padding: 1em 1em 1em 1em;
   margin-bottom: 0.4em;
 }
@@ -385,12 +394,11 @@ body {
 }
 
 #table-stakeholders tr:nth-child(even) {
-  background-color: #f1f1f1;
+  background-color: #fafafa;
 }
 
 #table-stakeholders th {
-  background-color: #0071bc;
-  color: white;
+  background-color: #f1f3f4;
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
@@ -411,10 +419,10 @@ table {
 }
 
 table th {
-  text-align: center;
+  /* text-align: center; */
 }
 
-table td {
+table td input {
   text-align: center;
 }
 
@@ -428,14 +436,6 @@ td {
 
 .column-name-labels {
   border-bottom: 1px dashed darkgrey;
-}
-
-.column-names th {
-  border-bottom: 1px solid black;
-}
-
-.row-name {
-  border-right: 1px solid black;
 }
 
 .invalid-text-input {
@@ -518,7 +518,7 @@ td {
 
 #sidebar {
   padding: 0.25em 0em 0.5em 0.4em;
-  background: #5b616b;
+  background: #212121;
   color: #fff;
   cursor: default;
   height: 100vh;
@@ -637,4 +637,114 @@ table input {
 
 button[aria-pressed='true'] {
   background-color: #112e51;
+}
+
+#defs th {
+  vertical-align: top;
+}
+
+.nav-hr {
+  background: white;
+  margin: 1em 0 1em;
+}
+
+#veilon_gotop {
+  position: fixed;
+  right: 15px;
+  bottom: -55px;
+  height: 40px;
+  width: 40px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: #d8d8d8;
+  color: #ffffff;
+  color: #ffffff;
+  transition-property: box-shadow, border-color, color, background, text-shadow, opacity;
+  transition: 400ms ease;
+}
+
+#veilon_gotop.show {
+  bottom: 15px;
+}
+
+.fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 14px;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+#veilon_gotop {
+  cursor: pointer;
+  color: #ffffff;
+  color: #ffffff;
+}
+
+.fa-chevron-up::before {
+  content: '^';
+}
+
+/* tooltip */
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+}
+
+.tooltip span {
+  border-bottom: dotted 1px #8a8a8a;
+  line-height: 1.5em;
+  cursor: help;
+}
+
+.tooltipright {
+  top: -5px;
+  left: 105%;
+}
+
+.tooltipleft {
+  top: -5px;
+  right: 105%;
+}
+
+.tooltipbottom {
+  top: 100%;
+  left: 50%;
+  margin-left: -120px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  font-weight: normal;
+  visibility: collapse;
+  font-size: 16px;
+  padding: 10px;
+
+  width: 240px;
+  background-color: #616161;
+  color: #fff;
+  border-radius: 3px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltiptext ul {
+  padding-top: 1.5em;
+  padding-bottom: 0;
+}
+
+.tooltiptext img {
+  padding-top: 1.5em;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
