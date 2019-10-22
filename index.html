@@ -75,7 +75,6 @@
                     <th class="tooltip">
                       <label for="magnitude-score"><span>Magnitude & Probability of Impact</span></label>
                       <span class="tooltipright tooltiptext">If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?
-                        <img src="img/probabilitymagnitude.PNG" width="240" alt="Probability and magnitude matrix">
                       </span>
                     </th>
                     <td data-th="Value"><input id="magnitude-score" type="number" min="0" max="100" /></td>
@@ -85,11 +84,6 @@
                     <th class="tooltip">
                       <label for="influence-score"><span>Level of Influence</span></label>
                       <span class="tooltipright tooltiptext">Does this stakeholder group have any formal or informal influence over the decision making process?
-                          <ul>
-                              <li>100 = This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</li>
-                              <li>50 = This group has informal influence over the decision-making process.</li>
-                              <li>0 = This group has no influence over the decision-making process.</li>
-                            </ul>
                       </span>
                     </th>
                     <td data-th="Value"><input id="influence-score" type="number" min="0" max="100" /></td>
@@ -98,14 +92,7 @@
                     <th data-th="Color"><span class="legend interest"></span></th>
                     <th class="tooltip">
                       <label for="interest-score"><span>Level of Interest</span></label>
-                      <span class="tooltipright tooltiptext">What is this stakeholder group's level of interest in this decision/action?
-                          <ul>
-                              <li>100 = High.</li>
-                              <li>75 = Moderate.</li>
-                              <li>50 = Low.</li>
-                              <li>0 = None.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">What is this stakeholder group's level of interest in this decision/action?</span>
                     </th>
                     <td data-th="Value"><input id="interest-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -113,16 +100,7 @@
                     <th data-th="Color"><span class="legend urgency"></span></th>
                     <th class="tooltip">
                       <label for="urgency-score"><span>Urgency & Temporal Immediacy</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group want an immediate decision/action on this issue?
-                          <ul>
-                              <li>100 = Yes, even if other actions/decisions must be postponed.</li>
-                              <li>80 = Yes, as long as it does not delay current commitments.</li>
-                              <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
-                              <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
-                              <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
-                              <li>0 = They do not care when an action/decision takes place.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group want an immediate decision/action on this issue?</span>
                     </th>
                     <td data-th="Value"><input id="urgency-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -130,16 +108,7 @@
                     <th data-th="Color"><span class="legend proximity"></span></th>
                     <th class="tooltip">
                       <label for="proximity-score"><span>Proximity</span></label>
-                      <span class="tooltipright tooltiptext">How frequently does this stakeholder group come into contact with the area subject to this decision?
-                          <ul>
-                              <li>100 = They are constantly in direct contact with the area.</li>
-                              <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</li>
-                              <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</li>
-                              <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
-                              <li>10 = They interact with this area from a distance.</li>
-                              <li>0 = They are never in contact with the area.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">How frequently does this stakeholder group come into contact with the area subject to this decision?</span>
                     </th>
                     <td data-th="Value"><input id="proximity-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -147,12 +116,7 @@
                     <th data-th="Color"><span class="legend economic-interest"></span></th>
                     <th class="tooltip">
                       <label for="economic-interest-score"><span>Economic Interest</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group have an economic interest in the outcome of this decision?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group have an economic interest in the outcome of this decision?</span>
                     </th>
                     <td data-th="Value"><input id="economic-interest-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -160,15 +124,7 @@
                     <th data-th="Color"><span class="legend rights"></span></th>
                     <th class="tooltip">
                       <label for="rights-score"><span>Rights</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?
-
-                          <ul>
-                              <li>100 = Yes, all 3.</li>
-                              <li>60 = Yes, 2 of the 3.</li>
-                              <li>20 = Yes, 1 of the 3.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</span>
                     </th>
                     <td data-th="Value"><input id="rights-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -176,12 +132,7 @@
                     <th data-th="Color"><span class="legend fairness"></span></th>
                     <th class="tooltip">
                       <label for="fairness-score"><span>Fairness</span></label>
-                      <span class="tooltipright tooltiptext">If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                      <span class="tooltipright tooltiptext">If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?</span>
                     </th>
                     <td data-th="Value"><input id="fairness-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -189,13 +140,7 @@
                     <th data-th="Color"><span class="legend representation"></span></th>
                     <th class="tooltip">
                       <label for="representation-score"><span>Underrepresented & Underserved Representation</span></label>
-                      <span class="tooltipright tooltiptext">Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
-                    </th>
+                      <span class="tooltipright tooltiptext">Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?</th>
                     <td data-th="Value"><input id="representation-score" type="number" min="0" max="100" /></td>
                   </tr>
                 </tbody>
