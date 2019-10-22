@@ -2744,15 +2744,19 @@ document.getElementById('stakeholder-group').addEventListener('keyup', event => 
 function addStakeholder() {
   const weights = fegsScopingData.makeCriteriaObject({});
   const stakeholderGroupInput = document.getElementById('stakeholder-group');
-  const stakeholderGroup = stakeholderGroupInput.value;
+  const stakeholderGroup = stakeholderGroupInput.value.trim();
   stakeholderGroupInput.value = '';
   // if the stakeholder exists or is blank.
   if (Object.keys(fegsScopingData.stakeholders).indexOf(stakeholderGroup) !== -1) {
     accessiblyNotify('A stakeholder with this name already exists.');
     return;
   }
-  if (stakeholderGroup.trim() === '') {
-    accessiblyNotify('Enter a valid stakeholder name.');
+  if (stakeholderGroup === '') {
+    accessiblyNotify("Stakeholder name can't be blank.");
+    return;
+  }
+  if (!Number.isNaN(Number(stakeholderGroup))) {
+    accessiblyNotify("Stakeholder can't be a number.");
     return;
   }
   fegsScopingData.addStakeholder(stakeholderGroup, weights); // add the stakeholder to the model
@@ -3020,14 +3024,31 @@ function addRow(tableID, rowData) {
   });
 
   saveButton.addEventListener('click', function clickSaveStakeholder() {
-    this.setAttribute('aria-hidden', 'true'); // hide the save button
     const row = this.parentNode.parentNode;
-    row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
     const { cells } = row;
     let originalStakeholderName = cells[1].innerText;
+    const newStakeholderName = cells[1].firstElementChild.value.trim();
 
     if (cells[1].firstElementChild.hasAttribute('data-original-value')) {
       originalStakeholderName = cells[1].firstElementChild.getAttribute('data-original-value');
+    }
+
+    if (
+      newStakeholderName !== originalStakeholderName &&
+      Object.keys(fegsScopingData.stakeholders).indexOf(newStakeholderName) !== -1
+    ) {
+      accessiblyNotify('A stakeholder with this name already exists.');
+      return;
+    }
+
+    if (newStakeholderName === '') {
+      accessiblyNotify("Stakeholder name can't be blank.");
+      return;
+    }
+
+    if (!Number.isNaN(Number(newStakeholderName))) {
+      accessiblyNotify("Stakeholder name can't be a number.");
+      return;
     }
 
     for (let i = 1, { length } = cells; i < length; i += 1) {
@@ -3046,13 +3067,16 @@ function addRow(tableID, rowData) {
     }
     scores = fegsScopingData.makeCriteriaObject(scores);
 
-    if (cells[1].innerText !== originalStakeholderName) {
-      fegsScopingData.renameStakeholder(originalStakeholderName, cells[1].innerText);
+    if (newStakeholderName !== originalStakeholderName) {
+      fegsScopingData.renameStakeholder(originalStakeholderName, newStakeholderName);
     } else {
       fegsScopingData.updateStakeholder(originalStakeholderName, scores);
     }
 
-    fegsScopingData.stakeholders[cells[1].innerText].scores = scores;
+    this.setAttribute('aria-hidden', 'true'); // hide the save button
+    row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
+
+    fegsScopingData.stakeholders[newStakeholderName].scores = scores;
     updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
     stakeholderBarchart();
     updateBeneficiaryView();
