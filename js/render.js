@@ -108,6 +108,18 @@ const beneficiaryColors = [
   '#A6A6A6'
 ];
 
+const beneTier1Colors = [
+  '#ddd9c4',
+  '#c5d9f1',
+  '#e4dfec',
+  '#f2dcdb',
+  '#f9fdd1',
+  '#daeef3',
+  '#ebf1de',
+  '#fde9d9',
+  '#f2f2f2'
+];
+
 /**
  * Get the data for the global scores and return them in a JSON object.
  * @function
@@ -625,10 +637,10 @@ function getBeneficiaryScoresForPieChart() {
 
 function beneficiaryPiechart() {
   initPieChart.draw({
-    data: getBeneficiaryScoresForPieChart(),
-    colors: beneficiaryColors,
+    data: getTier1BeneficiaryScoresForPieChart(),
+    colors: beneTier1Colors,
     element: 'beneficiary-pie',
-    legend: fegsScopingData.getExtantBeneficiaries()
+    legend: [...new Set(Object.values(fegsScopingData.fegsBeneficiariesTier1))]
   });
 }
 
@@ -719,6 +731,35 @@ function getAttributeScoresForPieChart() {
     }
   }
   return data;
+}
+
+function getTier1BeneficiaryScoresForPieChart() {
+  const temp = {};
+  const beneficiaryData = getBeneficiaryScoresForPieChart();
+  for (let i = 0; i < beneficiaryData.length; i += 1) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        temp,
+        fegsScopingData.fegsBeneficiariesTier1[beneficiaryData[i].label]
+      )
+    ) {
+      temp[fegsScopingData.fegsBeneficiariesTier1[beneficiaryData[i].label]] =
+        beneficiaryData[i].value;
+    } else {
+      temp[fegsScopingData.fegsBeneficiariesTier1[beneficiaryData[i].label]] +=
+        beneficiaryData[i].value;
+    }
+  }
+  const tier1 = [];
+  const tier1Beneficiaries = [...new Set(Object.values(fegsScopingData.fegsBeneficiariesTier1))];
+  for (let i = 0; i < tier1Beneficiaries.length; i += 1) {
+    if (Object.prototype.hasOwnProperty.call(temp, tier1Beneficiaries[i])) {
+      tier1.push({ label: tier1Beneficiaries[i], value: temp[tier1Beneficiaries[i]] });
+    } else {
+      tier1.push({ label: tier1Beneficiaries[i], value: 0 });
+    }
+  }
+  return tier1;
 }
 
 function getTier1AttributeScoresForPieChart() {
