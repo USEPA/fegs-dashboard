@@ -362,8 +362,8 @@ const initStackedBarChart = {
     const margin = {
       top: 20,
       right: 275,
-      bottom: 200,
-      left: 50
+      bottom: 20,
+      left: 275
     };
 
     Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
@@ -371,19 +371,19 @@ const initStackedBarChart = {
     });
 
     let divWidth = document.getElementById('beneficiary-charts').offsetWidth;
-    if (divWidth > 1000) {
-      divWidth = 1000;
+    if (divWidth > 1395) {
+      divWidth = 1395;
     } else if (divWidth < 550) {
       divWidth = 550;
     }
     const width = divWidth - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    const xScale = d3
+    const yScale = d3
       .scaleBand()
-      .range([0, width])
+      .range([height, 0])
       .padding(0.1);
-    const yScale = d3.scaleLinear().range([height, 0]);
+    const xScale = d3.scaleLinear().range([0, width]);
     const color = d3.scaleOrdinal(colors);
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
@@ -425,12 +425,12 @@ const initStackedBarChart = {
     data.sort(function(a, b) {
       return b.total - a.total;
     });
-    xScale.domain(
+    yScale.domain(
       data.map(function(d) {
         return d[header];
       })
     );
-    yScale.domain([
+    xScale.domain([
       0,
       d3.max(data, function(d) {
         return Object.values(d).reduce(function(acc, val) {
@@ -460,25 +460,25 @@ const initStackedBarChart = {
       .enter()
       .append('rect')
       .attr('class', 'bar')
-      .attr('x', function(d) {
-        return xScale(d.data[header]);
-      })
       .attr('y', function(d) {
-        if (isNaN(d[1])) {
-          return yScale(0);
-        }
-        return yScale(d[1]);
+        return yScale(d.data[header]);
       })
-      .attr('height', function(d) {
+      .attr('x', function(d) {
         if (isNaN(d[0])) {
-          return yScale(0) - yScale(0);
+          return xScale(0);
+        }
+        return xScale(d[0]);
+      })
+      .attr('width', function(d) {
+        if (isNaN(d[0])) {
+          return xScale(0) - xScale(0);
         }
         if (isNaN(d[1])) {
-          return yScale(0) - yScale(0);
+          return xScale(0) - xScale(0);
         }
-        return yScale(d[0]) - yScale(d[1]);
+        return xScale(d[1]) - xScale(d[0]);
       })
-      .attr('width', xScale.bandwidth())
+      .attr('height', yScale.bandwidth())
       .on('click', function() {
         d3.selectAll('.bar').classed('selected', false);
         d3.select(this).classed('selected', true);
@@ -492,10 +492,8 @@ const initStackedBarChart = {
       .attr('transform', `translate(0,${height + 5})`)
       .call(xAxis)
       .selectAll('.tick text')
-      .style('text-anchor', 'end')
-      .attr('dx', '-.8em')
-      .attr('dy', '.15em')
-      .attr('transform', 'rotate(-65)');
+      .style('text-anchor', 'middle')
+      .attr('dy', '0.8em');
 
     svg
       .append('g')
