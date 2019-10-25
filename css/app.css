@@ -648,45 +648,21 @@ button[aria-pressed='true'] {
   margin: 1em 0 1em;
 }
 
-#veilon_gotop {
+#go-to-top {
+  align-items: center;
+  background: #d8d8d8;
+  border-radius: 2px;
+  bottom: 15px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
   position: fixed;
   right: 15px;
-  bottom: -55px;
-  height: 40px;
-  width: 40px;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  background: #d8d8d8;
-  color: #ffffff;
-  color: #ffffff;
   transition-property: box-shadow, border-color, color, background, text-shadow, opacity;
   transition: 400ms ease;
-}
-
-#veilon_gotop.show {
-  bottom: 15px;
-}
-
-.fa {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: 14px;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-#veilon_gotop {
-  cursor: pointer;
-  color: #ffffff;
-  color: #ffffff;
-}
-
-.fa-chevron-up::before {
-  content: '^';
+  width: 40px;
 }
 
 /* tooltip */
@@ -747,4 +723,8 @@ button[aria-pressed='true'] {
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+#scoring-inputs {
+  justify-content: flex-start;
 }
