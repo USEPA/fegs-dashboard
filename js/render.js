@@ -3087,15 +3087,36 @@ function addRow(tableID, rowData) {
       return;
     }
 
+    cells[1].firstElementChild.classList.remove('invalid-text-input');
     if (!Number.isNaN(Number(newStakeholderName))) {
       accessiblyNotify("Stakeholder name can't be a number.");
+      cells[1].firstElementChild.classList.add('invalid-text-input');
       return;
     }
 
-    for (let i = 1, { length } = cells; i < length; i += 1) {
+    for (let i = 2, { length } = cells; i < length; i += 1) {
+      const cell = cells[i];
+      // set the value of the cell to the value of the child input of the cell
+      const newVal = +cell.firstElementChild.value;
+      cell.firstElementChild.classList.remove('invalid-text-input');
+      if (Number.isNaN(newVal) || newVal > 100 || newVal < 0) {
+        accessiblyNotify('Value must be a number in the range 0-100.');
+        cell.firstElementChild.classList.add('invalid-text-input');
+        return;
+      }
+    }
+
+    for (let i = 1; i < 2; i += 1) {
       const cell = cells[i];
       // set the value of the cell to the value of the child input of the cell
       cell.innerHTML = cell.firstElementChild.value;
+    }
+
+    for (let i = 2, { length } = cells; i < length; i += 1) {
+      const cell = cells[i];
+      // set the value of the cell to the value of the child input of the cell
+      const newVal = +cell.firstElementChild.value;
+      cell.innerHTML = newVal;
     }
 
     let scores = {};
