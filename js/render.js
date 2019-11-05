@@ -361,9 +361,9 @@ const initStackedBarChart = {
     const { colors } = config;
     const margin = {
       top: 20,
-      right: 275,
+      right: 350,
       bottom: 20,
-      left: 275
+      left: 350
     };
 
     Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
@@ -2597,13 +2597,6 @@ const pageZoomChange = function pageZoomChange(event) {
   webFrame.setZoomFactor(+event.target.value);
 };
 
-if (remote.process.argv.length > 1) {
-  if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === '.fegs') {
-    fegsScopingView.restoreView(remote.process.argv[1]);
-    fegsScopingView.indicateSaved(remote.process.argv[1]);
-  }
-}
-
 // Listen for save as from main process
 ipcRenderer.on('save-as', (event, arg) => {
   fegsScopingData.filePath = arg;
@@ -2742,13 +2735,22 @@ window.addEventListener('scroll', () => {
   for (let i = 0; i < menuItems.length; i += 1) {
     const currentItem = menuItems[i];
     const hrefElement = document.getElementById(currentItem.getAttribute('href').replace('#', ''));
+    //console.log('hrefElement.offsetTop <= scrollPos + 1');
+    //console.log(hrefElement.offsetTop + ' <= ' + +scrollPos + +1);
+
+    //console.log('hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos');
+    //console.log(+hrefElement.offsetTop + +hrefElement.offsetHeight + ' > ' + +scrollPos + +1);
     if (
       hrefElement.offsetTop <= scrollPos + 1 &&
-      hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos
+      hrefElement.offsetTop + hrefElement.offsetHeight > scrollPos + 1
     ) {
       currentItem.parentNode.classList.add('active');
+      //console.log('add');
+      //console.log(currentItem.parentNode);
     } else {
       currentItem.parentNode.classList.remove('active');
+      //console.log('remove');
+      //console.log(currentItem.parentNode);
     }
   }
 });
@@ -3761,4 +3763,11 @@ function displayBeneficiariesforSelectedStakeholder() {
       }
     });
   });
+}
+
+if (remote.process.argv.length > 1) {
+  if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === '.fegs') {
+    fegsScopingView.restoreView(remote.process.argv[1]);
+    fegsScopingView.indicateSaved(remote.process.argv[1]);
+  }
 }
