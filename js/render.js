@@ -2444,18 +2444,20 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     const { rows } = this.parentElement.parentElement.parentElement;
     let rowIndex;
     if (this.value < 1 || this.value > 100) {
+    const { value } = this;
+    if (value < 1 || value > 100) {
       // value is invalid after change
       for (let i = 0; i < rows.length; i += 1) {
         rows[i].cells[columnIndex].classList.remove('invalid-text-input');
       }
       this.parentElement.classList.add('invalid-text-input');
       accessiblyNotify(
-        `Attribute <em>${
-          rows[this.parentElement.parentElement.rowIndex].cells[0].innerText
-        }</em> was input as ${this.value} percent of beneficiary-group <em>' + ${
+        `"${
+          rows[this.parentElement.parentElement.rowIndex - rowOffset].cells[0].innerText
+        }" was set to ${value}% of ${
           document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex]
             .innerText
-        }</em>. Percentages must be between 1 and 100.`
+        }. Percentages must be between 1 and 100.`
       );
     } else {
       // individual input is valid
