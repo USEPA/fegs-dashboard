@@ -2443,7 +2443,6 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     let total = 0; // sum all cells to see if sum is correctly normalized
     const { rows } = this.parentElement.parentElement.parentElement;
     let rowIndex;
-    if (this.value < 1 || this.value > 100) {
     const { value } = this;
     if (value < 1 || value > 100) {
       // value is invalid after change
