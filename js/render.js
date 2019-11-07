@@ -1,6 +1,7 @@
 const fs = require('fs');
 const electron = require('electron');
 
+const { ipcRenderer, remote, webFrame } = electron;
 const { app } = electron.remote;
 const d3 = require('d3');
 d3.tip = require('d3-tip');
@@ -9,10 +10,7 @@ let fegsScopingData;
 let fegsScopingView;
 let fegsScopingController;
 let tableAttributes;
-
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
-
-const { ipcRenderer, remote, webFrame } = electron;
 
 const round = function round(number, precision) {
   const shift = function shift(number, precision, reverseShift) {
@@ -370,7 +368,7 @@ const initStackedBarChart = {
       element.parentNode.removeChild(element);
     });
 
-    let divWidth = document.getElementById('beneficiary-charts').offsetWidth;
+    let divWidth = document.getElementById('main-content').offsetWidth;
     if (divWidth > 1395) {
       divWidth = 1395;
     } else if (divWidth < 550) {

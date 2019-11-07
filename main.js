@@ -75,29 +75,33 @@ function saveFileAs() {
   if (projectName !== 'New Project' && savedFileName === 'New Project') {
     nameToUse = projectName;
   }
-  dialog.showSaveDialog(
-    {
-      defaultPath: nameToUse,
-      filters: [
-        {
-          name: 'Custom File Type',
-          extensions: ['fegs']
+  try {
+    dialog.showSaveDialog(
+      {
+        defaultPath: nameToUse,
+        filters: [
+          {
+            name: 'Custom File Type',
+            extensions: ['fegs']
+          }
+        ]
+      },
+      fileNames => {
+        let fileName = fileNames;
+        if (fileName === undefined) {
+          // fileNames is an array that contains all the selected files
+          // console.log("No file selected");
+        } else {
+          if (!fileName.endsWith('.fegs')) {
+            fileName += '.fegs';
+          }
+          mainWindow.webContents.send('save-as', fileName);
         }
-      ]
-    },
-    fileNames => {
-      let fileName = fileNames;
-      if (fileName === undefined) {
-        // fileNames is an array that contains all the selected files
-        // console.log("No file selected");
-      } else {
-        if (!fileName.endsWith('.fegs')) {
-          fileName += '.fegs';
-        }
-        mainWindow.webContents.send('save-as', fileName);
       }
-    }
-  );
+    );
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function saveFileAsAndRefresh() {
