@@ -3442,10 +3442,13 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
         fegsScopingView.indicateUnsaved();
       }
       document.getElementById('beneficiary-charts').removeAttribute('hidden');
-      beneficiaryBarchart();
-      beneficiaryPiechart();
+
+      updateBeneficiaryView();
+      updateAttributeView();
+
       updateBeneficiaryProgress();
       updateAttributeProgress();
+
       fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
       updateSelectBeneficiary('select-beneficiary');
       showSelectedBeneficiary(document.getElementById('select-beneficiary'));
