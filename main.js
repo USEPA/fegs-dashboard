@@ -250,18 +250,20 @@ function createWindow() {
                   if (response === 0) {
                     mainWindow.webContents.send('save-and-refresh');
                   } else if (response === 1) {
-                    mainWindow.webContents.reloadIgnoringCache();
                     savedFileName = 'New Project';
                     projectName = 'New Project';
                     saved = true;
+                    mainWindow.webContents.reloadIgnoringCache();
+                    mainWindow.setTitle(appTitle);
                   }
                 }
               );
             } else {
-              mainWindow.webContents.reloadIgnoringCache();
               savedFileName = 'New Project';
               projectName = 'New Project';
               saved = true;
+              mainWindow.webContents.reloadIgnoringCache();
+              mainWindow.setTitle(appTitle);
             }
           }
         },
