@@ -3444,6 +3444,7 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
       document.getElementById('beneficiary-charts').removeAttribute('hidden');
       beneficiaryBarchart();
       beneficiaryPiechart();
+      updateBeneficiaryProgress();
       updateAttributeProgress();
       fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
       updateSelectBeneficiary('select-beneficiary');
