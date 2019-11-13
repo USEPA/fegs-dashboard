@@ -3458,7 +3458,14 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
     removeLastColumnFromTable(table.id);
   }
   // add a column to house the data
-  addTableColumn(table.id, stakeholderName, fegsScopingData.fegsBeneficiaries);
+  addTableColumn(
+    table.id,
+    `${stakeholderName}<br /><br />Prioritization Score: ${round(
+      fegsScopingData.stakeholderPrioritizationScoreSum(stakeholderName),
+      1
+    )}`,
+    fegsScopingData.fegsBeneficiaries
+  );
   for (rowIndex = 0; rowIndex < tBody.rows.length; rowIndex += 1) {
     cell = tBody.rows[rowIndex].cells[tBody.rows[rowIndex].cells.length - 1];
     // create empty inputs for beneficiaries that are not scored for a stakeholder yet
