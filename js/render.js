@@ -3797,5 +3797,6 @@ if (remote.process.argv.length > 1) {
   if (remote.process.argv[1].substr(remote.process.argv[1].length - 5) === '.fegs') {
     fegsScopingView.restoreView(remote.process.argv[1]);
     fegsScopingView.indicateSaved(remote.process.argv[1]);
+    remote.process.argv = [remote.process.argv[0]];
   }
 }
