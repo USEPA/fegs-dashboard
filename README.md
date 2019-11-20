@@ -1,16 +1,20 @@
 # FEGS Scoping Tool
 ## SYNOPSIS
-Stakeholders describe utilization of Final Ecosystem Goods and Services(FEGS). The provided lists of beneficiaries and attributes are based on definitions from the Final Ecosystem Goods and Services-Classification-System(FEGS-CS).
+Stakeholders describe utilization of Final Ecosystem Goods and Services (FEGS). The provided lists of beneficiaries and attributes are based on definitions from the Final Ecosystem Goods and Services Classification System (FEGS-CS).
 
 ## Electron App Compilation from Source
-**Note**: Running this requires [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/en/) (which includes npm) on your system.
+**Note**: Running this requires [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/en/) (which includes [npm](https://www.npmjs.com/)) on your system.
 ### Clone the repository
 `$ git clone -b fegs-electron https://github.com/USEPA/fegs-dashboard`
 ### Go into the repository
 `$ cd fegs-dashboard`
 ### Install dependencies
+Dependencies are defined in package.json.
+
 `$ npm install`
 ### Run the app
+`$ npm start`
+### Build the app
 `$ npm run dist` followed by `$ './dist/FEGS-Scoping-Tool Setup X.Y.Z.exe'`, where `X`, `Y`, and `Z` represent current version-numbers. `X` is the major version, `Y` is the minor version, and `Z` is the patch.
 
 ## Contribute
