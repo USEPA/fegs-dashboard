@@ -12,6 +12,7 @@ let fegsScopingController;
 let tableAttributes;
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 
+// Rounding function used in the application
 const round = function round(number, precision) {
   const shift = function shift(number, precision, reverseShift) {
     if (reverseShift) {
@@ -55,6 +56,7 @@ const accessiblyNotify = function accessiblyNotify(text) {
 
 // PAGE PROCESS
 
+// Set the colors used in d3 visualizations
 const criteriaColors = [
   '#4f81bd',
   '#c0504d',
@@ -144,6 +146,7 @@ const sum = function sum(obj) {
   return total;
 };
 
+// Format the stakeholder data for use in the stakeholder bar chart
 const formatStakeholderData = function formatStakeholderData() {
   const data = [];
 
@@ -161,7 +164,7 @@ const formatStakeholderData = function formatStakeholderData() {
   return data;
 };
 
-/** pie chart */
+/** pie chart - used for all pie charts in the app */
 const initPieChart = {
   draw(config) {
     Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
@@ -190,9 +193,6 @@ const initPieChart = {
         } else {
           document.querySelector(`.key.${keyName}`).parentElement.setAttribute('hidden', '');
         }
-      } else {
-        // console.log(`couldnt find: ${d.label.replace(/\s*([/])\s*/g, '$1').replace(/[,()]/g, '')
-        //  .replace(/\s+|[\/]/g, '-').toLowerCase()}`);
       }
       return d.value;
     })(data);
@@ -261,7 +261,7 @@ const initPieChart = {
         this._current = d;
       }); // store the initial angles
 
-    // update
+    // used when there's an update to the pie charts
     function change() {
       const updatedPie = d3
         .pie()
@@ -301,6 +301,7 @@ const initPieChart = {
       updateAttributeView();
     }
 
+    // Code for just the criteria pie
     if (domEle === 'criteria-pie') {
       d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
         clearNotices();
@@ -348,7 +349,7 @@ const initPieChart = {
   }
 };
 
-/** stacked bar-chart */
+/** stacked bar-chart - used for all stacked barcharts */
 const initStackedBarChart = {
   draw(config) {
     const domEle = config.element;
@@ -420,18 +421,18 @@ const initStackedBarChart = {
       .offset(d3.stackOffsetNone);
 
     const layers = stack(data);
-    data.sort(function(a, b) {
+    data.sort(function (a, b) {
       return b.total - a.total;
     });
     yScale.domain(
-      data.map(function(d) {
+      data.map(function (d) {
         return d[header];
       })
     );
     xScale.domain([
       0,
-      d3.max(data, function(d) {
-        return Object.values(d).reduce(function(acc, val) {
+      d3.max(data, function (d) {
+        return Object.values(d).reduce(function (acc, val) {
           return acc + (isNaN(val) ? 0 : val);
         }, 0);
       })
@@ -443,31 +444,31 @@ const initStackedBarChart = {
       .enter()
       .append('g')
       .attr('class', 'layer')
-      .style('fill', function(d, i) {
+      .style('fill', function (d, i) {
         return color(i);
       })
-      .attr('data-label', function(d, i) {
+      .attr('data-label', function (d, i) {
         return stackKey[i];
       });
 
     layer
       .selectAll('rect')
-      .data(function(d) {
+      .data(function (d) {
         return d;
       })
       .enter()
       .append('rect')
       .attr('class', 'bar')
-      .attr('y', function(d) {
+      .attr('y', function (d) {
         return yScale(d.data[header]);
       })
-      .attr('x', function(d) {
+      .attr('x', function (d) {
         if (isNaN(d[0])) {
           return xScale(0);
         }
         return xScale(d[0]);
       })
-      .attr('width', function(d) {
+      .attr('width', function (d) {
         if (isNaN(d[0])) {
           return xScale(0) - xScale(0);
         }
@@ -477,7 +478,7 @@ const initStackedBarChart = {
         return xScale(d[1]) - xScale(d[0]);
       })
       .attr('height', yScale.bandwidth())
-      .on('click', function() {
+      .on('click', function () {
         d3.selectAll('.bar').classed('selected', false);
         d3.select(this).classed('selected', true);
       })
@@ -508,7 +509,7 @@ const initStackedBarChart = {
         .data(legendKey)
         .enter()
         .append('g')
-        .attr('transform', function(d, i) {
+        .attr('transform', function (d, i) {
           return `translate(30,${i * 19})`;
         });
 
@@ -517,7 +518,7 @@ const initStackedBarChart = {
         .attr('x', width - 18)
         .attr('width', 18)
         .attr('height', 18)
-        .attr('fill', function(d, i) {
+        .attr('fill', function (d, i) {
           return colors[i];
         });
 
@@ -527,7 +528,7 @@ const initStackedBarChart = {
         .attr('y', 9)
         .attr('dy', '0.35em')
         .attr('text-anchor', 'start')
-        .text(function(d) {
+        .text(function (d) {
           return d;
         });
     }
@@ -536,6 +537,7 @@ const initStackedBarChart = {
   }
 };
 
+// Draw or update the stakeholder bar chart
 function stakeholderBarchart() {
   initStackedBarChart.draw({
     data: formatStakeholderData(),
@@ -546,6 +548,7 @@ function stakeholderBarchart() {
   });
 }
 
+// Format the beneficiary data for use in the beneficiary bar chart
 const formatBeneficiaryData = function formatBeneficiaryData() {
   const data = [];
   const stakeholders = Object.entries(fegsScopingData.stakeholders);
@@ -574,6 +577,7 @@ const formatBeneficiaryData = function formatBeneficiaryData() {
   return data;
 };
 
+// Format the attribute data for use in the attribute bar chart
 function formatAttributeData() {
   const data = [];
 
@@ -587,6 +591,7 @@ function formatAttributeData() {
   return data;
 }
 
+// Create or update the beneficiary bar chart
 const beneficiaryBarchart = function beneficiaryBarchart() {
   initStackedBarChart.draw({
     data: formatBeneficiaryData(),
@@ -620,6 +625,7 @@ const beneficiaryBarchart = function beneficiaryBarchart() {
   });
 };
 
+// Format the beneficiary scores for the beneficiary pie chart
 function getBeneficiaryScoresForPieChart() {
   const data = [];
   for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) {
@@ -631,6 +637,7 @@ function getBeneficiaryScoresForPieChart() {
   return data;
 }
 
+// Draw or update the beneficiary bar chart
 function beneficiaryPiechart() {
   initPieChart.draw({
     data: getTier1BeneficiaryScoresForPieChart(),
@@ -640,12 +647,13 @@ function beneficiaryPiechart() {
   });
 }
 
+// Updates the beneficiary section charts
 const updateBeneficiaryView = function updateBeneficiaryView() {
   beneficiaryBarchart();
   beneficiaryPiechart();
 };
 
-/** Add an option with given value and text to a given select-box. */
+/** Add an option to an HTML select menu. Provide the text and the value. */
 const addOption = function addOption(selectId, optionText, optionValue) {
   const select = document.getElementById(selectId);
   const optionToAdd = document.createElement('option');
@@ -654,6 +662,7 @@ const addOption = function addOption(selectId, optionText, optionValue) {
   select.add(optionToAdd);
 };
 
+// Updates the Select a Beneficiary HTML input with the current available beneficiaries
 const updateSelectBeneficiary = function updateSelectBeneficiary(selectId) {
   const select = document.getElementById(selectId);
   const beneficiaries = fegsScopingData.getExtantBeneficiaries();
@@ -680,6 +689,10 @@ const updateSelectBeneficiary = function updateSelectBeneficiary(selectId) {
   }
 };
 
+/**
+ * Displays the data for the selected beneficiary in the attributes table
+ * @function
+ */
 const showSelectedBeneficiary = element => {
   const { value } = element;
   const beneficiariesToShow = [];
@@ -694,6 +707,11 @@ const showSelectedBeneficiary = element => {
   displayAttributesforSelectedBeneficiary();
 };
 
+
+/**
+ * Formats the attribute scores for the attribute pie chart
+ * @function
+ */
 function getAttributeScoresForPieChart() {
   const data = [];
   let sumOfBeneficiaryScores = 0;
@@ -729,6 +747,10 @@ function getAttributeScoresForPieChart() {
   return data;
 }
 
+/**
+ * Formats the data by the TIER 1 beneficiary categories for display in the beneficiary pie chart
+ * @function
+ */
 function getTier1BeneficiaryScoresForPieChart() {
   const temp = {};
   const beneficiaryData = getBeneficiaryScoresForPieChart();
@@ -758,6 +780,10 @@ function getTier1BeneficiaryScoresForPieChart() {
   return tier1;
 }
 
+/**
+ * Formats the data for the TIER 1 attributes for use in the attribute table
+ * @function
+ */
 function getTier1AttributeScoresForPieChart() {
   const temp = {};
   const attributeData = getAttributeScoresForPieChart();
@@ -795,6 +821,10 @@ function attributeBarChartBeneficiaries() {
   return arr;
 }
 
+/**
+ * Creates or updates the attribute pie chart
+ * @function
+ */
 function attributeBarchart() {
   initStackedBarChart.draw({
     data: formatAttributeData(),
@@ -828,6 +858,10 @@ function attributeBarchart() {
   });
 }
 
+/**
+ * Creates or updates the attribute pie chart with TIER 1 attributes
+ * @function
+ */
 function attributePiechartTier1() {
   initPieChart.draw({
     data: getTier1AttributeScoresForPieChart(), // attribute-pie
@@ -836,6 +870,10 @@ function attributePiechartTier1() {
   });
 }
 
+/**
+ * Update the attribute section view of the application
+ * @function
+ */
 function updateAttributeView() {
   fegsScopingView.displayBeneficiaryScores(); // table-attributes
   fegsScopingView.restoreAttributes(); // table-attributes
@@ -846,6 +884,10 @@ function updateAttributeView() {
   attributeBarchart();
 }
 
+/**
+ * Updates the attribute progress on the left menu 
+ * @function
+ */
 function updateAttributeProgress() {
   const beneficiaryCount = fegsScopingData.getExtantBeneficiaries().length;
   if (beneficiaryCount === 0) {
@@ -871,6 +913,10 @@ function updateAttributeProgress() {
   ).innerHTML = `${completeCount} of ${beneficiaryCount} beneficiaries completed`;
 }
 
+/**
+ * Creates or updates the criteria pie chart
+ * @function
+ */
 function criteriaPiechart() {
   initPieChart.draw({
     data: getScores(), // Get the score data
@@ -879,6 +925,10 @@ function criteriaPiechart() {
   });
 }
 
+/**
+ * Updates the left menu with the current stakeholder progress
+ * @function
+ */
 function updateStakeholderProgress() {
   const stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
   if (stakeholderCount === 0) {
@@ -911,7 +961,7 @@ function updateStakeholderProgress() {
     if (!added) {
       newText += `${stakeholder[0]}: ${completeCount}/${
         Object.keys(fegsScopingData.stakeholders[stakeholder[0]].scores).length
-      } criteria entered<br />`;
+        } criteria entered<br />`;
     }
   });
 
@@ -919,6 +969,10 @@ function updateStakeholderProgress() {
   updateBeneficiaryProgress();
 }
 
+/**
+ * Listens for CTRL + + to increase text size
+ * @listens 
+ */
 document.addEventListener('keydown', zEvent => {
   if (zEvent.ctrlKey && zEvent.key === '+') {
     const element = document.querySelector('#page-zoom');
@@ -931,6 +985,10 @@ document.addEventListener('keydown', zEvent => {
   }
 });
 
+/**
+ * Listens for CTRL + + to decrease text size
+ * @listens
+ */
 document.addEventListener('keydown', zEvent => {
   if (zEvent.ctrlKey && zEvent.key === '-') {
     const element = document.querySelector('#page-zoom');
@@ -1060,6 +1118,10 @@ const FEGSScopingData = function FEGSScopingData() {
     }
   };
 
+  /**
+   * Clears attributes that are not used by current beneficiaries
+   * @function
+   */
   this.clearOtherAttributes = function clearOtherAttributes(beneficiaries) {
     for (let i = 0; i < this.fegsBeneficiaries.length; i += 1) {
       if (beneficiaries.indexOf(this.fegsBeneficiaries[i]) < 0) {
@@ -1291,6 +1353,10 @@ const FEGSScopingData = function FEGSScopingData() {
     return numerator / denominator;
   };
 
+  /**
+   * Calculates the attribute scores for the attributes chart
+   * @function
+   */
   this.calculateAttributeScores = function calculateAttributeScores() {
     const attributeScores = {};
     for (let i = 0; i < this.fegsAttributes.length; i += 1) {
@@ -1312,6 +1378,10 @@ const FEGSScopingData = function FEGSScopingData() {
     return attributeScores;
   };
 
+  /**
+   * Calculates the attributes scores for the attributes charts
+   * @function
+   */
   this.calculateAttributeScoresTier1 = function calculateAttributeScoresTier1(attribute) {
     const attributeScores = {};
     attributeScores.attribute = attribute;
@@ -1338,6 +1408,10 @@ const FEGSScopingData = function FEGSScopingData() {
     return attributeScores;
   };
 
+  /**
+   * Calculates the attribute score ** NOT USED NOW
+   * @function
+   */
   this.calculateAttributeScore = function calculateAttributeScore(attribute) {
     let total = 0;
 
@@ -1371,6 +1445,10 @@ const FEGSScopingData = function FEGSScopingData() {
     return scores;
   };
 
+  /**
+   * Calculates the stake holder priorization score for a particular stakeholder
+   * @function
+   */
   this.stakeholderPrioritizationScoreSum = function stakeholderPrioritizationScoreSum(stakeholder) {
     let score = 0;
     for (let i = 0; i < this.criteria.length; i += 1) {
@@ -1382,6 +1460,10 @@ const FEGSScopingData = function FEGSScopingData() {
     return score;
   };
 
+  /**
+   * Sums up the stakeholder prioritization scores for all stakeholders
+   * @function
+   */
   this.sumOfStakeholderPrioritizationScores = function sumOfStakeholderPrioritizationScores() {
     let total = 0;
     for (let i = 0; i < Object.keys(this.stakeholders).length; i += 1) {
@@ -1422,11 +1504,19 @@ const FEGSScopingData = function FEGSScopingData() {
     return extantBeneficiaries;
   };
 
+  /**
+   * Updates the name of the project
+   * @function
+   */
   this.updateName = function updateName(name) {
     this.projectName = name;
     ipcRenderer.send('update-project-name', this.projectName);
   };
 
+  /**
+   * Updates the project description
+   * @function
+   */
   this.updateDescription = function updateDescription(description) {
     this.projectDescription = description;
   };
@@ -1508,7 +1598,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Charismatic Fauna',
     'Rare Fauna',
     'Pollinating Fauna',
-    'Pest / Predator / Depredator Fauna',
+    'Pest Predator / Depredator Fauna',
     'Commercially Important Fauna',
     'Spiritually / Culturally Important Fauna',
     'Risk of Flooding',
@@ -1519,18 +1609,18 @@ const FEGSScopingData = function FEGSScopingData() {
     'Scents',
     'Viewscapes',
     'Phenomena (e.g. Sunsets, Northern Lights, etc)',
-    'Ecological Condition',
-    'Acreage'
+    'Naturalness',
+    'Open Space'
   ];
   this.fegsAttributesTier1 = {
     'Water Quality': 'Water',
     'Water Quantity': 'Water',
     'Water Movement': 'Water',
-    'Air Quality': 'Air',
-    'Wind Strength / Speed': 'Weather',
-    Precipitation: 'Weather',
-    Sunlight: 'Weather',
-    Temperature: 'Weather',
+    'Air Quality': 'Air & Weather',
+    'Wind Strength / Speed': 'Air & Weather',
+    Precipitation: 'Air & Weather',
+    Sunlight: 'Air & Weather',
+    Temperature: 'Air & Weather',
     'Soil Quantity': 'Soil & Substrate',
     'Soil Quality': 'Soil & Substrate',
     'Substrate Quantity': 'Soil & Substrate',
@@ -1564,7 +1654,7 @@ const FEGSScopingData = function FEGSScopingData() {
     'Charismatic Fauna': 'Fauna',
     'Rare Fauna': 'Fauna',
     'Pollinating Fauna': 'Fauna',
-    'Pest / Predator / Depredator Fauna': 'Fauna',
+    'Pest Predator / Depredator Fauna': 'Fauna',
     'Commercially Important Fauna': 'Fauna',
     'Spiritually / Culturally Important Fauna': 'Fauna',
     'Risk of Flooding': 'Extreme Events',
@@ -1575,13 +1665,12 @@ const FEGSScopingData = function FEGSScopingData() {
     Scents: 'Composite',
     Viewscapes: 'Composite',
     'Phenomena (e.g. Sunsets, Northern Lights, etc)': 'Composite',
-    'Ecological Condition': 'Composite',
-    Acreage: 'Composite'
+    'Naturalness': 'Composite',
+    'Open Space': 'Composite'
   };
   this.tier1 = [
     'Water',
-    'Air',
-    'Weather',
+    'Air & Weather',
     'Soil & Substrate',
     'Natural Materials',
     'Flora',
@@ -1591,8 +1680,6 @@ const FEGSScopingData = function FEGSScopingData() {
     'Composite'
   ];
   this.fegsBeneficiaries = [
-    'Irrigators',
-    'CAFO Operators',
     'Livestock Grazers',
     'Agricultural Processors',
     'Aquaculturalists',
@@ -1601,13 +1688,13 @@ const FEGSScopingData = function FEGSScopingData() {
     'Food Extractors',
     'Timber / Fiber / Ornamental Extractors',
     'Industrial Processors',
-    'Industrial Dischargers',
     'Energy Generators',
-    'Resource Dependent Businesses',
     'Pharmaceutical / Food Supplement Suppliers',
     'Fur / Hide Trappers / Hunters',
+    'Commercial Property Owners',
+    'Private Drinking Water Plant Operators',
     'Municipal Drinking Water Plant Operators',
-    'Wastewater Treatment Plant Operators',
+    'Public Energy Generators',
     'Residential Property Owners',
     'Military / Coast Guard',
     'Transporters of Goods',
@@ -1626,12 +1713,9 @@ const FEGSScopingData = function FEGSScopingData() {
     'Artists',
     'Students and Educators',
     'Researchers',
-    'People Who Care (Existence)',
-    'People Who Care (Option, Bequest)'
+    'People Who Care'
   ];
   this.fegsBeneficiariesTier1 = {
-    Irrigators: 'Agricultural',
-    'CAFO Operators': 'Agricultural',
     'Livestock Grazers': 'Agricultural',
     'Agricultural Processors': 'Agricultural',
     Aquaculturalists: 'Agricultural',
@@ -1640,17 +1724,17 @@ const FEGSScopingData = function FEGSScopingData() {
     'Food Extractors': 'Commercial / Industrial',
     'Timber / Fiber / Ornamental Extractors': 'Commercial / Industrial',
     'Industrial Processors': 'Commercial / Industrial',
-    'Industrial Dischargers': 'Commercial / Industrial',
     'Energy Generators': 'Commercial / Industrial',
-    'Resource Dependent Businesses': 'Commercial / Industrial',
     'Pharmaceutical / Food Supplement Suppliers': 'Commercial / Industrial',
     'Fur / Hide Trappers / Hunters': 'Commercial / Industrial',
+    'Commercial Property Owners': 'Commercial / Industrial',
+    'Private Drinking Water Plant Operators': 'Commercial / Industrial',
     'Municipal Drinking Water Plant Operators': 'Governmental / Municipal / Residential',
-    'Wastewater Treatment Plant Operators': 'Governmental / Municipal / Residential',
+    'Public Energy Generators': 'Governmental / Municipal / Residential',
     'Residential Property Owners': 'Governmental / Municipal / Residential',
     'Military / Coast Guard': 'Governmental / Municipal / Residential',
-    'Transporters of Goods': 'Commercial / Military Transportation',
-    'Transporters of People': 'Commercial / Military Transportation',
+    'Transporters of Goods': 'Transportation',
+    'Transporters of People': 'Transportation',
     'Water Subsisters': 'Subsistence',
     'Food Subsisters': 'Subsistence',
     'Timber / Fiber / Fur / Hide Subsisters': 'Subsistence',
@@ -1665,8 +1749,7 @@ const FEGSScopingData = function FEGSScopingData() {
     Artists: 'Inspirational',
     'Students and Educators': 'Learning',
     Researchers: 'Learning',
-    'People Who Care (Existence)': 'Non-Use',
-    'People Who Care (Option, Bequest)': 'Non-Use'
+    'People Who Care': 'Non-Use'
   };
 }; // END PROTOTYPE FEGScopingData
 
@@ -1698,11 +1781,19 @@ const FEGSScopingController = function FEGSScopingController() {
     fegsScopingData.updateName(name);
   };
 
+  /**
+   * Updates the project description
+   * @function
+   */
   this.updateDescription = function updateDescription(description) {
     fegsScopingView.updateDescription(description);
     fegsScopingData.updateDescription(description);
   };
 
+  /**
+   * gets the current stakeholder from the #select-stakeholder HTML input
+   * @function
+   */
   this.getCurrentStakeholder = function getCurrentStakeholder() {
     return fegsScopingView.getCurrentStakeholder();
   };
@@ -1895,6 +1986,7 @@ const FEGSScopingView = function FEGSScopingView() {
       document.querySelector(`#${note}-note`).value = fegsScopingData.notes[note];
     });
 
+    // Run d3 chart functions
     criteriaPiechart();
     document.getElementById('beneficiary-charts').removeAttribute('hidden');
     beneficiaryBarchart();
@@ -1902,18 +1994,19 @@ const FEGSScopingView = function FEGSScopingView() {
     attributePiechartTier1();
     attributeBarchart();
 
+    // Display table data
     fegsScopingView.showStakeholderScores();
     fegsScopingView.displayBeneficiaryScores();
     fegsScopingView.restoreAttributes();
     updateSelectBeneficiary('select-beneficiary');
     showSelectedBeneficiary(document.getElementById('select-beneficiary'));
 
+    // Update the progress on the left menu
     updateWeightingProgress();
     updateStakeholderProgress();
     updateBeneficiaryProgress();
     updateAttributeProgress();
 
-    // TODO FIXME LOAD DATA ABOVE HERE ^ ^ ^ ^ ^ ^ ^
     fegsScopingView.indicateSaved(filename);
   };
 
@@ -1923,11 +2016,11 @@ const FEGSScopingView = function FEGSScopingView() {
     document.title = `${
       fegsScopingData.filePath !== ''
         ? fegsScopingData.filePath.slice(
-            fegsScopingData.filePath.lastIndexOf('\\') + 1,
-            fegsScopingData.filePath.length
-          )
+          fegsScopingData.filePath.lastIndexOf('\\') + 1,
+          fegsScopingData.filePath.length
+        )
         : 'Untitled'
-    } - ${appTitle}`;
+      } - ${appTitle}`;
     document.getElementById('unsaved-indicator').setAttribute('hidden', '');
     if (filename !== null) {
       ipcRenderer.send('has-been-saved', filename);
@@ -1940,11 +2033,11 @@ const FEGSScopingView = function FEGSScopingView() {
     document.title = `${
       fegsScopingData.filePath !== ''
         ? fegsScopingData.filePath.slice(
-            fegsScopingData.filePath.lastIndexOf('\\') + 1,
-            fegsScopingData.filePath.length
-          )
+          fegsScopingData.filePath.lastIndexOf('\\') + 1,
+          fegsScopingData.filePath.length
+        )
         : 'Untitled'
-    }* - ${appTitle}`;
+      }* - ${appTitle}`;
     document.getElementById('unsaved-indicator').removeAttribute('hidden');
     ipcRenderer.send('has-been-changed');
   };
@@ -1964,6 +2057,7 @@ const FEGSScopingView = function FEGSScopingView() {
 
   this.pages = document.querySelectorAll('.page');
   const self = this;
+
   /** show only the identified page */
   this.focusPage = function focusPage(pageId) {
     const pages = document.querySelectorAll('.page');
@@ -2058,10 +2152,16 @@ const FEGSScopingView = function FEGSScopingView() {
     }
   };
 
+  /**
+   * Updates the entire stakeholder section
+   * @function
+   */
   this.showStakeholderScores = function showStakeholderScores() {
+    // Clear table
     for (let i = document.getElementById('table-stakeholders').rows.length - 1; i > 0; i -= 1) {
       document.getElementById('table-stakeholders').deleteRow(i);
     }
+    // Add the rows
     Object.keys(fegsScopingData.stakeholders).forEach(stakeholder => {
       addRow('table-stakeholders', [stakeholder, fegsScopingData.stakeholders[stakeholder]]);
     });
@@ -2079,10 +2179,19 @@ const FEGSScopingView = function FEGSScopingView() {
     fegsScopingView.indicateUnsaved();
   };
 
+  /**
+   * Gets the current selected stakeholder
+   * @function
+   */
   this.getCurrentStakeholder = function getCurrentStakeholder() {
     return document.querySelector('#select-stakeholder').value;
   };
 
+  /**
+   * Checks if a stake holder is selected ** DEPRECATED **
+   * @function
+   * @deprecated
+   */
   this.stakeholderIsSelected = function stakeholderIsSelected() {
     return Boolean(document.querySelector('#select-stakeholder').selectedIndex);
   };
@@ -2109,6 +2218,10 @@ const FEGSScopingView = function FEGSScopingView() {
     }
   };
 
+  /**
+   * Restores the attributes table from saved data.
+   * @function
+   */
   this.restoreAttributes = function restoreAttributes() {
     const table = tableAttributes;
     const rowNames = table.rowHeaders;
@@ -2450,10 +2563,10 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
       this.parentElement.classList.add('invalid-text-input');
       accessiblyNotify(
         `"${
-          rows[this.parentElement.parentElement.rowIndex - rowOffset].cells[0].innerText
+        rows[this.parentElement.parentElement.rowIndex - rowOffset].cells[0].innerText
         }" was set to ${value}% of ${
-          document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex]
-            .innerText
+        document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex]
+          .innerText
         }. Percentages must be between 1 and 100.`
       );
     } else {
@@ -2505,6 +2618,8 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     for (let j = 0; j < columnNames.length; j += 1) {
       // TODO implement excel-compatible keyboard-navigation listeners
       let input;
+      console.log(rowNames[i])
+      console.log(columnNames[j])
       cell = table.cell(rowNames[i], columnNames[j]);
       if (cell.querySelector('input') === null) {
         input = document.createElement('input');
@@ -2570,21 +2685,28 @@ const updateSelectStakeholder = selectId => {
   selectStakeholderToSlice();
 };
 
+// Declare Data, View, and Controller.
 fegsScopingData = new FEGSScopingData();
 fegsScopingView = new FEGSScopingView();
 fegsScopingController = new FEGSScopingController();
+
+// Declare attributes table
 tableAttributes = tableAttributesCreator('table-attributes');
 
 updateSelectBeneficiary('select-beneficiary');
 showSelectedBeneficiary(document.getElementById('select-beneficiary'));
 
+// Update progress
 updateStakeholderProgress();
 updateWeightingProgress();
 updateBeneficiaryProgress();
 updateAttributeProgress();
 
+/**
+ * Update page zoom level
+ * @function
+ */
 document.getElementById('zoomer').removeAttribute('hidden');
-
 const indicatePageZoom = function indicatePageZoom(event) {
   document.querySelector('#page-zoom-indicator').innerText = `${parseInt(
     event.target.value * 100,
@@ -2592,6 +2714,10 @@ const indicatePageZoom = function indicatePageZoom(event) {
   )}%`;
 };
 
+/**
+ * Set the zoom factor of the app
+ * @function
+ */
 const pageZoomChange = function pageZoomChange(event) {
   webFrame.setZoomFactor(+event.target.value);
 };
@@ -2715,19 +2841,10 @@ APP.onResize(() => {
   attributeBarchart();
 });
 
-// // Removes an element from the document
-// function removeElementById(elementId) {
-//   const element = document.getElementById(elementId);
-//   element.parentNode.removeChild(element);
-// }
-
-// // Removes an element from the document
-// function removeElementsByClassName(className) {
-//   Array.from(document.getElementsByClassName(className)).forEach((element) => {
-//     element.parentNode.removeChild(element);
-//   });
-// }
-
+/**
+ * Listens for scroll and then updates the left menu to the section shown on the screen
+ * @listens
+ */
 window.addEventListener('scroll', () => {
   const scrollPos = window.scrollY;
   const menuItems = document.querySelectorAll('#menu > nav a');
@@ -2770,6 +2887,10 @@ const validateInput = function validateInput(value, min, max) {
   return false;
 };
 
+/**
+ * Listens for ENTER key up even on the add stakeholder burron and then adds the stakeholder
+ * @listens
+ */
 document.getElementById('stakeholder-group').addEventListener('keyup', event => {
   event.preventDefault();
   if (event.keyCode === 13) {
@@ -2859,6 +2980,10 @@ function addStakeholder() {
   fegsScopingView.indicateUnsaved();
 }
 
+/**
+ * Adds a stakeholder using data from the Add stakeholder section
+ * @function
+ */
 function addStakeholderScores() {
   const stakeholdersToAdd = scrapeAddStakeholders();
   const stakeholders = Object.keys(stakeholdersToAdd);
@@ -2888,6 +3013,7 @@ function addStakeholderScores() {
   // showSection('beneficiaries');
 }
 
+// Comments HERE
 function clearStakeholderScores() {
   const items = document.getElementsByClassName('stakeholder-score-item');
   for (let i = items.length - 1; i >= 0; i -= 1) {

@@ -20,7 +20,7 @@
       <button id="save-description" hidden>Save Description</button>
       <button id="clear-description" hidden>Clear</button>
       <button id="cancel-description" hidden>Cancel</button>
-      <hr class="nav-hr"/>
+      <hr class="nav-hr" />
       <nav>
         <ul>
           <li id="nav-weighting">
@@ -41,8 +41,9 @@
           </li>
         </ul>
       </nav>
-      <hr class="nav-hr"/>
-      <span id="zoomer" hidden><label for="page-zoom">Zoom</label> <span id="page-zoom-indicator">100%</span> <input id="page-zoom" max="2" min="0.25" step="0.05" type="range" value="1.0"></span>
+      <hr class="nav-hr" />
+      <span id="zoomer" hidden><label for="page-zoom">Zoom</label> <span id="page-zoom-indicator">100%</span> <input
+          id="page-zoom" max="2" min="0.25" step="0.05" type="range" value="1.0"></span>
     </div>
   </section>
 
@@ -57,7 +58,9 @@
           <textarea class="form-text note" id="weights-note" hidden></textarea>
           <button class="save-note-btn" id="weights-save-btn" data-note-id="weights" hidden>Save Note</button>
 
-          <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0 and 100.</p>
+          <p>Look over the criteria below. Identify the criterion that you value the most. Give that criterion a weight
+            of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0
+            and 100.</p>
           <p>Once you enter the 9 criteria proceed to the Stakeholder page.</p>
           <div id="scoring-inputs" class="flex-container">
             <div>
@@ -74,7 +77,9 @@
                     <th data-th="Color"><span class="legend magnitude"></span></th>
                     <th class="tooltip">
                       <label for="magnitude-score"><span>Magnitude & Probability of Impact</span></label>
-                      <span class="tooltipright tooltiptext">If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?
+                      <span class="tooltipright tooltiptext">If changes are made in this decision context what is the
+                        likelihood that this stakeholder group will be impacted? What is the potential magnitude of that
+                        impact?
                       </span>
                     </th>
                     <td data-th="Value"><input id="magnitude-score" type="number" min="0" max="100" /></td>
@@ -83,7 +88,8 @@
                     <th data-th="Color"><span class="legend influence"></span></th>
                     <th class="tooltip">
                       <label for="influence-score"><span>Level of Influence</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group have any formal or informal influence over the decision making process?
+                      <span class="tooltipright tooltiptext">Does this stakeholder group have any formal or informal
+                        influence over the decision making process?
                       </span>
                     </th>
                     <td data-th="Value"><input id="influence-score" type="number" min="0" max="100" /></td>
@@ -92,7 +98,8 @@
                     <th data-th="Color"><span class="legend interest"></span></th>
                     <th class="tooltip">
                       <label for="interest-score"><span>Level of Interest</span></label>
-                      <span class="tooltipright tooltiptext">What is this stakeholder group's level of interest in this decision/action?</span>
+                      <span class="tooltipright tooltiptext">What is this stakeholder group's level of interest in this
+                        decision/action?</span>
                     </th>
                     <td data-th="Value"><input id="interest-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -100,7 +107,8 @@
                     <th data-th="Color"><span class="legend urgency"></span></th>
                     <th class="tooltip">
                       <label for="urgency-score"><span>Urgency & Temporal Immediacy</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group want an immediate decision/action on this issue?</span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group want an immediate
+                        decision/action on this issue?</span>
                     </th>
                     <td data-th="Value"><input id="urgency-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -108,7 +116,8 @@
                     <th data-th="Color"><span class="legend proximity"></span></th>
                     <th class="tooltip">
                       <label for="proximity-score"><span>Proximity</span></label>
-                      <span class="tooltipright tooltiptext">How frequently does this stakeholder group come into contact with the area subject to this decision?</span>
+                      <span class="tooltipright tooltiptext">How frequently does this stakeholder group come into
+                        contact with the area subject to this decision?</span>
                     </th>
                     <td data-th="Value"><input id="proximity-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -116,7 +125,8 @@
                     <th data-th="Color"><span class="legend economic-interest"></span></th>
                     <th class="tooltip">
                       <label for="economic-interest-score"><span>Economic Interest</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group have an economic interest in the outcome of this decision?</span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group have an economic interest in
+                        the outcome of this decision?</span>
                     </th>
                     <td data-th="Value"><input id="economic-interest-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -124,7 +134,10 @@
                     <th data-th="Color"><span class="legend rights"></span></th>
                     <th class="tooltip">
                       <label for="rights-score"><span>Rights</span></label>
-                      <span class="tooltipright tooltiptext">Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?</span>
+                      <span class="tooltipright tooltiptext">Does this stakeholder group have any 1) legal right to be
+                        involved in this decision making process, 2) property rights associated with the land that will
+                        be impacted by the decision, or 3) consumer/user rights associated with the services that will
+                        be impacted by the decision?</span>
                     </th>
                     <td data-th="Value"><input id="rights-score" type="number" min="0" max="100" /></td>
                   </tr>
@@ -132,15 +145,18 @@
                     <th data-th="Color"><span class="legend fairness"></span></th>
                     <th class="tooltip">
                       <label for="fairness-score"><span>Fairness</span></label>
-                      <span class="tooltipright tooltiptext">If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?</span>
+                      <span class="tooltipright tooltiptext">If this stakeholder group is not considered in
+                        decision-making, would the resulting decision be seen as unfair?</span>
                     </th>
                     <td data-th="Value"><input id="fairness-score" type="number" min="0" max="100" /></td>
                   </tr>
                   <tr>
                     <th data-th="Color"><span class="legend representation"></span></th>
                     <th class="tooltip">
-                      <label for="representation-score"><span>Underrepresented & Underserved Representation</span></label>
-                      <span class="tooltipright tooltiptext">Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?</th>
+                      <label for="representation-score"><span>Underrepresented & Underserved
+                          Representation</span></label>
+                      <span class="tooltipright tooltiptext">Underrepresented & Underserved representation: Does this
+                        stakeholder group represent underserved or underrepresented groups?</th>
                     <td data-th="Value"><input id="representation-score" type="number" min="0" max="100" /></td>
                   </tr>
                 </tbody>
@@ -156,13 +172,15 @@
           <button class="add-note-btn" aria-pressed="false" data-note-id="stakeholders">Note</button>
           <label id="stakeholders-note-label" for="stakeholders-note" hidden>Note</label>
           <textarea class="form-text note" id="stakeholders-note" hidden></textarea>
-          <button class="save-note-btn" id="stakeholders-save-btn"  data-note-id="stakeholders"hidden>Save Note</button>
+          <button class="save-note-btn" id="stakeholders-save-btn" data-note-id="stakeholders" hidden>Save Note</button>
 
-          <p>Identify your stakeholder groups. Enter the name of the group and press <strong>Add stakeholder group</strong>.</p>
+          <p>Identify your stakeholder groups. Enter the name of the group and press <strong>Add stakeholder
+              group</strong>.</p>
           <div id="stakeholder-prioritization">
             <div>
               <div class="light-gray">
-                <label class="inline-block">Stakeholder group name <input class="form-text" type="text" id="stakeholder-group"/></label>
+                <label class="inline-block">Stakeholder group name <input class="form-text" type="text"
+                    id="stakeholder-group" /></label>
                 <button id="add-stakeholder" class="btn-no-margin">Add Stakeholder Group</button>
                 <ul id="stakeholder-list"></ul>
               </div>
@@ -171,12 +189,14 @@
             <br />
             <div id="set-stakeholder-values">
               <h3>Score Stakeholders</h3>
-              <p>Score each stakeholder group for each of the 9 criteria. When you have scored them all press <strong>Add stakeholder scores</strong>.</p>
+              <p>Score each stakeholder group for each of the 9 criteria. When you have scored them all press
+                <strong>Add stakeholder scores</strong>.</p>
               <p>Once you have entered your stakeholder data proceed to the Beneficiary page.</p>
               <div>
                 <div class="light-gray">
                   <h4>Magnitude & Probability of impact</h4>
-                  <p>If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?</p>
+                  <p>If changes are made in this decision context what is the likelihood that this stakeholder group
+                    will be impacted? What is the potential magnitude of that impact?</p>
                   <p>Please enter a number 0 to 100.</p>
                   <img src="img/probabilitymagnitude.PNG" width="250" alt="Probability and magnitude matrix">
                   <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
@@ -185,10 +205,12 @@
               <div>
                 <div class="light-gray">
                   <h4>Level of influence</h4>
-                  <p>Does this stakeholder group have any formal or informal influence over the decision making process?</p>
+                  <p>Does this stakeholder group have any formal or informal influence over the decision making process?
+                  </p>
                   <p>Please enter a number 0 to 100.</p>
                   <ul>
-                    <li>100 = This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</li>
+                    <li>100 = This group has formal influence over the decision-making process (i.e. can have the
+                      project stopped, must be consulted with).</li>
                     <li>50 = This group has informal influence over the decision-making process.</li>
                     <li>0 = This group has no influence over the decision-making process.</li>
                   </ul>
@@ -227,11 +249,14 @@
               <div>
                 <div class="light-gray">
                   <h4>Proximity</h4>
-                  <p>How frequently does this stakeholder group come into contact with the area subject to this decision?</p>
+                  <p>How frequently does this stakeholder group come into contact with the area subject to this
+                    decision?</p>
                   <ul>
                     <li>100 = They are constantly in direct contact with the area.</li>
-                    <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</li>
-                    <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</li>
+                    <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in
+                      direct contact with the area.</li>
+                    <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in
+                      direct contact with the area.</li>
                     <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
                     <li>10 = They interact with this area from a distance.</li>
                     <li>0 = They are never in contact with the area.</li>
@@ -253,7 +278,9 @@
               <div>
                 <div class="light-gray">
                   <h4>Rights</h4>
-                  <p>Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services
+                  <p>Does this stakeholder group have any 1) legal right to be involved in this decision making process,
+                    2) property rights associated with the land that will be impacted by the decision, or 3)
+                    consumer/user rights associated with the services
                     that will be impacted by the decision?</p>
                   <ul>
                     <li>100 = Yes, all 3.</li>
@@ -267,7 +294,8 @@
               <div>
                 <div class="light-gray">
                   <h4>Fairness</h4>
-                  <p>If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?</p>
+                  <p>If this stakeholder group is not considered in decision-making, would the resulting decision be
+                    seen as unfair?</p>
                   <ul>
                     <li>100 = Yes.</li>
                     <li>0 = No.</li>
@@ -296,90 +324,105 @@
                   <th></th>
                   <th>Stakeholder Group</th>
                   <th class="tooltip"><span>Magnitude & Probability of impact</span>
-                    <span class="tooltipbottom tooltiptext">If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?
-                        <img src="img/probabilitymagnitude.PNG" width="240" alt="Probability and magnitude matrix">
+                    <span class="tooltipbottom tooltiptext">If changes are made in this decision context what is the
+                      likelihood that this stakeholder group will be impacted? What is the potential magnitude of that
+                      impact?
+                      <img src="img/probabilitymagnitude.PNG" width="240" alt="Probability and magnitude matrix">
                     </span>
                   </th>
                   <th class="tooltip"><span>Level of influence</span>
-                      <span class="tooltipbottom tooltiptext">Does this stakeholder group have any formal or informal influence over the decision making process?
-                          <ul>
-                              <li>100 = This group has formal influence over the decision-making process (i.e. can have the project stopped, must be consulted with).</li>
-                              <li>50 = This group has informal influence over the decision-making process.</li>
-                              <li>0 = This group has no influence over the decision-making process.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have any formal or informal
+                      influence over the decision making process?
+                      <ul>
+                        <li>100 = This group has formal influence over the decision-making process (i.e. can have the
+                          project stopped, must be consulted with).</li>
+                        <li>50 = This group has informal influence over the decision-making process.</li>
+                        <li>0 = This group has no influence over the decision-making process.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Level of interest</span>
-                      <span class="tooltipbottom tooltiptext">What is this stakeholder group's level of interest in this decision/action?
-                          <ul>
-                              <li>100 = High.</li>
-                              <li>75 = Moderate.</li>
-                              <li>50 = Low.</li>
-                              <li>0 = None.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">What is this stakeholder group's level of interest in this
+                      decision/action?
+                      <ul>
+                        <li>100 = High.</li>
+                        <li>75 = Moderate.</li>
+                        <li>50 = Low.</li>
+                        <li>0 = None.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Urgency & Temporal immediacy</span>
-                      <span class="tooltipbottom tooltiptext">Does this stakeholder group want an immediate decision/action on this issue?
-                          <ul>
-                              <li>100 = Yes, even if other actions/decisions must be postponed.</li>
-                              <li>80 = Yes, as long as it does not delay current commitments.</li>
-                              <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
-                              <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
-                              <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
-                              <li>0 = They do not care when an action/decision takes place.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group want an immediate
+                      decision/action on this issue?
+                      <ul>
+                        <li>100 = Yes, even if other actions/decisions must be postponed.</li>
+                        <li>80 = Yes, as long as it does not delay current commitments.</li>
+                        <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
+                        <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
+                        <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
+                        <li>0 = They do not care when an action/decision takes place.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Proximity</span>
-                      <span class="tooltipbottom tooltiptext">How frequently does this stakeholder group come into contact with the area subject to this decision?
-                          <ul>
-                              <li>100 = They are constantly in direct contact with the area.</li>
-                              <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in direct contact with the area.</li>
-                              <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in direct contact with the area.</li>
-                              <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
-                              <li>10 = They interact with this area from a distance.</li>
-                              <li>0 = They are never in contact with the area.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">How frequently does this stakeholder group come into contact
+                      with the area subject to this decision?
+                      <ul>
+                        <li>100 = They are constantly in direct contact with the area.</li>
+                        <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently
+                          in direct contact with the area.</li>
+                        <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently
+                          in direct contact with the area.</li>
+                        <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
+                        <li>10 = They interact with this area from a distance.</li>
+                        <li>0 = They are never in contact with the area.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Economic interest</span>
-                      <span class="tooltipbottom tooltiptext">Does this stakeholder group have an economic interest in the outcome of this decision?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have an economic interest in the
+                      outcome of this decision?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Rights</span>
-                      <span class="tooltipbottom tooltiptext">Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have any 1) legal right to be
+                      involved in this decision making process, 2) property rights associated with the land that will be
+                      impacted by the decision, or 3) consumer/user rights associated with the services that will be
+                      impacted by the decision?
 
-                          <ul>
-                              <li>100 = Yes, all 3.</li>
-                              <li>60 = Yes, 2 of the 3.</li>
-                              <li>20 = Yes, 1 of the 3.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                      <ul>
+                        <li>100 = Yes, all 3.</li>
+                        <li>60 = Yes, 2 of the 3.</li>
+                        <li>20 = Yes, 1 of the 3.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Fairness</span>
-                      <span class="tooltipbottom tooltiptext">If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">If this stakeholder group is not considered in
+                      decision-making, would the resulting decision be seen as unfair?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
                   </th>
                   <th class="tooltip"><span>Underrepresented & Underserved representation</span>
-                      <span class="tooltipbottom tooltiptext">Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?
-                          <ul>
-                              <li>100 = Yes.</li>
-                              <li>0 = No.</li>
-                            </ul>
-                      </span>
+                    <span class="tooltipbottom tooltiptext">Underrepresented & Underserved representation: Does this
+                      stakeholder group represent underserved or underrepresented groups?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
                   </th>
                 </tr>
-    
+
               </thead>
               <tbody>
               </tbody>
@@ -445,10 +488,13 @@
           <button class="add-note-btn" aria-pressed="false" data-note-id="beneficiaries">Note</button>
           <label id="beneficiaries-note-label" for="beneficiaries-note" hidden>Note</label>
           <textarea class="form-text note" id="beneficiaries-note" hidden></textarea>
-          <button class="save-note-btn" id="beneficiaries-save-btn" data-note-id="beneficiaries" hidden>Save Note</button>
+          <button class="save-note-btn" id="beneficiaries-save-btn" data-note-id="beneficiaries" hidden>Save
+            Note</button>
 
-          <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder group by percentage.</label>
-          <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder must have beneficiary percentages which sum to 100.</p>
+          <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder group by
+            percentage.</label>
+          <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder
+            must have beneficiary percentages which sum to 100.</p>
           <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
           <label for="select-stakeholder">Select a Stakeholder Group</label>
           <select class="form-select" id="select-stakeholder"></select>
@@ -457,8 +503,9 @@
           <div id="toggle-beneficiaries">
             <button aria-pressed="false" data-beneficiary="Agricultural">Agricultural</button>
             <button aria-pressed="false" data-beneficiary="Commercial / Industrial">Commercial / Industrial</button>
-            <button aria-pressed="false" data-beneficiary="Governmental / Municipal / Residential">Governmental / Municipal / Residential</button>
-            <button aria-pressed="false" data-beneficiary="Commercial / Military Transportation">Commercial / Military Transportation</button>
+            <button aria-pressed="false" data-beneficiary="Governmental / Municipal / Residential">Governmental /
+              Municipal / Residential</button>
+            <button aria-pressed="false" data-beneficiary="Transportation">Transportation</button>
             <button aria-pressed="false" data-beneficiary="Subsistence">Subsistence</button>
             <button aria-pressed="false" data-beneficiary="Recreational">Recreational</button>
             <button aria-pressed="false" data-beneficiary="Inspirational">Inspirational</button>
@@ -470,21 +517,14 @@
             <thead>
               <tr>
                 <th style="width: 10em;">Category</th>
-                <th style="width: 10em;">Subcategory <br /><button id="table-beneficiaries-toggle" class="btn-no-margin">Hide Definitions</button></th>
+                <th style="width: 10em;">Subcategory <br /><button id="table-beneficiaries-toggle"
+                    class="btn-no-margin">Hide Definitions</button></th>
                 <th style="width: 15em;" class="definition">Definition</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th class="agricultural" rowspan="7">Agricultural</th>
-                <th class="agricultural">Irrigators</th>
-                <td class="definition">Consumes water for maintaining crops</td>
-              </tr>
-              <tr>
-                <th class="agricultural">CAFO Operators</th>
-                <td class="definition">Raises large, dense populations of livestock in a confined area either indoor or outdoor</td>
-              </tr>
-              <tr>
+                <th class="agricultural" rowspan="5">Agricultural</th>
                 <th class="agricultural">Livestock Grazers</th>
                 <td class="definition">Uses the environment to graze livestock</td>
               </tr>
@@ -507,35 +547,41 @@
               <tr>
                 <th class="commercial" rowspan="8">Commercial / Industrial</th>
                 <th class="commercial">Food Extractors</th>
-                <td class="definition">Uses the natural abundance of edible organisms (e.g., hunting, trapping, or fishing for livelihood, job, commercial, or artisinal purposes)</td>
+                <td class="definition">Uses the natural abundance of edible organisms (e.g., hunting, trapping, or
+                  fishing for livelihood, job, commercial, or artisinal purposes)</td>
               </tr>
               <tr>
                 <th class="commercial">Timber / Fiber / Ornamental Extractors</th>
-                <td class="definition">Extracts or harvests timber, fiber, wood, or ornamental extraction or harvest for commercial or business purposes (e.g., logging, shell collection)</td>
+                <td class="definition">Extracts or harvests timber, fiber, wood, or ornamental extraction or harvest for
+                  commercial or business purposes (e.g., logging, shell collection)</td>
               </tr>
               <tr>
                 <th class="commercial">Industrial Processors</th>
-                <td class="definition">Uses natural resources in industrial processing such as manufacturing (e.g., textile or steel industries), mills, or oil and gas extraction and processing)</td>
-              </tr>
-              <tr>
-                <th class="commercial">Industrial Dischargers</th>
-                <td class="definition">Discharges wastewater, waste material, or emissions</td>
+                <td class="definition">Uses natural resources in industrial processing such as manufacturing (e.g.,
+                  textile or steel industries), mills, or oil and gas extraction and processing)</td>
               </tr>
               <tr>
                 <th class="commercial">Energy Generators</th>
-                <td class="definition">Uses the environment for energy production or placement of power generation structures includes power plants (electric and nuclear), dams, turbines (wind, water, or wave), solar panels, and geothermal systems</td>
-              </tr>
-              <tr>
-                <th class="commercial">Resource Dependent Businesses</th>
-                <td class="definition">Businesses that rely or depend on local resources (e.g., marinas, tourism and ecotourism, developed or working waterfronts, fishing/hunting guides, fishing charters, tour boats)</td>
+                <td class="definition">Uses the environment for energy production or placement of power generation
+                  structures includes power plants (electric and nuclear), dams, turbines (wind, water, or wave), solar
+                  panels, and geothermal systems</td>
               </tr>
               <tr>
                 <th class="commercial">Pharmaceutical / Food Supplement Suppliers</th>
-                <td class="definition">Collects organisms from nature that are used for pharmaceuticals, medicines, food supplements, or vitamins for commerical sale</td>
+                <td class="definition">Collects organisms from nature that are used for pharmaceuticals, medicines, food
+                  supplements, or vitamins for commerical sale</td>
               </tr>
               <tr>
                 <th class="commercial">Fur / Hide Trappers / Hunters</th>
                 <td class="definition">Hunts or traps fauna for fur or hides for commerical sale</td>
+              </tr>
+              <tr>
+                <th class="commercial">Commercial Property Owners</th>
+                <td class="definition"></td>
+              </tr>
+              <tr>
+                <th class="commercial">Private Drinking Water Plant Operators</th>
+                <td class="definition"></td>
               </tr>
               <tr>
                 <th class="governmental" rowspan="4">Governmental / Municipal / Residential</th>
@@ -543,8 +589,8 @@
                 <td class="definition">Provides water for the Community</td>
               </tr>
               <tr>
-                <th class="governmental">Wastewater Treatment Plant Operators</th>
-                <td class="definition">Discharges treated wastewater</td>
+                <th class="governmental">Public Energy Generators</th>
+                <td class="definition"></td>
               </tr>
               <tr>
                 <th class="governmental">Residential Property Owners</th>
@@ -555,26 +601,31 @@
                 <td class="definition">Uses the environment for placement of infrastucture or training activities</td>
               </tr>
               <tr>
-                <th class="transportation" rowspan="2">Commercial / Military Transportation</th>
+                <th class="transportation" rowspan="2">Transportation</th>
                 <th class="transportation">Transporters of Goods</th>
-                <td class="definition">Uses the environment to transport goods (e.g., shipping, cargo, commercial navigation, barges, freight, planes, trains)</td>
+                <td class="definition">Uses the environment to transport goods (e.g., shipping, cargo, commercial
+                  navigation, barges, freight, planes, trains)</td>
               </tr>
               <tr>
                 <th class="transportation">Transporters of People</th>
-                <td class="definition">Uses the environment to transport people (e.g., cruises, ferries, airplanes, airports, trains, harbors)</td>
+                <td class="definition">Uses the environment to transport people (e.g., cruises, ferries, airplanes,
+                  airports, trains, harbors)</td>
               </tr>
               <tr>
                 <th class="subsistence" rowspan="4">Subsistence</th>
                 <th class="subsistence">Water Subsisters</th>
-                <td class="definition">Relies on natural sources for water including drinking water and tribal or traditional uses (may use wells, cisterns,  rain gardens, rain barrels, etc.)</td>
+                <td class="definition">Relies on natural sources for water including drinking water and tribal or
+                  traditional uses (may use wells, cisterns, rain gardens, rain barrels, etc.)</td>
               </tr>
               <tr>
-                <th class="subsistence">Food Subsisters</th>
-                <td class="definition">Uses natural sources of edible flora, fauna, and fungi as a major source of food; includes hunting, fishing, and gathering as well as other tribal or traditional uses</td>
+                <th class="subsistence">Food and Medicinal Subsisters</th>
+                <td class="definition">Uses natural sources of edible flora, fauna, and fungi as a major source of food;
+                  includes hunting, fishing, and gathering as well as other tribal or traditional uses</td>
               </tr>
               <tr>
-                <th class="subsistence">Timber / Fiber / Fur / Hide Subsisters</th>
-                <td class="definition">Relies on timber, fiber, or fauna for survival, including tribal or cultural traditions (e.g., firewood)</td>
+                <th class="subsistence">Timber / Fiber / Ornamental Subsisters</th>
+                <td class="definition">Relies on timber, fiber, or fauna for survival, including tribal or cultural
+                  traditions (e.g., firewood)</td>
               </tr>
               <tr>
                 <th class="subsistence">Building Material Subsisters</th>
@@ -583,11 +634,14 @@
               <tr>
                 <th class="recreational" rowspan="6">Recreational</th>
                 <th class="recreational">Experiencers / Viewers</th>
-                <td class="definition">Views and experiences the environment as an activity (e.g., bird, wildlife, or fauna watching; nature appreciation; hiking, biking, camping, climbing, outings, sunbathing, sightseeing, beach combing)</td>
+                <td class="definition">Views and experiences the environment as an activity (e.g., bird, wildlife, or
+                  fauna watching; nature appreciation; hiking, biking, camping, climbing, outings, sunbathing,
+                  sightseeing, beach combing)</td>
               </tr>
               <tr>
                 <th class="recreational">Food Pickers / Gatherers</th>
-                <td class="definition">Recreationally collects or gathers edible flora, fungi, or fauna (does not include hunting or trapping) (e.g., berry picking, mushroom gathering; clam digging)</td>
+                <td class="definition">Recreationally collects or gathers edible flora, fungi, or fauna (does not
+                  include hunting or trapping) (e.g., berry picking, mushroom gathering; clam digging)</td>
               </tr>
               <tr>
                 <th class="recreational">Hunters</th>
@@ -599,38 +653,42 @@
               </tr>
               <tr>
                 <th class="recreational">Waders / Swimmers / Divers</th>
-                <td class="definition">Recreates in or under the water (e.g., snorkeling, SCUBA, swimming, beachgoing, wading, diving, bathing)</td>
+                <td class="definition">Recreates in or under the water (e.g., snorkeling, SCUBA, swimming, beachgoing,
+                  wading, diving, bathing)</td>
               </tr>
               <tr>
                 <th class="recreational">Boaters</th>
-                <td class="definition">Recreates in motorized or unmotorized watercraft (e.g., sailboats, ski boats, jet skis, kayaks, surfboards)</td>
+                <td class="definition">Recreates in motorized or unmotorized watercraft (e.g., sailboats, ski boats, jet
+                  skis, kayaks, surfboards)</td>
               </tr>
               <tr>
                 <th class="inspirational" rowspan="2">Inspirational</th>
                 <th class="inspirational">Spiritual and Ceremonial Participants</th>
-                <td class="definition">Uses the environment for spiritual, ceremonial, or celebratory puposes (e.g., harvest festivals, tribal observances, traditional ceremonies, religious rites)</td>
+                <td class="definition">Uses the environment for spiritual, ceremonial, or celebratory puposes (e.g.,
+                  harvest festivals, tribal observances, traditional ceremonies, religious rites)</td>
               </tr>
               <tr>
                 <th class="inspirational">Artists</th>
-                <td class="definition">Uses the environment to produce art, includes writers, painters, sculptors, cinematographers, and recording artists</td>
+                <td class="definition">Uses the environment to produce art, includes writers, painters, sculptors,
+                  cinematographers, and recording artists</td>
               </tr>
               <tr>
                 <th class="learning" rowspan="2">Learning</th>
                 <th class="learning">Students and Educators</th>
-                <td class="definition">Includes all educational uses, interests, or opportunities including field trips and outdoor laboratories</td>
+                <td class="definition">Includes all educational uses, interests, or opportunities including field trips
+                  and outdoor laboratories</td>
               </tr>
               <tr>
                 <th class="learning">Researchers</th>
-                <td class="definition">Includes opportunities or interest for significant scientific research and improving scientific knowledge</td>
+                <td class="definition">Includes opportunities or interest for significant scientific research and
+                  improving scientific knowledge</td>
               </tr>
               <tr>
                 <th class="nonuse" rowspan="2">Non-Use</th>
-                <th class="nonuse">People Who Care (Existence)</th>
-                <td class="definition">Believes it is important to preserve the environment for moral or ethical reasons or for fear of its loss</td>
-              </tr>
-              <tr>
-                <th class="nonuse">People Who Care (Option, Bequest)</th>
-                <td class="definition">Believes it is important to preserve the environment to allow their future selves or future generations to visit or rely upon it</td>
+                <th class="nonuse">People Who Care</th>
+                <td class="definition">Believes it is important to preserve the environment for moral or ethical
+                  reasons, for fear of its loss, or to allow their future selves or future generations to visit or rely
+                  upon it</td>
               </tr>
             </tbody>
           </table>
@@ -649,7 +707,7 @@
               <div><span class="key agricultural"></span><span>Agricultural</span></div>
               <div><span class="key commercial"></span><span>Commercial / Industrial</span></div>
               <div><span class="key governmental"></span><span>Governmental / Municipal / Residential</span></div>
-              <div><span class="key transportation"></span><span>Commercial / Military Transportation</span></div>
+              <div><span class="key transportation"></span><span>Transportation</span></div>
               <div><span class="key subsistence"></span><span>Subsistence</span></div>
               <div><span class="key recreational"></span><span>Recreational</span></div>
               <div><span class="key inspirational"></span><span>Inspirational</span></div>
@@ -667,16 +725,17 @@
           <textarea class="form-text note" id="attributes-note" hidden></textarea>
           <button class="save-note-btn" id="attributes-save-btn" data-note-id="attributes" hidden>Save Note</button>
 
-          <label for="select-beneficiary">Identify the types of attributes making up each beneficiary group by percentage.</label>
-          <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage. Each beneficary group must have attributes which sum to 100.</p>
+          <label for="select-beneficiary">Identify the types of attributes making up each beneficiary group by
+            percentage.</label>
+          <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage.
+            Each beneficary group must have attributes which sum to 100.</p>
           <label for="select-beneficiary">Select a Beneficiary Group</label>
           <select class="form-select" id="select-beneficiary"></select>
           <br />
           <label style="padding-top: 1.5em">Select Attributes</label>
           <div id="toggle-attributes">
             <button aria-pressed="false" data-attribute="Water">Water</button>
-            <button aria-pressed="false" data-attribute="Air">Air</button>
-            <button aria-pressed="false" data-attribute="Weather">Weather</button>
+            <button aria-pressed="false" data-attribute="Air & Weather">Air & Weather</button>
             <button aria-pressed="false" data-attribute="Soil & Substrate">Soil & Substrate</button>
             <button aria-pressed="false" data-attribute="Natural Materials">Natural Materials</button>
             <button aria-pressed="false" data-attribute="Flora">Flora</button>
@@ -690,7 +749,7 @@
               <col class="row-labels" span="2" />
               <col class="row-labels" span="1" />
               <col class="definition" span="1" />
-              <col class="agricultural" span="7" />
+              <col class="agricultural" span="5" />
               <col class="commercial" span="8" />
               <col class="governmental" span="4" />
               <col class="transportation" span="2" />
@@ -698,30 +757,30 @@
               <col class="recreational" span="6" />
               <col class="inspirational" span="2" />
               <col class="learning" span="2" />
-              <col class="nonuse" span="2" />
+              <col class="nonuse" span="1" />
             </colgroup>
             <thead>
               <tr class="column-name-labels">
                 <th colspan="2" class="row-label-header"></th>
                 <th colspan="1" class="row-label-header"></th>
                 <th colspan="1" rowspan="3" class="definition">Definition</th>
-                <th colspan="7">Agricultural</th>
+                <th colspan="5">Agricultural</th>
                 <th colspan="8">Commercial / Industrial</th>
                 <th colspan="4">Governmental / Municipal / Residential</th>
-                <th colspan="2">Commercial / Military Transportation</th>
+                <th colspan="2">Transportation</th>
                 <th colspan="4">Subsistence</th>
                 <th colspan="6">Recreational</th>
                 <th colspan="2">Inspirational</th>
                 <th colspan="2">Learning</th>
-                <th colspan="2">Non-Use</th>
+                <th colspan="1">Non-Use</th>
               </tr>
               <tr class="column-names">
                 <th colspan="2">Attribute Tier 1</th>
-                <th>Attribute Tier 2<br /><button id="table-attributes-toggle" class="btn-no-margin">Show Definitions</button></th>
+                <th>Attribute Tier 2<br />
+                  <button id="table-attributes-toggle" class="btn-no-margin">Show Definitions</button>
+                </th>
                 <th aria-hidden="true"></th>
                 <th aria-hidden="true"></th>
-                <th>Irrigators</th>
-                <th>CAFO Operators</th>
                 <th>Livestock Grazers</th>
                 <th>Agricultural Processors</th>
                 <th>Aquaculturalists</th>
@@ -730,20 +789,20 @@
                 <th>Food Extractors</th>
                 <th>Timber / Fiber / Ornamental Extractors</th>
                 <th>Industrial Processors</th>
-                <th>Industrial Dischargers</th>
                 <th>Energy Generators</th>
-                <th>Resource Dependent Businesses</th>
                 <th>Pharmaceutical / Food Supplement Suppliers</th>
                 <th>Fur / Hide Trappers / Hunters</th>
+                <th>Commercial Property Owners</th>
+                <th>Private Drinking Water Plant Operators</th>
                 <th>Municipal Drinking Water Plant Operators</th>
-                <th>Wastewater Treatment Plant Operators</th>
+                <th>Public Energy Generators</th>
                 <th>Residential Property Owners</th>
                 <th>Military / Coast Guard</th>
                 <th>Transporters of Goods</th>
                 <th>Transporters of People</th>
                 <th>Water Subsisters</th>
-                <th>Food Subsisters</th>
-                <th>Timber / Fiber / Fur / Hide Subsisters</th>
+                <th>Food and Medicinal Subsisters</th>
+                <th>Timber / Fiber / Ornamental Subsisters</th>
                 <th>Building Material Subsisters</th>
                 <th>Experiencers / Viewers</th>
                 <th>Food Pickers / Gatherers</th>
@@ -755,17 +814,13 @@
                 <th>Artists</th>
                 <th>Students and Educators</th>
                 <th>Researchers</th>
-                <th>People Who Care (Existence)</th>
-                <th>People Who Care (Option, Bequest)</th>
+                <th>People Who Care</th>
               </tr>
               <tr class="dark">
                 <th class="row-tier-1" aria-hidden="true"></th>
                 <th colspan="3" class="row-name">Beneficiary Score</th>
                 <th aria-hidden="true" colspan="1"></th>
                 <th aria-hidden="true" colspan="1"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -842,9 +897,6 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
@@ -884,10 +936,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td></td
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
@@ -928,61 +977,52 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
-                  <th rowspan="1" class="row-tier-1" colspan="2">Air</th>
-                  <th class="row-name">Air Quality</th>
-                  <th class="row-tier-1" aria-hidden="true"></th>
-                  <th class="definition"></th>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              <tr>
-                <th rowspan="4" class="row-tier-1" colspan="2">Weather</th>
-                <th class="row-name">Wind Strength / Speed</th>
+                <th rowspan="5" class="row-tier-1" colspan="2">Air & Weather</th>
+                <th class="row-name">Air Quality</th>
                 <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <th aria-hidden="true"></th>
+                <th class="row-name">Wind Strength / Speed</th>
+                <th aria-hidden="true"></th>
+                <th class="definition"></th>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1057,18 +1097,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Sunlight</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1143,18 +1177,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th rowspan="4" class="row-tier-1" colspan="2">Soil & Substrate</th>
                 <th class="row-name">Soil Quantity</th>
                 <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1229,18 +1257,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Substrate Quantity</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1315,18 +1337,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th rowspan="7" class="row-tier-1" colspan="2">Natural Materials</th>
                 <th class="row-name">Fuel Quality</th>
                 <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1401,18 +1417,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Fiber Material Quantity</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1487,18 +1497,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Mineral / Chemical Quantity</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1573,18 +1577,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1659,18 +1657,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Edible Flora</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1745,18 +1737,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Keystone Flora</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1831,18 +1817,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Rare Flora</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -1917,18 +1897,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Spiritually / Culturally Important Flora</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2003,18 +1977,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Edible Fungi</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2089,18 +2057,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Rare Fungi</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2175,18 +2137,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
                 <th class="row-name">Spiritually / Culturally Important Fungi</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2261,18 +2217,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Edible Fauna</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2347,18 +2297,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Keystone Fauna</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2433,18 +2377,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Rare Fauna</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2519,18 +2457,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
-                <th class="row-name">Pest / Predator / Depredator Fauna</th>
+                <th class="row-name">Pest Predator / Depredator Fauna</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2605,9 +2537,6 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
@@ -2648,19 +2577,13 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
 
               <tr>
-                <th rowspan="4" class="row-tier-1">Extreme Events</th>
-                <th rowspan="1" class="row-tier-2">Flooding</th>
+                <th rowspan="4" colspan="2" class="row-tier-1">Extreme Events</th>
                 <th class="row-name">Risk of Flooding</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2698,12 +2621,9 @@
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
-                <th rowspan="1" class="row-tier-2">Fire</th>
                 <th class="row-name">Risk of Fire</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2741,12 +2661,9 @@
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
-                <th rowspan="1" class="row-tier-2">Extreme Weather Events</th>
                 <th class="row-name">Risk of Extreme Weather Events</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2784,12 +2701,9 @@
               </tr>
               <tr>
                 <th aria-hidden="true"></th>
-                <th rowspan="1" class="row-tier-2">Earthquakes</th>
                 <th class="row-name">Risk of Earthquakes</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2864,18 +2778,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
                 <th class="row-name">Scents</th>
                 <th aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2950,9 +2858,6 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
@@ -2993,18 +2898,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
-                <th rowspan="1" class="row-tier-2">Naturalness</th>
-                <th class="row-name">Ecological Condition</th>
+                <th class="row-name" colspan="2">Naturalness</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -3042,12 +2941,9 @@
               </tr>
               <tr class="dark">
                 <th aria-hidden="true"></th>
-                <th rowspan="1" class="row-tier-2">Open Space</th>
-                <th class="row-name">Acreage</th>
+                <th class="row-name" colspan="2">Open Space</th>
+                <th class="row-tier-1" aria-hidden="true"></th>
                 <th class="definition"></th>
-                <td></td>
-                <td></td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -3100,11 +2996,7 @@
               </div>
               <div>
                 <span class="key air"></span>
-                <span>Air</span>
-              </div>
-              <div>
-                <span class="key weather"></span>
-                <span>Weather</span>
+                <span>Air & Weather</span>
               </div>
               <div>
                 <span class="key soil-substrate"></span>
@@ -3146,4 +3038,5 @@
   </script>
   <script src="./js/render.js"></script>
 </body>
+
 </html>

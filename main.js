@@ -18,6 +18,7 @@ let projectName = 'New Project';
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 const windows = [];
 
+// Open a file using the appliction menu
 function openFile() {
   // console.log("open file")
   dialog.showOpenDialog(
@@ -64,10 +65,12 @@ function openFile() {
   );
 }
 
+// Send a message to the render thread to save the file
 function saveFile() {
   mainWindow.webContents.send('save');
 }
 
+// Use a dialog menu to save the file and then send the message to the render thread
 function saveFileAs() {
   let nameToUse = savedFileName;
   // console.log(projectName)
@@ -104,6 +107,7 @@ function saveFileAs() {
   }
 }
 
+// Saves the file using a dialog and then refreshes the applcation to fresh state
 function saveFileAsAndRefresh() {
   let nameToUse = savedFileName;
   // console.log(projectName)
@@ -136,6 +140,7 @@ function saveFileAsAndRefresh() {
   );
 }
 
+// Save the file and then open the specified project
 function saveFileAsAndOpen(saveName, openName) {
   let nameToUse = savedFileName;
   // console.log(projectName)
@@ -168,6 +173,7 @@ function saveFileAsAndOpen(saveName, openName) {
   );
 }
 
+// Save and then quit the application
 function saveFileAsAndQuit() {
   let nameToUse = savedFileName;
   // console.log(projectName)
@@ -208,6 +214,7 @@ function quit() {
   }
 }
 
+// Creates the main window of the application
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -229,6 +236,7 @@ function createWindow() {
     })
   );
 
+  // Create the file menu at the top of the application
   const menuTemplate = [
     {
       label: 'File',
@@ -440,6 +448,7 @@ ipcMain.on('update-project-name', (event, arg) => {
   projectName = arg;
 });
 
+// When the render thread sends a message update these variables
 ipcMain.on('has-been-saved', (event, arg) => {
   // console.log("has-been-saved");
   // console.log(arg);
@@ -447,6 +456,7 @@ ipcMain.on('has-been-saved', (event, arg) => {
   saved = true;
 });
 
+// When the render thread sends a message update this variable
 ipcMain.on('has-been-changed', () => {
   // console.log("has-been-changed");
   saved = false;
