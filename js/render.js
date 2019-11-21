@@ -2200,7 +2200,7 @@ const FEGSScopingView = function FEGSScopingView() {
   this.displayBeneficiaryScores = function displayBeneficiaryScores() {
     const table = tableAttributes;
     const columnNames = fegsScopingData.getExtantBeneficiaries();
-    const rowNames = ['Beneficiary Score'];
+    const rowNames = ['Beneficiary Result'];
     let cell;
     let cellValue;
     for (let i = 0; i < columnNames.length; i += 1) {
@@ -3588,7 +3588,7 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   // add a column to house the data
   addTableColumn(
     table.id,
-    `${stakeholderName}<br /><br />Prioritization Score: ${round(
+    `${stakeholderName}<br /><br />Prioritization Result: ${round(
       fegsScopingData.stakeholderPrioritizationScoreSum(stakeholderName),
       1
     )}`,
