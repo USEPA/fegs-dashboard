@@ -349,29 +349,26 @@ body {
 .air {
   background: #ff7f0e;
 }
-.weather {
+.soil-substrate {
   background: #2ca02c;
 }
-.soil-substrate {
+.natural-materials {
   background: #d62728;
 }
-.natural-materials {
+.flora {
   background: #9467bd;
 }
-.flora {
+.fungi {
   background: #8c564b;
 }
 .fauna {
   background: #e377c2;
 }
-.fungi {
+.extreme-events {
   background: #7f7f7f;
 }
-.extreme-events {
-  background: #bcbd22;
-}
 .composite {
-  background: #17becf;
+  background: #bcbd22;
 }
 
 .legend {
