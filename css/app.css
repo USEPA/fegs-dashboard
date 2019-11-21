@@ -159,6 +159,42 @@ body {
   background: #f2f2f2;
 }
 
+.agricultural-chart {
+  background: #663300;
+}
+
+.commercial-chart {
+  background: #0000cc;
+}
+
+.governmental-chart {
+  background: #660066;
+}
+
+.transportation-chart {
+  background: #ff0000;
+}
+
+.subsistence-chart {
+  background: #ff9900;
+}
+
+.recreational-chart {
+  background: #00ffff;
+}
+
+.inspirational-chart {
+  background: #70ad47;
+}
+
+.learning-chart {
+  background: #ffff66;
+}
+
+.nonuse-chart {
+  background: #b2b2b2;
+}
+
 .irrigators {
   background: #ddd9c3;
 }

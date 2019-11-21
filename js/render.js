@@ -109,15 +109,15 @@ const beneficiaryColors = [
 ];
 
 const beneTier1Colors = [
-  '#ddd9c4',
-  '#c5d9f1',
-  '#e4dfec',
-  '#f2dcdb',
-  '#f9fdd1',
-  '#daeef3',
-  '#ebf1de',
-  '#fde9d9',
-  '#f2f2f2'
+  '#663300',
+  '#0000cc',
+  '#660066',
+  '#ff0000',
+  '#ff9900',
+  '#00ffff',
+  '#70ad47',
+  '#ffff66',
+  '#b2b2b2'
 ];
 
 /**
