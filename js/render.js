@@ -1700,8 +1700,8 @@ const FEGSScopingData = function FEGSScopingData() {
     'Transporters of Goods',
     'Transporters of People',
     'Water Subsisters',
-    'Food Subsisters',
-    'Timber / Fiber / Fur / Hide Subsisters',
+    'Food and Medicinal Subsisters',
+    'Timber / Fiber / Ornamental Subsisters',
     'Building Material Subsisters',
     'Experiencers / Viewers',
     'Food Pickers / Gatherers',
@@ -1736,8 +1736,8 @@ const FEGSScopingData = function FEGSScopingData() {
     'Transporters of Goods': 'Transportation',
     'Transporters of People': 'Transportation',
     'Water Subsisters': 'Subsistence',
-    'Food Subsisters': 'Subsistence',
-    'Timber / Fiber / Fur / Hide Subsisters': 'Subsistence',
+    'Food and Medicinal Subsisters': 'Subsistence',
+    'Timber / Fiber / Ornamental Subsisters': 'Subsistence',
     'Building Material Subsisters': 'Subsistence',
     'Experiencers / Viewers': 'Recreational',
     'Food Pickers / Gatherers': 'Recreational',
@@ -2618,8 +2618,6 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     for (let j = 0; j < columnNames.length; j += 1) {
       // TODO implement excel-compatible keyboard-navigation listeners
       let input;
-      console.log(rowNames[i])
-      console.log(columnNames[j])
       cell = table.cell(rowNames[i], columnNames[j]);
       if (cell.querySelector('input') === null) {
         input = document.createElement('input');
