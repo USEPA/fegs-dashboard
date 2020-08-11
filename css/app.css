@@ -761,3 +761,14 @@ button[aria-pressed='true'] {
 #scoring-inputs {
   justify-content: flex-start;
 }
+
+/* Chart styles */
+.barchart {
+  shape-rendering: crispEdges;
+}
+.axis {
+  font: 14px sans-serif;
+}
+.chart-legend {
+  font: 14px sans-serif;
+}

@@ -395,6 +395,7 @@ const initStackedBarChart = {
     }
     const svg = container
       .append('svg')
+      .attr('class', 'barchart')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + 10 + margin.bottom + 10 + 30)
       .append('g')
@@ -503,8 +504,7 @@ const initStackedBarChart = {
     if (legendKey) {
       const legend = svg
         .append('g')
-        .attr('font-family', 'sans-serif')
-        .attr('font-size', 10)
+        .attr('class', 'chart-legend')
         .selectAll('g')
         .data(legendKey)
         .enter()
