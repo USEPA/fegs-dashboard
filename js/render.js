@@ -1609,8 +1609,8 @@ const FEGSScopingData = function FEGSScopingData() {
     'Scents',
     'Viewscapes',
     'Phenomena (e.g. Sunsets, Northern Lights, etc)',
-    'Naturalness',
-    'Open Space'
+    'Ecological Condition',
+    'Acreage'
   ];
   this.fegsAttributesTier1 = {
     'Water Quality': 'Water',
@@ -1665,8 +1665,8 @@ const FEGSScopingData = function FEGSScopingData() {
     Scents: 'Composite',
     Viewscapes: 'Composite',
     'Phenomena (e.g. Sunsets, Northern Lights, etc)': 'Composite',
-    'Naturalness': 'Composite',
-    'Open Space': 'Composite'
+    'Ecological Condition': 'Composite',
+    'Acreage': 'Composite'
   };
   this.tier1 = [
     'Water',
