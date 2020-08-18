@@ -1522,7 +1522,7 @@ const FEGSScopingData = function FEGSScopingData() {
   };
 
   this.appName = appTitle;
-  this.version = '1.0.0';
+  this.version = app.getVersion() || '1.0.0';
   this.projectName = 'New Project';
   this.projectDescription = '';
   this.notes = {
