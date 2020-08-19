@@ -3112,6 +3112,7 @@ function addRow(tableID, rowData) {
   newCell.appendChild(removeButton);
 
   removeButton.addEventListener('click', function clickRemoveStakeholder() {
+    fegsScopingView.indicateUnsaved();
     // create listeners for the buttons
     const stakeholder = this.parentNode.nextSibling.innerHTML;
     fegsScopingData.removeStakeholders([stakeholder]);
@@ -3127,18 +3128,21 @@ function addRow(tableID, rowData) {
   });
 
   editButton.addEventListener('click', function clickEditStakeholder() {
+    fegsScopingView.indicateUnsaved();
     this.setAttribute('aria-hidden', 'true'); // hide the edit button
     const row = this.parentNode.parentNode;
     row.getElementsByClassName('save-button')[0].removeAttribute('aria-hidden'); // show the save button
     const { cells } = row;
-    for (let i = 1, { length } = cells; i < length; i += 1) {
+    cells[1].innerHTML = `<input style="min-width: 8rem;" data-original-value="${cells[1].innerText}" type="text" value="${cells[1].innerText}"/>`;
+    for (let i = 2, { length } = cells; i < length; i += 1) {
       const cell = cells[i];
-      const text = cell.innerHTML;
-      cell.innerHTML = `<input class="form-text" data-original-value="${text}" type="text" value="${text}"/>`; // create an input with the cell value
+      const text = cell.innerText;
+      cell.innerHTML = `<input data-original-value="${text}" type="text" value="${text}"/>`; // create an input with the cell value
     }
   });
 
   saveButton.addEventListener('click', function clickSaveStakeholder() {
+    fegsScopingView.indicateUnsaved(); // not yet saved to file
     const row = this.parentNode.parentNode;
     const { cells } = row;
     let originalStakeholderName = cells[1].innerText;
