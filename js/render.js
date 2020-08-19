@@ -3889,8 +3889,12 @@ if (remote.process.argv.length > 1) {
 const weightScoreInputs = document.querySelectorAll('#table-scores input')
 for(const input of weightScoreInputs) {
   input.addEventListener('change', () => {
-    fegsScopingView.displayBeneficiaryScores()
-    fegsScopingView.showStakeholderScores()
+    if (Object.keys(fegsScopingData.stakeholders).length < 1) {
+      return
+    } else {
+      fegsScopingView.displayBeneficiaryScores()
+      fegsScopingView.showStakeholderScores()
+    }
   })
 }
 
