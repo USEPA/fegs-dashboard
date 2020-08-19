@@ -65,6 +65,30 @@ function openFile() {
   );
 }
 
+const saveDialog = (action) => {
+  let fileName = savedFileName; // fileName does not include extension
+  if (projectName !== 'New Project' && savedFileName === 'New Project') {
+    fileName = projectName;
+  }
+  dialog.showSaveDialog(mainWindow, {
+    defaultPath: fileName,
+    filters: [{
+      name: 'Custom File Type',
+      extensions: ['fegs']
+    }]
+  }).then(result => {
+    if (!result.canceled) {
+      let filePath = result.filePath
+      if (!filePath.endsWith('.fegs')) {
+        filePath += '.fegs'
+      }
+      mainWindow.webContents.send(action, filePath)
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+}
+
 // Send a message to the render thread to save the file
 function saveFile() {
   mainWindow.webContents.send('save');
@@ -72,146 +96,27 @@ function saveFile() {
 
 // Use a dialog menu to save the file and then send the message to the render thread
 function saveFileAs() {
-  let nameToUse = savedFileName;
-  // console.log(projectName)
-  // console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === 'New Project') {
-    nameToUse = projectName;
-  }
-  try {
-    dialog.showSaveDialog(
-      {
-        defaultPath: nameToUse,
-        filters: [
-          {
-            name: 'Custom File Type',
-            extensions: ['fegs']
-          }
-        ]
-      },
-      fileNames => {
-        let fileName = fileNames;
-        if (fileName === undefined) {
-          // fileNames is an array that contains all the selected files
-          // console.log("No file selected");
-        } else {
-          if (!fileName.endsWith('.fegs')) {
-            fileName += '.fegs';
-          }
-          mainWindow.webContents.send('save-as', fileName);
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e);
-  }
+  saveDialog('save-as')
 }
 
 // Saves the file using a dialog and then refreshes the applcation to fresh state
 function saveFileAsAndRefresh() {
-  let nameToUse = savedFileName;
-  // console.log(projectName)
-  // console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === 'New Project') {
-    nameToUse = projectName;
-  }
-  dialog.showSaveDialog(
-    {
-      defaultPath: nameToUse,
-      filters: [
-        {
-          name: 'Custom File Type',
-          extensions: ['fegs']
-        }
-      ]
-    },
-    fileNames => {
-      let fileName = fileNames;
-      if (fileNames === undefined) {
-        // fileNames is an array that contains all the selected files
-        // console.log("No file selected");
-      } else {
-        if (!fileName.endsWith('.fegs')) {
-          fileName += '.fegs';
-        }
-        mainWindow.webContents.send('save-as-and-refresh', fileName);
-      }
-    }
-  );
+  saveDialog('save-as-and-refresh')
 }
 
 // Save the file and then open the specified project
 function saveFileAsAndOpen(saveName, openName) {
-  let nameToUse = savedFileName;
-  // console.log(projectName)
-  // console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === 'New Project') {
-    nameToUse = projectName;
-  }
-  dialog.showSaveDialog(
-    {
-      defaultPath: nameToUse,
-      filters: [
-        {
-          name: 'Custom File Type',
-          extensions: ['fegs']
-        }
-      ]
-    },
-    fileNames => {
-      let fileName = fileNames;
-      if (fileName === undefined) {
-        // fileNames is an array that contains all the selected files
-        // console.log("No file selected");
-      } else {
-        if (!fileNames.endsWith('.fegs')) {
-          fileName += '.fegs';
-        }
-        mainWindow.webContents.send('save-as-and-open', fileName, openName);
-      }
-    }
-  );
+  saveDialog('save-as-and-open')
 }
 
 // Save and then quit the application
 function saveFileAsAndQuit() {
-  let nameToUse = savedFileName;
-  // console.log(projectName)
-  // console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === 'New Project') {
-    nameToUse = projectName;
-  }
-  dialog.showSaveDialog(
-    {
-      defaultPath: nameToUse,
-      filters: [
-        {
-          name: 'Custom File Type',
-          extensions: ['fegs']
-        }
-      ]
-    },
-    fileNames => {
-      let fileName = fileNames;
-      if (fileNames === undefined) {
-        // fileNames is an array that contains all the selected files
-        // console.log("No file selected");
-      } else {
-        if (!fileName.endsWith('.fegs')) {
-          fileName += '.fegs';
-        }
-        mainWindow.webContents.send('save-as-and-quit', fileName);
-      }
-    }
-  );
+  saveDialog('save-as-and-quit')
 }
 
-function quit() {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+// Quit the application
+function quit() { // File > Quit, Alt+F4, Cmd+Q
+  app.quit()
 }
 
 // Creates the main window of the application
@@ -237,12 +142,21 @@ function createWindow() {
   );
 
   // Create the file menu at the top of the application
+  const newProject = () => {
+    savedFileName = 'New Project'
+    projectName = 'New Project'
+    saved = true
+    mainWindow.webContents.reloadIgnoringCache()
+    mainWindow.setTitle(appTitle)
+  }
+  const cmd = (process.platform === 'darwin') ? 'Cmd' : 'Ctrl'
   const menuTemplate = [
     {
       label: 'File',
       submenu: [
         {
-          label: 'New Project',
+          label: 'New',
+          accelerator: `${cmd}+N`,
           click: () => {
             if (!saved) {
               // Check if unsaved
@@ -258,52 +172,40 @@ function createWindow() {
                   if (response === 0) {
                     mainWindow.webContents.send('save-and-refresh');
                   } else if (response === 1) {
-                    savedFileName = 'New Project';
-                    projectName = 'New Project';
-                    saved = true;
-                    mainWindow.webContents.reloadIgnoringCache();
-                    mainWindow.setTitle(appTitle);
+                    newProject()
                   }
                 }
               );
             } else {
-              savedFileName = 'New Project';
-              projectName = 'New Project';
-              saved = true;
-              mainWindow.webContents.reloadIgnoringCache();
-              mainWindow.setTitle(appTitle);
+              newProject()
             }
           }
         },
         {
-          label: 'Open Project...',
-          click: () => {
-            openFile();
-          }
-        },
-        {
-          label: 'Save Project',
-          click: () => {
-            saveFile();
-          }
-        },
-        {
-          label: 'Save Project As...',
-          click: () => {
-            saveFileAs();
-          }
+          label: 'Open...',
+          accelerator: `${cmd}+O`,
+          click: openFile,
         },
         {
           type: 'separator'
+        },
+        {
+          label: 'Save',
+          accelerator: `${cmd}+S`,
+          click: saveFile,
+        },
+        {
+          label: 'Save As... ',
+          accelerator: `${cmd}+Shift+S`,
+          click: saveFileAs,
         },
         {
           type: 'separator'
         },
         {
           label: 'Quit',
-          click: () => {
-            quit();
-          }
+          accelerator: (process.platform === 'darwin') ? 'Cmd+Q' : 'Alt+F4',
+          click: quit,
         }
       ]
     },
@@ -375,17 +277,19 @@ function createWindow() {
   // Emitted when the window is closed.
   mainWindow.on('close', e => {
     if (saved) {
-      const choice = electron.dialog.showMessageBox(mainWindow, {
-        type: 'question',
-        buttons: ['Yes', 'No'],
-        title: appTitle,
-        message: 'Are you sure you want to quit?'
-      });
-      if (choice === 1) {
-        e.preventDefault();
+      if (process.platform !== 'darwin') { // will quit after close
+        const choice = electron.dialog.showMessageBoxSync(mainWindow, {
+          type: 'question',
+          buttons: ['Yes', 'No'],
+          title: appTitle,
+          message: 'Are you sure you want to quit?'
+        });
+        if (choice === 1) {
+          e.preventDefault();
+        }
       }
     } else {
-      const choice = dialog.showMessageBox(mainWindow, {
+      const choice = dialog.showMessageBoxSync(mainWindow, {
         type: 'question',
         buttons: ['Save', "Don't Save", 'Cancel'],
         title: appTitle,
@@ -397,7 +301,7 @@ function createWindow() {
       } else if (choice === 2) {
         e.preventDefault();
       } else {
-        console.log('just quit');
+        console.log('Quit');
       }
     }
     windows.forEach(win => {
@@ -408,11 +312,11 @@ function createWindow() {
   });
 
   mainWindow.webContents.on('crashed', () => {
-    console.log('crashed');
+    console.error('Crashed');
   });
 
   mainWindow.on('unresponsive', () => {
-    console.log('unresponsive');
+    console.warn('Unresponsive...');
   });
 }
 
@@ -476,7 +380,9 @@ app.on('window-all-closed', () => {
   // console.log("window-all-closed");
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  quit();
+  if (process.platform !== 'darwin') {
+    quit()
+  }
 });
 
 app.on('activate', () => {
@@ -488,5 +394,5 @@ app.on('activate', () => {
 });
 
 process.on('uncaughtException', () => {
-  console.log('uncaughtException');
+  console.error('uncaughtException');
 });

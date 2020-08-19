@@ -1807,6 +1807,7 @@ const FEGSScopingController = function FEGSScopingController() {
   this.saveJSON = function saveJSON(savePath, jsonToBeSaved) {
     let jsonText;
     if (typeof jsonToBeSaved !== 'string') {
+      document.querySelectorAll('button.save-button:not([aria-hidden="true"])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
       jsonText = JSON.stringify(jsonToBeSaved);
     } else {
       jsonText = jsonToBeSaved;
