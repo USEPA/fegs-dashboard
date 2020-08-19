@@ -2754,6 +2754,7 @@ ipcRenderer.on('save', () => {
 ipcRenderer.on('open-file', (event, arg) => {
   fegsScopingView.restoreView(arg[0]);
   fegsScopingView.indicateSaved(arg[0]);
+  //updateWeightingProgress()
 });
 
 const APP = (function APP() {
@@ -3883,3 +3884,13 @@ if (remote.process.argv.length > 1) {
     remote.process.argv = [remote.process.argv[0]];
   }
 }
+
+
+const weightScoreInputs = document.querySelectorAll('#table-scores input')
+for(const input of weightScoreInputs) {
+  input.addEventListener('change', () => {
+    fegsScopingView.displayBeneficiaryScores()
+    fegsScopingView.showStakeholderScores()
+  })
+}
+
