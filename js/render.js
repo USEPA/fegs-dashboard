@@ -1056,7 +1056,9 @@ const FEGSScopingData = function FEGSScopingData() {
   this.addStakeholder = function addStakeholderToFEGSData(stakeholderName, stakeholderScores) {
     this.stakeholders[stakeholderName] = {
       scores: stakeholderScores,
-      beneficiaries: {}
+      beneficiaries: {},
+      noBenefit: false, // stakeholder does not benefit from the environment
+      lastBeneficiaries: {}, // remember previous entries when noBenefit is selected
     };
   };
 
@@ -3470,6 +3472,7 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   const table = document.getElementById('table-beneficiaries');
   const select = document.getElementById('select-stakeholder');
   const stakeholderName = select.value;
+  const noBenefit = fegsScopingData.stakeholders[stakeholderName].noBenefit
   const tBody = table.tBodies[0];
   let rowIndex;
   let cell;
@@ -3477,66 +3480,6 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   // let cellText;
   // let rowspan;
   // let numberOfBeneficiaryColumnsInRow;
-
-  // validate sum of percentages is 100 +- 0.05 then save
-  const beneficiaryPercentageOfStakeholderInputValidator = function beneficiaryPercentageOfStakeholderInputValidator() {
-    clearNotices();
-    let percentageSum = 0;
-    // let input;
-    const inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
-    for (let j = 0; j < inputs.length; j += 1) {
-      const value = parseFloat(inputs[j].value);
-
-      if (value > 100 || value < 1) {
-        inputs[j].parentElement.style = 'background-color: #ffcccc';
-        accessiblyNotify(`Values must be between 1 and 100. The current value is ${value}.`);
-        return;
-      }
-
-      if (isNaN(value)) {
-        inputs[j].parentElement.style = 'background-color: #ffcccc';
-      }
-      percentageSum += Number(inputs[j].value);
-    }
-    // inform user of unnormalized percentages
-    if (percentageSum < 99.95 || percentageSum > 100.05) {
-      accessiblyNotify(`Percentages must sum to 100. The current sum is ${percentageSum}.`);
-      for (let j = 0; j < inputs.length; j += 1) {
-        inputs[j].parentElement.style = 'background-color: #ffcccc';
-      }
-    } else {
-      // update data with valid input
-      for (let j = 0; j < inputs.length; j += 1) {
-        inputs[j].parentElement.style = 'background-color: initial';
-        const beneficiaryNameForInput =
-          inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 2]
-            .innerText;
-        if (
-          !fegsScopingData.stakeholders[stakeholderName].beneficiaries ||
-          !fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]
-        ) {
-          fegsScopingData.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
-        }
-        fegsScopingData.stakeholders[stakeholderName].beneficiaries[
-          beneficiaryNameForInput
-        ].percentageOfStakeholder = inputs[j].value;
-        fegsScopingView.indicateUnsaved();
-      }
-      document.getElementById('beneficiary-charts').removeAttribute('hidden');
-
-      updateBeneficiaryView();
-      updateAttributeView();
-
-      updateBeneficiaryProgress();
-      updateAttributeProgress();
-
-      fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
-      updateSelectBeneficiary('select-beneficiary');
-      showSelectedBeneficiary(document.getElementById('select-beneficiary'));
-      fegsScopingData.clearOtherAttributes(fegsScopingData.getExtantBeneficiaries());
-      // showSection('attributes');
-    }
-  };
 
   for (let i = tBody.rows[0].cells.length - 1; i > 2; i -= 1) {
     // remove all data columns
@@ -3592,11 +3535,79 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
       input.oninput = beneficiaryPercentageOfStakeholderInputValidator; // save valid input
       cell.appendChild(input);
     }
+    input.disabled = noBenefit
   }
+  document.getElementById('check-stakeholder-benefits').checked = noBenefit
 
   updateSelectBeneficiary('select-beneficiary');
   showSelectedBeneficiary(document.getElementById('select-beneficiary'));
   updateBeneficiaryProgress();
+};
+
+// validate sum of percentages is 100 +- 0.05 then save
+function beneficiaryPercentageOfStakeholderInputValidator() {
+  clearNotices();
+  const stakeholderName = document.getElementById('select-stakeholder').value;
+  let percentageSum = 0;
+  // let input;
+  const inputs = document.getElementsByClassName('beneficiary-percentage-of-stakeholder');
+  for (let j = 0; j < inputs.length; j += 1) {
+    const value = parseFloat(inputs[j].value);
+
+    if (value > 100 || value < 0) {
+      inputs[j].parentElement.style = 'background-color: #ffcccc';
+      accessiblyNotify(`Values must be between 0 and 100. The current value is ${value}.`);
+      return;
+    }
+
+    if (isNaN(value)) {
+      inputs[j].parentElement.style = 'background-color: #ffcccc';
+    }
+    percentageSum += Number(inputs[j].value);
+  }
+
+  // TODO observe checkbox
+  const hasBeneficiaries = !document.getElementById('check-stakeholder-benefits').checked
+  // TODO checkbox onclick listener calls this fucntion?
+
+  // inform user of unnormalized percentages
+  if (hasBeneficiaries && percentageSum < 99.95 || percentageSum > 100.05) {
+    accessiblyNotify(`Percentages must sum to 100. The current sum is ${percentageSum}.`);
+    for (let j = 0; j < inputs.length; j += 1) {
+      inputs[j].parentElement.style = 'background-color: #ffcccc';
+    }
+  } else {
+    // update data with valid input
+    for (let j = 0; j < inputs.length; j += 1) {
+      inputs[j].parentElement.style = 'background-color: initial';
+      const beneficiaryNameForInput =
+        inputs[j].parentElement.parentElement.cells[inputs[j].parentElement.cellIndex - 2]
+          .innerText;
+      if (
+        !fegsScopingData.stakeholders[stakeholderName].beneficiaries ||
+        !fegsScopingData.stakeholders[stakeholderName].beneficiaries[beneficiaryNameForInput]
+      ) {
+        fegsScopingData.addBeneficiary(stakeholderName, beneficiaryNameForInput, inputs[j].value);
+      }
+      fegsScopingData.stakeholders[stakeholderName].beneficiaries[
+        beneficiaryNameForInput
+      ].percentageOfStakeholder = inputs[j].value;
+      fegsScopingView.indicateUnsaved();
+    }
+    document.getElementById('beneficiary-charts').removeAttribute('hidden');
+
+    updateBeneficiaryView();
+    updateAttributeView();
+
+    updateBeneficiaryProgress();
+    updateAttributeProgress();
+
+    fegsScopingView.displayBeneficiaryScores(); // update #table-beneficiary-score
+    updateSelectBeneficiary('select-beneficiary');
+    showSelectedBeneficiary(document.getElementById('select-beneficiary'));
+    fegsScopingData.clearOtherAttributes(fegsScopingData.getExtantBeneficiaries());
+    // showSection('attributes');
+  }
 };
 
 // function toggleSection(Id) {
@@ -3764,6 +3775,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-stakeholder-scores').addEventListener('click', () => {
     addStakeholderScores();
   });
+
+  document.getElementById('check-stakeholder-benefits').addEventListener('change', event => {
+    const stakeholderName = document.getElementById('select-stakeholder').value
+    const stakeholder = fegsScopingData.stakeholders[stakeholderName]
+    if (event.target.checked) {
+      stakeholder.noBenefit = true
+      stakeholder.lastBeneficiaries = stakeholder.beneficiaries // save
+      stakeholder.beneficiaries = {}
+    } else {
+      stakeholder.noBenefit = false
+      stakeholder.beneficiaries = stakeholder.lastBeneficiaries // restore
+      stakeholder.lastBeneficiaries = {}
+    }
+    selectStakeholderToSlice() // refresh beneficiary table
+    beneficiaryPercentageOfStakeholderInputValidator() // refresh eveything else
+  })
 
   document.querySelectorAll('.add-note-btn').forEach(ele => {
     ele.addEventListener('click', event => {

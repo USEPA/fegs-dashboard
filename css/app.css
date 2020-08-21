@@ -772,3 +772,10 @@ button[aria-pressed='true'] {
 .chart-legend {
   font: 14px sans-serif;
 }
+
+/* Flexbox classes */
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

@@ -497,7 +497,12 @@
             must have beneficiary percentages which sum to 100.</p>
           <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
           <label for="select-stakeholder">Select a Stakeholder Group</label>
-          <select class="form-select" id="select-stakeholder"></select>
+          <div class="flexrow">
+            <select class="form-select" id="select-stakeholder"></select>
+            <input id="check-stakeholder-benefits" type="checkbox">
+            <label for="check-stakeholder-benefits" style="margin-left: 1.5em;">This stakeholder group does not directly benefit from the ecosystem</label>
+          </div>
+          
 
           <label style="padding-top: 1.5em">Select Beneficiaries</label>
           <div id="toggle-beneficiaries">
