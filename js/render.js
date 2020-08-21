@@ -113,10 +113,10 @@ const beneTier1Colors = [
   '#0000cc',
   '#660066',
   '#ff0000',
-  '#ff9900',
+  '#ffff66',
   '#00ffff',
   '#70ad47',
-  '#ffff66',
+  '#ff9900',
   '#b2b2b2'
 ];
 
