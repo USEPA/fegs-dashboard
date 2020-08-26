@@ -2,7 +2,7 @@ const fs = require('fs');
 const electron = require('electron');
 
 const { ipcRenderer, remote, webFrame } = electron;
-const { app } = electron.remote;
+const { app, dialog } = electron.remote;
 const d3 = require('d3');
 d3.tip = require('d3-tip');
 
@@ -55,6 +55,10 @@ const accessiblyNotify = function accessiblyNotify(text) {
 };
 
 // PAGE PROCESS
+
+// Set styles used in d3 visualizations
+const fontLabel = '14px sans-serif'
+const fontLegend = '14px sans-serif'
 
 // Set the colors used in d3 visualizations
 const criteriaColors = [
@@ -215,7 +219,9 @@ const initPieChart = {
       .outerRadius(radius - 10)
       .innerRadius(0);
 
-    d3.selectAll(`.${domEle} > *`).remove();
+    const container = d3.select(`#${domEle}`);
+
+    d3.selectAll(`#${domEle} > *`).remove();
 
     Object.values(pie).forEach(prop => {
       if (prop.value) {
@@ -227,8 +233,7 @@ const initPieChart = {
       }
     });
 
-    const svg = d3
-      .selectAll(`.${domEle}`)
+    const svg = container
       .append('div')
       .classed('svg-container', true) // container class to make it responsive
       .append('svg')
@@ -287,7 +292,7 @@ const initPieChart = {
       }
 
       const path = d3
-        .selectAll(`.${domEle}`)
+        .select(`#${domEle}`)
         .selectAll('path')
         .data(updatedPie)
         .on('mouseover', tip.show)
@@ -301,8 +306,9 @@ const initPieChart = {
       updateAttributeView();
     }
 
-    // Code for just the criteria pie
-    if (domEle === 'criteria-pie') {
+    // Code for just the criteria pie chart
+    if (domEle === 'criteria-piechart') { // FIXME this whole thing is a hack...
+      initPieChart.draw({ data, colors, element: 'stakeholder-piechart' });
       d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
         clearNotices();
         const inputs = document.querySelectorAll('.scoring input');
@@ -329,6 +335,7 @@ const initPieChart = {
         data = getScores();
         change();
         stakeholderBarchart();
+        initPieChart.draw({ data, colors, element: 'stakeholder-piechart' });
 
         if (allValid && document.getElementById('section-stakeholders').hasAttribute('hidden')) {
           // showSection('stakeholders');
@@ -395,7 +402,7 @@ const initStackedBarChart = {
     }
     const svg = container
       .append('svg')
-      .attr('class', 'barchart')
+      .style('shape-rendering', 'crispEdges')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + 10 + margin.bottom + 10 + 30)
       .append('g')
@@ -488,7 +495,8 @@ const initStackedBarChart = {
 
     svg
       .append('g')
-      .attr('class', 'axis axis--x')
+      .style('font', fontLabel) // inline style makes exporting easier
+      .attr('class', 'axis--x')
       .attr('transform', `translate(0,${height + 5})`)
       .call(xAxis)
       .selectAll('.tick text')
@@ -497,14 +505,15 @@ const initStackedBarChart = {
 
     svg
       .append('g')
-      .attr('class', 'axis axis--y')
+      .style('font', fontLabel)
+      .attr('class', 'axis--y')
       .attr('transform', 'translate(0,0)')
       .call(yAxis);
 
     if (legendKey) {
       const legend = svg
         .append('g')
-        .attr('class', 'chart-legend')
+        .style('font', fontLegend)
         .selectAll('g')
         .data(legendKey)
         .enter()
@@ -642,7 +651,7 @@ function beneficiaryPiechart() {
   initPieChart.draw({
     data: getTier1BeneficiaryScoresForPieChart(),
     colors: beneTier1Colors,
-    element: 'beneficiary-pie',
+    element: 'beneficiary-piechart',
     legend: [...new Set(Object.values(fegsScopingData.fegsBeneficiariesTier1))]
   });
 }
@@ -866,7 +875,7 @@ function attributePiechartTier1() {
   initPieChart.draw({
     data: getTier1AttributeScoresForPieChart(), // attribute-pie
     colors: d3.schemeCategory10,
-    element: 'tier1-attribute-pie'
+    element: 'tier1-attribute-piechart'
   });
 }
 
@@ -921,7 +930,7 @@ function criteriaPiechart() {
   initPieChart.draw({
     data: getScores(), // Get the score data
     colors: criteriaColors,
-    element: 'criteria-pie'
+    element: 'criteria-piechart'
   });
 }
 
@@ -3457,7 +3466,7 @@ function attributePiechart() {
   initPieChart.draw({
     data: getAttributeScoresForPieChart(), // attribute-pie
     colors: d3.schemeSet3,
-    element: 'attribute-pie'
+    element: 'attribute-piechart'
   });
 }
 
@@ -3721,6 +3730,74 @@ function toggleAllAttributes() {
   });
 }
 
+function serializeSVG(svg) { // returns svg string
+  svg = svg.cloneNode(true)
+  // ... attach styles here as needed
+  const serializer = new XMLSerializer()
+  return serializer.serializeToString(svg)
+}
+
+function rasterizeSVG(svg, mime='png', scale=2) { // returns png/jpeg buffer
+  return new Promise((resolve, reject) => {
+    const width = svg.clientWidth*scale
+    const height = svg.clientHeight*scale
+    const svgString = serializeSVG(svg)
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+    
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    
+    const img = new Image()
+    img.onerror = reject
+    img.onload = () => {
+      if (mime === 'jpeg') { // no transparency
+        ctx.fillStyle = '#FFF'
+        ctx.fillRect(0, 0, width, height)
+      }
+      ctx.drawImage(img, 0, 0, width, height)
+      canvas.toBlob(imgBlob => {
+        imgBlob.arrayBuffer().then(result => {
+          const buffer = new Buffer(result)
+          resolve(buffer)
+        })
+      }, `image/${mime}`)
+    }
+    img.src = window.URL.createObjectURL(svgBlob)
+  })
+}
+
+function downloadChart(svg, name='Chart') {
+  let filePath = null
+  dialog.showSaveDialog({
+    defaultPath: `${name}.png`,
+    filters: [
+      { name: 'PNG', extensions: ['png'] },
+      { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
+      { name: 'SVG', extensions: ['svg'] },
+    ]
+  }).then(result => {
+    if (!result.canceled) {
+      filePath = result.filePath
+      const ext = filePath.split('.').pop()
+      if (ext === 'svg') {
+        return serializeSVG(svg)
+      } else if (ext === 'jpeg' || ext === 'jpg') {
+        return rasterizeSVG(svg, 'jpeg')
+      } else {
+        return rasterizeSVG(svg, 'png')
+      }
+    }
+  }).then(result => {
+    if (filePath) {
+      fs.writeFileSync(filePath, result)
+    }
+  }).catch(err => {
+    console.error(err)
+  })
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   criteriaPiechart();
   if (document.body.getAttribute('data-restore') === 'true') {
@@ -3790,6 +3867,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     selectStakeholderToSlice() // refresh beneficiary table
     beneficiaryPercentageOfStakeholderInputValidator() // refresh eveything else
+  })
+
+  document.getElementById('download-stakeholder-barchart').addEventListener('click', () => {
+    const svg = document.getElementById('stakeholder-barchart').firstChild
+    downloadChart(svg, 'Stakeholder Prioritization')
+  })
+
+  document.getElementById('download-stakeholder-piechart').addEventListener('click', () => {
+    const svg = document.getElementById('stakeholder-piechart').firstChild.firstChild
+    downloadChart(svg, 'Prioritization Criteria Relative Weights')
+  })
+
+  document.getElementById('download-beneficiary-barchart').addEventListener('click', () => {
+    const svg = document.getElementById('beneficiary-barchart').firstChild
+    downloadChart(svg, 'Beneficiary Prioritization')
+  })
+
+  document.getElementById('download-beneficiary-piechart').addEventListener('click', () => {
+    const svg = document.getElementById('beneficiary-piechart').firstChild.firstChild
+    downloadChart(svg, 'Beneficiary Profile')
+  })
+
+  document.getElementById('download-attribute-barchart').addEventListener('click', () => {
+    const svg = document.getElementById('attribute-barchart').firstChild
+    downloadChart(svg, 'Environmental Attribute Prioritization')
+  })
+
+  document.getElementById('download-attribute-piechart').addEventListener('click', () => {
+    const svg = document.getElementById('tier1-attribute-piechart').firstChild.firstChild
+    downloadChart(svg, 'Environmental Attributes Relative Priority')
   })
 
   document.querySelectorAll('.add-note-btn').forEach(ele => {

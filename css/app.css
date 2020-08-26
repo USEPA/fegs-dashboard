@@ -16,12 +16,12 @@ body {
 
 th {
   background-color: #f1f3f4;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
   font-weight: 500;
 }
 
 td {
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
 }
 
 section {
@@ -402,7 +402,7 @@ body {
 
 .light-gray {
   background-color: #f1f3f4;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
   padding: 1em 1em 1em 1em;
   margin-bottom: 0.4em;
 }
@@ -448,7 +448,7 @@ table input {
 
 table {
   border-collapse: collapse;
-  margin-bottom: 1em;
+  margin-bottom: 3rem;
 }
 
 table th {
@@ -762,20 +762,30 @@ button[aria-pressed='true'] {
   justify-content: flex-start;
 }
 
-/* Chart styles */
-.barchart {
-  shape-rendering: crispEdges;
+
+
+/* Chart classes */
+.chart-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
-.axis {
-  font: 14px sans-serif;
+.chart-header h2 {
+  margin-left: calc(6rem + 1rem); /* button width + button margin */
 }
-.chart-legend {
-  font: 14px sans-serif;
+.chart-header button {
+  margin: 0 0 1rem 1rem;
 }
 
 /* Flexbox classes */
 .flexrow {
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+.flexcol {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
