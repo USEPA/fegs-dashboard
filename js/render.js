@@ -169,7 +169,7 @@ const formatStakeholderData = function formatStakeholderData() {
 };
 
 /** pie chart - used for all pie charts in the app */
-const initPieChart = {
+const initPieChart = { // TODO add labels, but whole chart system needs a rework...
   draw(config) {
     Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
       element.parentNode.removeChild(element);
@@ -265,87 +265,6 @@ const initPieChart = {
       .each(function storeAngles(d) {
         this._current = d;
       }); // store the initial angles
-
-    // used when there's an update to the pie charts
-    function change() {
-      const updatedPie = d3
-        .pie()
-        .sort(null)
-        .value(d => d.value)(data);
-
-      function checkD3Data(chart) {
-        for (let i = 0; i < Object.keys(chart).length; i += 1) {
-          if (updatedPie[Object.keys(chart)[i]].value) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      const element = document.getElementById(domEle);
-      if (element) {
-        if (checkD3Data(updatedPie)) {
-          document.getElementById(domEle).removeAttribute('hidden');
-        } else {
-          document.getElementById(domEle).setAttribute('hidden', '');
-        }
-      }
-
-      const path = d3
-        .select(`#${domEle}`)
-        .selectAll('path')
-        .data(updatedPie)
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
-
-      path
-        .transition()
-        .duration(500)
-        .attrTween('d', arcTween); // Smooth transition with arcTween
-      updateBeneficiaryView();
-      updateAttributeView();
-    }
-
-    // Code for just the criteria pie chart
-    if (domEle === 'criteria-piechart') { // FIXME this whole thing is a hack...
-      initPieChart.draw({ data, colors, element: 'stakeholder-piechart' });
-      d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
-        clearNotices();
-        const inputs = document.querySelectorAll('.scoring input');
-        let allValid = true;
-        for (let i = 0; i < inputs.length; i += 1) {
-          let selected = false;
-          if (this === inputs[i]) {
-            selected = true;
-          }
-          const { value } = inputs[i];
-          const isValid = validateInput(value, 0, 100);
-          if (isValid) {
-            inputs[i].classList.remove('invalid-text-input');
-            fegsScopingData.scores[inputs[i].id.replace('-score', '')] = value;
-          } else {
-            allValid = false;
-            if (selected) {
-              inputs[i].classList.add('invalid-text-input');
-              accessiblyNotify('Enter a number between 0 and 100');
-            }
-          }
-        }
-
-        data = getScores();
-        change();
-        stakeholderBarchart();
-        initPieChart.draw({ data, colors, element: 'stakeholder-piechart' });
-
-        if (allValid && document.getElementById('section-stakeholders').hasAttribute('hidden')) {
-          // showSection('stakeholders');
-        }
-
-        updateWeightingProgress();
-        fegsScopingView.indicateUnsaved();
-      });
-    }
-
     function arcTween(a) {
       const i = d3.interpolate(this._current, a);
       this._current = i(0);
@@ -927,10 +846,35 @@ function updateAttributeProgress() {
  * @function
  */
 function criteriaPiechart() {
-  initPieChart.draw({
+  const config = (elementId) => ({
     data: getScores(), // Get the score data
     colors: criteriaColors,
-    element: 'criteria-piechart'
+    element: elementId,
+  })
+
+  initPieChart.draw(config('criteria-piechart'))
+  initPieChart.draw(config('stakeholder-piechart'))
+
+  d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
+    clearNotices();
+    const inputs = document.querySelectorAll('.scoring input');
+    for (let input of inputs) {
+      const isValid = validateInput(input.value, 0, 100);
+      if (isValid) {
+        input.classList.remove('invalid-text-input');
+        fegsScopingData.scores[input.id.replace('-score', '')] = input.value;
+      } else if (this === input) { // selected
+        input.classList.add('invalid-text-input');
+        accessiblyNotify('Enter a number between 0 and 100');
+      }
+    }
+
+    initPieChart.draw(config('criteria-piechart'))
+    initPieChart.draw(config('stakeholder-piechart'))
+    stakeholderBarchart();
+
+    updateWeightingProgress();
+    fegsScopingView.indicateUnsaved();
   });
 }
 
