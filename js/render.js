@@ -4,13 +4,433 @@ const electron = require('electron');
 const { ipcRenderer, remote, webFrame } = electron;
 const { app, dialog } = electron.remote;
 const d3 = require('d3');
+const { color } = require('d3');
 d3.tip = require('d3-tip');
+
+const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 
 let fegsScopingData;
 let fegsScopingView;
 let fegsScopingController;
 let tableAttributes;
-const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
+
+const charts = {} // object to namespace charts
+
+// Constants
+// const template = {
+//   'Tier 1': {
+//     color: 'str',
+//     short: 'str',
+//     def: 'str',
+//     parts: {
+//       'Tier 2': {
+//         color: 'str',
+//         short: 'str',
+//         def: 'str',
+//       },
+//     }
+//   },
+// }
+
+const CRITERIA = {
+  'Magnitude & Probability of Impact': {
+    color: '#4f81bd',
+    short: 'Impact',
+  },
+  'Level of Influence': {
+    color: '#c0504d',
+    short: 'Influence',
+  },
+  'Level of Interest': {
+    color: '#9bbb59',
+    short: 'Interest',
+  },
+  'Urgency & Temporal Immediacy': {
+    color: '#8064a2',
+    short: 'Urgency',
+  },
+  'Proximity': {
+    color: '#4bacc6',
+  },
+  'Economic Interest': {
+    color: '#f79646',
+    short: 'Economic',
+  },
+  'Rights': {
+    color: '#2c4d75',
+  },
+  'Fairness': {
+    color: '#772c2a',
+  },
+  'Underrepresented & Underserved Representation': {
+    color: '#5f7530',
+    short: 'Underrepresented',
+  },
+}
+
+const BENEFICIARIES = { // TODO build table dynamically with defs from here
+  'Agricultural': {
+    color: '#663300',
+    parts: {
+      'Livestock Grazers': {
+        def: '',
+      },
+      'Agricultural Processors': {
+        def: '',
+      },
+      'Aquaculturalists': {
+        def: '',
+      },
+      'Farmers': {
+        def: '',
+      },
+      'Foresters': {
+        def: '',
+      },
+    },
+  },
+  'Commercial / Industrial': {
+    color: '#0000CC',
+    parts: {
+      'Food Extractors': {
+        def: '',
+      },
+      'Timber / Fiber / Ornamental Extractors': {
+        def: '',
+      },
+      'Industrial Processors': {
+        def: '',
+      },
+      'Energy Generators': {
+        def: '',
+      },
+      'Pharmaceutical / Food Supplement Suppliers': {
+        def: '',
+      },
+      'Fur / Hide Trappers / Hunters': {
+        def: '',
+      },
+      'Commercial Property Owners': {
+        def: '',
+      },
+      'Private Drinking Water Plant Operators': {
+        def: '',
+      },
+    },
+  },
+  'Governmental / Municipal / Residential': {
+    color: '#660066',
+    parts: {
+      'Municipal Drinking Water Plant Operators': {
+        def: '',
+      },
+      'Public Energy Generators': {
+        def: '',
+      },
+      'Residential Property Owners': {
+        def: '',
+      },
+      'Military / Coast Guard': {
+        def: '',
+      },
+    },
+  },
+  'Transportation': {
+    color: '#FF0000',
+    parts: {
+      'Transporters of Goods': {
+        def: '',
+      },
+      'Transporters of People': {
+        def: '',
+      },
+    },
+  },
+  'Subsistence': {
+    color: '#FFFF66',
+    parts: {
+      'Water Subsisters': {
+        def: '',
+      },
+      'Food and Medicinal Subsisters': {
+        def: '',
+      },
+      'Timber / Fiber / Ornamental Subsisters': {
+        def: '',
+      },
+      'Building Material Subsisters': {
+        def: '',
+      },
+    },
+  },
+  'Recreational': {
+    color: '#00FFFF',
+    parts: {
+      'Experiencers / Viewers': {
+        def: '',
+      },
+      'Food Pickers / Gatherers': {
+        def: '',
+      },
+      'Hunters': {
+        def: '',
+      },
+      'Anglers': {
+        def: '',
+      },
+      'Waders / Swimmers / Divers': {
+        def: '',
+      },
+      'Boaters': {
+        def: '',
+      },
+    },
+  },
+  'Inspirational': {
+    color: '#70AD47',
+    parts: {
+      'Spiritual and Ceremonial Participants': {
+        def: '',
+      },
+      'Artists': {
+        def: '',
+      },
+    },
+  },
+  'Learning': {
+    color: '#FF9900',
+    parts: {
+      'Students and Educators': {
+        def: '',
+      },
+      'Researchers': {
+        def: '',
+      },
+    },
+  },
+  'Non-Use': {
+    color: '#B2B2B2',
+    parts: {
+      'People Who Care': {
+        def: '',
+      },
+    },
+  },
+}
+
+const ATTRIBUTES = { // TODO build table dynamically with defs from here
+  'Water': {
+    color: '#1F77B4',
+    parts: {
+      'Water Quality': {
+        def: '',
+      },
+      'Water Quantity': {
+        def: '',
+      },
+      'Water Movement': {
+        def: '',
+      },
+    },
+  },
+  'Air & Weather': {
+    color: '#33AAFF',
+    parts: {
+      'Air Quality': {
+        def: '',
+      },
+      'Wind Strength / Speed': {
+        def: '',
+      },
+      'Precipitation': {
+        def: '',
+      },
+      'Sunlight': {
+        def: '',
+      },
+      'Temperature': {
+        def: '',
+      },
+    },
+  },
+  'Soil & Substrate': {
+    color: '#775544',
+    parts: {
+      'Soil Quantity': {
+        def: '',
+      },
+      'Soil Quality': {
+        def: '',
+      },
+      'Substrate Quantity': {
+        def: '',
+      },
+      'Substrate Quality': {
+        def: '',
+      },
+    },
+  },
+  'Natural Materials': {
+    color: '#D62728',
+    parts: {
+      'Fuel Quality': {
+        def: '',
+      },
+      'Fuel Quantity': {
+        def: '',
+      },
+      'Fiber Material Quantity': {
+        def: '',
+      },
+      'Fiber Material Quality': {
+        def: '',
+      },
+      'Mineral / Chemical Quantity': {
+        def: '',
+      },
+      'Mineral / Chemical Quality': {
+        def: '',
+      },
+      'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)': {
+        short: 'Other Natural Materials',
+        def: '',
+      },
+    },
+  },
+  'Flora': {
+    color: '#2CA02C',
+    parts: {
+      'Flora Community': {
+        def: '',
+      },
+      'Edible Flora': {
+        def: '',
+      },
+      'Medicinal Flora': {
+        def: '',
+      },
+      'Keystone Flora': {
+        def: '',
+      },
+      'Charismatic Flora': {
+        def: '',
+      },
+      'Rare Flora': {
+        def: '',
+      },
+      'Commercially Important Flora': {
+        def: '',
+      },
+      'Spiritually / Culturally Important Flora': {
+        def: '',
+      },
+    },
+  },
+  'Fungi': {
+    color: '#9467BD',
+    parts: {
+      'Fungal Community': {
+        def: '',
+      },
+      'Edible Fungi': {
+        def: '',
+      },
+      'Medicinal Fungi': {
+        def: '',
+      },
+      'Rare Fungi': {
+        def: '',
+      },
+      'Commercially Important Fungi': {
+        def: '',
+      },
+      'Spiritually / Culturally Important Fungi': {
+        def: '',
+      },
+    },
+  },
+  'Fauna': {
+    color: '#E377C2',
+    parts: {
+      'Fauna Community': {
+        def: '',
+      },
+      'Edible Fauna': {
+        def: '',
+      },
+      'Medicinal Fauna': {
+        def: '',
+      },
+      'Keystone Fauna': {
+        def: '',
+      },
+      'Charismatic Fauna': {
+        def: '',
+      },
+      'Rare Fauna': {
+        def: '',
+      },
+      'Pollinating Fauna': {
+        def: '',
+      },
+      'Pest Predator / Depredator Fauna': {
+        def: '',
+      },
+      'Commercially Important Fauna': {
+        def: '',
+      },
+      'Spiritually / Culturally Important Fauna': {
+        def: '',
+      },
+    },
+  },
+  'Extreme Events': {
+    color: '#BCBD22',
+    parts: {
+      'Risk of Flooding': {
+        short: 'Flooding',
+        def: '',
+      },
+      'Risk of Fire': {
+        short: 'Fire',
+        def: '',
+      },
+      'Risk of Extreme Weather Events': {
+        short: 'Extreme Weather',
+        def: '',
+      },
+      'Risk of Earthquakes': {
+        short: 'Earthquakes',
+        def: '',
+      },
+    },
+  },
+  'Composite': {
+    color: '#7F7F7F',
+    parts: {
+      'Sounds': {
+        def: '',
+      },
+      'Scents': {
+        def: '',
+      },
+      'Viewscapes': {
+        def: '',
+      },
+      'Phenomena (e.g. Sunsets, Northern Lights, etc)': {
+        short: 'Phenomena',
+        def: '',
+      },
+      'Ecological Condition': {
+        def: '',
+      },
+      'Acreage': {
+        def: '',
+      },
+    },
+  },
+}
+
 
 // Rounding function used in the application
 const round = function round(number, precision) {
@@ -61,6 +481,17 @@ const fontLabel = '14px sans-serif'
 const fontLegend = '14px sans-serif'
 
 // Set the colors used in d3 visualizations
+const criteriaColorMap = {
+  'Magnitude & Probability of Impact': '#4f81bd',
+  'Level of Influence': '#c0504d',
+  'Level of Interest': '#9bbb59',
+  'Urgency & Temporal Immediacy': '#8064a2',
+  'Proximity': '#4bacc6',
+  'Economic Interest': '#f79646',
+  'Rights': '#2c4d75',
+  'Fairness': '#772c2a',
+  'Underrepresented & Underserved Representation': '#5f7530',
+}
 const criteriaColors = [
   '#4f81bd',
   '#c0504d',
@@ -70,7 +501,7 @@ const criteriaColors = [
   '#f79646',
   '#2c4d75',
   '#772c2a',
-  '#5f7530'
+  '#5f7530',
 ];
 const beneficiaryColors = [
   '#DDD9C3',
@@ -124,22 +555,6 @@ const beneTier1Colors = [
   '#b2b2b2'
 ];
 
-/**
- * Get the data for the global scores and return them in a JSON object.
- * @function
- * @return {object} - A JSON object containing the criteria and their scores.
- */
-const getScores = function getScores() {
-  const data = [];
-  Object.entries(fegsScopingData.scores).forEach(row => {
-    data.push({
-      label: row[0],
-      value: row[1]
-    });
-  });
-  return data;
-};
-
 /** sum all values in an object */
 const sum = function sum(obj) {
   let total = 0;
@@ -168,112 +583,225 @@ const formatStakeholderData = function formatStakeholderData() {
   return data;
 };
 
-/** pie chart - used for all pie charts in the app */
-const initPieChart = { // TODO add labels, but whole chart system needs a rework...
-  draw(config) {
-    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
-      element.parentNode.removeChild(element);
-    });
-
-    const domEle = config.element;
-    let { data } = config;
-    const { colors } = config;
-    const width = 310;
-    const height = 485;
-    const radius = Math.min(width, height) / 2;
-
-    const color = d3.scaleOrdinal(colors); // Set the colors
-
-    const pie = d3.pie().value(d => {
-      const keyName = d.label
-        .replace(/\s*([/])\s*/g, '$1')
-        .replace(/[&,()]/g, '')
-        .replace(/\s+|[/]/g, '-')
-        .toLowerCase();
-      const element = document.querySelector(`.key.${keyName}`);
-      if (element) {
-        if (d.value !== 0) {
-          document.querySelector(`.key.${keyName}`).parentElement.removeAttribute('hidden');
-        } else {
-          document.querySelector(`.key.${keyName}`).parentElement.setAttribute('hidden', '');
-        }
-      }
-      return d.value;
-    })(data);
-
-    const tip = d3
-      .tip()
-      .attr('class', `d3-tip ${config.element}`)
-      .offset([50, 0])
-      .html(d => {
-        const index = fegsScopingData.criteria.indexOf(d.data.label);
-        let { label } = d.data;
-        if (index >= 0) {
-          label = fegsScopingData.fegsCriteria[index];
-        }
-        return `${label}: ${round(d.data.value, 1)}`;
-      });
-
-    const arc = d3
-      .arc()
-      .outerRadius(radius - 10)
-      .innerRadius(0);
-
-    const container = d3.select(`#${domEle}`);
-
-    d3.selectAll(`#${domEle} > *`).remove();
-
-    Object.values(pie).forEach(prop => {
-      if (prop.value) {
-        const element = document.getElementById(domEle);
-        if (element) {
-          element.removeAttribute('hidden');
-        }
-        // break;
-      }
-    });
-
-    const svg = container
-      .append('div')
-      .classed('svg-container', true) // container class to make it responsive
-      .append('svg')
-      .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', `0 0 ${width} ${width}`)
-      .classed('svg-content-responsive', true)
-      .attr('width', width)
-      .attr('height', height);
-
-    const g = svg.append('g').attr('transform', `translate(${width / 2}, ${height / 2})`); // Moving the center point. 1/2 the width and 1/2 the height
-
-    g.call(tip);
-
-    const arcg = g
-      .selectAll('arc')
-      .data(pie)
-      .enter()
-      .append('g')
-      .attr('class', 'arc');
-
-    arcg
-      .append('path')
-      .attr('d', arc)
-      .style('fill', d => {
-        return color(d.index);
-      })
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide)
-      .each(function storeAngles(d) {
-        this._current = d;
-      }); // store the initial angles
-    function arcTween(a) {
-      const i = d3.interpolate(this._current, a);
-      this._current = i(0);
-      return function innerArcTween(t) {
-        return arc(i(t));
-      };
-    }
+class PieChart {
+  constructor(config) {
+    this.node =      config.node // DOM node to attach svg
+    this.colorMap =  config.colorMap // map: label -> color
+    this.width =     config.width || 800 // svg width
+    this.ratio =     config.heightRatio || 0.3 // height = width * ratio (smaller number means less height)
+    this.duration =  config.duration || 1000 // animation time (ms)
+    this.font =      config.fontLabel || fontLabel || '14px sans-serif'
+    this.doLabels =  config.doLabels || true
+    this.doPercent = config.doPercent || true
+    this.show()
+    this.init()
+    this.resize(this.width)
   }
-};
+  
+  init() {
+    this.svg = d3.select(this.node)
+      .append('svg')
+      .append('g')
+
+    this.svg.append('g').attr('class', 'lines') // lines first so they don't cover piechart
+    this.svg.append('g').attr('class', 'slices')
+    this.svg.append('g').attr('class', 'labels')
+    
+    this.pie = d3.pie()
+      .sort(null)
+      .value(d => d.value)
+
+    this.arc = d3.arc()
+      .startAngle(d => d.startAngle - Math.PI/2)
+      .endAngle(d => d.endAngle - Math.PI/2)
+    
+    this.outerArc = d3.arc()
+      .startAngle(d => d.startAngle - Math.PI/2)
+      .endAngle(d => d.endAngle - Math.PI/2)
+
+    this.color = d3.scaleOrdinal()
+      .domain(Object.keys(this.colorMap))
+      .range(Object.values(this.colorMap))
+  }
+
+  resize(width) { // resize to desired total width
+    this.width = Math.max(width, 300) // minimum width
+    this.height = this.width*this.ratio
+    this.radius = this.height/2
+    
+    d3.select(this.svg.node().parentNode) // actual svg element
+      .attr('width', this.width)
+      .attr('height', this.height)
+
+    this.svg // g element
+      .attr('transform', `translate(${this.width/2},${this.height/2})`);
+
+    this.arc
+      .outerRadius(this.radius * 0.8)
+      .innerRadius(0)
+
+    this.outerArc
+      .innerRadius(this.radius * 0.9)
+      .outerRadius(this.radius * 0.9)
+
+    this.update()
+  }
+
+  update(data=null) { // data: [{ label: str, value: num }, ...]
+    if (data) {
+      data.sort((a, b) => a.value - b.value) // slices in order by size
+      this.data = data
+    } else {
+      data = this.data || [] // calling update for redraw
+    }
+
+    const mergeWithFirstEqualZero = (first, second) => {
+      const secondSet = d3.set()
+      second.forEach(d => secondSet.add(d.label))
+      const onlyFirst = first
+        .filter(d => !secondSet.has(d.label))
+        .map(d => ({label: d.label, value: 0}));
+      return d3.merge([second, onlyFirst])
+    }
+    const round = (num, decimals) => Math.round(num*10*decimals)/(10*decimals)
+    const percent = (num, total) => (total > 0) ? round((num/total)*100, 1) : 0
+    const percentStr = num => (this.doPercent) ? ` (${percent(num, sum)}%)` : ''
+    const key = d => d.data.label
+    const midAngle = d => (d.startAngle + (d.endAngle - d.startAngle)/2)
+    const rightSide = d => midAngle(d) > Math.PI*0.5 && midAngle(d) < Math.PI*1.5
+
+    const sum = data.reduce((total, item) => total + item.value, 0)
+
+    let data0 = this.svg.select('.slices').selectAll('path.slice')
+      .data().map(d => d.data);
+    if (data0.length == 0) data0 = data;
+    const was = mergeWithFirstEqualZero(data, data0);
+    const is = mergeWithFirstEqualZero(data0, data);
+    
+    const self = this // alias to use inside anonymous functions
+    
+    // SLICE ARCS
+    const slice = this.svg.select('.slices').selectAll('path.slice')
+  
+    slice.data(this.pie(was), key)
+      .enter()
+      .insert('path')
+      .attr('class', 'slice')
+      .style('fill', d => this.colorMap[d.data.key || d.data.label])
+      .each(function (d) {
+        this._current = d;
+      });
+  
+    slice.data(this.pie(is), key)
+      .transition()
+      .duration(this.duration)
+      .attrTween('d', function (d) {
+        const interpolate = d3.interpolate(this._current, d);
+        return (t) => {
+          this._current = interpolate(t);
+          return self.arc(this._current);
+        };
+      });
+  
+    slice.data(this.pie(data), key)
+      .exit()
+      .transition()
+      .delay(this.duration)
+      .duration(0)
+      .remove();
+
+    if (!this.doLabels) return // don't show any labels
+
+    // TEXT LABELS
+    const text = this.svg.select('.labels').selectAll('text')
+  
+    text.data(this.pie(was), key)
+      .enter()
+      .append('text')
+        .style('font', this.font)
+        .attr('dy', '.35em')
+        .style('opacity', 0)
+        .text(key)
+        .each(function (d) {
+          this._current = d;
+        });
+  
+    text.data(this.pie(is), key)
+      .transition()
+      .duration(this.duration)
+      .style('opacity', d => {
+        return d.data.value == 0 ? 0 : 1;
+      })
+      .text(d => `${d.data.label}${percentStr(d.data.value)}`)
+      .attrTween('transform', function (d) {
+        const interpolate = d3.interpolate(this._current, d);
+        return (t) => {
+          const d2 = interpolate(t);
+          this._current = d2;
+          const pos = self.outerArc.centroid(d2);
+          pos[0] = self.radius*(rightSide(d2) ? 1 : -1);
+          return `translate(${pos})`;
+        };
+      })
+      .styleTween('text-anchor', function (d) {
+        const interpolate = d3.interpolate(this._current, d);
+        return (t) => {
+          const d2 = interpolate(t);
+          return rightSide(d2) ? 'start' : 'end';
+        };
+      });
+    
+    text.data(this.pie(data), key)
+      .exit()
+      .transition()
+      .delay(this.duration)
+      .remove();
+  
+  
+    // SLICE TO TEXT POLYLINES
+    const polyline = this.svg.select('.lines').selectAll('polyline')  
+    
+    polyline.data(this.pie(was), key)
+      .enter()
+      .append('polyline')
+        .style('opacity', 0)
+        .attr('stroke', 'black')
+        .attr('stroke-width', '1px')
+        .attr('fill', 'none')
+        .each(function (d) {
+          this._current = d;
+        });
+  
+    polyline.data(this.pie(is), key)
+      .transition()
+      .duration(this.duration)
+      .style('opacity', d => (d.data.value == 0) ? 0 : 1)
+      .attrTween('points', function (d) {
+        const interpolate = d3.interpolate(this._current, d);
+        return (t) => {
+          const d2 = interpolate(t);
+          this._current = d2;
+          const y = Math.round(self.outerArc.centroid(d2)[1]) + 0.5 // try to land on pixel to prevent blur
+          const outer = [self.radius*0.95*(rightSide(d2) ? 1 : -1), y] 
+          const bend = [self.outerArc.centroid(d2)[0], y]
+          const inner = self.arc.centroid(d2)
+          return [inner, bend, outer];
+        };			
+      });
+    
+    polyline.data(this.pie(data), key)
+      .exit()
+      .transition()
+      .delay(this.duration)
+      .remove();
+  }
+  hide() {
+    this.node.hidden = true
+  }
+  show() {
+    this.node.hidden = false
+  }
+}
 
 /** stacked bar-chart - used for all stacked barcharts */
 const initStackedBarChart = {
@@ -465,11 +993,105 @@ const initStackedBarChart = {
   }
 };
 
+function criteriaScores(short=true) {
+  const data = [];
+  Object.entries(fegsScopingData.scores).forEach(row => {
+    const label = fegsScopingData.criteriaMap[row[0]]
+    const shortLabel = CRITERIA[label].short // may be undefined
+    data.push({
+      key: label, // used for colorMap
+      label: (short && shortLabel) ? shortLabel : label,
+      value: parseFloat(row[1]),
+    });
+  });
+  return data;
+};
+
+function updateAllCharts() {
+  updateCriteriaPieChart()
+  updateStakeholderPieChart()
+  updateBeneficiaryPieChart()
+  updateAttributePieChart()
+
+  // TODO bar charts refactor ...
+  stakeholderBarChart()
+  beneficiaryBarChart()
+  attributeBarChart()
+}
+
+const mainWidth = () => document.getElementById('main-content').offsetWidth
+const extractColorMap = obj => {
+  const colorMap = {}
+  Object.keys(obj).forEach(key => colorMap[key] = obj[key].color)
+  return colorMap
+}
+
+// Create or update the criteria pie chart
+function updateCriteriaPieChart() {
+  if (!charts.criteriaPie) {
+    charts.criteriaPie = new PieChart({
+      node: document.getElementById('criteria-piechart'),
+      colorMap: extractColorMap(CRITERIA),
+      width: mainWidth() - 350,
+      heightRatio: 0.55,
+    })
+    window.addEventListener('resize', () => charts.criteriaPie.resize(mainWidth() - 350))
+  }
+  charts.criteriaPie.update(criteriaScores())
+}
+
+// Create or update the stakeholder pie chart
+function updateStakeholderPieChart() {
+  if (!charts.stakeholderPie) {
+    charts.stakeholderPie = new PieChart({
+      node: document.getElementById('stakeholder-piechart'),
+      colorMap: extractColorMap(CRITERIA),
+      width: mainWidth(),
+    })
+    window.addEventListener('resize', () => charts.stakeholderPie.resize(mainWidth()))
+  }
+  charts.stakeholderPie.update(criteriaScores(false)) // same data as criteria pie chart
+}
+
+// Create or update the beneficiary pie chart
+function updateBeneficiaryPieChart() {
+  if (!charts.beneficiaryPie) {
+    charts.beneficiaryPie = new PieChart({
+      node: document.getElementById('beneficiary-piechart'),
+      colorMap: extractColorMap(BENEFICIARIES),
+      width: mainWidth(),
+    })
+    window.addEventListener('resize', () => charts.beneficiaryPie.resize(mainWidth()))
+  }
+  charts.beneficiaryPie.update(getTier1BeneficiaryScoresForPieChart())
+}
+
+// Create or update the attribute pie chart
+function updateAttributePieChart() {
+  if (!charts.attributePie) {
+    charts.attributePie = new PieChart({
+      node: document.getElementById('attribute-piechart'),
+      colorMap: extractColorMap(ATTRIBUTES),
+      width: mainWidth(),
+    })
+    window.addEventListener('resize', () => charts.attributePie.resize(mainWidth()))
+  }
+  charts.attributePie.update(getTier1AttributeScoresForPieChart())
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * TODO
+ * refactor categories, tiers, colors, definitions
+ * dynamic width of pie charts
+ * test everything
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // Draw or update the stakeholder bar chart
-function stakeholderBarchart() {
+function stakeholderBarChart() {
   initStackedBarChart.draw({
     data: formatStakeholderData(),
     key: fegsScopingData.criteria,
+    legend: fegsScopingData.fegsCriteria,
     element: 'stakeholder-barchart',
     header: 'stakeholder',
     colors: criteriaColors
@@ -520,7 +1142,7 @@ function formatAttributeData() {
 }
 
 // Create or update the beneficiary bar chart
-const beneficiaryBarchart = function beneficiaryBarchart() {
+const beneficiaryBarChart = function beneficiaryBarChart() {
   initStackedBarChart.draw({
     data: formatBeneficiaryData(),
     key: Object.keys(fegsScopingData.stakeholders),
@@ -565,20 +1187,10 @@ function getBeneficiaryScoresForPieChart() {
   return data;
 }
 
-// Draw or update the beneficiary bar chart
-function beneficiaryPiechart() {
-  initPieChart.draw({
-    data: getTier1BeneficiaryScoresForPieChart(),
-    colors: beneTier1Colors,
-    element: 'beneficiary-piechart',
-    legend: [...new Set(Object.values(fegsScopingData.fegsBeneficiariesTier1))]
-  });
-}
-
 // Updates the beneficiary section charts
-const updateBeneficiaryView = function updateBeneficiaryView() {
-  beneficiaryBarchart();
-  beneficiaryPiechart();
+function updateBeneficiaryView() {
+  beneficiaryBarChart();
+  updateBeneficiaryPieChart();
 };
 
 /** Add an option to an HTML select menu. Provide the text and the value. */
@@ -753,7 +1365,7 @@ function attributeBarChartBeneficiaries() {
  * Creates or updates the attribute pie chart
  * @function
  */
-function attributeBarchart() {
+function attributeBarChart() {
   initStackedBarChart.draw({
     data: formatAttributeData(),
     key: attributeBarChartBeneficiaries(),
@@ -787,18 +1399,6 @@ function attributeBarchart() {
 }
 
 /**
- * Creates or updates the attribute pie chart with TIER 1 attributes
- * @function
- */
-function attributePiechartTier1() {
-  initPieChart.draw({
-    data: getTier1AttributeScoresForPieChart(), // attribute-pie
-    colors: d3.schemeCategory10,
-    element: 'tier1-attribute-piechart'
-  });
-}
-
-/**
  * Update the attribute section view of the application
  * @function
  */
@@ -808,8 +1408,8 @@ function updateAttributeView() {
   updateSelectBeneficiary('select-beneficiary');
   showSelectedBeneficiary(document.getElementById('select-beneficiary'));
 
-  attributePiechartTier1();
-  attributeBarchart();
+  updateAttributePieChart()
+  attributeBarChart();
 }
 
 /**
@@ -839,43 +1439,6 @@ function updateAttributeProgress() {
   document.getElementById(
     'attributes-progress'
   ).innerHTML = `${completeCount} of ${beneficiaryCount} beneficiaries completed`;
-}
-
-/**
- * Creates or updates the criteria pie chart
- * @function
- */
-function criteriaPiechart() {
-  const config = (elementId) => ({
-    data: getScores(), // Get the score data
-    colors: criteriaColors,
-    element: elementId,
-  })
-
-  initPieChart.draw(config('criteria-piechart'))
-  initPieChart.draw(config('stakeholder-piechart'))
-
-  d3.selectAll('.scoring input').on('input', function criteriaPieInput() {
-    clearNotices();
-    const inputs = document.querySelectorAll('.scoring input');
-    for (let input of inputs) {
-      const isValid = validateInput(input.value, 0, 100);
-      if (isValid) {
-        input.classList.remove('invalid-text-input');
-        fegsScopingData.scores[input.id.replace('-score', '')] = input.value;
-      } else if (this === input) { // selected
-        input.classList.add('invalid-text-input');
-        accessiblyNotify('Enter a number between 0 and 100');
-      }
-    }
-
-    initPieChart.draw(config('criteria-piechart'))
-    initPieChart.draw(config('stakeholder-piechart'))
-    stakeholderBarchart();
-
-    updateWeightingProgress();
-    fegsScopingView.indicateUnsaved();
-  });
 }
 
 /**
@@ -955,7 +1518,51 @@ document.addEventListener('keydown', zEvent => {
 });
 
 /** Prototype data-model and its CRUD-methods. */
-const FEGSScopingData = function FEGSScopingData() {
+const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attributes) {
+  // constructor()...
+  
+  this.criteria = [ // TODO refactor to stop using this stupid thing
+    'magnitude',
+    'influence',
+    'interest',
+    'urgency',
+    'proximity',
+    'economic-interest',
+    'rights',
+    'fairness',
+    'representation'
+  ]; // [oldname, ...]
+  this.fegsCriteria = [] // [newname, ...]
+  this.criteriaMap = {} // { oldname: newname, ... }
+
+  Object.keys(criteria).forEach(key => this.fegsCriteria.push(key))
+  this.criteria.forEach(key => {
+    const search = key.slice(0, 5) // first 5 chars
+    this.criteriaMap[key] = this.fegsCriteria.find(item => item.toLowerCase().includes(search))
+  })
+
+  this.fegsBeneficiaries = [] // [beneficiary, ...]
+  this.fegsBeneficiariesTier1 = {} // {beneficiary: tier, ...}
+
+  Object.entries(beneficiaries).forEach(([key, value]) => {
+    Object.keys(value.parts).forEach(key2 => {
+      this.fegsBeneficiaries.push(key2)
+      this.fegsBeneficiariesTier1[key2] = key
+    })
+  })
+
+  this.tier1 = [] // [tier, ...]
+  this.fegsAttributes = [] // [attribute, ...]
+  this.fegsAttributesTier1 = {} // {attribute: tier, ...}
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    this.tier1.push(key)
+    Object.keys(value.parts).forEach(key2 => {
+      this.fegsAttributes.push(key2)
+      this.fegsAttributesTier1[key2] = key
+    })
+  })
+
   /**
    * This object-factory sets value as specified in arg criteria
    *  else to defaultValue.
@@ -1476,6 +2083,8 @@ const FEGSScopingData = function FEGSScopingData() {
     this.projectDescription = description;
   };
 
+
+  // constructor()...
   this.appName = appTitle;
   this.version = app.getVersion() || '1.0.0';
   this.projectName = 'New Project';
@@ -1487,176 +2096,9 @@ const FEGSScopingData = function FEGSScopingData() {
     attributes: ''
   };
   this.filePath = '';
-  this.criteria = [
-    'magnitude',
-    'influence',
-    'interest',
-    'urgency',
-    'proximity',
-    'economic-interest',
-    'rights',
-    'fairness',
-    'representation'
-  ];
-  this.fegsCriteria = [
-    'Magnitude & Probability of Impact',
-    'Level of influence',
-    'Level of Interest',
-    'Urgency & Temporal immediacy',
-    'Proximity',
-    'Economic interest',
-    'Rights',
-    'Fairness',
-    'Underrepresented & Underserved representation'
-  ];
   this.scores = this.makeCriteriaObject('0');
   this.stakeholders = {};
   this.attributes = {};
-  this.attributeDefs = { // {tier1: {attribute: def, ...}, ...}
-    'Water': {
-      'Water Quality': '',
-      'Water Quantity': '',
-      'Water Movement': '',
-    },
-    'Air & Weather': {
-      'Air Quality': '',
-      'Wind Strength / Speed': '',
-      'Precipitation': '',
-      'Sunlight': '',
-      'Temperature': '',
-    },
-    'Soil & Substrate': {
-      'Soil Quantity': '',
-      'Soil Quality': '',
-      'Substrate Quantity': '',
-      'Substrate Quality': '',
-    },
-    'Natural Materials': {
-      'Fuel Quality': '',
-      'Fuel Quantity': '',
-      'Fiber Material Quantity': '',
-      'Fiber Material Quality': '',
-      'Mineral / Chemical Quantity': '',
-      'Mineral / Chemical Quality': '',
-      'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)': '',
-    },
-    'Flora': {
-      'Flora Community': '',
-      'Edible Flora': '',
-      'Medicinal Flora': '',
-      'Keystone Flora': '',
-      'Charismatic Flora': '',
-      'Rare Flora': '',
-      'Commercially Important Flora': '',
-      'Spiritually / Culturally Important Flora': '',
-    },
-    'Fungi': {
-      'Fungal Community': '',
-      'Edible Fungi': '',
-      'Medicinal Fungi': '',
-      'Rare Fungi': '',
-      'Commercially Important Fungi': '',
-      'Spiritually / Culturally Important Fungi': '',
-    },
-    'Fauna': {
-      'Fauna Community': '',
-      'Edible Fauna': '',
-      'Medicinal Fauna': '',
-      'Keystone Fauna': '',
-      'Charismatic Fauna': '',
-      'Rare Fauna': '',
-      'Pollinating Fauna': '',
-      'Pest Predator / Depredator Fauna': '',
-      'Commercially Important Fauna': '',
-      'Spiritually / Culturally Important Fauna': '',
-    },
-    'Extreme Events': {
-      'Risk of Flooding': '',
-      'Risk of Fire': '',
-      'Risk of Extreme Weather Events': '',
-      'Risk of Earthquakes': '',
-    },
-    'Composite': {
-      'Sounds': '',
-      'Scents': '',
-      'Viewscapes': '',
-      'Phenomena (e.g. Sunsets, Northern Lights, etc)': '',
-      'Ecological Condition': '',
-      'Acreage': '',
-    },
-  }
-  this.tier1 = [] // [tier, ...]
-  this.fegsAttributes = [] // [attribute, ...]
-  this.fegsAttributesTier1 = {} // {attribute: tier, ...}
-  for (let tier1 in this.attributeDefs) {
-    this.tier1.push(tier1)
-    for (let attribute in this.attributeDefs[tier1]) {
-      this.fegsAttributes.push(attribute)
-      this.fegsAttributesTier1[attribute] = tier1
-    }
-  }
-  this.beneficiaryDefs = { // {tier1: {beneficiary: def, ...}, ...}
-    'Agricultural': {
-      'Livestock Grazers': '',
-      'Agricultural Processors': '',
-      'Aquaculturalists': '',
-      'Farmers': '',
-      'Foresters': '',
-    },
-    'Commercial / Industrial': {
-      'Food Extractors': '',
-      'Timber / Fiber / Ornamental Extractors': '',
-      'Industrial Processors': '',
-      'Energy Generators': '',
-      'Pharmaceutical / Food Supplement Suppliers': '',
-      'Fur / Hide Trappers / Hunters': '',
-      'Commercial Property Owners': '',
-      'Private Drinking Water Plant Operators': '',
-    },
-    'Governmental / Municipal / Residential': {
-      'Municipal Drinking Water Plant Operators': '',
-      'Public Energy Generators': '',
-      'Residential Property Owners': '',
-      'Military / Coast Guard': '',
-    },
-    'Transportation': {
-      'Transporters of Goods': '',
-      'Transporters of People': '',
-    },
-    'Subsistence': {
-      'Water Subsisters': '',
-      'Food and Medicinal Subsisters': '',
-      'Timber / Fiber / Ornamental Subsisters': '',
-      'Building Material Subsisters': '',
-    },
-    'Recreational': {
-      'Experiencers / Viewers': '',
-      'Food Pickers / Gatherers': '',
-      'Hunters': '',
-      'Anglers': '',
-      'Waders / Swimmers / Divers': '',
-      'Boaters': '',
-    },
-    'Inspirational': {
-      'Spiritual and Ceremonial Participants': '',
-      'Artists': '',
-    },
-    'Learning': {
-      'Students and Educators': '',
-      'Researchers': '',
-    },
-    'Non-Use': {
-      'People Who Care': '',
-    },
-  }
-  this.fegsBeneficiaries = [] // [beneficiary, ...]
-  this.fegsBeneficiariesTier1 = {} // {beneficiary: tier, ...}
-  for (let tier1 in this.beneficiaryDefs) {
-    for (let beneficiary in this.beneficiaryDefs[tier1]) {
-      this.fegsBeneficiaries.push(beneficiary)
-      this.fegsBeneficiariesTier1[beneficiary] = tier1
-    }
-  }
 }; // END PROTOTYPE FEGScopingData
 
 /** Prototype controller of communication between data and view */
@@ -1894,12 +2336,8 @@ const FEGSScopingView = function FEGSScopingView() {
     });
 
     // Run d3 chart functions
-    criteriaPiechart();
     document.getElementById('beneficiary-charts').removeAttribute('hidden');
-    beneficiaryBarchart();
-    beneficiaryPiechart();
-    attributePiechartTier1();
-    attributeBarchart();
+    updateAllCharts()    
 
     // Display table data
     fegsScopingView.showStakeholderScores();
@@ -2076,7 +2514,7 @@ const FEGSScopingView = function FEGSScopingView() {
     document.getElementById('stakeholder-list').style.display = 'none';
     clearStakeholderScores();
 
-    stakeholderBarchart();
+    stakeholderBarChart();
 
     updateSelectStakeholder('select-stakeholder');
     const event = new Event('change');
@@ -2517,8 +2955,8 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
       }
     }
     updateAttributeProgress();
-    attributePiechartTier1();
-    attributeBarchart();
+    updateAttributePieChart();
+    attributeBarChart();
   };
 
   for (let i = 0; i < rowNames.length; i += 1) {
@@ -2590,8 +3028,10 @@ const updateSelectStakeholder = selectId => {
   selectStakeholderToSlice();
 };
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // Declare Data, View, and Controller.
-fegsScopingData = new FEGSScopingData();
+fegsScopingData = new FEGSScopingData(CRITERIA, BENEFICIARIES, ATTRIBUTES); // TODO refactor into ES6 object
 fegsScopingView = new FEGSScopingView();
 fegsScopingController = new FEGSScopingController();
 
@@ -2606,6 +3046,9 @@ updateStakeholderProgress();
 updateWeightingProgress();
 updateBeneficiaryProgress();
 updateAttributeProgress();
+
+// Create charts
+updateAllCharts()
 
 /**
  * Update page zoom level
@@ -2742,9 +3185,9 @@ const APP = (function APP() {
 })();
 
 APP.onResize(() => {
-  stakeholderBarchart();
-  beneficiaryBarchart();
-  attributeBarchart();
+  stakeholderBarChart();
+  beneficiaryBarChart();
+  attributeBarChart();
 });
 
 /**
@@ -2906,7 +3349,7 @@ function addStakeholderScores() {
   document.getElementById('set-stakeholder-values').style.display = 'none';
   document.getElementById('stakeholder-list').style.display = 'none';
   clearStakeholderScores();
-  stakeholderBarchart();
+  stakeholderBarChart();
   updateSelectStakeholder('select-stakeholder');
   const event = new Event('input');
   document.getElementById('select-stakeholder').dispatchEvent(event);
@@ -3075,7 +3518,7 @@ function addRow(tableID, rowData) {
     fegsScopingData.removeStakeholders([stakeholder]);
     this.parentNode.parentNode.remove();
     removeOptionFromSelect('select-stakeholder', stakeholder);
-    stakeholderBarchart();
+    stakeholderBarChart();
     const stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
     if (stakeholderCount === 0) {
       document.getElementById('stakeholder-table-container').style.display = 'none';
@@ -3175,7 +3618,7 @@ function addRow(tableID, rowData) {
 
     fegsScopingData.stakeholders[newStakeholderName].scores = scores;
     updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
-    stakeholderBarchart();
+    stakeholderBarChart();
     updateBeneficiaryView();
     updateAttributeView();
   });
@@ -3404,14 +3847,6 @@ function toggleTableDefinitions(event, tableID) {
       element.classList.add('display-none');
     }
   }
-}
-
-function attributePiechart() {
-  initPieChart.draw({
-    data: getAttributeScoresForPieChart(), // attribute-pie
-    colors: d3.schemeSet3,
-    element: 'attribute-piechart'
-  });
 }
 
 /**
@@ -3743,7 +4178,6 @@ function downloadChart(svg, name='Chart') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  criteriaPiechart();
   if (document.body.getAttribute('data-restore') === 'true') {
     fegsScopingController.importData();
   }
@@ -3813,35 +4247,53 @@ document.addEventListener('DOMContentLoaded', () => {
     beneficiaryPercentageOfStakeholderInputValidator() // refresh eveything else
   })
 
+  const child = id => document.getElementById(id).firstChild // div id -> svg node
+
   document.getElementById('download-stakeholder-barchart').addEventListener('click', () => {
-    const svg = document.getElementById('stakeholder-barchart').firstChild
-    downloadChart(svg, 'Stakeholder Prioritization')
+    downloadChart(child('stakeholder-barchart'), 'Stakeholder Prioritization')
   })
 
   document.getElementById('download-stakeholder-piechart').addEventListener('click', () => {
-    const svg = document.getElementById('stakeholder-piechart').firstChild.firstChild
-    downloadChart(svg, 'Prioritization Criteria Relative Weights')
+    downloadChart(child('stakeholder-piechart'), 'Prioritization Criteria Relative Weights')
   })
 
   document.getElementById('download-beneficiary-barchart').addEventListener('click', () => {
-    const svg = document.getElementById('beneficiary-barchart').firstChild
-    downloadChart(svg, 'Beneficiary Prioritization')
+    downloadChart(child('beneficiary-barchart'), 'Beneficiary Prioritization')
   })
 
   document.getElementById('download-beneficiary-piechart').addEventListener('click', () => {
-    const svg = document.getElementById('beneficiary-piechart').firstChild.firstChild
-    downloadChart(svg, 'Beneficiary Profile')
+    downloadChart(child('beneficiary-piechart'), 'Beneficiary Profile')
   })
 
   document.getElementById('download-attribute-barchart').addEventListener('click', () => {
-    const svg = document.getElementById('attribute-barchart').firstChild
-    downloadChart(svg, 'Environmental Attribute Prioritization')
+    downloadChart(child('attribute-barchart'), 'Environmental Attribute Prioritization')
   })
 
   document.getElementById('download-attribute-piechart').addEventListener('click', () => {
-    const svg = document.getElementById('tier1-attribute-piechart').firstChild.firstChild
-    downloadChart(svg, 'Environmental Attributes Relative Priority')
+    downloadChart(child('attribute-piechart'), 'Environmental Attributes Relative Priority')
   })
+
+  document.querySelectorAll('.scoring input').forEach(ele => {
+    ele.addEventListener('input', event => {
+      clearNotices();
+      const inputs = document.querySelectorAll('.scoring input');
+      for (let input of inputs) {
+        const isValid = validateInput(input.value, 0, 100);
+        if (isValid) {
+          input.classList.remove('invalid-text-input');
+          fegsScopingData.scores[input.id.replace('-score', '')] = input.value;
+        } else if (event === input) { // selected
+          input.classList.add('invalid-text-input');
+          accessiblyNotify('Enter a number between 0 and 100');
+        }
+      }
+      updateCriteriaPieChart();
+      updateStakeholderPieChart();
+      stakeholderBarChart();
+      updateWeightingProgress();
+      fegsScopingView.indicateUnsaved();
+    });
+  });
 
   document.querySelectorAll('.add-note-btn').forEach(ele => {
     ele.addEventListener('click', event => {
