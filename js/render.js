@@ -480,81 +480,6 @@ const accessiblyNotify = function accessiblyNotify(text) {
 const fontLabel = '14px sans-serif'
 const fontLegend = '14px sans-serif'
 
-// Set the colors used in d3 visualizations
-const criteriaColorMap = {
-  'Magnitude & Probability of Impact': '#4f81bd',
-  'Level of Influence': '#c0504d',
-  'Level of Interest': '#9bbb59',
-  'Urgency & Temporal Immediacy': '#8064a2',
-  'Proximity': '#4bacc6',
-  'Economic Interest': '#f79646',
-  'Rights': '#2c4d75',
-  'Fairness': '#772c2a',
-  'Underrepresented & Underserved Representation': '#5f7530',
-}
-const criteriaColors = [
-  '#4f81bd',
-  '#c0504d',
-  '#9bbb59',
-  '#8064a2',
-  '#4bacc6',
-  '#f79646',
-  '#2c4d75',
-  '#772c2a',
-  '#5f7530',
-];
-const beneficiaryColors = [
-  '#DDD9C3',
-  '#C4BD97',
-  '#948A54',
-  '#948A54',
-  '#4A452A',
-  '#1E1C11',
-  '#050503',
-  '#DCE6F2',
-  '#C6D9F1',
-  '#8EB4E3',
-  '#558ED5',
-  '#376092',
-  '#1F497D',
-  '#254061',
-  '#10253F',
-  '#CCC1DA',
-  '#B3A2C7',
-  '#604A7B',
-  '#403152',
-  '#D99694',
-  '#953735',
-  '#F9FDD1',
-  '#F9F383',
-  '#F5F018',
-  '#FFFF00',
-  '#DBEEF4',
-  '#B7DEE8',
-  '#93CDDD',
-  '#4BACC6',
-  '#31859C',
-  '#215968',
-  '#C3D69B',
-  '#77933C',
-  '#FAC090',
-  '#E46C0A',
-  '#D9D9D9',
-  '#A6A6A6'
-];
-
-const beneTier1Colors = [
-  '#663300',
-  '#0000cc',
-  '#660066',
-  '#ff0000',
-  '#ffff66',
-  '#00ffff',
-  '#70ad47',
-  '#ff9900',
-  '#b2b2b2'
-];
-
 /** sum all values in an object */
 const sum = function sum(obj) {
   let total = 0;
@@ -1094,7 +1019,17 @@ function stakeholderBarChart() {
     legend: fegsScopingData.fegsCriteria,
     element: 'stakeholder-barchart',
     header: 'stakeholder',
-    colors: criteriaColors
+    colors: [
+      '#4f81bd',
+      '#c0504d',
+      '#9bbb59',
+      '#8064a2',
+      '#4bacc6',
+      '#f79646',
+      '#2c4d75',
+      '#772c2a',
+      '#5f7530',
+    ]
   });
 }
 
