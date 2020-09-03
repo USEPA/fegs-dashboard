@@ -16,12 +16,12 @@ body {
 
 th {
   background-color: #f1f3f4;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
   font-weight: 500;
 }
 
 td {
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
 }
 
 section {
@@ -30,6 +30,26 @@ section {
 
 body {
   line-height: 1;
+}
+
+svg * {
+  transition: none; /* managed with d3 */
+}
+
+hr {
+  margin: 2rem 0 1rem 0;
+}
+
+.wrapper {
+  padding-bottom: 5rem; /* signify end of page with extra space */
+  position: relative;
+  background-color: #fff;
+}
+
+.wrapper > .inner {
+  width: 75em;
+  max-width: 100%;
+  padding: 1em 0em 0em 1em;
 }
 
 @media screen and (max-width: 1680px) {
@@ -42,39 +62,14 @@ body {
   body {
     font-size: 12pt;
   }
+  .wrapper > .inner {
+    padding: 0.5em 0em 0em 0.5em;
+  }
 }
 
 @media screen and (max-width: 360px) {
   body {
     font-size: 11pt;
-  }
-}
-
-.wrapper {
-  position: relative;
-}
-
-.wrapper > .inner {
-  padding: 5em 5em 3em 5em;
-  max-width: 100%;
-  width: 75em;
-}
-
-@media screen and (max-width: 1680px) {
-  .wrapper > .inner {
-    padding: 4em 4em 2em 4em;
-  }
-}
-
-@media screen and (max-width: 1280px) {
-  .wrapper > .inner {
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 736px) {
-  .wrapper > .inner {
-    padding: 3em 2em 1em 2em;
   }
 }
 
@@ -159,218 +154,6 @@ body {
   background: #f2f2f2;
 }
 
-.agricultural-chart {
-  background: #663300;
-}
-
-.commercial-chart {
-  background: #0000cc;
-}
-
-.governmental-chart {
-  background: #660066;
-}
-
-.transportation-chart {
-  background: #ff0000;
-}
-
-.subsistence-chart {
-  background: #ffff66;
-}
-
-.recreational-chart {
-  background: #00ffff;
-}
-
-.inspirational-chart {
-  background: #70ad47;
-}
-
-.learning-chart {
-  background: #ff9900;
-}
-
-.nonuse-chart {
-  background: #b2b2b2;
-}
-
-.irrigators {
-  background: #ddd9c3;
-}
-
-.cafo-operators {
-  background: #c4bd97;
-}
-
-.livestock-grazers {
-  background: #948a54;
-}
-
-.agricultural-processors {
-  background: #948a54;
-}
-
-.aquaculturalists {
-  background: #4a452a;
-}
-
-.farmers {
-  background: #1e1c11;
-}
-
-.foresters {
-  background: #050503;
-}
-
-.food-extractors {
-  background: #dce6f2;
-}
-
-.timber-fiber-ornamental-extractors {
-  background: #c6d9f1;
-}
-
-.industrial-processors {
-  background: #8eb4e3;
-}
-
-.industrial-dischargers {
-  background: #558ed5;
-}
-
-.energy-generators {
-  background: #376092;
-}
-
-.resource-dependent-businesses {
-  background: #1f497d;
-}
-
-.pharmaceutical-food-supplement-suppliers {
-  background: #254061;
-}
-
-.fur-hide-trappers-hunters {
-  background: #10253f;
-}
-
-.municipal-drinking-water-plant-operators {
-  background: #ccc1da;
-}
-
-.wastewater-treatment-plant-operators {
-  background: #b3a2c7;
-}
-
-.residential-property-owners {
-  background: #604a7b;
-}
-
-.military-coast-guard {
-  background: #403152;
-}
-
-.transporters-of-goods {
-  background: #d99694;
-}
-
-.transporters-of-people {
-  background: #953735;
-}
-
-.water-subsisters {
-  background: #f9fdd1;
-}
-
-.food-subsisters {
-  background: #f9f383;
-}
-
-.timber-fiber-fur-hide-subsisters {
-  background: #f5f018;
-}
-
-.building-material-subsisters {
-  background: #ffff00;
-}
-
-.experiencers-viewers {
-  background: #dbeef4;
-}
-
-.food-pickers-gatherers {
-  background: #b7dee8;
-}
-
-.hunters {
-  background: #93cddd;
-}
-
-.anglers {
-  background: #4bacc6;
-}
-
-.waders-swimmers-divers {
-  background: #31859c;
-}
-
-.boaters {
-  background: #215968;
-}
-
-.spiritual-and-ceremonial-participants {
-  background: #c3d69b;
-}
-
-.artists {
-  background: #77933c;
-}
-
-.students-and-educators {
-  background: #fac090;
-}
-
-.researchers {
-  background: #e46c0a;
-}
-
-.people-who-care-existence {
-  background: #d9d9d9;
-}
-
-.people-who-care-option-bequest {
-  background: #a6a6a6;
-}
-
-.water {
-  background: #1f77b4;
-}
-.air {
-  background: #ff7f0e;
-}
-.soil-substrate {
-  background: #2ca02c;
-}
-.natural-materials {
-  background: #d62728;
-}
-.flora {
-  background: #9467bd;
-}
-.fungi {
-  background: #8c564b;
-}
-.fauna {
-  background: #e377c2;
-}
-.extreme-events {
-  background: #7f7f7f;
-}
-.composite {
-  background: #bcbd22;
-}
-
 .legend {
   border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
@@ -402,7 +185,7 @@ body {
 
 .light-gray {
   background-color: #f1f3f4;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #DDD;
   padding: 1em 1em 1em 1em;
   margin-bottom: 0.4em;
 }
@@ -450,7 +233,7 @@ table input {
 
 table {
   border-collapse: collapse;
-  margin-bottom: 1em;
+  margin-bottom: 3rem;
 }
 
 table th {
@@ -540,17 +323,6 @@ td {
   text-rendering: optimizeLegibility;
 }
 
-.wrapper {
-  background-color: #fff;
-  position: relative;
-}
-
-.wrapper > .inner {
-  max-width: 100%;
-  padding: 0.25em 0em 0em 0.25em;
-  width: 75em;
-}
-
 #sidebar {
   padding: 0.25em 0em 0.5em 0.4em;
   background: #212121;
@@ -597,6 +369,7 @@ td {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
 
 table input {
@@ -779,12 +552,25 @@ input[disabled] {
 /* Chart styles */
 .barchart {
   shape-rendering: crispEdges;
+
+
+/* Chart classes */
+.chart-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
-.axis {
-  font: 14px sans-serif;
+.chart-header h2 {
+  margin-left: calc(6rem + 1rem); /* button width + button margin */
 }
-.chart-legend {
-  font: 14px sans-serif;
+.chart-header button {
+  margin: 0 0 1rem 1rem;
+}
+@media screen and (max-width: 1160px) {
+  .chart-header h2 {
+    margin-left: 0 /* prefer offset title over wrapping title */
+  }
 }
 
 /* Flexbox classes */
@@ -813,3 +599,8 @@ td.icon-cell i {
 }
 
 
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

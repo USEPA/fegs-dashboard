@@ -63,7 +63,7 @@
             of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0
             and 100.</p>
           <p>Once you enter the 9 criteria proceed to the Stakeholder page.</p>
-          <div id="scoring-inputs" class="flex-container">
+          <div id="scoring-inputs" class="flexrow">
             <div>
               <table class="scoring" id="table-scores">
                 <thead>
@@ -163,7 +163,7 @@
                 </tbody>
               </table>
             </div>
-            <div id="criteria-pie" class="criteria-pie" hidden></div>
+            <div id="criteria-piechart" hidden></div>
           </div>
         </div>
         <div class="page" id="section-stakeholders">
@@ -429,55 +429,19 @@
               </tbody>
             </table>
             <div>
-              <div class="flex-container">
-                <h2>Stakeholder Prioritization</h2>
-              </div>
-              <div class="flex-container">
+              <div class="flexcol">
+                <div class="chart-header">
+                  <h2>Stakeholder Prioritization</h2>
+                  <button id="download-stakeholder-barchart" title="Download Chart">Download</button>
+                </div>
                 <div id="stakeholder-barchart"></div>
               </div>
-              <div class="flex-container light-gray">
-                <div>
-                  <span class="key magnitude"></span>
-                  <span>Magnitude & Probability of impact</span>
+              <div class="flexcol">
+                <div class="chart-header">
+                  <h2>Prioritization Criteria Relative Weights</h2>
+                  <button id="download-stakeholder-piechart" title="Download Chart">Download</button>
                 </div>
-                <div>
-                  <span class="key influence"></span>
-                  <span>Level of influence</span>
-                </div>
-                <div>
-                  <span class="key interest"></span>
-                  <span>Level of interest</span>
-                </div>
-                <div>
-                  <span class="key urgency"></span>
-                  <span>Urgency & Temporal immediacy</span>
-                </div>
-                <div>
-                  <span class="key proximity"></span>
-                  <span>Proximity</span>
-                </div>
-                <div>
-                  <span class="key economic-interest"></span>
-                  <span>Economic interest</span>
-                </div>
-                <div>
-                  <span class="key rights"></span>
-                  <span>Rights</span>
-                </div>
-                <div>
-                  <span class="key fairness"></span>
-                  <span>Fairness</span>
-                </div>
-                <div>
-                  <span class="key representation"></span>
-                  <span>Underrepresented & Underserved representation</span>
-                </div>
-              </div>
-              <div class="flex-container">
-                <h2 style="margin-top: 1em">Prioritization Criteria Relative Weights</h2>
-              </div>
-              <div class="flex-container">
-                <div class="criteria-pie"></div>
+                <div id="stakeholder-piechart"></div>
               </div>
             </div>
           </div>
@@ -699,26 +663,17 @@
             </tbody>
           </table>
           <div id="beneficiary-charts" hidden>
-            <div class="flex-container">
-              <h2>Beneficiary Prioritization</h2>
+            <div class="flexcol">
+              <div class="chart-header">
+                <h2>Beneficiary Prioritization</h2>
+                <button id="download-beneficiary-barchart" title="Download Chart">Download</button>
+              </div>
               <div id="beneficiary-barchart"></div>
-            </div>
-            <div class="flex-container">
-              <h2>Beneficiary Profile</h2>
-            </div>
-            <div class="flex-container">
-              <div class="beneficiary-pie"></div>
-            </div>
-            <div class="flex-container light-gray">
-              <div><span class="key agricultural-chart"></span><span>Agricultural</span></div>
-              <div><span class="key commercial-chart"></span><span>Commercial / Industrial</span></div>
-              <div><span class="key governmental-chart"></span><span>Governmental / Municipal / Residential</span></div>
-              <div><span class="key transportation-chart"></span><span>Transportation</span></div>
-              <div><span class="key subsistence-chart"></span><span>Subsistence</span></div>
-              <div><span class="key recreational-chart"></span><span>Recreational</span></div>
-              <div><span class="key inspirational-chart"></span><span>Inspirational</span></div>
-              <div><span class="key learning-chart"></span><span>Learning</span></div>
-              <div><span class="key nonuse-chart"></span><span>Non-Use</span></div>
+              <div class="chart-header">
+                <h2>Beneficiary Profile</h2>
+                <button id="download-beneficiary-piechart" title="Download Chart">Download</button>
+              </div>
+              <div id="beneficiary-piechart"></div>
             </div>
           </div>
         </div>
@@ -2988,50 +2943,17 @@
             </tbody>
           </table>
           <div id="attribute-charts">
-            <div class="flex-container">
-              <h2>Environmental Attribute Prioritization</h2>
+            <div class="flexcol">
+              <div class="chart-header">
+                <h2>Environmental Attribute Prioritization</h2>
+                <button id="download-attribute-barchart" title="Download Chart">Download</button>
+              </div>
               <div id="attribute-barchart"></div>
-              <h2>Environmental Attributes Relative Priority (by Tier 1 category)</h2>
-              <div class="attribute-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
-              <div class="tier1-attribute-pie" style="align-self: center; margin: 0 4em 0 4em;"></div>
-            </div>
-            <div class="flex-container light-gray">
-              <div>
-                <span class="key water"></span>
-                <span>Water</span>
+              <div class="chart-header">
+                <h2>Environmental Attributes Relative Priority</h2>
+                <button id="download-attribute-piechart" title="Download Chart">Download</button>
               </div>
-              <div>
-                <span class="key air"></span>
-                <span>Air & Weather</span>
-              </div>
-              <div>
-                <span class="key soil-substrate"></span>
-                <span>Soil & Substrate</span>
-              </div>
-              <div>
-                <span class="key natural-materials"></span>
-                <span>Natural Materials</span>
-              </div>
-              <div>
-                <span class="key flora"></span>
-                <span>Flora</span>
-              </div>
-              <div>
-                <span class="key fungi"></span>
-                <span>Fungi</span>
-              </div>
-              <div>
-                <span class="key fauna"></span>
-                <span>Fauna</span>
-              </div>
-              <div>
-                <span class="key extreme-events"></span>
-                <span>Extreme Events</span>
-              </div>
-              <div>
-                <span class="key composite"></span>
-                <span>Composite</span>
-              </div>
+              <div id="attribute-piechart"></div>
             </div>
           </div>
         </div>
