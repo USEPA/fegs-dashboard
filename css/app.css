@@ -552,7 +552,7 @@ input[disabled] {
 /* Chart styles */
 .barchart {
   shape-rendering: crispEdges;
-
+}
 
 /* Chart classes */
 .chart-header {
