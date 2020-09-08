@@ -443,7 +443,9 @@ table input {
   width: 50%;
 }
 
-#toggle-beneficiaries button, #toggle-attributes button {
+#toggle-beneficiaries button,
+#toggle-attributes button {
+  margin-bottom: 0.5rem;
   border: 2px solid #0071bc;
   background: none;
   color: #0071bc;
@@ -550,11 +552,6 @@ input[disabled] {
 }
 
 /* Chart styles */
-.barchart {
-  shape-rendering: crispEdges;
-}
-
-/* Chart classes */
 .chart-header {
   display: flex;
   flex-direction: row;
@@ -573,12 +570,20 @@ input[disabled] {
   }
 }
 
-/* Flexbox classes */
+/* Flexbox styles */
 .flexrow {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
 
 .button-icon {
   padding: 5px 10px;
@@ -596,11 +601,4 @@ input[disabled] {
 td.icon-cell i {
   text-align: center;
   display: inline;
-}
-
-
-.flexcol {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
