@@ -79,7 +79,7 @@ hr {
 }
 
 [aria-hidden='true'] {
-  display: none;
+  display: none !important;
 }
 
 .magnitude {
@@ -202,7 +202,9 @@ hr {
 #table-stakeholders td,
 #table-stakeholders th {
   border: 1px solid #d6d7d9;
-  padding: 8px;
+  padding: 20px 4px;
+  /* padding: 8px; */
+  text-align: center;
 }
 
 #stakeholder-table-container {
@@ -217,7 +219,7 @@ hr {
   background-color: #f1f3f4;
   padding-top: 12px;
   padding-bottom: 12px;
-  text-align: left;
+  /* text-align: left; */
 }
 
 #table-stakeholders {
@@ -441,8 +443,16 @@ table input {
   width: 50%;
 }
 
+#toggle-beneficiaries button, #toggle-attributes button {
+  border: 2px solid #0071bc;
+  background: none;
+  color: #0071bc;
+}
+
 button[aria-pressed='true'] {
-  background-color: #112e51;
+  background-color: #112e51 !important;
+  border: none !important;
+  color: white !important;
 }
 
 #defs th {
@@ -535,7 +545,14 @@ button[aria-pressed='true'] {
   justify-content: flex-start;
 }
 
+input[disabled] {
+  background: #eee;
+}
 
+/* Chart styles */
+.barchart {
+  shape-rendering: crispEdges;
+}
 
 /* Chart classes */
 .chart-header {
@@ -562,6 +579,26 @@ button[aria-pressed='true'] {
   flex-direction: row;
   align-items: center;
 }
+
+.button-icon {
+  padding: 5px 10px;
+  font-size: 1.3em !important;
+  cursor: pointer;
+}
+.button-icon:hover {
+  opacity: .7;
+}
+.icon-cell {
+  text-align: center;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+td.icon-cell i {
+  text-align: center;
+  display: inline;
+}
+
+
 .flexcol {
   display: flex;
   flex-direction: column;

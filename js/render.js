@@ -3531,6 +3531,12 @@ const createButton = function createButton(text, className) {
   return button;
 };
 
+const createIcon = function createIcon(className) {
+  const icon = document.createElement('i');
+  icon.className = className;
+  return icon;
+};
+
 /**
  * Adds a row containing the specified data to the table, with appropriate listeners.
  * @function
@@ -3541,15 +3547,21 @@ function addRow(tableID, rowData) {
   const tableRef = document.getElementById(tableID).getElementsByTagName('tbody')[0]; // Get a reference to the table
   const newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
 
-  const editButton = createButton('Edit', 'edit-button'); // Create Buttons
-  const saveButton = createButton('Save', 'save-button');
+  const editButton = createIcon('far fa-edit fa-2x edit-button button-icon'); // Create Buttons
+  editButton.setAttribute('title', 'Edit');
+
+  const saveButton = createIcon('fas fa-check fa-2x save-button button-icon');
   saveButton.setAttribute('aria-hidden', 'true');
-  const removeButton = createButton('Remove', 'remove-button');
+  saveButton.setAttribute('title', 'Save')
+
+  const removeButton = createIcon('far fa-trash-alt fa-2x remove-button button-icon');
+  removeButton.setAttribute('title', 'Remove')
 
   let newCell = newRow.insertCell(); // Insert a cell in the row to hold the buttons
   newCell.appendChild(editButton);
   newCell.appendChild(saveButton);
   newCell.appendChild(removeButton);
+  newCell.className = 'icon-cell'
 
   removeButton.addEventListener('click', function clickRemoveStakeholder() {
     fegsScopingView.indicateUnsaved();
