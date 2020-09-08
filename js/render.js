@@ -20,6 +20,7 @@ const charts = {} // object to namespace charts
 // const template = {
 //   'Tier 1': {
 //     color: 'str',
+//     colorBack: 'str',
 //     short: 'str',
 //     def: 'str',
 //     parts: {
@@ -71,6 +72,7 @@ const CRITERIA = {
 const BENEFICIARIES = { // TODO build table dynamically with defs from here
   'Agricultural': {
     color: '#663300',
+    colorBack: '#DDD9C4',
     parts: {
       'Livestock Grazers': {
         def: '',
@@ -91,6 +93,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Commercial / Industrial': {
     color: '#0000CC',
+    colorBack: '#C5D9F1',
     parts: {
       'Food Extractors': {
         def: '',
@@ -120,6 +123,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Governmental / Municipal / Residential': {
     color: '#660066',
+    colorBack: '#E4DFEC',
     parts: {
       'Municipal Drinking Water Plant Operators': {
         def: '',
@@ -137,6 +141,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Transportation': {
     color: '#FF0000',
+    colorBack: '#F2DCDB',
     parts: {
       'Transporters of Goods': {
         def: '',
@@ -148,6 +153,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Subsistence': {
     color: '#FFFF66',
+    colorBack: '#F9FDD1',
     parts: {
       'Water Subsisters': {
         def: '',
@@ -165,6 +171,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Recreational': {
     color: '#00FFFF',
+    colorBack: '#DAEEF3',
     parts: {
       'Experiencers / Viewers': {
         def: '',
@@ -188,6 +195,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Inspirational': {
     color: '#70AD47',
+    colorBack: '#EBF1DE',
     parts: {
       'Spiritual and Ceremonial Participants': {
         def: '',
@@ -199,6 +207,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Learning': {
     color: '#FF9900',
+    colorBack: '#FDE9D9',
     parts: {
       'Students and Educators': {
         def: '',
@@ -210,6 +219,7 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
   },
   'Non-Use': {
     color: '#B2B2B2',
+    colorBack: '#F2F2F2',
     parts: {
       'People Who Care': {
         def: '',
@@ -219,213 +229,204 @@ const BENEFICIARIES = { // TODO build table dynamically with defs from here
 }
 
 const ATTRIBUTES = { // TODO build table dynamically with defs from here
-  'Water': {
-    color: '#1F77B4',
-    parts: {
-      'Water Quality': {
-        def: '',
-      },
-      'Water Quantity': {
-        def: '',
-      },
-      'Water Movement': {
-        def: '',
-      },
-    },
-  },
-  'Air & Weather': {
-    color: '#33AAFF',
+  'Atmosphere': {
+    color: '#73D6FF',
     parts: {
       'Air Quality': {
-        def: '',
+        def: 'The degree to which air is clean, clear, and pollution-free',
       },
       'Wind Strength / Speed': {
-        def: '',
+        def: 'The speed and force of the wind',
       },
       'Precipitation': {
-        def: '',
+        def: 'Weather in which something, including rain, snow, sleet, and/or hail, is falling from the sky',
       },
       'Sunlight': {
-        def: '',
+        def: 'Light from the sun ',
       },
       'Temperature': {
-        def: '',
+        def: 'A measure of the warmth or coldness of the weather or climate',
       },
     },
   },
-  'Soil & Substrate': {
-    color: '#775544',
+  'Soil': {
+    color: '#5B3F1E',
     parts: {
-      'Soil Quantity': {
-        def: '',
-      },
       'Soil Quality': {
-        def: '',
+        def: 'The suitability of soil for use based on physical, chemical, and/or biological characteristics',
       },
-      'Substrate Quantity': {
-        def: '',
+      'Soil Quantity': {
+        def: 'The amount of soil present, could be measured in terms of volume, depth, and/or extent',
       },
       'Substrate Quality': {
-        def: '',
+        def: 'The suitability of substrate for use based on physical, chemical, and/or biological characteristics',
+      },
+      'Substrate Quantity': {
+        def: 'The amount of substrate present, could be measured in terms of volume, depth, and/or extent',
       },
     },
   },
-  'Natural Materials': {
-    color: '#D62728',
+  'Water': {
+    color: '#2B3BFF',
     parts: {
-      'Fuel Quality': {
-        def: '',
+      'Water Quality': {
+        def: 'The suitability of water for use based on physical, chemical, and/or biological characteristics',
       },
-      'Fuel Quantity': {
-        def: '',
+      'Water Quantity': {
+        def: 'The amount of water present, could be measured in terms of volume, depth, total yield, and/or peak flow',
       },
-      'Fiber Material Quantity': {
-        def: '',
-      },
-      'Fiber Material Quality': {
-        def: '',
-      },
-      'Mineral / Chemical Quantity': {
-        def: '',
-      },
-      'Mineral / Chemical Quality': {
-        def: '',
-      },
-      'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)': {
-        short: 'Other Natural Materials',
-        def: '',
-      },
-    },
-  },
-  'Flora': {
-    color: '#2CA02C',
-    parts: {
-      'Flora Community': {
-        def: '',
-      },
-      'Edible Flora': {
-        def: '',
-      },
-      'Medicinal Flora': {
-        def: '',
-      },
-      'Keystone Flora': {
-        def: '',
-      },
-      'Charismatic Flora': {
-        def: '',
-      },
-      'Rare Flora': {
-        def: '',
-      },
-      'Commercially Important Flora': {
-        def: '',
-      },
-      'Spiritually / Culturally Important Flora': {
-        def: '',
-      },
-    },
-  },
-  'Fungi': {
-    color: '#9467BD',
-    parts: {
-      'Fungal Community': {
-        def: '',
-      },
-      'Edible Fungi': {
-        def: '',
-      },
-      'Medicinal Fungi': {
-        def: '',
-      },
-      'Rare Fungi': {
-        def: '',
-      },
-      'Commercially Important Fungi': {
-        def: '',
-      },
-      'Spiritually / Culturally Important Fungi': {
-        def: '',
+      'Water Movement': {
+        def: 'The amount of water flowing per unit of time, includes aspects such as surface water movement through watersheds, wave action, etc',
       },
     },
   },
   'Fauna': {
-    color: '#E377C2',
+    color: '#E23577',
     parts: {
       'Fauna Community': {
-        def: '',
+        def: 'The interacting animal life present in the area',
       },
       'Edible Fauna': {
-        def: '',
+        def: 'Fauna fit to be eaten by humans',
       },
       'Medicinal Fauna': {
-        def: '',
+        def: 'Fauna that has healing properties as is or after processesing',
       },
       'Keystone Fauna': {
-        def: '',
+        def: 'Fauna on which other species depend, its absence would significantly alter the ecosystem',
       },
       'Charismatic Fauna': {
-        def: '',
+        def: 'Fauna with symbolic value or widespread popular appeal',
       },
       'Rare Fauna': {
-        def: '',
+        def: 'Fauna that are uncommon or infrequently encountered',
       },
       'Pollinating Fauna': {
-        def: '',
+        def: 'Fauna that moves pollen from plant to plant',
       },
       'Pest Predator / Depredator Fauna': {
-        def: '',
+        def: 'Fauna that prey upon pest species',
       },
       'Commercially Important Fauna': {
-        def: '',
+        def: 'Fauna that has importance for commerce',
       },
       'Spiritually / Culturally Important Fauna': {
-        def: '',
+        def: 'Fauna that has importance for spiritual or cultural practices or beliefs',
       },
     },
   },
-  'Extreme Events': {
-    color: '#BCBD22',
+  'Flora': {
+    color: '#199F00',
     parts: {
-      'Risk of Flooding': {
-        short: 'Flooding',
-        def: '',
+      'Flora Community': {
+        def: 'The interacting plant life present in the area',
       },
-      'Risk of Fire': {
-        short: 'Fire',
-        def: '',
+      'Edible Flora': {
+        def: 'Flora fit to be eaten by humans',
       },
-      'Risk of Extreme Weather Events': {
-        short: 'Extreme Weather',
-        def: '',
+      'Medicinal Flora': {
+        def: 'Flora that has healing properties as is or after processesing',
       },
-      'Risk of Earthquakes': {
-        short: 'Earthquakes',
-        def: '',
+      'Keystone Flora': {
+        def: 'Flora on which other species depend, its absence would significantly alter the ecosystem',
+      },
+      'Charismatic Flora': {
+        def: 'Flora with symbolic value or widespread popular appeal',
+      },
+      'Rare Flora': {
+        def: 'Flora that are uncommon or infrequently encountered',
+      },
+      'Commercially Important Flora': {
+        def: 'Flora that has importance for commerce',
+      },
+      'Spiritually / Culturally Important Flora': {
+        def: 'Flora that has importance for spiritual or cultural practices or beliefs',
       },
     },
   },
-  'Composite': {
-    color: '#7F7F7F',
+  'Fungi': {
+    color: '#5A6E61',
+    parts: {
+      'Fungal Community': {
+        def: 'The interacting fungal life present in the area',
+      },
+      'Edible Fungi': {
+        def: 'Fungi fit to be eaten by humans',
+      },
+      'Medicinal Fungi': {
+        def: 'Fungi that has healing properties as is or after processesing',
+      },
+      'Rare Fungi': {
+        def: 'Fungi that are uncommon or infrequently encountered',
+      },
+      'Commercially Important Fungi': {
+        def: 'Fungi that has importance for commerce',
+      },
+      'Spiritually / Culturally Important Fungi': {
+        def: 'Fungi that has importance for spiritual or cultural practices or beliefs',
+      },
+    },
+  },
+  'Other Natural Components': {
+    color: '#BA9314',
+    parts: {
+      'Fuel Quality': {
+        def: 'The suitability of material, based on physical, chemical, and/or biological characteristics, to produce heat or power through burning or other methods ',
+      },
+      'Fuel Quantity': {
+        def: 'The amount of fuel present, could be measured in terms of volume, mass, and/or extent',
+      },
+      'Fiber Material Quality': {
+        def: 'The amount of fiber material present, could be measured in terms of volume, mass, and/or extent',
+      },
+      'Fiber Material Quantity': {
+        def: 'The suitability of material, based on physical, chemical, and/or biological characteristics, to be used in production of textiles',
+      },
+      'Mineral / Chemical Quality': {
+        def: 'The suitability of material for use based on physical, chemical, and/or biological characteristics',
+      },
+      'Mineral / Chemical Quantity': {
+        def: 'The amount of material present, could be measured in terms of volume, mass, and/or extent',
+      },
+      'Presence of Other Natural Materials for Artistic Use or Consumption (e.g. Shells, Acorns, Honey)': {
+        short: 'Other Natural Materials',
+        def: 'The presence and/or extent of materials suitable for artistic use or consumption',
+      },
+    },
+  },
+  'Composite (and Extreme Events)': {
+    color: '#8936E3',
     parts: {
       'Sounds': {
-        def: '',
+        def: 'The sounds or combination of sounds arising from the area',
       },
       'Scents': {
-        def: '',
+        def: 'The scents or combination of scents arising from the area',
       },
       'Viewscapes': {
-        def: '',
+        def: 'The views and vistas available in the area',
       },
       'Phenomena (e.g. Sunsets, Northern Lights, etc)': {
         short: 'Phenomena',
-        def: '',
+        def: 'Natural phenomena arising from a combination of environmental attributes',
       },
       'Ecological Condition': {
-        def: '',
+        def: 'The overall quality of the ecological system based on physical, chemical, and biological characteristics',
       },
-      'Acreage': {
-        def: '',
+      'Open Space': {
+        def: 'Land that is undeveloped, but may be landscaped or otherwise in use, and is available for use',
+      },
+      'Flooding': {
+        def: 'The likelihood the area will experience flooding and the likely severity of the flooding',
+      },
+      'Wildfire': {
+        def: 'The likelihood the area will experience wildfire and the likely severity of the fire',
+      },
+      'Extreme Weather Events': {
+        def: 'The likelihood the area will experience extreme weather events and the likely severity of the events',
+      },
+      'Earthquakes': {
+        def: 'The likelihood the area will experience earthquakes and the likely severity of the earthquakes',
       },
     },
   },
@@ -1003,13 +1004,6 @@ function updateAttributePieChart() {
   }
   charts.attributePie.update(getTier1AttributeScoresForPieChart())
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * TODO
- * refactor categories, tiers, colors, definitions
- * dynamic width of pie charts
- * test everything
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Draw or update the stakeholder bar chart
 function stakeholderBarChart() {
@@ -2963,6 +2957,115 @@ const updateSelectStakeholder = selectId => {
   selectStakeholderToSlice();
 };
 
+function buildAttributeTable(tableNode) { // generate html instead of hard-coding it (still spagettied with Table class)
+  const element = ({ tag, cls, text, childs, ...rest }) => {
+    const ele = document.createElement(tag)
+    if (cls) ele.className = cls
+    if (text) ele.innerText = text
+    if (childs) childs.forEach(child => ele.appendChild(element(child))) // recursive
+    Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
+    return ele
+  }
+
+  // Using appendChild instead of innerHTML... possibly more confusing, but faster and secure.
+  // The object formatting for elements is meant to look like the HTML structure.
+
+  const colgroup = element({ 
+    tag: 'colgroup', childs: [
+      { tag: 'col', cls: 'row-labels', span: '2' }, // category
+      { tag: 'col', cls: 'row-labels', span: '1' }, // sub-category
+      { tag: 'col', cls: 'definition', span: '1' }] // definition
+  })
+
+  const thead = element({ tag: 'thead' })
+
+  const row1 = element({
+    tag: 'tr', cls: 'column-name-labels', childs: [
+      { tag: 'th', cls: 'row-label-header', colspan: 2 }, // category
+      { tag: 'th', cls: 'row-label-header', colspan: 1 }, // sub-category
+      { tag: 'th', cls: 'definition', colspan: 1, rowspan: 3, text: 'Definition' }] // definition
+  })
+
+  const row2 = element({
+    tag: 'tr', cls: 'column-names', childs: [
+      { tag: 'th', colspan: 2, text: 'Attribute Tier 1' }, // category
+      { tag: 'th', text: 'Attribute Tier 2', childs: [ // sub-category
+        { tag: 'br' }, 
+        { tag: 'button', id: 'table-attributes-toggle', cls: 'btn-no-margin', text: 'Show Definitions' }]
+      }, 
+      { tag: 'th', 'aria-hidden': true }, // some sort of spacer...?
+      { tag: 'th', 'aria-hidden': true }] // some sort of spacer...?
+  })
+
+  const row3 = element({
+    tag: 'tr', childs: [
+      { tag: 'th', cls: 'row-tier-1', 'aria-hidden': true },
+      { tag: 'th', cls: 'row-name', colspan: 3, text: 'Beneficiary Result' },
+      { tag: 'th', colspan: 1, 'aria-hidden': true },
+      { tag: 'th', colspan: 1, 'aria-hidden': true }]
+  })
+
+  let numBeneficiaries = 0 // used later
+  Object.entries(BENEFICIARIES).forEach(([key, val]) => {
+    const color = val.colorBack || val.color
+    const parts = Object.keys(val.parts) // parts of beneficiary sub-categories
+    colgroup.appendChild(element({ tag: 'col', span: parts.length, style: `background-color: ${color};` }))
+    row1.appendChild(element({ tag: 'th', colspan: parts.length, text: key }))
+    parts.forEach(key => {
+      row2.appendChild(element({ tag: 'th', text: key }))
+      row3.appendChild(element({ tag: 'td' }))
+      numBeneficiaries += 1
+    })
+  })
+  thead.appendChild(row1)
+  thead.appendChild(row2)
+  thead.appendChild(row3)
+
+  const tbody = element({ tag: 'tbody' })
+
+  let darken = true
+  Object.entries(ATTRIBUTES).forEach(([key, val]) => {
+    let first = true
+    const parts = Object.entries(val.parts)
+    parts.forEach(([key2, val2]) => {
+      const row = element({ tag: 'tr', cls: (darken)?'dark':'' })
+      if (first) row.appendChild(element({ tag: 'th', cls: 'row-tier-1', rowspan: parts.length, colspan: 2, text: key }))
+      else row.appendChild(element({ tag: 'th', 'aria-hidden': true }))
+      row.appendChild(element({ tag: 'th', cls: 'row-name', text: key2 }))
+      row.appendChild(element({ tag: 'th', cls: (first)?'row-tier-1':'', 'aria-hidden': true }))
+      row.appendChild(element({ tag: 'th', cls: 'definition', text: val2.def }))
+      for (let i = 0; i < numBeneficiaries; i++) {
+        row.appendChild(element({ tag: 'td' }))
+      }
+      tbody.appendChild(row)
+      first = false
+    })
+    darken = !darken // alternate
+  })
+
+  const fragment = new DocumentFragment()
+  fragment.appendChild(colgroup)
+  fragment.appendChild(thead)
+  fragment.appendChild(tbody)
+  tableNode.appendChild(fragment) // one reflow instead of 3+
+}
+
+function buildAttributeToggles(divNode) {
+  Object.keys(ATTRIBUTES).forEach(key => {
+    const btn = document.createElement('button')
+    btn.setAttribute('aria-pressed', false) // for toggle
+    btn.setAttribute('data-attribute', key) // TODO deprecate
+    btn.setAttribute('style', 'margin-right: 0.2rem;')
+    btn.innerText = key
+    btn.addEventListener('click', event => {
+      const pressed = (btn.getAttribute('aria-pressed') === 'true')
+      btn.setAttribute('aria-pressed', !pressed);
+      toggleAttributeRow(key)
+    })
+    divNode.appendChild(btn)
+  })
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Declare Data, View, and Controller.
@@ -2971,6 +3074,8 @@ fegsScopingView = new FEGSScopingView();
 fegsScopingController = new FEGSScopingController();
 
 // Declare attributes table
+buildAttributeTable(document.getElementById('table-attributes'))
+buildAttributeToggles(document.getElementById('toggle-attributes'))
 tableAttributes = tableAttributesCreator('table-attributes');
 
 updateSelectBeneficiary('select-beneficiary');
@@ -3770,8 +3875,7 @@ const getTableCell = function getTableCell(table, x, y) {
 };
 
 function toggleTableDefinitions(event, tableID) {
-  for (let i = 0; i < document.querySelectorAll(`#${tableID} .definition`).length; i += 1) {
-    const element = document.querySelectorAll(`#${tableID} .definition`)[i];
+  for (element of document.querySelectorAll(`#${tableID} .definition`)) {
     if (element.hasAttribute('hidden') || element.classList.contains('display-none')) {
       event.target.innerHTML = 'Hide Definitions';
       element.removeAttribute('hidden');
@@ -4044,33 +4148,31 @@ function toggleAllAttributes() {
   });
 }
 
-function serializeSVG(svg) { // returns svg string
-  svg = svg.cloneNode(true)
-  // ... attach styles here as needed
+function serializeSVG(svgNode) { // returns svg string
+  const svg = svgNode.cloneNode(true)
+  // ... attach inline styles here as needed
   const serializer = new XMLSerializer()
   return serializer.serializeToString(svg)
 }
 
-function rasterizeSVG(svg, mime='png', scale=2) { // returns png/jpeg buffer
+function rasterizeSVG(svgNode, mime='png', scale=2) { // returns png/jpeg buffer promise
   return new Promise((resolve, reject) => {
-    const width = svg.clientWidth*scale
-    const height = svg.clientHeight*scale
-    const svgString = serializeSVG(svg)
+    const svgString = serializeSVG(svgNode)
     const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
     
     const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
+    canvas.width = svgNode.clientWidth*scale
+    canvas.height = svgNode.clientHeight*scale
     const ctx = canvas.getContext('2d')
     
     const img = new Image()
     img.onerror = reject
     img.onload = () => {
-      if (mime === 'jpeg') { // no transparency
-        ctx.fillStyle = '#FFF'
-        ctx.fillRect(0, 0, width, height)
+      if (mime === 'jpeg') { // transparency unsupported
+        ctx.fillStyle = '#FFF' // background color
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
       }
-      ctx.drawImage(img, 0, 0, width, height)
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
       canvas.toBlob(imgBlob => {
         imgBlob.arrayBuffer().then(result => {
           const buffer = new Buffer(result)
@@ -4082,25 +4184,25 @@ function rasterizeSVG(svg, mime='png', scale=2) { // returns png/jpeg buffer
   })
 }
 
-function downloadChart(svg, name='Chart') {
+function downloadChart(svgNode, name='Chart') {
   let filePath = null
   dialog.showSaveDialog({
     defaultPath: `${name}.png`,
     filters: [
-      { name: 'PNG', extensions: ['png'] },
+      { name: 'PNG',  extensions: ['png'] },
       { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
-      { name: 'SVG', extensions: ['svg'] },
+      { name: 'SVG',  extensions: ['svg'] },
     ]
   }).then(result => {
     if (!result.canceled) {
       filePath = result.filePath
       const ext = filePath.split('.').pop()
       if (ext === 'svg') {
-        return serializeSVG(svg)
+        return serializeSVG(svgNode)
       } else if (ext === 'jpeg' || ext === 'jpg') {
-        return rasterizeSVG(svg, 'jpeg')
+        return rasterizeSVG(svgNode, 'jpeg')
       } else {
-        return rasterizeSVG(svg, 'png')
+        return rasterizeSVG(svgNode, 'png')
       }
     }
   }).then(result => {
@@ -4266,15 +4368,6 @@ document.addEventListener('DOMContentLoaded', () => {
       label.hidden = hidden;
       note.hidden = hidden;
       saveBtn.hidden = hidden;
-    });
-  });
-
-  document.querySelectorAll('#toggle-attributes button').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const element = event.target;
-      const pressed = element.getAttribute('aria-pressed') === 'true';
-      element.setAttribute('aria-pressed', !pressed);
-      toggleAttributeRow(element.innerText);
     });
   });
 
