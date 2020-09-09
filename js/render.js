@@ -2133,7 +2133,6 @@ const FEGSScopingController = function FEGSScopingController() {
   this.saveJSON = function saveJSON(savePath, jsonToBeSaved) {
     let jsonText;
     if (typeof jsonToBeSaved !== 'string') {
-      document.querySelectorAll('button.save-button:not([aria-hidden="true"])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
       jsonText = JSON.stringify(jsonToBeSaved);
     } else {
       jsonText = jsonToBeSaved;
@@ -3110,45 +3109,50 @@ const pageZoomChange = function pageZoomChange(event) {
   webFrame.setZoomFactor(+event.target.value);
 };
 
+
+function save(filepath) {
+  if (document.getElementById('set-stakeholder-values').style.display !== 'none') addStakeholderScores() // greasy hack for in-edit stakeholder creation
+  document.querySelectorAll('button.save-button:not([aria-hidden="true"])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
+  fegsScopingController.saveJSON(filepath, fegsScopingData)
+  fegsScopingView.indicateSaved(filepath)
+}
+
+function open(filepath) {
+  fegsScopingView.restoreView(filepath)
+  fegsScopingView.indicateSaved(filepath)
+}
+
 // Listen for save as from main process
 ipcRenderer.on('save-as', (event, arg) => {
   fegsScopingData.filePath = arg;
-  fegsScopingController.saveJSON(arg, fegsScopingData);
-  fegsScopingView.indicateSaved(arg);
+  save(arg)
 });
 
 // Listen for save as from main process
 ipcRenderer.on('save-as-and-refresh', (event, arg) => {
   fegsScopingData.filePath = arg;
-  fegsScopingController.saveJSON(arg, fegsScopingData);
-  fegsScopingView.indicateSaved(arg);
+  save(arg)
   window.location.reload(true);
 });
 
 // Listen for save as from main process
 ipcRenderer.on('save-as-and-open', (event, saveName, openName) => {
   fegsScopingData.filePath = saveName;
-  fegsScopingController.saveJSON(saveName, fegsScopingData);
-  fegsScopingView.indicateSaved(saveName);
-
-  fegsScopingView.restoreView(openName);
-  fegsScopingView.indicateSaved(openName);
+  save(saveName)
+  open(openName)
 });
 
 // Listen for save as from main process then quit
 ipcRenderer.on('save-as-and-quit', (event, saveName) => {
   fegsScopingData.filePath = saveName;
-  fegsScopingController.saveJSON(saveName, fegsScopingData);
-  fegsScopingView.indicateSaved(saveName);
-
+  save(saveName)
   ipcRenderer.send('quit');
 });
 
 // Listen for save from main process and refresh
 ipcRenderer.on('save-and-refresh', () => {
   if (fegsScopingData.filePath !== '') {
-    fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
-    fegsScopingView.indicateSaved(fegsScopingData.filePath);
+    save(fegsScopingData.filePath)
     window.location.reload(true);
   } else {
     ipcRenderer.send('save-as-and-refresh', fegsScopingData.projectName);
@@ -3158,8 +3162,7 @@ ipcRenderer.on('save-and-refresh', () => {
 // Listen for save from main process and quit
 ipcRenderer.on('save-and-quit', () => {
   if (fegsScopingData.filePath !== '') {
-    fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
-    fegsScopingView.indicateSaved(fegsScopingData.filePath);
+    save(fegsScopingData.filePath)
     ipcRenderer.send('quit');
   } else {
     ipcRenderer.send('save-as-and-quit', fegsScopingData.projectName);
@@ -3169,10 +3172,8 @@ ipcRenderer.on('save-and-quit', () => {
 // Listen for save from main process and open
 ipcRenderer.on('save-and-open', (event, arg) => {
   if (fegsScopingData.filePath !== '') {
-    fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
-    fegsScopingView.indicateSaved(fegsScopingData.filePath);
-    fegsScopingView.restoreView(arg[0]);
-    fegsScopingView.indicateSaved(arg[0]);
+    save(fegsScopingData.filePath)
+    open(arg[0])
   } else {
     ipcRenderer.send('save-as-and-open', fegsScopingData.projectName, arg[0]);
   }
@@ -3181,8 +3182,7 @@ ipcRenderer.on('save-and-open', (event, arg) => {
 // Listen for save from main process
 ipcRenderer.on('save', () => {
   if (fegsScopingData.filePath !== '') {
-    fegsScopingController.saveJSON(fegsScopingData.filePath, fegsScopingData);
-    fegsScopingView.indicateSaved(fegsScopingData.filePath);
+    save(fegsScopingData.filePath)
   } else {
     ipcRenderer.send('save-as', fegsScopingData.projectName);
   }
@@ -3190,9 +3190,7 @@ ipcRenderer.on('save', () => {
 
 // Listen for open file from main process
 ipcRenderer.on('open-file', (event, arg) => {
-  fegsScopingView.restoreView(arg[0]);
-  fegsScopingView.indicateSaved(arg[0]);
-  //updateWeightingProgress()
+  open(arg[0])
 });
 
 const APP = (function APP() {
@@ -3421,23 +3419,14 @@ function clearStakeholderScores() {
 function scrapeAddStakeholders() {
   const stakeholdersToAdd = {};
   const stakeholderScoreInputs = document.getElementsByClassName('stakeholder-score-input');
-  for (let i = 0; i < stakeholderScoreInputs.length; i += 1) {
-    const stakeholder = stakeholderScoreInputs[i].parentNode.getAttribute('data-stakeholder');
-    const criterion = stakeholderScoreInputs[i].getAttribute('data-criterion');
-
-    if (!Object.prototype.hasOwnProperty.call(stakeholdersToAdd, stakeholder)) {
-      stakeholdersToAdd[stakeholder] = {};
-      const value = parseInt(stakeholderScoreInputs[i].value, 10);
-      const isValid = validateInput(value, 0, 100);
-      if (isValid) {
-        stakeholdersToAdd[stakeholder][criterion] = value;
-      } else {
-        accessiblyNotify('Invalid inputs. Please review your stakeholder weights.');
-        return {};
-      }
-    } else {
-      stakeholdersToAdd[stakeholder][criterion] = stakeholderScoreInputs[i].value;
+  for (let input of stakeholderScoreInputs) {
+    const stakeholder = input.parentNode.getAttribute('data-stakeholder')
+    const criteria = input.getAttribute('data-criterion')
+    if (!(stakeholder in stakeholdersToAdd)) { // first time adding this stakeholder
+      stakeholdersToAdd[stakeholder] = {}
     }
+    const value = parseInt(input.value) || ""
+    stakeholdersToAdd[stakeholder][criteria] = value
   }
   return stakeholdersToAdd;
 }
@@ -3645,7 +3634,7 @@ function addRow(tableID, rowData) {
     for (let i = 2, { length } = cells; i < length; i += 1) {
       const cell = cells[i];
       // set the value of the cell to the value of the child input of the cell
-      const newVal = +cell.firstElementChild.value;
+      const newVal = cell.firstElementChild.value; // may be empty string
       cell.innerHTML = newVal;
     }
 
