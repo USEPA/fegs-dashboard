@@ -552,6 +552,11 @@ input[disabled] {
 }
 
 /* Chart styles */
+.chart {
+  width: 100%; 
+  max-width: 1020px; 
+  margin: 0 auto;
+}
 .chart-header {
   display: flex;
   flex-direction: row;

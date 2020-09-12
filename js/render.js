@@ -5,6 +5,7 @@ const { ipcRenderer, remote, webFrame } = electron;
 const { app, dialog } = electron.remote;
 const d3 = require('d3');
 const { color } = require('d3');
+const { time } = require('console');
 d3.tip = require('d3-tip');
 
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
@@ -32,6 +33,30 @@ const charts = {} // object to namespace charts
 //     }
 //   },
 // }
+
+const STAKEHOLDER_COLORS = [
+  '#e6194b',
+  '#3cb44b',
+  '#ffe119',
+  '#0082c8',
+  '#f58231',
+  '#911eb4',
+  '#46f0f0',
+  '#f032e6',
+  '#d2f53c',
+  '#fabebe',
+  '#008080',
+  '#e6beff',
+  '#aa6e28',
+  '#fffac8',
+  '#800000',
+  '#aaffc3',
+  '#808000',
+  '#ffd8b1',
+  '#000080',
+  '#808080',
+  '#000000',
+]
 
 const CRITERIA = {
   'Magnitude & Probability of Impact': {
@@ -433,19 +458,6 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
 }
 
 
-// Rounding function used in the application
-const round = function round(number, precision) {
-  const shift = function shift(number, precision, reverseShift) {
-    if (reverseShift) {
-      precision = -precision;
-    }
-    const numArray = number.toString().split('e');
-    return +`${numArray[0]}e${numArray[1] ? +numArray[1] + precision : precision}`;
-  };
-
-  return shift(Math.round(shift(number, precision, false)), precision, true);
-};
-
 /** clear all notices */
 const clearNotices = function clearNotices() {
   const notices = document.getElementsByClassName('accessible-notification');
@@ -481,6 +493,10 @@ const accessiblyNotify = function accessiblyNotify(text) {
 const fontLabel = '14px sans-serif'
 const fontLegend = '14px sans-serif'
 
+
+// UTILS
+const isNum = n => (typeof n === 'number' && !isNaN(n))
+
 /** sum all values in an object */
 const sum = function sum(obj) {
   let total = 0;
@@ -491,23 +507,19 @@ const sum = function sum(obj) {
   return total;
 };
 
-// Format the stakeholder data for use in the stakeholder bar chart
-const formatStakeholderData = function formatStakeholderData() {
-  const data = [];
+// Rounding function used in the application
+const round = function round(number, precision) {
+  const shift = function shift(number, precision, reverseShift) {
+    if (reverseShift) {
+      precision = -precision;
+    }
+    const numArray = number.toString().split('e');
+    return +`${numArray[0]}e${numArray[1] ? +numArray[1] + precision : precision}`;
+  };
 
-  Object.entries(fegsScopingData.stakeholders).forEach(entry => {
-    const stakeholder = {};
-    [stakeholder.stakeholder] = entry;
-
-    Object.entries(entry[1].scores).forEach(criterion => {
-      stakeholder[criterion[0]] =
-        +criterion[1] * (+fegsScopingData.scores[criterion[0]] / sum(fegsScopingData.scores));
-    });
-
-    data.push(stakeholder);
-  });
-  return data;
+  return shift(Math.round(shift(number, precision, false)), precision, true);
 };
+
 
 class PieChart {
   constructor(config) {
@@ -522,6 +534,13 @@ class PieChart {
     this.show()
     this.init()
     this.resize(this.width)
+  }
+
+  hide() {
+    this.node.hidden = true
+  }
+  show() {
+    this.node.hidden = false
   }
   
   init() {
@@ -613,7 +632,7 @@ class PieChart {
       .enter()
       .insert('path')
       .attr('class', 'slice')
-      .style('fill', d => this.colorMap[d.data.key || d.data.label])
+      .style('fill', d => this.color(d.data.key || d.data.label))
       .each(function (d) {
         this._current = d;
       });
@@ -721,6 +740,145 @@ class PieChart {
       .delay(this.duration)
       .remove();
   }
+}
+
+class BarChart {
+  constructor(config) {
+    this.node =     config.node // DOM node to attach svg
+    this.font =     config.font || '14px sans-serif'
+    this.colorMap = config.colorMap || {}   // map: label -> color
+    this.colors =   config.colors || []     // colors to use after or in place of colorMap
+    this.wTotal =   config.width || 1020    // svg width
+    this.hTotal =   config.height || 520    // svg minimum height
+    this.wPlot =    config.plotWidth || 420 // horizontal area where bars can be
+    this.data =     config.data || []       // [{ key: str, label1: num, label2: num, ... }, ...]
+    this.labels =   config.labels || []     // ...
+
+    this.show()
+    this.init()
+    if (this.data.length > 0) this.update(this.data)
+  }
+  
+  init() {
+    this.wSide = (this.wTotal - this.wPlot)/2 // space on left and right for y axis labels or legend
+    this.hSide = 50 // space on bottom for x axis labels
+    this.hPlot = this.hTotal - this.hSide // vertical area where bars can be
+
+    this.svg = d3.select(this.node).append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${this.wTotal} ${this.hTotal}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .style('shape-rendering', 'crispEdges')
+
+    this.main = this.svg.append('g')
+      .attr('transform', `translate(${this.wSide},0)`)
+
+    this.xAxis = this.main.append('g')
+      .attr('class', 'x-axis')
+      .style('font', this.font)
+      .attr('transform', `translate(-1,${this.hPlot + 5})`)
+
+    this.yAxis = this.main.append('g')
+      .attr('class', 'y-axis')
+      .style('font', this.font)
+      .attr('transform', `translate(-1,0)`) // ...?
+
+    this.legend = this.main.append('g')
+      .attr('class', 'legend')
+      .style('font', this.font)
+
+    this.color = d3.scaleOrdinal()
+      .domain(Object.keys(this.colorMap))
+      .range(Object.values(this.colorMap).concat(this.colors))
+  }
+
+  update(data) {
+    this.data = data // [{ key: str, label1: num, label2: num, ... }, ...]
+
+    const keys = this.data.map(d => d.key) // for y axis
+    const largest = d3.max(this.data, d => {
+      return Object.values(d).reduce((total, item) => {
+        return isNum(item) ? item + total : total
+      }, 0)
+    })
+    const labels = [...this.labels] // for legend/colors
+    this.data.forEach(item => {
+      Object.keys(item).forEach(key => {
+        if (key !== 'key' && !labels.includes(key)) { // unique key
+          labels.push(key)
+        }
+      })
+    })
+    
+    const xScale = d3.scaleLinear()
+      .domain([0, largest])
+      .range([0, this.wPlot])
+    this.xAxis.call(d3.axisBottom(xScale))
+
+    const yScale = d3.scaleBand()
+      .domain(keys)
+      .range([this.hPlot, 0])
+      .padding(0.1)
+    this.yAxis.call(d3.axisLeft(yScale))
+
+    const tip = d3.tip()
+      .attr('class', 'd3-tip stacket-bar-chart')
+      .offset([-10, 0])
+      .html(function (d) {
+        const label = this.parentNode.getAttribute('data-label')
+        return `${label} (${round(d[1] - d[0], 1)})`
+      })
+    this.main.call(tip)
+
+    const stack = d3.stack()
+      .keys(labels)
+      .order(d3.stackOrderNone)
+      .offset(d3.stackOffsetNone)
+
+    const layer = this.main.selectAll('.layer')
+      .data(stack(this.data), d => d) // note: d => d binds data by content instead of index
+      .join(enter => {
+        const item = enter.insert('g', ':first-child') // prepend
+          .attr('class', 'layer')
+          .style('fill', d => this.color(d.key))
+          .attr('data-label', (d, i) => labels[i])
+        return item
+      })      
+    
+    const rect = layer.selectAll('rect')
+      .data(d => d)
+      .join(enter => {
+        const item = enter.append('rect')
+          .attr('class', 'bar')
+          .attr('x', d => xScale(isNum(d[0]) ? d[0] : 0))
+          .attr('y', d => yScale(d.data.key))
+          .attr('width', d => (isNum(d[0]) && isNum(d[1])) ? xScale(d[1]) - xScale(d[0]) : 0)
+          .attr('height', yScale.bandwidth)
+          .on('mouseover', tip.show)
+          .on('mouseout', tip.hide)
+        return item
+      })
+
+    const entry = this.legend.selectAll('g')
+      .data(labels, d => d)
+      .join(enter => {
+        const item = enter.append('g')
+          .attr('transform', (d, i) => `translate(${this.wPlot},${i*19})`)
+        item.append('rect')
+          .attr('x', 10)
+          .attr('width', 18)
+          .attr('height', 18)
+          .attr('fill', d => this.color(d))
+        item.append('text')
+          .attr('x', 30)
+          .attr('y', 9)
+          .attr('dy', '0.35em')
+          .text(d => d)
+        return item
+      })
+  }
+
   hide() {
     this.node.hidden = true
   }
@@ -729,226 +887,24 @@ class PieChart {
   }
 }
 
-/** stacked bar-chart - used for all stacked barcharts */
-const initStackedBarChart = {
-  draw(config) {
-    const domEle = config.element;
-    const stackKey = config.key;
-    const legendKey = config.legend;
-    const { data } = config;
-    const { header } = config;
-    const { colors } = config;
-    const margin = {
-      top: 20,
-      right: 350,
-      bottom: 20,
-      left: 350
-    };
-
-    Array.from(document.getElementsByClassName(`d3-tip ${config.element}`)).forEach(element => {
-      element.parentNode.removeChild(element);
-    });
-
-    let divWidth = document.getElementById('main-content').offsetWidth;
-    if (divWidth > 1395) {
-      divWidth = 1395;
-    } else if (divWidth < 550) {
-      divWidth = 550;
-    }
-    const width = divWidth - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
-
-    const yScale = d3
-      .scaleBand()
-      .range([height, 0])
-      .padding(0.1);
-    const xScale = d3.scaleLinear().range([0, width]);
-    const color = d3.scaleOrdinal(colors);
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
-    const container = d3.select(`#${domEle}`);
-
-    container.selectAll('svg').remove();
-
-    if (data.length === 0) {
-      return null; // if there's no data to display don't display anything!
-    }
-    const svg = container
-      .append('svg')
-      .style('shape-rendering', 'crispEdges')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + 10 + margin.bottom + 10 + 30)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    const tip = d3
-      .tip()
-      .attr('class', 'd3-tip stacked-bar-chart')
-      .offset([-10, 0])
-      .html(function tooltipHtml(d) {
-        const index = fegsScopingData.criteria.indexOf(this.parentNode.getAttribute('data-label'));
-        let label = this.parentNode.getAttribute('data-label');
-        if (index >= 0) {
-          label = fegsScopingData.fegsCriteria[index];
-        }
-        return `<div><span>${label}:</span> <span style="color:white">${round(d[1] - d[0], 1)}</span></div>`;
-      });
-    svg.call(tip);
-
-    const stack = d3
-      .stack()
-      .keys(stackKey)
-      .order(d3.stackOrderNone)
-      .offset(d3.stackOffsetNone);
-
-    const layers = stack(data);
-    data.sort(function (a, b) {
-      return b.total - a.total;
-    });
-    yScale.domain(
-      data.map(function (d) {
-        return d[header];
-      })
-    );
-    xScale.domain([
-      0,
-      d3.max(data, function (d) {
-        return Object.values(d).reduce(function (acc, val) {
-          return acc + (isNaN(val) ? 0 : val);
-        }, 0);
-      })
-    ]);
-
-    const layer = svg
-      .selectAll('.layer')
-      .data(layers)
-      .enter()
-      .append('g')
-      .attr('class', 'layer')
-      .style('fill', function (d, i) {
-        return color(i);
-      })
-      .attr('data-label', function (d, i) {
-        return stackKey[i];
-      });
-
-    layer
-      .selectAll('rect')
-      .data(function (d) {
-        return d;
-      })
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('y', function (d) {
-        return yScale(d.data[header]);
-      })
-      .attr('x', function (d) {
-        if (isNaN(d[0])) {
-          return xScale(0);
-        }
-        return xScale(d[0]);
-      })
-      .attr('width', function (d) {
-        if (isNaN(d[0])) {
-          return xScale(0) - xScale(0);
-        }
-        if (isNaN(d[1])) {
-          return xScale(0) - xScale(0);
-        }
-        return xScale(d[1]) - xScale(d[0]);
-      })
-      .attr('height', yScale.bandwidth())
-      .on('click', function () {
-        d3.selectAll('.bar').classed('selected', false);
-        d3.select(this).classed('selected', true);
-      })
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide);
-
-    svg
-      .append('g')
-      .style('font', fontLabel) // inline style makes exporting easier
-      .attr('class', 'axis--x')
-      .attr('transform', `translate(0,${height + 5})`)
-      .call(xAxis)
-      .selectAll('.tick text')
-      .style('text-anchor', 'middle')
-      .attr('dy', '0.8em');
-
-    svg
-      .append('g')
-      .style('font', fontLabel)
-      .attr('class', 'axis--y')
-      .attr('transform', 'translate(0,0)')
-      .call(yAxis);
-
-    if (legendKey) {
-      const legend = svg
-        .append('g')
-        .style('font', fontLegend)
-        .selectAll('g')
-        .data(legendKey)
-        .enter()
-        .append('g')
-        .attr('transform', function (d, i) {
-          return `translate(30,${i * 19})`;
-        });
-
-      legend
-        .append('rect')
-        .attr('x', width - 18)
-        .attr('width', 18)
-        .attr('height', 18)
-        .attr('fill', function (d, i) {
-          return colors[i];
-        });
-
-      legend
-        .append('text')
-        .attr('x', width + 5)
-        .attr('y', 9)
-        .attr('dy', '0.35em')
-        .attr('text-anchor', 'start')
-        .text(function (d) {
-          return d;
-        });
-    }
-
-    return container;
-  }
-};
-
-function criteriaScores(short=true) {
-  const data = [];
-  Object.entries(fegsScopingData.scores).forEach(row => {
-    const label = fegsScopingData.criteriaMap[row[0]]
-    const shortLabel = CRITERIA[label].short // may be undefined
-    data.push({
-      key: label, // used for colorMap
-      label: (short && shortLabel) ? shortLabel : label,
-      value: parseFloat(row[1]),
-    });
-  });
-  return data;
-};
 
 function updateAllCharts() {
   updateCriteriaPieChart()
+  updateStakeholderBarChart()
   updateStakeholderPieChart()
+  updateBeneficiaryBarChart()
   updateBeneficiaryPieChart()
+  updateAttributeBarChart()
   updateAttributePieChart()
-
-  // TODO bar charts refactor ...
-  stakeholderBarChart()
-  beneficiaryBarChart()
-  attributeBarChart()
 }
 
 const mainWidth = () => document.getElementById('main-content').offsetWidth
 const extractColorMap = obj => {
   const colorMap = {}
-  Object.keys(obj).forEach(key => colorMap[key] = obj[key].color)
+  Object.entries(obj).forEach(([key, val]) => {
+    colorMap[key] = obj[key].color
+    if (val.short) colorMap[val.short] = obj[key].color
+  })
   return colorMap
 }
 
@@ -963,7 +919,20 @@ function updateCriteriaPieChart() {
     })
     window.addEventListener('resize', () => charts.criteriaPie.resize(mainWidth() - 350))
   }
-  charts.criteriaPie.update(criteriaScores())
+  charts.criteriaPie.update(criteriaPieData())
+}
+
+// Create or update the stakeholder bar chart
+function updateStakeholderBarChart() {
+  if (!charts.stakeholderBar) {
+    charts.stakeholderBar = new BarChart({
+      node: document.getElementById('stakeholder-barchart'),
+      colorMap: extractColorMap(CRITERIA),
+      width: 1020,
+      height: 520,
+    })
+  }
+  charts.stakeholderBar.update(stakeholderBarData())
 }
 
 // Create or update the stakeholder pie chart
@@ -976,7 +945,20 @@ function updateStakeholderPieChart() {
     })
     window.addEventListener('resize', () => charts.stakeholderPie.resize(mainWidth()))
   }
-  charts.stakeholderPie.update(criteriaScores(false)) // same data as criteria pie chart
+  charts.stakeholderPie.update(criteriaPieData(false)) // same data as criteria pie chart
+}
+
+// Create or update the beneficiary bar chart
+function updateBeneficiaryBarChart() {
+  if (!charts.beneficiaryBar) {
+    charts.beneficiaryBar = new BarChart({
+      node: document.getElementById('beneficiary-barchart'),
+      colors: STAKEHOLDER_COLORS, // TODO d3 overflow colors
+      width: 1020,
+      height: 520,
+    })
+  }
+  charts.beneficiaryBar.update(beneficiaryBarData())
 }
 
 // Create or update the beneficiary pie chart
@@ -992,6 +974,20 @@ function updateBeneficiaryPieChart() {
   charts.beneficiaryPie.update(getTier1BeneficiaryScoresForPieChart())
 }
 
+// Create or update the attribute bar chart
+function updateAttributeBarChart() {
+  if (!charts.attributeBar) {
+    charts.attributeBar = new BarChart({
+      node: document.getElementById('attribute-barchart'),
+      colorMap: extractColorMap(BENEFICIARIES),
+      labels: Object.keys(BENEFICIARIES),
+      width: 1020,
+      height: 520,
+    })
+  }
+  charts.attributeBar.update(attributeBarData())
+}
+
 // Create or update the attribute pie chart
 function updateAttributePieChart() {
   if (!charts.attributePie) {
@@ -1005,104 +1001,62 @@ function updateAttributePieChart() {
   charts.attributePie.update(getTier1AttributeScoresForPieChart())
 }
 
-// Draw or update the stakeholder bar chart
-function stakeholderBarChart() {
-  initStackedBarChart.draw({
-    data: formatStakeholderData(),
-    key: fegsScopingData.criteria,
-    legend: fegsScopingData.fegsCriteria,
-    element: 'stakeholder-barchart',
-    header: 'stakeholder',
-    colors: [
-      '#4f81bd',
-      '#c0504d',
-      '#9bbb59',
-      '#8064a2',
-      '#4bacc6',
-      '#f79646',
-      '#2c4d75',
-      '#772c2a',
-      '#5f7530',
-    ]
+
+// Format data for the criteria (and stakeholder) pie chart
+function criteriaPieData(short=true) {
+  const data = [];
+  Object.entries(fegsScopingData.scores).forEach(row => {
+    const label = fegsScopingData.criteriaMap[row[0]]
+    const shortLabel = CRITERIA[label].short // may be undefined
+    data.push({
+      key: label, // used for colorMap
+      label: (short && shortLabel) ? shortLabel : label,
+      value: parseFloat(row[1]),
+    });
   });
+  return data;
 }
 
-// Format the beneficiary data for use in the beneficiary bar chart
-const formatBeneficiaryData = function formatBeneficiaryData() {
-  const data = [];
-  const stakeholders = Object.entries(fegsScopingData.stakeholders);
-  for (let i = 0; i < fegsScopingData.fegsBeneficiaries.length; i += 1) {
-    const beneficiary = {};
-    const beneficiaryName = fegsScopingData.fegsBeneficiaries[i];
+// Format data for the stakeholder bar chart
+function stakeholderBarData() {
+  const data = []
+  Object.entries(fegsScopingData.stakeholders).forEach(([key, val]) => {
+    const item = { key }
+    Object.entries(val.scores).forEach(([key2, val2]) => {
+      const label = CRITERIA[fegsScopingData.criteriaMap[key2]].short || fegsScopingData.criteriaMap[key2]
+      item[label] = val2*(fegsScopingData.scores[key2]/sum(fegsScopingData.scores))
+    })
+    data.push(item)
+  })
+  return data // [{ key: str, label1: num, label2: num, ... }, ...]
+}
 
-    for (let j = 0; j < stakeholders.length; j += 1) {
-      const stakeholder = stakeholders[j];
-      if (
-        Object.prototype.hasOwnProperty.call(stakeholder[1].beneficiaries, beneficiaryName) &&
-        stakeholder[1].beneficiaries[beneficiaryName].percentageOfStakeholder !== ''
-      ) {
-        beneficiary[stakeholder[0]] = fegsScopingData.beneficiaryScoreForStakeholder(
-          beneficiaryName,
-          stakeholder[0]
-        );
+// Format data for the beneficiary bar chart
+function beneficiaryBarData() {
+  const data = [];
+  fegsScopingData.fegsBeneficiaries.forEach(beneficiary => {
+    const item = { key: beneficiary }
+    Object.entries(fegsScopingData.stakeholders).forEach(([key, val]) => {
+      if (beneficiary in val.beneficiaries && val.beneficiaries[beneficiary].percentageOfStakeholder !== '') {
+        item[key] = fegsScopingData.beneficiaryScoreForStakeholder(beneficiary, key)
       }
-    }
+    })
+    if (Object.keys(item).length > 1) data.push(item) // more than just the key
+  })
+  return data // [{ key: str, label1: num, label2: num, ... }, ...]
+}
 
-    if (Object.keys(beneficiary).length !== 0) {
-      beneficiary.beneficiary = beneficiaryName;
-      data.push(beneficiary);
-    }
-  }
-  return data;
-};
-
-// Format the attribute data for use in the attribute bar chart
-function formatAttributeData() {
+// Format data for the attribute bar chart
+function attributeBarData() {
   const data = [];
-
   Object.keys(fegsScopingData.calculateAttributeScores()).forEach(attribute => {
-    data.push(fegsScopingData.calculateAttributeScoresTier1(attribute));
-  });
-
-  // for (const attribute in fegsScopingData.calculateAttributeScores()) {
-  //   data.push(fegsScopingData.calculateAttributeScoresTier1(attribute));
-  // }
+    const { attribute: key, ...item } = fegsScopingData.calculateAttributeScoresTier1(attribute)
+    item.key = key // rename 'attribute' property to 'key'
+    data.push(item);
+  })
   return data;
 }
 
-// Create or update the beneficiary bar chart
-const beneficiaryBarChart = function beneficiaryBarChart() {
-  initStackedBarChart.draw({
-    data: formatBeneficiaryData(),
-    key: Object.keys(fegsScopingData.stakeholders),
-    legend: Object.keys(fegsScopingData.stakeholders),
-    element: 'beneficiary-barchart',
-    header: 'beneficiary',
-    colors: [
-      '#e6194b',
-      '#3cb44b',
-      '#ffe119',
-      '#0082c8',
-      '#f58231',
-      '#911eb4',
-      '#46f0f0',
-      '#f032e6',
-      '#d2f53c',
-      '#fabebe',
-      '#008080',
-      '#e6beff',
-      '#aa6e28',
-      '#fffac8',
-      '#800000',
-      '#aaffc3',
-      '#808000',
-      '#ffd8b1',
-      '#000080',
-      '#808080',
-      '#000000'
-    ]
-  });
-};
 
 // Format the beneficiary scores for the beneficiary pie chart
 function getBeneficiaryScoresForPieChart() {
@@ -1118,9 +1072,10 @@ function getBeneficiaryScoresForPieChart() {
 
 // Updates the beneficiary section charts
 function updateBeneficiaryView() {
-  beneficiaryBarChart();
+  updateBeneficiaryBarChart();
   updateBeneficiaryPieChart();
 };
+
 
 /** Add an option to an HTML select menu. Provide the text and the value. */
 const addOption = function addOption(selectId, optionText, optionValue) {
@@ -1279,54 +1234,6 @@ function getTier1AttributeScoresForPieChart() {
   return tier1;
 }
 
-function attributeBarChartBeneficiaries() {
-  const arr = [];
-  const benes = fegsScopingData.getExtantBeneficiaries();
-  for (let i = 0; i < benes.length; i += 1) {
-    if (arr.indexOf(fegsScopingData.fegsBeneficiariesTier1[benes[i]]) < 0) {
-      arr.push(fegsScopingData.fegsBeneficiariesTier1[benes[i]]);
-    }
-  }
-  return arr;
-}
-
-/**
- * Creates or updates the attribute pie chart
- * @function
- */
-function attributeBarChart() {
-  initStackedBarChart.draw({
-    data: formatAttributeData(),
-    key: attributeBarChartBeneficiaries(),
-    legend: attributeBarChartBeneficiaries(),
-    element: 'attribute-barchart', // attribute-barchart
-    header: 'attribute',
-    colors: [
-      '#e6194b',
-      '#3cb44b',
-      '#ffe119',
-      '#0082c8',
-      '#f58231',
-      '#911eb4',
-      '#46f0f0',
-      '#f032e6',
-      '#d2f53c',
-      '#fabebe',
-      '#008080',
-      '#e6beff',
-      '#aa6e28',
-      '#fffac8',
-      '#800000',
-      '#aaffc3',
-      '#808000',
-      '#ffd8b1',
-      '#000080',
-      '#808080',
-      '#000000'
-    ]
-  });
-}
-
 /**
  * Update the attribute section view of the application
  * @function
@@ -1338,7 +1245,7 @@ function updateAttributeView() {
   showSelectedBeneficiary(document.getElementById('select-beneficiary'));
 
   updateAttributePieChart()
-  attributeBarChart();
+  updateAttributeBarChart();
 }
 
 /**
@@ -2442,7 +2349,7 @@ const FEGSScopingView = function FEGSScopingView() {
     document.getElementById('stakeholder-list').style.display = 'none';
     clearStakeholderScores();
 
-    stakeholderBarChart();
+    updateStakeholderBarChart();
 
     updateSelectStakeholder('select-stakeholder');
     const event = new Event('change');
@@ -2884,7 +2791,7 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     }
     updateAttributeProgress();
     updateAttributePieChart();
-    attributeBarChart();
+    updateAttributeBarChart();
   };
 
   for (let i = 0; i < rowNames.length; i += 1) {
@@ -3223,9 +3130,7 @@ const APP = (function APP() {
 })();
 
 APP.onResize(() => {
-  stakeholderBarChart();
-  beneficiaryBarChart();
-  attributeBarChart();
+  // ...?
 });
 
 /**
@@ -3387,7 +3292,7 @@ function addStakeholderScores() {
   document.getElementById('set-stakeholder-values').style.display = 'none';
   document.getElementById('stakeholder-list').style.display = 'none';
   clearStakeholderScores();
-  stakeholderBarChart();
+  updateStakeholderBarChart();
   updateSelectStakeholder('select-stakeholder');
   const event = new Event('input');
   document.getElementById('select-stakeholder').dispatchEvent(event);
@@ -3559,7 +3464,7 @@ function addRow(tableID, rowData) {
     fegsScopingData.removeStakeholders([stakeholder]);
     this.parentNode.parentNode.remove();
     removeOptionFromSelect('select-stakeholder', stakeholder);
-    stakeholderBarChart();
+    updateStakeholderBarChart();
     const stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
     if (stakeholderCount === 0) {
       document.getElementById('stakeholder-table-container').style.display = 'none';
@@ -3659,7 +3564,7 @@ function addRow(tableID, rowData) {
 
     fegsScopingData.stakeholders[newStakeholderName].scores = scores;
     updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
-    stakeholderBarChart();
+    updateStakeholderBarChart();
     updateBeneficiaryView();
     updateAttributeView();
   });
@@ -4327,7 +4232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateCriteriaPieChart();
       updateStakeholderPieChart();
-      stakeholderBarChart();
+      updateStakeholderBarChart();
       updateWeightingProgress();
       fegsScopingView.indicateUnsaved();
     });
