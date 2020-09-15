@@ -524,16 +524,113 @@ const round = function round(number, precision) {
 class PieChart {
   constructor(config) {
     this.node =      config.node // DOM node to attach svg
-    this.colorMap =  config.colorMap // map: label -> color
-    this.width =     config.width || 800 // svg width
-    this.ratio =     config.heightRatio || 0.3 // height = width * ratio (smaller number means less height)
-    this.duration =  config.duration || 1000 // animation time (ms)
-    this.font =      config.fontLabel || fontLabel || '14px sans-serif'
+    this.font =      config.font || '14px sans-serif'
+    this.colorMap =  config.colorMap || {} // map: label -> color
+    this.colors =    config.colors || []   // colors to use after or in place of colorMap
+    this.wTotal =    config.width || 1020  // svg width
+    this.hTotal =    config.height || 420  // svg height
     this.doLabels =  config.doLabels || true
     this.doPercent = config.doPercent || true
+
     this.show()
     this.init()
-    this.resize(this.width)
+    if (config.data) this.update(config.data) // [{ key: str, label: str, value: num }, ...] note: provide optional key for color lookup
+  }
+  
+  init() {
+    this.rTotal = Math.min(this.wTotal/2, this.hTotal/2) // largest possible radius
+    this.rLine = this.rTotal - 10 // radius where label line bends
+    this.rPie = this.rLine - 10 // radius of pie slices
+
+    this.svg = d3.select(this.node).append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${this.wTotal} ${this.hTotal}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+
+    this.main = this.svg.append('g')
+      .attr('transform', `translate(${this.wTotal/2},${this.hTotal/2})`)
+
+    this.lines = this.main.append('g')
+      .attr('class', 'lines')
+
+    this.slices = this.main.append('g')
+      .attr('class', 'slices')
+
+    this.labels = this.main.append('g')
+      .attr('class', 'labels')
+      .style('font', this.font)
+    
+    this.color = d3.scaleOrdinal()
+      .domain(Object.keys(this.colorMap))
+      .range(Object.values(this.colorMap).concat(this.colors))
+  }
+
+  update(data) { // data: [{ label: str, value: num }, ...]
+    data = data.filter(d => d.value > 0) // don't draw empty slices
+    data = data.sort((a, b) => a.value - b.value) // slices in order by size
+
+    const sum = data.reduce((total, item) => total + item.value, 0)
+
+    const round = (num, decimals) => Math.round(num*10*decimals)/(10*decimals)
+    const percent = (num, total) => (total > 0) ? round((num/total)*100, 1) : 0
+    const percentStr = num => (this.doPercent) ? ` (${percent(num, sum)}%)` : ''
+    const midAngle = d => (d.startAngle + (d.endAngle - d.startAngle)/2)
+    const rightSide = d => midAngle(d) > Math.PI*0.5 && midAngle(d) < Math.PI*1.5
+
+    const arcPie = d3.arc()
+      .innerRadius(0)
+      .outerRadius(this.rPie)
+      .startAngle(d => d.startAngle + Math.PI*1.5)
+      .endAngle(d => d.endAngle + Math.PI*1.5)
+       
+    const arcLine = d3.arc()
+      .innerRadius(this.rLine)
+      .outerRadius(this.rLine)
+      .startAngle(d => d.startAngle + Math.PI*1.5)
+      .endAngle(d => d.endAngle + Math.PI*1.5)
+
+    const pie = d3.pie()
+      .value(d => d.value)
+
+    const slice = this.slices.selectAll('path')
+      .data(pie(data), d => d)
+      .join(enter => enter.insert('path'))
+      .style('fill', d => this.color(d.data.key || d.data.label))
+      .attr('d', d => arcPie(d))
+
+    // if (!this.doLabels) return // don't show any labels (as implemented, old labels won't be removed if this flag is changed after construction)
+
+    const label = this.labels.selectAll('text')
+      .data(pie(data), d => d)
+      .join(enter => enter.append('text')
+        .style('font', this.font)
+        .attr('dy', '.35em')
+      )
+      .style('text-anchor', d => rightSide(d) ? 'start' : 'end')
+      .attr('hidden', (this.doLabels) ? null : true)
+      .attr('transform', d => {
+        let [x, y] = arcLine.centroid(d)
+        x = (this.rTotal + 5)*(rightSide(d) ? 1 : -1)
+        return `translate(${x},${y})`
+      })
+      .text(d => `${d.data.label}${percentStr(d.data.value)}`)
+  
+    const line = this.lines.selectAll('polyline')
+      .data(pie(data), d => d)
+      .join(enter => enter.append('polyline')
+        .attr('stroke', 'black')
+        .attr('stroke-width', '1px')
+        .attr('fill', 'none')
+      )
+      .attr('hidden', (this.doLabels) ? null : true)
+      .attr('points', d => {
+        const y = Math.round(arcLine.centroid(d)[1]) + 0.5 // try to land on pixel to prevent blur
+        const outer = [this.rTotal*(rightSide(d) ? 1 : -1), y] 
+        const bend = [arcLine.centroid(d)[0], y]
+        const inner = arcPie.centroid(d)
+        return [inner, bend, outer]
+      })
   }
 
   hide() {
@@ -541,204 +638,6 @@ class PieChart {
   }
   show() {
     this.node.hidden = false
-  }
-  
-  init() {
-    this.svg = d3.select(this.node)
-      .append('svg')
-      .append('g')
-
-    this.svg.append('g').attr('class', 'lines') // lines first so they don't cover piechart
-    this.svg.append('g').attr('class', 'slices')
-    this.svg.append('g').attr('class', 'labels')
-    
-    this.pie = d3.pie()
-      .sort(null)
-      .value(d => d.value)
-
-    this.arc = d3.arc()
-      .startAngle(d => d.startAngle - Math.PI/2)
-      .endAngle(d => d.endAngle - Math.PI/2)
-    
-    this.outerArc = d3.arc()
-      .startAngle(d => d.startAngle - Math.PI/2)
-      .endAngle(d => d.endAngle - Math.PI/2)
-
-    this.color = d3.scaleOrdinal()
-      .domain(Object.keys(this.colorMap))
-      .range(Object.values(this.colorMap))
-  }
-
-  resize(width) { // resize to desired total width
-    this.width = Math.max(width, 300) // minimum width
-    this.height = this.width*this.ratio
-    this.radius = this.height/2
-    
-    d3.select(this.svg.node().parentNode) // actual svg element
-      .attr('width', this.width)
-      .attr('height', this.height)
-
-    this.svg // g element
-      .attr('transform', `translate(${this.width/2},${this.height/2})`);
-
-    this.arc
-      .outerRadius(this.radius * 0.8)
-      .innerRadius(0)
-
-    this.outerArc
-      .innerRadius(this.radius * 0.9)
-      .outerRadius(this.radius * 0.9)
-
-    this.update()
-  }
-
-  update(data=null) { // data: [{ label: str, value: num }, ...]
-    if (data) {
-      data.sort((a, b) => a.value - b.value) // slices in order by size
-      this.data = data
-    } else {
-      data = this.data || [] // calling update for redraw
-    }
-
-    const mergeWithFirstEqualZero = (first, second) => {
-      const secondSet = d3.set()
-      second.forEach(d => secondSet.add(d.label))
-      const onlyFirst = first
-        .filter(d => !secondSet.has(d.label))
-        .map(d => ({label: d.label, value: 0}));
-      return d3.merge([second, onlyFirst])
-    }
-    const round = (num, decimals) => Math.round(num*10*decimals)/(10*decimals)
-    const percent = (num, total) => (total > 0) ? round((num/total)*100, 1) : 0
-    const percentStr = num => (this.doPercent) ? ` (${percent(num, sum)}%)` : ''
-    const key = d => d.data.label
-    const midAngle = d => (d.startAngle + (d.endAngle - d.startAngle)/2)
-    const rightSide = d => midAngle(d) > Math.PI*0.5 && midAngle(d) < Math.PI*1.5
-
-    const sum = data.reduce((total, item) => total + item.value, 0)
-
-    let data0 = this.svg.select('.slices').selectAll('path.slice')
-      .data().map(d => d.data);
-    if (data0.length == 0) data0 = data;
-    const was = mergeWithFirstEqualZero(data, data0);
-    const is = mergeWithFirstEqualZero(data0, data);
-    
-    const self = this // alias to use inside anonymous functions
-    
-    // SLICE ARCS
-    const slice = this.svg.select('.slices').selectAll('path.slice')
-  
-    slice.data(this.pie(was), key)
-      .enter()
-      .insert('path')
-      .attr('class', 'slice')
-      .style('fill', d => this.color(d.data.key || d.data.label))
-      .each(function (d) {
-        this._current = d;
-      });
-  
-    slice.data(this.pie(is), key)
-      .transition()
-      .duration(this.duration)
-      .attrTween('d', function (d) {
-        const interpolate = d3.interpolate(this._current, d);
-        return (t) => {
-          this._current = interpolate(t);
-          return self.arc(this._current);
-        };
-      });
-  
-    slice.data(this.pie(data), key)
-      .exit()
-      .transition()
-      .delay(this.duration)
-      .duration(0)
-      .remove();
-
-    if (!this.doLabels) return // don't show any labels
-
-    // TEXT LABELS
-    const text = this.svg.select('.labels').selectAll('text')
-  
-    text.data(this.pie(was), key)
-      .enter()
-      .append('text')
-        .style('font', this.font)
-        .attr('dy', '.35em')
-        .style('opacity', 0)
-        .text(key)
-        .each(function (d) {
-          this._current = d;
-        });
-  
-    text.data(this.pie(is), key)
-      .transition()
-      .duration(this.duration)
-      .style('opacity', d => {
-        return d.data.value == 0 ? 0 : 1;
-      })
-      .text(d => `${d.data.label}${percentStr(d.data.value)}`)
-      .attrTween('transform', function (d) {
-        const interpolate = d3.interpolate(this._current, d);
-        return (t) => {
-          const d2 = interpolate(t);
-          this._current = d2;
-          const pos = self.outerArc.centroid(d2);
-          pos[0] = self.radius*(rightSide(d2) ? 1 : -1);
-          return `translate(${pos})`;
-        };
-      })
-      .styleTween('text-anchor', function (d) {
-        const interpolate = d3.interpolate(this._current, d);
-        return (t) => {
-          const d2 = interpolate(t);
-          return rightSide(d2) ? 'start' : 'end';
-        };
-      });
-    
-    text.data(this.pie(data), key)
-      .exit()
-      .transition()
-      .delay(this.duration)
-      .remove();
-  
-  
-    // SLICE TO TEXT POLYLINES
-    const polyline = this.svg.select('.lines').selectAll('polyline')  
-    
-    polyline.data(this.pie(was), key)
-      .enter()
-      .append('polyline')
-        .style('opacity', 0)
-        .attr('stroke', 'black')
-        .attr('stroke-width', '1px')
-        .attr('fill', 'none')
-        .each(function (d) {
-          this._current = d;
-        });
-  
-    polyline.data(this.pie(is), key)
-      .transition()
-      .duration(this.duration)
-      .style('opacity', d => (d.data.value == 0) ? 0 : 1)
-      .attrTween('points', function (d) {
-        const interpolate = d3.interpolate(this._current, d);
-        return (t) => {
-          const d2 = interpolate(t);
-          this._current = d2;
-          const y = Math.round(self.outerArc.centroid(d2)[1]) + 0.5 // try to land on pixel to prevent blur
-          const outer = [self.radius*0.95*(rightSide(d2) ? 1 : -1), y] 
-          const bend = [self.outerArc.centroid(d2)[0], y]
-          const inner = self.arc.centroid(d2)
-          return [inner, bend, outer];
-        };			
-      });
-    
-    polyline.data(this.pie(data), key)
-      .exit()
-      .transition()
-      .delay(this.duration)
-      .remove();
   }
 }
 
@@ -749,14 +648,13 @@ class BarChart {
     this.colorMap = config.colorMap || {}   // map: label -> color
     this.colors =   config.colors || []     // colors to use after or in place of colorMap
     this.wTotal =   config.width || 1020    // svg width
-    this.hTotal =   config.height || 520    // svg minimum height
-    this.wPlot =    config.plotWidth || 420 // horizontal area where bars can be
-    this.data =     config.data || []       // [{ key: str, label1: num, label2: num, ... }, ...]
-    this.labels =   config.labels || []     // ...
+    this.hTotal =   config.height || 520    // svg height
+    this.wPlot =    config.plotWidth || 420 // horizontal area where bars can be  
+    this.labels =   config.labels || []     // labels to always include in legend
 
     this.show()
     this.init()
-    if (this.data.length > 0) this.update(this.data)
+    if (config.data) this.update(config.data) // [{ key: str, label1: num, label2: num, ... }, ...]
   }
   
   init() {
@@ -793,17 +691,15 @@ class BarChart {
       .range(Object.values(this.colorMap).concat(this.colors))
   }
 
-  update(data) {
-    this.data = data // [{ key: str, label1: num, label2: num, ... }, ...]
-
-    const keys = this.data.map(d => d.key) // for y axis
-    const largest = d3.max(this.data, d => {
+  update(data) { // data: [{ key: str, label1: num, label2: num, ... }, ...]
+    const keys = data.map(d => d.key) // for y axis
+    const largest = d3.max(data, d => {
       return Object.values(d).reduce((total, item) => {
         return isNum(item) ? item + total : total
       }, 0)
     })
     const labels = [...this.labels] // for legend/colors
-    this.data.forEach(item => {
+    data.forEach(item => {
       Object.keys(item).forEach(key => {
         if (key !== 'key' && !labels.includes(key)) { // unique key
           labels.push(key)
@@ -837,7 +733,7 @@ class BarChart {
       .offset(d3.stackOffsetNone)
 
     const layer = this.main.selectAll('.layer')
-      .data(stack(this.data), d => d) // note: d => d binds data by content instead of index
+      .data(stack(data), d => d) // note: d => d binds data by content instead of index
       .join(enter => {
         const item = enter.insert('g', ':first-child') // prepend
           .attr('class', 'layer')
@@ -889,16 +785,17 @@ class BarChart {
 
 
 function updateAllCharts() {
+  // pie charts
   updateCriteriaPieChart()
-  updateStakeholderBarChart()
-  updateStakeholderPieChart()
-  updateBeneficiaryBarChart()
   updateBeneficiaryPieChart()
-  updateAttributeBarChart()
+  updateStakeholderPieChart()
   updateAttributePieChart()
+  // bar charts
+  updateStakeholderBarChart()
+  updateBeneficiaryBarChart()
+  updateAttributeBarChart()
 }
 
-const mainWidth = () => document.getElementById('main-content').offsetWidth
 const extractColorMap = obj => {
   const colorMap = {}
   Object.entries(obj).forEach(([key, val]) => {
@@ -908,31 +805,21 @@ const extractColorMap = obj => {
   return colorMap
 }
 
+const chartWidth = 1020
+const barHeight = 520
+const pieHeight = 300
+
 // Create or update the criteria pie chart
 function updateCriteriaPieChart() {
   if (!charts.criteriaPie) {
     charts.criteriaPie = new PieChart({
       node: document.getElementById('criteria-piechart'),
       colorMap: extractColorMap(CRITERIA),
-      width: mainWidth() - 350,
-      heightRatio: 0.55,
+      width: 680,
+      height: 340,
     })
-    window.addEventListener('resize', () => charts.criteriaPie.resize(mainWidth() - 350))
   }
   charts.criteriaPie.update(criteriaPieData())
-}
-
-// Create or update the stakeholder bar chart
-function updateStakeholderBarChart() {
-  if (!charts.stakeholderBar) {
-    charts.stakeholderBar = new BarChart({
-      node: document.getElementById('stakeholder-barchart'),
-      colorMap: extractColorMap(CRITERIA),
-      width: 1020,
-      height: 520,
-    })
-  }
-  charts.stakeholderBar.update(stakeholderBarData())
 }
 
 // Create or update the stakeholder pie chart
@@ -941,24 +828,11 @@ function updateStakeholderPieChart() {
     charts.stakeholderPie = new PieChart({
       node: document.getElementById('stakeholder-piechart'),
       colorMap: extractColorMap(CRITERIA),
-      width: mainWidth(),
+      width: chartWidth,
+      height: pieHeight,
     })
-    window.addEventListener('resize', () => charts.stakeholderPie.resize(mainWidth()))
   }
   charts.stakeholderPie.update(criteriaPieData(false)) // same data as criteria pie chart
-}
-
-// Create or update the beneficiary bar chart
-function updateBeneficiaryBarChart() {
-  if (!charts.beneficiaryBar) {
-    charts.beneficiaryBar = new BarChart({
-      node: document.getElementById('beneficiary-barchart'),
-      colors: STAKEHOLDER_COLORS, // TODO d3 overflow colors
-      width: 1020,
-      height: 520,
-    })
-  }
-  charts.beneficiaryBar.update(beneficiaryBarData())
 }
 
 // Create or update the beneficiary pie chart
@@ -967,11 +841,51 @@ function updateBeneficiaryPieChart() {
     charts.beneficiaryPie = new PieChart({
       node: document.getElementById('beneficiary-piechart'),
       colorMap: extractColorMap(BENEFICIARIES),
-      width: mainWidth(),
+      width: chartWidth,
+      height: pieHeight,
     })
-    window.addEventListener('resize', () => charts.beneficiaryPie.resize(mainWidth()))
   }
   charts.beneficiaryPie.update(getTier1BeneficiaryScoresForPieChart())
+}
+
+// Create or update the attribute pie chart
+function updateAttributePieChart() {
+  if (!charts.attributePie) {
+    charts.attributePie = new PieChart({
+      node: document.getElementById('attribute-piechart'),
+      colorMap: extractColorMap(ATTRIBUTES),
+      width: chartWidth,
+      height: pieHeight,
+    })
+  }
+  charts.attributePie.update(getTier1AttributeScoresForPieChart())
+}
+
+
+// Create or update the stakeholder bar chart
+function updateStakeholderBarChart() {
+  if (!charts.stakeholderBar) {
+    charts.stakeholderBar = new BarChart({
+      node: document.getElementById('stakeholder-barchart'),
+      colorMap: extractColorMap(CRITERIA),
+      width: chartWidth,
+      height: barHeight,
+    })
+  }
+  charts.stakeholderBar.update(stakeholderBarData())
+}
+
+// Create or update the beneficiary bar chart
+function updateBeneficiaryBarChart() {
+  if (!charts.beneficiaryBar) {
+    charts.beneficiaryBar = new BarChart({
+      node: document.getElementById('beneficiary-barchart'),
+      colors: STAKEHOLDER_COLORS, // TODO d3 overflow colors
+      width: chartWidth,
+      height: barHeight,
+    })
+  }
+  charts.beneficiaryBar.update(beneficiaryBarData())
 }
 
 // Create or update the attribute bar chart
@@ -981,24 +895,11 @@ function updateAttributeBarChart() {
       node: document.getElementById('attribute-barchart'),
       colorMap: extractColorMap(BENEFICIARIES),
       labels: Object.keys(BENEFICIARIES),
-      width: 1020,
-      height: 520,
+      width: chartWidth,
+      height: barHeight,
     })
   }
   charts.attributeBar.update(attributeBarData())
-}
-
-// Create or update the attribute pie chart
-function updateAttributePieChart() {
-  if (!charts.attributePie) {
-    charts.attributePie = new PieChart({
-      node: document.getElementById('attribute-piechart'),
-      colorMap: extractColorMap(ATTRIBUTES),
-      width: mainWidth(),
-    })
-    window.addEventListener('resize', () => charts.attributePie.resize(mainWidth()))
-  }
-  charts.attributePie.update(getTier1AttributeScoresForPieChart())
 }
 
 
