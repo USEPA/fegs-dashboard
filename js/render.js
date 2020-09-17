@@ -17,7 +17,7 @@ let tableAttributes;
 
 const charts = {} // object to namespace charts
 
-// Constants
+// CONSTANTS
 // const template = {
 //   'Tier 1': {
 //     color: 'str', // block color
@@ -1486,7 +1486,7 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
       if (beneficiaries.indexOf(this.fegsBeneficiaries[i]) < 0) {
         const attributes = this.attributes[this.fegsBeneficiaries[i]];
 
-        if (attributes) {
+        if (typeof attributes === 'array') {
           attributes.forEach(attribute => {
             this.attributes[this.fegsBeneficiaries[i]][attribute].percentageOfBeneficiary = '';
           });
@@ -2129,6 +2129,7 @@ const FEGSScopingView = function FEGSScopingView() {
 
     // Run d3 chart functions
     document.getElementById('beneficiary-charts').removeAttribute('hidden');
+    document.getElementById('attribute-charts').removeAttribute('hidden');
     updateAllCharts()    
 
     // Display table data
@@ -3970,6 +3971,7 @@ function beneficiaryPercentageOfStakeholderInputValidator() {
       fegsScopingView.indicateUnsaved();
     }
     document.getElementById('beneficiary-charts').removeAttribute('hidden');
+    document.getElementById('attribute-charts').removeAttribute('hidden');
 
     updateBeneficiaryView();
     updateAttributeView();
