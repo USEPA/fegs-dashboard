@@ -20,242 +20,285 @@ const charts = {} // object to namespace charts
 // Constants
 // const template = {
 //   'Tier 1': {
-//     color: 'str',
-//     colorBack: 'str',
-//     short: 'str',
-//     def: 'str',
-//     parts: {
+//     color: 'str', // block color
+//     colorBack: 'str', // background color
+//     colorBack2: 'str', // lighter background color
+//     short: 'str', // shorter label for 'Tier 1'
+//     tip: 'str', // tooltip for tier
+//     def: 'str', // definition for tier
+//     parts: { // sub-tiers
 //       'Tier 2': {
 //         color: 'str',
 //         short: 'str',
 //         def: 'str',
 //       },
+//       ...
 //     }
 //   },
+//   ...
 // }
 
 const STAKEHOLDER_COLORS = [
-  '#e6194b',
-  '#3cb44b',
-  '#ffe119',
-  '#0082c8',
-  '#f58231',
-  '#911eb4',
-  '#46f0f0',
-  '#f032e6',
-  '#d2f53c',
-  '#fabebe',
-  '#008080',
-  '#e6beff',
-  '#aa6e28',
-  '#fffac8',
-  '#800000',
-  '#aaffc3',
-  '#808000',
-  '#ffd8b1',
-  '#000080',
-  '#808080',
-  '#000000',
+  "rgb(225,43,87)",
+  "rgb(76,177,89)",
+  "rgb(18,135,197)",
+  "rgb(240,137,64)",
+  "rgb(147,47,178)",
+  "rgb(93,226,226)",
+  "rgb(226,75,218)",
+  "rgb(138,229,56)",
+  "rgb(250,190,190)",
+  "rgb(0,128,128)",
+  "rgb(230,190,255)",
+  "rgb(170,110,40)",
+  "rgb(255,221,136)",
+  "rgb(136,51,51)",
+  "rgb(136,255,136)",
+  "rgb(136,136,51)",
+  "rgb(250,222,42)",
+  "rgb(51,51,136)",
+  "rgb(136,221,255)",
+  "rgb(136,136,136)",
+  "rgb(51,51,51)",
+  "rgb(129,37,59)",
+  "rgb(60,91,64)",
+  "rgb(21,67,92)",
+  "rgb(167,90,35)",
+  "rgb(74,38,85)",
+  "rgb(55,162,162)",
+  "rgb(151,48,146)",
+  "rgb(89,144,39)",
+  "rgb(225,112,112)",
+  "rgb(8,69,69)",
+  "rgb(187,105,238)",
+  "rgb(77,56,31)",
+  "rgb(233,182,56)",
+  "rgb(53,32,32)",
+  "rgb(56,233,56)",
+  "rgb(53,53,32)",
+  "rgb(167,147,23)",
+  "rgb(32,32,53)",
+  "rgb(56,182,233)",
+  "rgb(85,85,85)",
+  "rgb(0,0,0)",
 ]
 
 const CRITERIA = {
   'Magnitude & Probability of Impact': {
-    color: '#4f81bd',
+    tip: 'If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?',
+    color: '#c0504d',
     short: 'Impact',
   },
   'Level of Influence': {
-    color: '#c0504d',
+    tip: 'Does this stakeholder group have any formal or informal influence over the decision making process?',
+    color: '#9bbb59',
     short: 'Influence',
   },
   'Level of Interest': {
-    color: '#9bbb59',
+    tip: 'What is this stakeholder group\'s level of interest in this decision/action?',
+    color: '#8064a2',
     short: 'Interest',
   },
   'Urgency & Temporal Immediacy': {
-    color: '#8064a2',
+    tip: 'Does this stakeholder group want an immediate decision/action on this issue?',
+    color: '#DDC436',
     short: 'Urgency',
   },
   'Proximity': {
+    tip: 'How frequently does this stakeholder group come into contact with the area subject to this decision?',
     color: '#4bacc6',
   },
   'Economic Interest': {
-    color: '#f79646',
+    tip: 'Does this stakeholder group have an economic interest in the outcome of this decision?',
+    color: '#2F7455',
     short: 'Economic',
   },
   'Rights': {
-    color: '#2c4d75',
+    tip: 'Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?',
+    color: '#f79646',
   },
   'Fairness': {
-    color: '#772c2a',
+    tip: 'If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?',
+    color: '#863758',
   },
   'Underrepresented & Underserved Representation': {
-    color: '#5f7530',
+    tip: 'Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?',
+    color: '#2c4d75',
     short: 'Underrepresented',
   },
 }
 
-const BENEFICIARIES = { // TODO build table dynamically with defs from here
+const BENEFICIARIES = {
   'Agricultural': {
-    color: '#663300',
-    colorBack: '#DDD9C4',
+    color: 'rgb(255,133,82)',
+    colorBack: 'rgb(245,208,168)',
+    colorBack2: 'rgb(250,231,211)',
     parts: {
       'Livestock Grazers': {
-        def: '',
+        def: 'Uses the environment to graze livestock',
       },
       'Agricultural Processors': {
-        def: '',
+        def: 'Cleans edible products',
       },
       'Aquaculturalists': {
-        def: '',
+        def: 'Farms aquatic fauna (e.g., fish, shrimp, oysters)',
       },
       'Farmers': {
-        def: '',
+        def: 'Farms terrestrial or aquatic flora (e.g., crops, orchards)',
       },
       'Foresters': {
-        def: '',
+        def: 'Plants and raises trees (i.e., silviculture)',
       },
     },
   },
   'Commercial / Industrial': {
-    color: '#0000CC',
-    colorBack: '#C5D9F1',
+    color: 'rgb(219,58,52)',
+    colorBack: 'rgb(242,145,141)',
+    colorBack2: 'rgb(248,200,198)',
     parts: {
       'Food Extractors': {
-        def: '',
+        def: 'Uses the natural abundance of edible organisms (e.g., hunting, trapping, or fishing for livelihood, job, commercial, or artisinal purposes)',
       },
       'Timber / Fiber / Ornamental Extractors': {
-        def: '',
+        def: 'Extracts or harvests timber, fiber, wood, or ornamental extraction or harvest for commercial or business purposes (e.g., logging, shell collection)',
       },
       'Industrial Processors': {
-        def: '',
+        def: 'Uses natural resources in industrial processing such as manufacturing (e.g., textile or steel industries), mills, or oil and gas extraction and processing)',
       },
       'Energy Generators': {
-        def: '',
+        def: 'Uses the environment for energy production or placement of power generation structures includes power plants (electric and nuclear), dams, turbines (wind, water, or wave), solar',
       },
       'Pharmaceutical / Food Supplement Suppliers': {
-        def: '',
+        def: 'Collects organisms from nature that are used for pharmaceuticals, medicines, food supplements, or vitamins for commerical sale',
       },
       'Fur / Hide Trappers / Hunters': {
-        def: '',
+        def: 'Hunts or traps fauna for fur or hides for commerical sale',
       },
       'Commercial Property Owners': {
-        def: '',
+        def: 'Owners of private land for commercial or industrial purposes',
       },
       'Private Drinking Water Plant Operators': {
-        def: '',
+        def: 'Provides water for private purposes',
       },
     },
   },
   'Governmental / Municipal / Residential': {
-    color: '#660066',
-    colorBack: '#E4DFEC',
+    color: 'rgb(180,111,236)',
+    colorBack: 'rgb(248,194,248)',
+    colorBack2: 'rgb(251,224,251)',
     parts: {
       'Municipal Drinking Water Plant Operators': {
-        def: '',
+        def: 'Provides water for the Community',
       },
       'Public Energy Generators': {
-        def: '',
+        def: 'Uses the environment for energy production or placement of power generation structures for the community, includes power plants (electric and nuclear), dams, turbines (wind, water, or wave), solar panels, and geothermal systems',
       },
       'Residential Property Owners': {
-        def: '',
+        def: 'Homeowners of private land',
       },
       'Military / Coast Guard': {
-        def: '',
+        def: 'Uses the environment for placement of infrastucture or training activities',
       },
     },
   },
   'Transportation': {
-    color: '#FF0000',
-    colorBack: '#F2DCDB',
+    color: 'rgb(102,0,7)',
+    colorBack: 'rgb(184,122,127)',
+    colorBack2: 'rgb(219,188,191)',
     parts: {
       'Transporters of Goods': {
-        def: '',
+        def: 'Uses the environment to transport goods (e.g., shipping, cargo, commercial navigation, barges, freight, planes, trains)',
       },
       'Transporters of People': {
-        def: '',
+        def: 'Uses the environment to transport people (e.g., cruises, ferries, airplanes, airports, trains, harbors)',
       },
     },
   },
   'Subsistence': {
-    color: '#FFFF66',
-    colorBack: '#F9FDD1',
+    color: 'rgb(115,194,190)',
+    colorBack: 'rgb(176,235,232)',
+    colorBack2: 'rgb(215,245,243)',
     parts: {
       'Water Subsisters': {
-        def: '',
+        def: 'Relies on natural sources for water including drinking water and tribal or traditional uses (may use wells, cisterns, rain gardens, rain barrels, etc.)',
       },
       'Food and Medicinal Subsisters': {
-        def: '',
+        def: 'Uses natural sources of edible flora, fauna, and fungi as a major source of food; includes hunting, fishing, and gathering as well as other tribal or traditional uses',
       },
       'Timber / Fiber / Ornamental Subsisters': {
-        def: '',
+        def: 'Relies on timber, fiber, or fauna for survival, including tribal or cultural traditions (e.g., firewood)',
       },
       'Building Material Subsisters': {
-        def: '',
+        def: 'Relies on natural materials for infrastructure and housing',
       },
     },
   },
   'Recreational': {
-    color: '#00FFFF',
-    colorBack: '#DAEEF3',
+    color: 'rgb(144,39,83)',
+    colorBack: 'rgb(234,153,187)',
+    colorBack2: 'rgb(224,204,221)',
     parts: {
       'Experiencers / Viewers': {
-        def: '',
+        def: 'Views and experiences the environment as an activity (e.g., bird, wildlife, or fauna watching; nature appreciation; hiking, biking, camping, climbing, outings, sunbathing, sightseeing, beach combing)',
       },
       'Food Pickers / Gatherers': {
-        def: '',
+        def: 'Recreationally collects or gathers edible flora, fungi, or fauna (does not include hunting or trapping) (e.g., berry picking, mushroom gathering; clam digging)',
       },
       'Hunters': {
-        def: '',
+        def: 'Hunts for recreation or sport',
       },
       'Anglers': {
-        def: '',
+        def: 'Fishes for recreation or sport',
       },
       'Waders / Swimmers / Divers': {
-        def: '',
+        def: 'Recreates in or under the water (e.g., snorkeling, SCUBA, swimming, beachgoing, wading, diving, bathing)',
       },
       'Boaters': {
-        def: '',
+        def: 'Recreates in motorized or unmotorized watercraft (e.g., sailboats, ski boats, jet skis, kayaks, surfboards)',
       },
     },
   },
   'Inspirational': {
-    color: '#70AD47',
-    colorBack: '#EBF1DE',
+    color: 'rgb(62,142,97)',
+    colorBack: 'rgb(153,203,175)',
+    colorBack2: 'rgb(204,229,215)',
     parts: {
       'Spiritual and Ceremonial Participants': {
-        def: '',
+        def: 'Uses the environment for spiritual, ceremonial, or celebratory puposes (e.g., harvest festivals, tribal observances, traditional ceremonies, religious rites)',
       },
       'Artists': {
-        def: '',
+        def: 'Uses the environment to produce art, includes writers, painters, sculptors, cinematographers, and recording artists',
       },
     },
   },
   'Learning': {
-    color: '#FF9900',
-    colorBack: '#FDE9D9',
+    color: 'rgb(233,215,88)',
+    colorBack: 'rgb(243,243,151)',
+    colorBack2: 'rgb(249,249,203)',
     parts: {
       'Students and Educators': {
-        def: '',
+        def: 'Includes all educational uses, interests, or opportunities including field trips and outdoor laboratories',
       },
       'Researchers': {
-        def: '',
+        def: 'Includes opportunities or interest for significant scientific research and improving scientific knowledge',
       },
     },
   },
   'Non-Use': {
-    color: '#B2B2B2',
-    colorBack: '#F2F2F2',
+    color: 'rgb(27,64,121)',
+    colorBack: 'rgb(145,169,207)',
+    colorBack2: 'rgb(200,212,231)',
     parts: {
       'People Who Care': {
-        def: '',
+        def: 'Believes it is important to preserve the environment for moral or ethical reasons, for fear of its loss, or to allow their future selves or future generations to visit or rely upon it',
       },
     },
   },
 }
 
-const ATTRIBUTES = { // TODO build table dynamically with defs from here
+const ATTRIBUTES = {
   'Atmosphere': {
-    color: '#73D6FF',
+    color: 'rgb(34,181,195)',
     parts: {
       'Air Quality': {
         def: 'The degree to which air is clean, clear, and pollution-free',
@@ -275,7 +318,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Soil': {
-    color: '#5B3F1E',
+    color: 'rgb(129,93,86)',
     parts: {
       'Soil Quality': {
         def: 'The suitability of soil for use based on physical, chemical, and/or biological characteristics',
@@ -292,7 +335,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Water': {
-    color: '#2B3BFF',
+    color: 'rgb(42,117,169)',
     parts: {
       'Water Quality': {
         def: 'The suitability of water for use based on physical, chemical, and/or biological characteristics',
@@ -306,7 +349,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Fauna': {
-    color: '#E23577',
+    color: 'rgb(201,52,53)',
     parts: {
       'Fauna Community': {
         def: 'The interacting animal life present in the area',
@@ -341,7 +384,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Flora': {
-    color: '#199F00',
+    color: 'rgb(54,150,54)',
     parts: {
       'Flora Community': {
         def: 'The interacting plant life present in the area',
@@ -370,7 +413,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Fungi': {
-    color: '#5A6E61',
+    color: 'rgb(147,114,178)',
     parts: {
       'Fungal Community': {
         def: 'The interacting fungal life present in the area',
@@ -393,7 +436,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Other Natural Components': {
-    color: '#BA9314',
+    color: 'rgb(243,128,26)',
     parts: {
       'Fuel Quality': {
         def: 'The suitability of material, based on physical, chemical, and/or biological characteristics, to produce heat or power through burning or other methods ',
@@ -420,7 +463,7 @@ const ATTRIBUTES = { // TODO build table dynamically with defs from here
     },
   },
   'Composite (and Extreme Events)': {
-    color: '#8936E3',
+    color: 'rgb(219,127,191)',
     parts: {
       'Sounds': {
         def: 'The sounds or combination of sounds arising from the area',
@@ -495,7 +538,18 @@ const fontLegend = '14px sans-serif'
 
 
 // UTILS
+
+// determine if a variable is a valid number
 const isNum = n => (typeof n === 'number' && !isNaN(n))
+
+// sort an array alphabetically by the key specified by keyfunc
+const alphabetize = (arr, keyfunc=d=>d) => {
+  return arr.sort((a, b) => {
+    a = keyfunc(a).toLowerCase()
+    b = keyfunc(b).toLowerCase()
+    return (a < b) ? -1 : (a > b) ? 1 : 0
+  })
+}
 
 /** sum all values in an object */
 const sum = function sum(obj) {
@@ -672,6 +726,9 @@ class BarChart {
     this.main = this.svg.append('g')
       .attr('transform', `translate(${this.wSide},0)`)
 
+    this.layers = this.main.append('g')
+      .attr('class', 'layers')
+
     this.xAxis = this.main.append('g')
       .attr('class', 'x-axis')
       .style('font', this.font)
@@ -685,13 +742,11 @@ class BarChart {
     this.legend = this.main.append('g')
       .attr('class', 'legend')
       .style('font', this.font)
-
-    this.color = d3.scaleOrdinal()
-      .domain(Object.keys(this.colorMap))
-      .range(Object.values(this.colorMap).concat(this.colors))
   }
 
   update(data) { // data: [{ key: str, label1: num, label2: num, ... }, ...]
+    data = data.reverse() // y axis builds from bottom
+  
     const keys = data.map(d => d.key) // for y axis
     const largest = d3.max(data, d => {
       return Object.values(d).reduce((total, item) => {
@@ -701,11 +756,15 @@ class BarChart {
     const labels = [...this.labels] // for legend/colors
     data.forEach(item => {
       Object.keys(item).forEach(key => {
-        if (key !== 'key' && !labels.includes(key)) { // unique key
+        if (key !== 'key' && !labels.includes(key)) { // unique key (could use a set instead)
           labels.push(key)
         }
       })
     })
+
+    const color = d3.scaleOrdinal()
+      .domain(Object.keys(this.colorMap))
+      .range(Object.values(this.colorMap).concat(this.colors))
     
     const xScale = d3.scaleLinear()
       .domain([0, largest])
@@ -723,7 +782,7 @@ class BarChart {
       .offset([-10, 0])
       .html(function (d) {
         const label = this.parentNode.getAttribute('data-label')
-        return `${label} (${round(d[1] - d[0], 1)})`
+        return `${round(d[1] - d[0], 1)} (${label})`
       })
     this.main.call(tip)
 
@@ -732,47 +791,45 @@ class BarChart {
       .order(d3.stackOrderNone)
       .offset(d3.stackOffsetNone)
 
-    const layer = this.main.selectAll('.layer')
+    const layer = this.layers.selectAll('g.layer')
       .data(stack(data), d => d) // note: d => d binds data by content instead of index
-      .join(enter => {
-        const item = enter.insert('g', ':first-child') // prepend
-          .attr('class', 'layer')
-          .style('fill', d => this.color(d.key))
-          .attr('data-label', (d, i) => labels[i])
-        return item
-      })      
+      .join(enter => enter.append('g')
+        .attr('class', 'layer')
+      )
+      .style('fill', d => color(d.key))
+      .attr('data-label', (d, i) => labels[i])  
     
     const rect = layer.selectAll('rect')
       .data(d => d)
-      .join(enter => {
-        const item = enter.append('rect')
-          .attr('class', 'bar')
-          .attr('x', d => xScale(isNum(d[0]) ? d[0] : 0))
-          .attr('y', d => yScale(d.data.key))
-          .attr('width', d => (isNum(d[0]) && isNum(d[1])) ? xScale(d[1]) - xScale(d[0]) : 0)
-          .attr('height', yScale.bandwidth)
-          .on('mouseover', tip.show)
-          .on('mouseout', tip.hide)
-        return item
-      })
-
-    const entry = this.legend.selectAll('g')
+      .join(enter => enter.append('rect')
+        .attr('class', 'bar')
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
+      )
+      .attr('x', d => xScale(isNum(d[0]) ? d[0] : 0))
+      .attr('y', d => yScale(d.data.key))
+      .attr('width', d => (isNum(d[0]) && isNum(d[1])) ? xScale(d[1]) - xScale(d[0]) : 0)
+      .attr('height', yScale.bandwidth)
+      
+    const legendColor = this.legend.selectAll('rect')
       .data(labels, d => d)
-      .join(enter => {
-        const item = enter.append('g')
-          .attr('transform', (d, i) => `translate(${this.wPlot},${i*19})`)
-        item.append('rect')
-          .attr('x', 10)
-          .attr('width', 18)
-          .attr('height', 18)
-          .attr('fill', d => this.color(d))
-        item.append('text')
-          .attr('x', 30)
-          .attr('y', 9)
-          .attr('dy', '0.35em')
-          .text(d => d)
-        return item
-      })
+      .join(enter => enter.append('rect')
+        .attr('x', 10)
+        .attr('width', 18)
+        .attr('height', 18)
+      )
+      .attr('fill', d => color(d))
+      .attr('transform', (d, i) => `translate(${this.wPlot},${i*19})`)
+
+    const legendLabel = this.legend.selectAll('text')
+      .data(labels, d => d)
+      .join(entry => entry.append('text')
+        .attr('x', 30)
+        .attr('y', 9)
+        .attr('dy', '0.35em')
+      )
+      .text(d => d)
+      .attr('transform', (d, i) => `translate(${this.wPlot},${i*19})`)
   }
 
   hide() {
@@ -907,7 +964,7 @@ function updateAttributeBarChart() {
 function criteriaPieData(short=true) {
   const data = [];
   Object.entries(fegsScopingData.scores).forEach(row => {
-    const label = fegsScopingData.criteriaMap[row[0]]
+    const label = fegsScopingData.criteriaMapOldToNew[row[0]]
     const shortLabel = CRITERIA[label].short // may be undefined
     data.push({
       key: label, // used for colorMap
@@ -924,7 +981,7 @@ function stakeholderBarData() {
   Object.entries(fegsScopingData.stakeholders).forEach(([key, val]) => {
     const item = { key }
     Object.entries(val.scores).forEach(([key2, val2]) => {
-      const label = CRITERIA[fegsScopingData.criteriaMap[key2]].short || fegsScopingData.criteriaMap[key2]
+      const label = CRITERIA[fegsScopingData.criteriaMapOldToNew[key2]].short || fegsScopingData.criteriaMapOldToNew[key2]
       item[label] = val2*(fegsScopingData.scores[key2]/sum(fegsScopingData.scores))
     })
     data.push(item)
@@ -1270,12 +1327,15 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
     'representation'
   ]; // [oldname, ...]
   this.fegsCriteria = [] // [newname, ...]
-  this.criteriaMap = {} // { oldname: newname, ... }
+  this.criteriaMapOldToNew = {} // { oldname: newname, ... }
+  this.criteriaMapNewToOld = {} // { newname: oldname, ... }
 
   Object.keys(criteria).forEach(key => this.fegsCriteria.push(key))
   this.criteria.forEach(key => {
     const search = key.slice(0, 5) // first 5 chars
-    this.criteriaMap[key] = this.fegsCriteria.find(item => item.toLowerCase().includes(search))
+    const newName = this.fegsCriteria.find(item => item.toLowerCase().includes(search))
+    this.criteriaMapOldToNew[key] = newName
+    this.criteriaMapNewToOld[newName] = key
   })
 
   this.fegsBeneficiaries = [] // [beneficiary, ...]
@@ -1587,17 +1647,12 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
    *  will be summed
    */
   this.scoresTimesScoresSum = function scoresTimesScoresSum(stakeholder) {
-    const criteria = Object.keys(this.scores);
     let total = 0;
-    for (let k = 0; k < criteria.length; k += 1) {
-      if (typeof this.stakeholders[stakeholder].scores[criteria[k]] === 'undefined') {
-        accessiblyNotify(`${stakeholder} has no score for ${criteria[k]}`);
-      } else {
-        total +=
-          parseFloat(this.scores[criteria[k]]) *
-          parseFloat(this.stakeholders[stakeholder].scores[criteria[k]]);
-      }
-    }
+    Object.keys(this.scores).forEach(criteria => {
+      const score1 = this.scores[criteria] || 0
+      const score2 = this.stakeholders[stakeholder].scores[criteria] || 0
+      total += score1*score2;
+    })
     return total;
   };
 
@@ -2063,7 +2118,8 @@ const FEGSScopingView = function FEGSScopingView() {
     fegsScopingController.updateDescription(fegsScopingData.projectDescription);
     for (let i = 0; i < fegsScopingData.criteria.length; i += 1) {
       criterion = fegsScopingData.criteria[i];
-      document.querySelector(`#${criterion}-score`).value = fegsScopingData.scores[criterion];
+      const query = `.scoring input[data-criteria="${fegsScopingData.criteriaMapOldToNew[criterion]}"]`
+      document.querySelector(query).value = fegsScopingData.scores[criterion];
     }
 
     // restore notes
@@ -2764,62 +2820,140 @@ const updateSelectStakeholder = selectId => {
   selectStakeholderToSlice();
 };
 
-function buildAttributeTable(tableNode) { // generate html instead of hard-coding it (still spagettied with Table class)
-  const element = ({ tag, cls, text, childs, ...rest }) => {
-    const ele = document.createElement(tag)
-    if (cls) ele.className = cls
-    if (text) ele.innerText = text
-    if (childs) childs.forEach(child => ele.appendChild(element(child))) // recursive
-    Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
-    return ele
-  }
 
+function element({ tag, cls, text, childs, ...rest }) { // create and return the specified element
+  const ele = document.createElement(tag)
+  if (cls) ele.className = cls
+  if (text) ele.innerText = text
+  if (childs) childs.forEach(child => ele.appendChild(element(child))) // recursive
+  Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
+  return ele
+}
+
+function buildCriteriaTable(tableNode) {
+  const thead = element({ tag: 'thead', childs: [
+    { tag: 'tr', childs: [
+      { tag: 'th', text: 'Color' },
+      { tag: 'th', text: 'Criterion' },
+      { tag: 'th', text: 'Weight' },
+    ] }
+  ] })
+
+  const tbody = element({ tag: 'tbody' })
+
+  let i = 0
+  Object.entries(CRITERIA).forEach(([key, val]) => {
+    const inputId = `score-${i++}`
+    const row = element({ tag: 'tr', childs: [
+      { tag: 'th', cls: 'legend-cell', childs: [
+        { tag: 'span', cls: 'legend', style: `background-color: ${val.color};` },
+      ] },
+      { tag: 'th', cls: 'tooltip', childs: [
+        { tag: 'label', for: inputId, childs: [
+          { tag: 'span', text: key },
+        ] },
+        { tag: 'span', cls: 'tooltiprigth tooltiptext', text: val.tip },
+      ] },
+      { tag: 'td', childs: [
+        { tag: 'input', id: inputId, 'data-criteria': key, type: 'number', min: 0, max: 100 },
+      ] },
+    ] })
+    tbody.appendChild(row)
+  })
+  
+  const fragment = new DocumentFragment()
+  fragment.appendChild(thead)
+  fragment.appendChild(tbody)
+  tableNode.appendChild(fragment) // one reflow instead of 2+ (this approach probably not necessary)
+}
+
+function buildBeneficiaryTable(tableNode) {
+  const thead = element({ tag: 'thead', childs: [
+    { tag: 'tr', childs: [
+      { tag: 'th', style: 'width: 10em;', text: 'Category' },
+      { tag: 'th', style: 'width: 10em;', text: 'Subcategory', childs: [
+        { tag: 'br' }, 
+        { tag: 'button', id: 'table-beneficiaries-toggle', cls: 'btn-no-margin', text: 'Hide Definitions' },
+      ] },
+      { tag: 'th', cls: 'definition', style: 'width: 15em;', text: 'Definition' },
+    ] },
+  ] })
+
+  const tbody = element({ tag: 'tbody' })
+
+  Object.entries(BENEFICIARIES).forEach(([key, val]) => {
+    let first = true
+    const parts = Object.entries(val.parts)
+    parts.forEach(([key2, val2]) => {
+      const row = element({ tag: 'tr' })
+      if (first) row.appendChild(element({ tag: 'th', rowspan: parts.length, style: `background-color: ${val.colorBack}; border-left: 4px solid ${val.color};`, text: key }))
+      row.appendChild(element({ tag: 'th', style: `background-color: ${val.colorBack};`, text: key2 }))
+      row.appendChild(element({ tag: 'td', cls: 'definition', style: `background-color: ${val.colorBack2};`, text: val2.def }))
+      tbody.appendChild(row)
+      first = false
+    })
+  })
+
+  const fragment = new DocumentFragment()
+  fragment.appendChild(thead)
+  fragment.appendChild(tbody)
+  tableNode.appendChild(fragment) // one reflow instead of 2+ (this approach probably not necessary)
+}
+
+function buildBeneficiaryToggles(divNode) {
+  Object.keys(BENEFICIARIES).forEach(key => {
+    const btn = element({ tag: 'button', 'aria-pressed': false, 'data-beneficiary': key, style: 'margin-right: 0.2rem;', text: key })
+    btn.addEventListener('click', event => {
+      const pressed = (btn.getAttribute('aria-pressed') === 'true')
+      btn.setAttribute('aria-pressed', !pressed);
+      toggleBeneficiaryRow(key)
+    })
+    divNode.appendChild(btn)
+  })
+}
+
+function buildAttributeTable(tableNode) { // generate html instead of hard-coding it (still spagettied with Table class)
   // Using appendChild instead of innerHTML... possibly more confusing, but faster and secure.
   // The object formatting for elements is meant to look like the HTML structure.
 
-  const colgroup = element({ 
-    tag: 'colgroup', childs: [
-      { tag: 'col', cls: 'row-labels', span: '2' }, // category
-      { tag: 'col', cls: 'row-labels', span: '1' }, // sub-category
-      { tag: 'col', cls: 'definition', span: '1' }] // definition
-  })
+  const colgroup = element({ tag: 'colgroup', childs: [
+    { tag: 'col', cls: 'row-labels', span: '2' }, // category
+    { tag: 'col', cls: 'row-labels', span: '1' }, // sub-category
+    { tag: 'col', cls: 'definition', span: '1' }, // definition
+  ] })
 
   const thead = element({ tag: 'thead' })
 
-  const row1 = element({
-    tag: 'tr', cls: 'column-name-labels', childs: [
-      { tag: 'th', cls: 'row-label-header', colspan: 2 }, // category
-      { tag: 'th', cls: 'row-label-header', colspan: 1 }, // sub-category
-      { tag: 'th', cls: 'definition', colspan: 1, rowspan: 3, text: 'Definition' }] // definition
-  })
+  const row1 = element({ tag: 'tr', cls: 'column-name-labels', childs: [
+    { tag: 'th', cls: 'row-label-header', colspan: 2 }, // category
+    { tag: 'th', cls: 'row-label-header', colspan: 1 }, // sub-category
+    { tag: 'th', cls: 'definition', colspan: 1, rowspan: 3, text: 'Definition' }, // definition
+  ] })
 
-  const row2 = element({
-    tag: 'tr', cls: 'column-names', childs: [
-      { tag: 'th', colspan: 2, text: 'Attribute Tier 1' }, // category
-      { tag: 'th', text: 'Attribute Tier 2', childs: [ // sub-category
-        { tag: 'br' }, 
-        { tag: 'button', id: 'table-attributes-toggle', cls: 'btn-no-margin', text: 'Show Definitions' }]
-      }, 
-      { tag: 'th', 'aria-hidden': true }, // some sort of spacer...?
-      { tag: 'th', 'aria-hidden': true }] // some sort of spacer...?
-  })
+  const row2 = element({ tag: 'tr', cls: 'column-names', childs: [
+    { tag: 'th', colspan: 2, text: 'Attribute Tier 1' }, // category
+    { tag: 'th', text: 'Attribute Tier 2', childs: [ // sub-category
+      { tag: 'br' }, 
+      { tag: 'button', id: 'table-attributes-toggle', cls: 'btn-no-margin', text: 'Show Definitions' },
+    ] }, 
+    { tag: 'th', 'aria-hidden': true }, // some sort of spacer...?
+    { tag: 'th', 'aria-hidden': true }, // some sort of spacer...?
+  ] })
 
-  const row3 = element({
-    tag: 'tr', childs: [
-      { tag: 'th', cls: 'row-tier-1', 'aria-hidden': true },
-      { tag: 'th', cls: 'row-name', colspan: 3, text: 'Beneficiary Result' },
-      { tag: 'th', colspan: 1, 'aria-hidden': true },
-      { tag: 'th', colspan: 1, 'aria-hidden': true }]
-  })
+  const row3 = element({ tag: 'tr', childs: [
+    { tag: 'th', cls: 'row-tier-1', 'aria-hidden': true },
+    { tag: 'th', cls: 'row-name', colspan: 3, text: 'Beneficiary Result' },
+    { tag: 'th', colspan: 1, 'aria-hidden': true },
+    { tag: 'th', colspan: 1, 'aria-hidden': true },
+  ] })
 
   let numBeneficiaries = 0 // used later
   Object.entries(BENEFICIARIES).forEach(([key, val]) => {
-    const color = val.colorBack || val.color
     const parts = Object.keys(val.parts) // parts of beneficiary sub-categories
-    colgroup.appendChild(element({ tag: 'col', span: parts.length, style: `background-color: ${color};` }))
-    row1.appendChild(element({ tag: 'th', colspan: parts.length, text: key }))
+    colgroup.appendChild(element({ tag: 'col', span: parts.length, style: `background-color: ${val.colorBack2};` }))
+    row1.appendChild(element({ tag: 'th', colspan: parts.length, style: `background-color: ${val.colorBack}; border-top: 4px solid ${val.color};`, text: key }))
     parts.forEach(key => {
-      row2.appendChild(element({ tag: 'th', text: key }))
+      row2.appendChild(element({ tag: 'th', style: `background-color: ${val.colorBack};`, text: key }))
       row3.appendChild(element({ tag: 'td' }))
       numBeneficiaries += 1
     })
@@ -2854,7 +2988,7 @@ function buildAttributeTable(tableNode) { // generate html instead of hard-codin
   fragment.appendChild(colgroup)
   fragment.appendChild(thead)
   fragment.appendChild(tbody)
-  tableNode.appendChild(fragment) // one reflow instead of 3+
+  tableNode.appendChild(fragment) // one reflow instead of 3+ (this approach probably not necessary)
 }
 
 function buildAttributeToggles(divNode) {
@@ -2880,7 +3014,14 @@ fegsScopingData = new FEGSScopingData(CRITERIA, BENEFICIARIES, ATTRIBUTES); // T
 fegsScopingView = new FEGSScopingView();
 fegsScopingController = new FEGSScopingController();
 
-// Declare attributes table
+// Build criteria table
+buildCriteriaTable(document.getElementById('table-scores'))
+
+// Build beneficiary table
+buildBeneficiaryTable(document.getElementById('table-beneficiaries'))
+buildBeneficiaryToggles(document.getElementById('toggle-beneficiaries'))
+
+// Build attributes table
 buildAttributeTable(document.getElementById('table-attributes'))
 buildAttributeToggles(document.getElementById('toggle-attributes'))
 tableAttributes = tableAttributesCreator('table-attributes');
@@ -3962,14 +4103,14 @@ function serializeSVG(svgNode) { // returns svg string
   return serializer.serializeToString(svg)
 }
 
-function rasterizeSVG(svgNode, mime='png', scale=2) { // returns png/jpeg buffer promise
+function rasterizeSVG(svgNode, mime='png', scale=2, pad=5) { // returns png/jpeg buffer promise
   return new Promise((resolve, reject) => {
     const svgString = serializeSVG(svgNode)
     const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
     
     const canvas = document.createElement('canvas')
-    canvas.width = svgNode.clientWidth*scale
-    canvas.height = svgNode.clientHeight*scale
+    canvas.width = svgNode.clientWidth*scale + pad*2
+    canvas.height = svgNode.clientHeight*scale + pad*2
     const ctx = canvas.getContext('2d')
     
     const img = new Image()
@@ -3979,7 +4120,7 @@ function rasterizeSVG(svgNode, mime='png', scale=2) { // returns png/jpeg buffer
         ctx.fillStyle = '#FFF' // background color
         ctx.fillRect(0, 0, canvas.width, canvas.height)
       }
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      ctx.drawImage(img, pad, pad, canvas.width - pad*2, canvas.height - pad*2)
       canvas.toBlob(imgBlob => {
         imgBlob.arrayBuffer().then(result => {
           const buffer = new Buffer(result)
@@ -4125,8 +4266,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const isValid = validateInput(input.value, 0, 100);
         if (isValid) {
           input.classList.remove('invalid-text-input');
-          fegsScopingData.scores[input.id.replace('-score', '')] = input.value;
-        } else if (event === input) { // selected
+          const criteria = fegsScopingData.criteriaMapNewToOld[input.dataset['criteria']]
+          fegsScopingData.scores[criteria] = input.value;
+        } else if (event.target === input) { // selected
           input.classList.add('invalid-text-input');
           accessiblyNotify('Enter a number between 0 and 100');
         }
@@ -4179,16 +4321,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   toggleAllAttributes();
-
-  document.querySelectorAll('#toggle-beneficiaries button').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const element = event.target;
-      const pressed = element.getAttribute('aria-pressed') === 'true';
-      element.setAttribute('aria-pressed', !pressed);
-      toggleBeneficiaryRow(element.innerText);
-    });
-  });
-
   toggleAllBeneficiaries();
 });
 

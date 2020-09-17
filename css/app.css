@@ -82,83 +82,16 @@ hr {
   display: none !important;
 }
 
-.magnitude {
-  background: #4f81bd;
-}
-
-.influence {
-  background: #c0504d;
-}
-
-.interest {
-  background: #9bbb59;
-}
-
-.urgency {
-  background: #8064a2;
-}
-
-.proximity {
-  background: #4bacc6;
-}
-
-.economic-interest {
-  background: #f79646;
-}
-
-.rights {
-  background: #2c4d75;
-}
-
-.fairness {
-  background: #772c2a;
-}
-
-.representation {
-  background: #5f7530;
-}
-
-.agricultural {
-  background: #ddd9c4;
-}
-
-.commercial {
-  background: #c5d9f1;
-}
-
-.governmental {
-  background: #e4dfec;
-}
-
-.transportation {
-  background: #f2dcdb;
-}
-
-.subsistence {
-  background: #f9fdd1;
-}
-
-.recreational {
-  background: #daeef3;
-}
-
-.inspirational {
-  background: #ebf1de;
-}
-
-.learning {
-  background: #fde9d9;
-}
-
-.nonuse {
-  background: #f2f2f2;
-}
-
 .legend {
   border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
   height: 1em;
   width: 1em;
+  margin: 0.5em;
+}
+
+.legend-cell {
+  text-align: center;
 }
 
 .key {
@@ -169,18 +102,12 @@ hr {
   margin: 1em 1em 0 1em;
 }
 
-@media (min-width: 600px) {
-  .legend {
-    margin: 1em;
-  }
-}
-
 .scoring input {
   max-width: 4em;
 }
 
 .dark {
-  background: rgba(128, 128, 128, 0.25);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .light-gray {
