@@ -16,6 +16,7 @@ let fegsScopingController;
 let tableAttributes;
 
 const charts = {} // object to namespace charts
+const notes = {} // object to namespace notes
 
 // CONSTANTS
 // const template = {
@@ -551,6 +552,16 @@ const alphabetize = (arr, keyfunc=d=>d) => {
   })
 }
 
+// create and return the specified element
+const element = ({ tag, cls, text, childs, ...rest }) => {
+  const ele = document.createElement(tag)
+  if (cls) ele.className = cls
+  if (text) ele.innerText = text
+  if (childs) childs.forEach(child => ele.appendChild(element(child))) // recursive
+  Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
+  return ele
+}
+
 /** sum all values in an object */
 const sum = function sum(obj) {
   let total = 0;
@@ -574,6 +585,75 @@ const round = function round(number, precision) {
   return shift(Math.round(shift(number, precision, false)), precision, true);
 };
 
+
+// CLASSES
+
+class Note {
+  constructor(config) {
+    this.node =        config.node // DOM node to attach note section
+    this.saveFunc =    config.saveFunc || null // called when edited text is saved
+    this.header =      config.header || 'Notes'
+    this.placeholder = config.placeholder || '<em>Your notes here...</em>'
+
+    this.editIcon = 'fas fa-edit'.split(' ') // array of CSS classes
+    this.saveIcon = 'fas fa-check green'.split(' ') // array of CSS classes
+    this.editing = false
+    this.note = ''
+
+    this.init()
+  }
+  init() {
+    const headerDiv = element({ tag: 'div', cls: 'note-header' })
+    headerDiv.appendChild(element({ tag: 'h3', text: this.header }))
+
+    this.button = element({ tag: 'i', cls: 'icon-btn' })
+    this.button.addEventListener('click', () => {
+      (this.editing) ? this.save() : this.edit()
+    })
+    headerDiv.appendChild(this.button)
+    this.node.appendChild(headerDiv)
+
+    this.content = element({ tag: 'div', cls: 'note', text: this.note })
+    this.node.appendChild(this.content)
+
+    this.save() // initialize state
+  }
+  save() {
+    if (this.editing) {
+      this.note = this.content.innerText
+      if (this.saveFunc) this.saveFunc(this.note)
+    }
+    if (!this.note) this.content.innerHTML = this.placeholder
+    this.viewMode()
+  }
+  edit() {
+    this.content.innerText = this.note
+    this.editMode()
+  }
+  viewMode() {
+    this.editing = false
+    this.content.setAttribute('contenteditable', false)
+    this.button.classList.remove(...this.saveIcon)
+    this.button.classList.add(...this.editIcon)
+    this.button.setAttribute('title', 'Edit')
+  }
+  editMode() {
+    this.editing = true
+    this.content.setAttribute('contenteditable', true)
+    this.button.classList.remove(...this.editIcon)
+    this.button.classList.add(...this.saveIcon)
+    this.button.setAttribute('title', 'Save')
+  }
+  get() {
+    return this.note
+  }
+  set(note) {
+    this.note = note
+    if (note) this.content.innerText = note
+    else this.content.innerHTML = this.placeholder
+    this.viewMode()
+  }
+}
 
 class PieChart {
   constructor(config) {
@@ -1882,7 +1962,7 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
   this.projectName = 'New Project';
   this.projectDescription = '';
   this.notes = {
-    weights: '',
+    criteria: '',
     stakeholders: '',
     beneficiaries: '',
     attributes: ''
@@ -2123,13 +2203,20 @@ const FEGSScopingView = function FEGSScopingView() {
     }
 
     // restore notes
-    Object.keys(fegsScopingData.notes).forEach(note => {
-      document.querySelector(`#${note}-note`).value = fegsScopingData.notes[note];
+    Object.keys(fegsScopingData.notes).forEach(section => {
+      if (section in notes) notes[section].set(fegsScopingData.notes[section])
     });
 
+    const hasStakeholder = (Object.keys(fegsScopingData.stakeholders).length > 0)
+
     // Run d3 chart functions
-    document.getElementById('beneficiary-charts').removeAttribute('hidden');
-    document.getElementById('attribute-charts').removeAttribute('hidden');
+    if (hasStakeholder) {
+      document.getElementById('beneficiary-charts').removeAttribute('hidden');
+      document.getElementById('attribute-charts').removeAttribute('hidden');
+    } else {
+      document.getElementById('beneficiary-charts').setAttribute('hidden', true);
+      document.getElementById('attribute-charts').setAttribute('hidden', true);
+    }
     updateAllCharts()    
 
     // Display table data
@@ -2313,7 +2400,10 @@ const FEGSScopingView = function FEGSScopingView() {
     const event = new Event('change');
     document.getElementById('select-stakeholder').dispatchEvent(event);
     updateStakeholderProgress();
-    document.getElementById('stakeholder-table-container').style.display = 'block';
+    
+    const display = (Object.keys(fegsScopingData.stakeholders).length > 0) ? 'block' : 'none'
+    document.getElementById('stakeholder-table-container').style.display = display
+
     fegsScopingView.indicateUnsaved();
   };
 
@@ -2822,15 +2912,6 @@ const updateSelectStakeholder = selectId => {
 };
 
 
-function element({ tag, cls, text, childs, ...rest }) { // create and return the specified element
-  const ele = document.createElement(tag)
-  if (cls) ele.className = cls
-  if (text) ele.innerText = text
-  if (childs) childs.forEach(child => ele.appendChild(element(child))) // recursive
-  Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
-  return ele
-}
-
 function buildCriteriaTable(tableNode) {
   const thead = element({ tag: 'thead', childs: [
     { tag: 'tr', childs: [
@@ -3008,6 +3089,37 @@ function buildAttributeToggles(divNode) {
   })
 }
 
+function buildNotes() {
+  notes.criteria = new Note({ 
+    node: document.getElementById('note-criteria'),
+    saveFunc: note => {
+      fegsScopingData.notes.criteria = note
+      fegsScopingView.indicateUnsaved()
+    }
+  })
+  notes.stakeholders = new Note({ 
+    node: document.getElementById('note-stakeholder'),
+    saveFunc: note => {
+      fegsScopingData.notes.stakeholders = note
+      fegsScopingView.indicateUnsaved()
+    }
+  })
+  notes.beneficiaries = new Note({ 
+    node: document.getElementById('note-beneficiary'),
+    saveFunc: note => {
+      fegsScopingData.notes.beneficiaries = note
+      fegsScopingView.indicateUnsaved()
+    }
+  })
+  notes.attributes = new Note({ 
+    node: document.getElementById('note-attribute'),
+    saveFunc: note => {
+      fegsScopingData.notes.attributes = note
+      fegsScopingView.indicateUnsaved()
+    }
+  })
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Declare Data, View, and Controller.
@@ -3029,6 +3141,9 @@ tableAttributes = tableAttributesCreator('table-attributes');
 
 updateSelectBeneficiary('select-beneficiary');
 showSelectedBeneficiary(document.getElementById('select-beneficiary'));
+
+// Build notes
+buildNotes()
 
 // Update progress
 updateStakeholderProgress();
@@ -3063,6 +3178,7 @@ const pageZoomChange = function pageZoomChange(event) {
 function save(filepath) {
   if (document.getElementById('set-stakeholder-values').style.display !== 'none') addStakeholderScores() // greasy hack for in-edit stakeholder creation
   document.querySelectorAll('button.save-button:not([aria-hidden="true"])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
+  Object.values(notes).forEach(note => note.save()) // save in-edit notes
   fegsScopingController.saveJSON(filepath, fegsScopingData)
   fegsScopingView.indicateSaved(filepath)
 }
@@ -3848,7 +3964,7 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
   const table = document.getElementById('table-beneficiaries');
   const select = document.getElementById('select-stakeholder');
   const stakeholderName = select.value;
-  const noBenefit = fegsScopingData.stakeholders[stakeholderName].noBenefit
+  const noBenefit = (stakeholderName) ? fegsScopingData.stakeholders[stakeholderName].noBenefit : null
   const tBody = table.tBodies[0];
   let rowIndex;
   let cell;
@@ -3861,6 +3977,8 @@ const selectStakeholderToSlice = function selectStakeholderToSlice() {
     // remove all data columns
     removeLastColumnFromTable(table.id);
   }
+  if (!stakeholderName) return // no stakeholder
+
   // add a column to house the data
   addTableColumn(
     table.id,
@@ -4280,45 +4398,6 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStakeholderBarChart();
       updateWeightingProgress();
       fegsScopingView.indicateUnsaved();
-    });
-  });
-
-  document.querySelectorAll('.add-note-btn').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const notetype = event.target.dataset.noteId;
-      const label = document.querySelector(`#${notetype}-note-label`);
-      const note = document.querySelector(`#${notetype}-note`);
-      const saveBtn = document.querySelector(`#${notetype}-save-btn`);
-      const pressed = event.target.getAttribute('aria-pressed') === 'true';
-      let hidden = false;
-
-      event.target.setAttribute('aria-pressed', !pressed);
-
-      hidden = !label.hidden;
-      label.hidden = hidden;
-      note.hidden = hidden;
-      saveBtn.hidden = hidden;
-    });
-  });
-
-  document.querySelectorAll('.save-note-btn').forEach(ele => {
-    ele.addEventListener('click', event => {
-      const notetype = event.target.dataset.noteId;
-      const label = document.querySelector(`#${notetype}-note-label`);
-      const note = document.querySelector(`#${notetype}-note`);
-      const saveBtn = document.querySelector(`#${notetype}-save-btn`);
-      const pressed = event.target.getAttribute('aria-pressed') === 'true';
-      const hidden = !label.hidden;
-
-      event.target.setAttribute('aria-pressed', !pressed);
-
-      // save note
-      fegsScopingData.notes[`${notetype}`] = note.value;
-
-      // hide menu
-      label.hidden = hidden;
-      note.hidden = hidden;
-      saveBtn.hidden = hidden;
     });
   });
 
