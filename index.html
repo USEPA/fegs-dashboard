@@ -73,7 +73,7 @@
           <p>Identify your stakeholder groups. Enter the name of the group and press <strong>Add stakeholder
               group</strong>.</p>
 
-          <div id="note-stakeholder"></div>
+          <div id="note-stakeholders"></div>
 
           <div id="stakeholder-prioritization">
             <div>
@@ -326,18 +326,20 @@
               <tbody>
               </tbody>
             </table>
-            <div>
+            <div id="stakeholder-charts">
               <div class="flexcol">
                 <div class="chart-header">
-                  <h2>Stakeholder Prioritization</h2>
-                  <button id="download-stakeholder-barchart" title="Download Chart">Download</button>
+                  <h2>Stakeholder Prioritization
+                    <i id="download-stakeholder-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                  </h2>  
                 </div>
                 <div id="stakeholder-barchart" class="chart"></div>
               </div>
               <div class="flexcol">
                 <div class="chart-header">
-                  <h2>Prioritization Criteria Relative Weights</h2>
-                  <button id="download-stakeholder-piechart" title="Download Chart">Download</button>
+                  <h2>Prioritization Criteria Relative Weights
+                    <i id="download-stakeholder-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                  </h2>
                 </div>
                 <div id="stakeholder-piechart" class="chart"></div>
               </div>
@@ -354,7 +356,7 @@
             must have beneficiary percentages which sum to 100.</p>
           <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
 
-          <div id="note-beneficiary"></div>
+          <div id="note-beneficiaries"></div>
 
           <label for="select-stakeholder">Select a Stakeholder Group</label>
           <div class="flexrow">
@@ -369,13 +371,15 @@
           <div id="beneficiary-charts" hidden>
             <div class="flexcol">
               <div class="chart-header">
-                <h2>Beneficiary Prioritization</h2>
-                <button id="download-beneficiary-barchart" title="Download Chart">Download</button>
+                <h2>Beneficiary Prioritization
+                  <i id="download-beneficiary-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
               </div>
               <div id="beneficiary-barchart" class="chart"></div>
               <div class="chart-header">
-                <h2>Beneficiary Profile</h2>
-                <button id="download-beneficiary-piechart" title="Download Chart">Download</button>
+                <h2>Beneficiary Profile
+                  <i id="download-beneficiary-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
               </div>
               <div id="beneficiary-piechart" class="chart"></div>
             </div>
@@ -390,7 +394,7 @@
           <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage.
             Each beneficary group must have attributes which sum to 100.</p>
 
-          <div id="note-attribute"></div>
+          <div id="note-attributes"></div>
 
           <label for="select-beneficiary">Select a Beneficiary Group</label>
           <select class="form-select" id="select-beneficiary"></select>
@@ -401,13 +405,15 @@
           <div id="attribute-charts" hidden>
             <div class="flexcol">
               <div class="chart-header">
-                <h2>Environmental Attribute Prioritization</h2>
-                <button id="download-attribute-barchart" title="Download Chart">Download</button>
+                <h2>Environmental Attribute Prioritization
+                  <i id="download-attribute-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
               </div>
               <div id="attribute-barchart" class="chart"></div>
               <div class="chart-header">
-                <h2>Environmental Attributes Relative Priority</h2>
-                <button id="download-attribute-piechart" title="Download Chart">Download</button>
+                <h2>Environmental Attributes Relative Priority
+                  <i id="download-attribute-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
               </div>
               <div id="attribute-piechart" class="chart"></div>
             </div>

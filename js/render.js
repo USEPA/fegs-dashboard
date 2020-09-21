@@ -40,7 +40,6 @@ const notes = {} // object to namespace notes
 // }
 
 const STAKEHOLDER_COLORS = [
-  "rgb(225,43,87)",
   "rgb(76,177,89)",
   "rgb(18,135,197)",
   "rgb(240,137,64)",
@@ -50,6 +49,7 @@ const STAKEHOLDER_COLORS = [
   "rgb(138,229,56)",
   "rgb(250,190,190)",
   "rgb(0,128,128)",
+  "rgb(225,43,87)",
   "rgb(230,190,255)",
   "rgb(170,110,40)",
   "rgb(255,221,136)",
@@ -61,7 +61,6 @@ const STAKEHOLDER_COLORS = [
   "rgb(136,221,255)",
   "rgb(136,136,136)",
   "rgb(51,51,51)",
-  "rgb(129,37,59)",
   "rgb(60,91,64)",
   "rgb(21,67,92)",
   "rgb(167,90,35)",
@@ -71,6 +70,7 @@ const STAKEHOLDER_COLORS = [
   "rgb(89,144,39)",
   "rgb(225,112,112)",
   "rgb(8,69,69)",
+  "rgb(129,37,59)",
   "rgb(187,105,238)",
   "rgb(77,56,31)",
   "rgb(233,182,56)",
@@ -596,8 +596,11 @@ class Note {
     this.placeholder = config.placeholder || '<em>Your notes here...</em>'
 
     this.editIcon = 'fas fa-edit'.split(' ') // array of CSS classes
-    this.saveIcon = 'fas fa-check green'.split(' ') // array of CSS classes
+    this.saveIcon = 'fas fa-check green'.split(' ')
+    // this.hideIcon = 'fas fa-chevron-up'.split(' ')
+    // this.showIcon = 'fas fa-chevron-down'.split(' ')
     this.editing = false
+    this.visible = true
     this.note = ''
 
     this.init()
@@ -606,52 +609,85 @@ class Note {
     const headerDiv = element({ tag: 'div', cls: 'note-header' })
     headerDiv.appendChild(element({ tag: 'h3', text: this.header }))
 
-    this.button = element({ tag: 'i', cls: 'icon-btn' })
-    this.button.addEventListener('click', () => {
+    this.editBtn = element({ tag: 'i', cls: 'icon-btn' })
+    this.editBtn.addEventListener('click', () => {
       (this.editing) ? this.save() : this.edit()
     })
-    headerDiv.appendChild(this.button)
+    headerDiv.appendChild(this.editBtn)
+
+    // this.viewBtn = element({ tag: 'i', cls: 'icon-btn', style: 'margin-left: .75em' })
+    // this.viewBtn.addEventListener('click', () => {
+    //   (this.visible) ? this.hide() : this.show()
+    // })
+    // headerDiv.appendChild(this.viewBtn)
+
     this.node.appendChild(headerDiv)
 
     this.content = element({ tag: 'div', cls: 'note', text: this.note })
     this.node.appendChild(this.content)
 
     this.save() // initialize state
-  }
-  save() {
-    if (this.editing) {
-      this.note = this.content.innerText
-      if (this.saveFunc) this.saveFunc(this.note)
-    }
-    if (!this.note) this.content.innerHTML = this.placeholder
-    this.viewMode()
-  }
-  edit() {
-    this.content.innerText = this.note
-    this.editMode()
-  }
-  viewMode() {
-    this.editing = false
-    this.content.setAttribute('contenteditable', false)
-    this.button.classList.remove(...this.saveIcon)
-    this.button.classList.add(...this.editIcon)
-    this.button.setAttribute('title', 'Edit')
-  }
-  editMode() {
-    this.editing = true
-    this.content.setAttribute('contenteditable', true)
-    this.button.classList.remove(...this.editIcon)
-    this.button.classList.add(...this.saveIcon)
-    this.button.setAttribute('title', 'Save')
+    // this.show() // initialize state
   }
   get() {
     return this.note
   }
   set(note) {
     this.note = note
-    if (note) this.content.innerText = note
-    else this.content.innerHTML = this.placeholder
-    this.viewMode()
+    this.editing = false
+    this.save()
+    // this.show()
+  }
+  save() {
+    if (this.editing) {
+      this.note = this.content.innerText
+      if (this.saveFunc) this.saveFunc(this.note)
+    }
+    this.editing = false
+    this.content.setAttribute('contenteditable', false)
+    this.editBtn.classList.remove(...this.saveIcon)
+    this.editBtn.classList.add(...this.editIcon)
+    this.editBtn.setAttribute('title', 'Edit')
+    // this.viewBtn.hidden = false
+    this.showContent()
+  }
+  edit() {
+    this.editing = true
+    this.content.setAttribute('contenteditable', true)
+    this.editBtn.classList.remove(...this.editIcon)
+    this.editBtn.classList.add(...this.saveIcon)
+    this.editBtn.setAttribute('title', 'Save')
+    // this.viewBtn.hidden = true
+    this.showContent()
+  }
+  // hide() {
+  //   this.visible = false
+  //   this.viewBtn.classList.remove(...this.hideIcon)
+  //   this.viewBtn.classList.add(...this.showIcon)
+  //   this.viewBtn.setAttribute('title', 'Show')
+  //   this.showContent()
+  // }
+  // show() {
+  //   this.visible = true
+  //   this.viewBtn.classList.remove(...this.showIcon)
+  //   this.viewBtn.classList.add(...this.hideIcon)
+  //   this.viewBtn.setAttribute('title', 'Hide')
+  //   this.showContent()
+  // }
+  showContent() { // show correct note content depending on state
+    if (this.editing) {
+      this.content.innerText = this.note
+    } else {
+      if (this.visible) {
+        if (this.note) {
+          this.content.innerText = this.note
+        } else {
+          this.content.innerHTML = this.placeholder
+        }
+      } else {
+        this.content.innerHTML = '...'
+      }
+    }
   }
 }
 
@@ -2943,10 +2979,7 @@ function buildCriteriaTable(tableNode) {
     tbody.appendChild(row)
   })
   
-  const fragment = new DocumentFragment()
-  fragment.appendChild(thead)
-  fragment.appendChild(tbody)
-  tableNode.appendChild(fragment) // one reflow instead of 2+ (this approach probably not necessary)
+  tableNode.append(thead, tbody)
 }
 
 function buildBeneficiaryTable(tableNode) {
@@ -2976,10 +3009,7 @@ function buildBeneficiaryTable(tableNode) {
     })
   })
 
-  const fragment = new DocumentFragment()
-  fragment.appendChild(thead)
-  fragment.appendChild(tbody)
-  tableNode.appendChild(fragment) // one reflow instead of 2+ (this approach probably not necessary)
+  tableNode.append(thead, tbody)
 }
 
 function buildBeneficiaryToggles(divNode) {
@@ -3040,9 +3070,7 @@ function buildAttributeTable(tableNode) { // generate html instead of hard-codin
       numBeneficiaries += 1
     })
   })
-  thead.appendChild(row1)
-  thead.appendChild(row2)
-  thead.appendChild(row3)
+  thead.append(row1, row2, row3)
 
   const tbody = element({ tag: 'tbody' })
 
@@ -3066,11 +3094,7 @@ function buildAttributeTable(tableNode) { // generate html instead of hard-codin
     darken = !darken // alternate
   })
 
-  const fragment = new DocumentFragment()
-  fragment.appendChild(colgroup)
-  fragment.appendChild(thead)
-  fragment.appendChild(tbody)
-  tableNode.appendChild(fragment) // one reflow instead of 3+ (this approach probably not necessary)
+  tableNode.append(colgroup, thead, tbody)
 }
 
 function buildAttributeToggles(divNode) {
@@ -3090,34 +3114,15 @@ function buildAttributeToggles(divNode) {
 }
 
 function buildNotes() {
-  notes.criteria = new Note({ 
-    node: document.getElementById('note-criteria'),
-    saveFunc: note => {
-      fegsScopingData.notes.criteria = note
-      fegsScopingView.indicateUnsaved()
-    }
-  })
-  notes.stakeholders = new Note({ 
-    node: document.getElementById('note-stakeholder'),
-    saveFunc: note => {
-      fegsScopingData.notes.stakeholders = note
-      fegsScopingView.indicateUnsaved()
-    }
-  })
-  notes.beneficiaries = new Note({ 
-    node: document.getElementById('note-beneficiary'),
-    saveFunc: note => {
-      fegsScopingData.notes.beneficiaries = note
-      fegsScopingView.indicateUnsaved()
-    }
-  })
-  notes.attributes = new Note({ 
-    node: document.getElementById('note-attribute'),
-    saveFunc: note => {
-      fegsScopingData.notes.attributes = note
-      fegsScopingView.indicateUnsaved()
-    }
-  })
+  for (let section of ['criteria', 'stakeholders', 'beneficiaries', 'attributes']) {
+    notes[section] = new Note({ 
+      node: document.getElementById(`note-${section}`),
+      saveFunc: note => {
+        fegsScopingData.notes[section] = note
+        fegsScopingView.indicateUnsaved()
+      }
+    })
+  }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -3177,7 +3182,7 @@ const pageZoomChange = function pageZoomChange(event) {
 
 function save(filepath) {
   if (document.getElementById('set-stakeholder-values').style.display !== 'none') addStakeholderScores() // greasy hack for in-edit stakeholder creation
-  document.querySelectorAll('button.save-button:not([aria-hidden="true"])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
+  document.querySelectorAll('i[title="Save"]:not([hidden])').forEach(btn => btn.click()) // greasy hack for in-edit stakeholder rows
   Object.values(notes).forEach(note => note.save()) // save in-edit notes
   fegsScopingController.saveJSON(filepath, fegsScopingData)
   fegsScopingView.indicateSaved(filepath)
@@ -3571,26 +3576,6 @@ function getCheckedValueByName(name) {
 }
 
 /**
- * Creates an HTML button element with the text and class specified.
- * @function
- * @param {string} text - The text to be displayed on the button.
- * @param {string} className - The class to assign to the button.
- * @return {Element} - The HTML button element.
- */
-const createButton = function createButton(text, className) {
-  const button = document.createElement('button');
-  button.innerHTML = text;
-  button.className = className;
-  return button;
-};
-
-const createIcon = function createIcon(className) {
-  const icon = document.createElement('i');
-  icon.className = className;
-  return icon;
-};
-
-/**
  * Adds a row containing the specified data to the table, with appropriate listeners.
  * @function
  * @param {string} tableID - The ID of the table element.
@@ -3600,28 +3585,23 @@ function addRow(tableID, rowData) {
   const tableRef = document.getElementById(tableID).getElementsByTagName('tbody')[0]; // Get a reference to the table
   const newRow = tableRef.insertRow(); // Insert a row in the table at row index 0
 
-  const editButton = createIcon('far fa-edit fa-2x edit-button button-icon'); // Create Buttons
-  editButton.setAttribute('title', 'Edit');
-
-  const saveButton = createIcon('fas fa-check fa-2x save-button button-icon');
-  saveButton.setAttribute('aria-hidden', 'true');
-  saveButton.setAttribute('title', 'Save')
-
-  const removeButton = createIcon('far fa-trash-alt fa-2x remove-button button-icon');
-  removeButton.setAttribute('title', 'Remove')
+  const editBtn = element({ tag: 'i', cls: 'fas fa-edit icon-btn', title: 'Edit' })
+  const saveBtn = element({ tag: 'i', cls: 'fas fa-check green icon-btn', title: 'Save' })
+  saveBtn.hidden = true
+  const removeBtn = element({ tag: 'i', cls: 'fas fa-trash-alt red icon-btn', title: 'Remove' })
 
   let newCell = newRow.insertCell(); // Insert a cell in the row to hold the buttons
-  newCell.appendChild(editButton);
-  newCell.appendChild(saveButton);
-  newCell.appendChild(removeButton);
-  newCell.className = 'icon-cell'
 
-  removeButton.addEventListener('click', function clickRemoveStakeholder() {
+  const wrapper = element({ tag: 'div', cls: 'flexrow', style: 'min-width: 4.5em; justify-content: space-around;' })
+  wrapper.append(editBtn, saveBtn, removeBtn)
+  newCell.append(wrapper)
+
+  removeBtn.addEventListener('click', () => {
     fegsScopingView.indicateUnsaved();
     // create listeners for the buttons
-    const stakeholder = this.parentNode.nextSibling.innerHTML;
+    const stakeholder = wrapper.parentNode.nextSibling.innerHTML; // I hate this
     fegsScopingData.removeStakeholders([stakeholder]);
-    this.parentNode.parentNode.remove();
+    wrapper.parentNode.parentNode.remove();
     removeOptionFromSelect('select-stakeholder', stakeholder);
     updateStakeholderBarChart();
     const stakeholderCount = Object.keys(fegsScopingData.stakeholders).length;
@@ -3632,11 +3612,13 @@ function addRow(tableID, rowData) {
     updateAttributeView();
   });
 
-  editButton.addEventListener('click', function clickEditStakeholder() {
+  editBtn.addEventListener('click', () => {
+    editBtn.hidden = true
+    saveBtn.hidden = false
+    removeBtn.hidden = true
+
     fegsScopingView.indicateUnsaved();
-    this.setAttribute('aria-hidden', 'true'); // hide the edit button
-    const row = this.parentNode.parentNode;
-    row.getElementsByClassName('save-button')[0].removeAttribute('aria-hidden'); // show the save button
+    const row = wrapper.parentNode.parentNode;
     const { cells } = row;
     cells[1].innerHTML = `<input style="min-width: 8rem;" data-original-value="${cells[1].innerText}" type="text" value="${cells[1].innerText}"/>`;
     for (let i = 2, { length } = cells; i < length; i += 1) {
@@ -3646,9 +3628,13 @@ function addRow(tableID, rowData) {
     }
   });
 
-  saveButton.addEventListener('click', function clickSaveStakeholder() {
+  saveBtn.addEventListener('click', () => {
+    editBtn.hidden = false
+    saveBtn.hidden = true
+    removeBtn.hidden = false
+
     fegsScopingView.indicateUnsaved(); // not yet saved to file
-    const row = this.parentNode.parentNode;
+    const row = wrapper.parentNode.parentNode;
     const { cells } = row;
     let originalStakeholderName = cells[1].innerText;
     const newStakeholderName = cells[1].firstElementChild.value.trim();
@@ -3717,9 +3703,6 @@ function addRow(tableID, rowData) {
     } else {
       fegsScopingData.updateStakeholder(originalStakeholderName, scores);
     }
-
-    this.setAttribute('aria-hidden', 'true'); // hide the save button
-    row.getElementsByClassName('edit-button')[0].removeAttribute('aria-hidden'); // show the edit button
 
     fegsScopingData.stakeholders[newStakeholderName].scores = scores;
     updateSelectStakeholder('select-stakeholder'); // update select-box that its entries have changed
@@ -3940,7 +3923,7 @@ const getTableCell = function getTableCell(table, x, y) {
 };
 
 function toggleTableDefinitions(event, tableID) {
-  for (element of document.querySelectorAll(`#${tableID} .definition`)) {
+  for (let element of document.querySelectorAll(`#${tableID} .definition`)) {
     if (element.hasAttribute('hidden') || element.classList.contains('display-none')) {
       event.target.innerHTML = 'Hide Definitions';
       element.removeAttribute('hidden');

@@ -129,9 +129,13 @@ hr {
 #table-stakeholders td,
 #table-stakeholders th {
   border: 1px solid #d6d7d9;
-  padding: 20px 4px;
-  /* padding: 8px; */
+  /* padding: 20px 4px; */
+  padding: 8px;
   text-align: center;
+}
+
+#table-stakeholders td input {
+  margin: .5em;
 }
 
 #stakeholder-table-container {
@@ -487,16 +491,14 @@ input[disabled] {
   align-items: center;
 }
 .chart-header h2 {
-  margin-left: calc(6rem + 1rem); /* button width + button margin */
+  margin-left: 1em;
 }
-.chart-header button {
-  margin: 0 0 1rem 1rem;
+.chart-header i {
+  position: relative;
+  bottom: .1em;
+  font-size: 1.2rem;
 }
-@media screen and (max-width: 1160px) {
-  .chart-header h2 {
-    margin-left: 0 /* prefer offset title over wrapping title */
-  }
-}
+
 
 /* Note styles */
 .note {
@@ -546,6 +548,9 @@ input[disabled] {
   font-size: 1.2em;
   color: #0071bc;
 }
+.icon-btn[hidden] {
+  display: none;
+}
 .icon-btn:focus,
 .icon-btn:hover {
   color: #205493;
@@ -572,23 +577,4 @@ input[disabled] {
 }
 .icon-btn.red:active {
   color: #691218;
-}
-
-
-.button-icon {
-  padding: 5px 10px;
-  font-size: 1.3em !important;
-  cursor: pointer;
-}
-.button-icon:hover {
-  opacity: .7;
-}
-.icon-cell {
-  text-align: center;
-  margin: 0 auto;
-  vertical-align: middle;
-}
-td.icon-cell i {
-  text-align: center;
-  display: inline;
 }
