@@ -2179,6 +2179,7 @@ const FEGSScopingView = function FEGSScopingView() {
     this.showName.style.display = 'inline-block';
     this.inputName.style.display = 'none';
     this.saveNameButton.style.display = 'none';
+    this.indicateUnsaved()
   };
 
   /** update name displayed in titlebar and header */
@@ -2188,6 +2189,7 @@ const FEGSScopingView = function FEGSScopingView() {
     this.inputDescription.style.display = 'none';
     this.saveDescriptionButton.style.display = 'none';
     this.inputDescription.value = description;
+    this.indicateUnsaved()
   };
 
   /** input the name of this project */
@@ -3241,12 +3243,12 @@ ipcRenderer.on('save-and-quit', () => {
 });
 
 // Listen for save from main process and open
-ipcRenderer.on('save-and-open', (event, arg) => {
+ipcRenderer.on('save-and-open', (event, filePath) => {
   if (fegsScopingData.filePath !== '') {
     save(fegsScopingData.filePath)
-    open(arg[0])
+    open(filePath)
   } else {
-    ipcRenderer.send('save-as-and-open', fegsScopingData.projectName, arg[0]);
+    ipcRenderer.send('save-as-and-open', fegsScopingData.projectName, filePath);
   }
 });
 
@@ -3260,8 +3262,8 @@ ipcRenderer.on('save', () => {
 });
 
 // Listen for open file from main process
-ipcRenderer.on('open-file', (event, arg) => {
-  open(arg[0])
+ipcRenderer.on('open-file', (event, filePath) => {
+  open(filePath)
 });
 
 const APP = (function APP() {

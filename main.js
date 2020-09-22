@@ -13,79 +13,78 @@ const { dialog } = electron;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let saved = true;
-let savedFileName = 'New Project';
+let savedFilePath = '';
 let projectName = 'New Project';
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
 const windows = [];
 
-// Open a file using the appliction menu
-function openFile() {
-  // console.log("open file")
-  dialog.showOpenDialog(
-    {
-      filters: [{ name: 'Custom File Type', extensions: ['fegs'] }]
-    },
-    fileNames => {
-      if (fileNames === undefined) {
-        // fileNames is an array that contains all the selected files
-        // console.log("No file selected");
-      } else if (!saved) {
-        // Check if unsaved
-        // console.log("not saved")
-        dialog.showMessageBox(
-          mainWindow,
-          {
-            type: 'question',
-            buttons: ['Save', "Don't Save", 'Cancel'],
-            title: appTitle,
-            message: `Do you want to save your changes to ${savedFileName}?`
-          },
-          response => {
-            // console.log(response);
-            if (response === 0) {
-              // console.log("Save and Open");
-              mainWindow.webContents.send('save-and-open', fileNames);
-            } else if (response === 2) {
-              // console.log("Cancel");
-            } else {
-              // console.log("Just open");
-              mainWindow.webContents.send('open-file', fileNames);
-              savedFileName = fileNames;
-              saved = true;
-            }
-          }
-        );
-      } else {
-        // console.log("saved")
-        mainWindow.webContents.send('open-file', fileNames);
-        savedFileName = fileNames;
-        saved = true;
-      }
+
+const safeCall = func => (typeof func === 'function') ? func() : undefined
+
+const saveQuery = obj => { // obj: { yes: (), no: (), cancel: () } (has 3 optional methods)
+  dialog.showMessageBox(mainWindow, {
+    type: 'question',
+    buttons: ['Save', "Don't Save", 'Cancel'],
+    title: appTitle,
+    message: `Do you want to save your changes to ${projectName}?`
+  }).then(result => {
+    switch (result.response) {
+      case 0: safeCall(obj.yes); break // save
+      case 1: safeCall(obj.no); break // don't save
+      case 2: safeCall(obj.cancel); break // cancel
     }
-  );
+  })
 }
 
 const saveDialog = (action) => {
-  let fileName = savedFileName; // fileName does not include extension
-  if (projectName !== 'New Project' && savedFileName === 'New Project') {
-    fileName = projectName;
-  }
+  let filePath = savedFilePath || projectName; // filePath might not include extension
   dialog.showSaveDialog(mainWindow, {
-    defaultPath: fileName,
+    defaultPath: filePath,
     filters: [{
       name: 'Custom File Type',
       extensions: ['fegs']
     }]
   }).then(result => {
     if (!result.canceled) {
-      let filePath = result.filePath
+      filePath = result.filePath
       if (!filePath.endsWith('.fegs')) {
         filePath += '.fegs'
       }
       mainWindow.webContents.send(action, filePath)
     }
   }).catch(err => {
-    console.log(err)
+    console.error(err)
+  })
+}
+
+// Use a dialog menu to specify a file to open
+function openFile() {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: 'Custom File Type',
+      extensions: ['fegs']
+    }],
+    properties: ['openFile']
+  }).then(result => {
+    if (!result.canceled) {
+      const filePath = result.filePaths[0]
+      if (!saved) {
+        saveQuery({
+          yes: () => mainWindow.webContents.send('save-and-open', filePath),
+          no: () => {
+            mainWindow.webContents.send('open-file', filePath)
+            savedFilePath = filePath
+            saved = true
+          }
+        })
+      } else {
+        mainWindow.webContents.send('open-file', filePath)
+        savedFilePath = filePath
+        saved = true
+      }
+    }
+  }).catch(err => {
+    console.error(err)
   })
 }
 
@@ -115,7 +114,7 @@ function saveFileAsAndQuit() {
 }
 
 // Quit the application
-function quit() { // File > Quit, Alt+F4, Cmd+Q
+function quit() { // File > Quit, Alt+F4, or Cmd+Q
   app.quit()
 }
 
@@ -143,7 +142,7 @@ function createWindow() {
 
   // Create the file menu at the top of the application
   const newProject = () => {
-    savedFileName = 'New Project'
+    savedFilePath = ''
     projectName = 'New Project'
     saved = true
     mainWindow.webContents.reloadIgnoringCache()
@@ -159,23 +158,10 @@ function createWindow() {
           accelerator: `${cmd}+N`,
           click: () => {
             if (!saved) {
-              // Check if unsaved
-              dialog.showMessageBox(
-                mainWindow,
-                {
-                  type: 'question',
-                  buttons: ['Save', "Don't Save", 'Cancel'],
-                  title: appTitle,
-                  message: `Do you want to save your changes to ${savedFileName}?`
-                },
-                response => {
-                  if (response === 0) {
-                    mainWindow.webContents.send('save-and-refresh');
-                  } else if (response === 1) {
-                    newProject()
-                  }
-                }
-              );
+              saveQuery({
+                yes: () => mainWindow.webContents.send('save-and-refresh'),
+                no: () => newProject()
+              })
             } else {
               newProject()
             }
@@ -289,20 +275,14 @@ function createWindow() {
         }
       }
     } else {
-      const choice = dialog.showMessageBoxSync(mainWindow, {
-        type: 'question',
-        buttons: ['Save', "Don't Save", 'Cancel'],
-        title: appTitle,
-        message: `Do you want to save your changes to ${savedFileName}?`
-      });
-      if (choice === 0) {
-        e.preventDefault();
-        mainWindow.webContents.send('save-and-quit');
-      } else if (choice === 2) {
-        e.preventDefault();
-      } else {
-        console.log('Quit');
-      }
+      saveQuery({
+        yes: () => {
+          e.preventDefault()
+          mainWindow.webContents.send('save-and-quit')
+        },
+        no: () => console.log('Quit'),
+        cancel: () => e.preventDefault()
+      })
     }
     windows.forEach(win => {
       if (win) {
@@ -356,7 +336,7 @@ ipcMain.on('update-project-name', (event, arg) => {
 ipcMain.on('has-been-saved', (event, arg) => {
   // console.log("has-been-saved");
   // console.log(arg);
-  savedFileName = arg;
+  savedFilePath = arg;
   saved = true;
 });
 
