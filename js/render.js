@@ -597,8 +597,8 @@ class Note {
 
     this.editIcon = 'fas fa-edit'.split(' ') // array of CSS classes
     this.saveIcon = 'fas fa-check green'.split(' ')
-    // this.hideIcon = 'fas fa-chevron-up'.split(' ')
-    // this.showIcon = 'fas fa-chevron-down'.split(' ')
+    this.hideIcon = 'fas fa-chevron-down'.split(' ')
+    this.showIcon = 'fas fa-chevron-right'.split(' ')
     this.editing = false
     this.visible = true
     this.note = ''
@@ -615,11 +615,11 @@ class Note {
     })
     headerDiv.appendChild(this.editBtn)
 
-    // this.viewBtn = element({ tag: 'i', cls: 'icon-btn', style: 'margin-left: .75em' })
-    // this.viewBtn.addEventListener('click', () => {
-    //   (this.visible) ? this.hide() : this.show()
-    // })
-    // headerDiv.appendChild(this.viewBtn)
+    this.viewBtn = element({ tag: 'i', cls: 'icon-btn', style: 'margin-left: .75em' })
+    this.viewBtn.addEventListener('click', () => {
+      (this.visible) ? this.hide() : this.show()
+    })
+    headerDiv.appendChild(this.viewBtn)
 
     this.node.appendChild(headerDiv)
 
@@ -627,7 +627,7 @@ class Note {
     this.node.appendChild(this.content)
 
     this.save() // initialize state
-    // this.show() // initialize state
+    this.show() // initialize state
   }
   get() {
     return this.note
@@ -636,7 +636,7 @@ class Note {
     this.note = note
     this.editing = false
     this.save()
-    // this.show()
+    this.show()
   }
   save() {
     if (this.editing) {
@@ -648,7 +648,7 @@ class Note {
     this.editBtn.classList.remove(...this.saveIcon)
     this.editBtn.classList.add(...this.editIcon)
     this.editBtn.setAttribute('title', 'Edit')
-    // this.viewBtn.hidden = false
+    this.viewBtn.hidden = false
     this.showContent()
   }
   edit() {
@@ -657,23 +657,23 @@ class Note {
     this.editBtn.classList.remove(...this.editIcon)
     this.editBtn.classList.add(...this.saveIcon)
     this.editBtn.setAttribute('title', 'Save')
-    // this.viewBtn.hidden = true
+    this.viewBtn.hidden = true
     this.showContent()
   }
-  // hide() {
-  //   this.visible = false
-  //   this.viewBtn.classList.remove(...this.hideIcon)
-  //   this.viewBtn.classList.add(...this.showIcon)
-  //   this.viewBtn.setAttribute('title', 'Show')
-  //   this.showContent()
-  // }
-  // show() {
-  //   this.visible = true
-  //   this.viewBtn.classList.remove(...this.showIcon)
-  //   this.viewBtn.classList.add(...this.hideIcon)
-  //   this.viewBtn.setAttribute('title', 'Hide')
-  //   this.showContent()
-  // }
+  hide() {
+    this.visible = false
+    this.viewBtn.classList.remove(...this.hideIcon)
+    this.viewBtn.classList.add(...this.showIcon)
+    this.viewBtn.setAttribute('title', 'Show')
+    this.showContent()
+  }
+  show() {
+    this.visible = true
+    this.viewBtn.classList.remove(...this.showIcon)
+    this.viewBtn.classList.add(...this.hideIcon)
+    this.viewBtn.setAttribute('title', 'Hide')
+    this.showContent()
+  }
   showContent() { // show correct note content depending on state
     if (this.editing) {
       this.content.innerText = this.note
@@ -685,7 +685,7 @@ class Note {
           this.content.innerHTML = this.placeholder
         }
       } else {
-        this.content.innerHTML = '...'
+        this.content.innerHTML = '<em>Notes hidden...</em>'
       }
     }
   }
