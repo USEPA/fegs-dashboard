@@ -3496,7 +3496,8 @@ function scrapeAddStakeholders() {
     if (!(stakeholder in stakeholdersToAdd)) { // first time adding this stakeholder
       stakeholdersToAdd[stakeholder] = {}
     }
-    const value = parseInt(input.value) || ""
+    const num = Number.parseFloat(input.value)
+    const value = (typeof num === 'number' && !Number.isNaN(num)) ? num : ""
     stakeholdersToAdd[stakeholder][criteria] = value
   }
   return stakeholdersToAdd;
