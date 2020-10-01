@@ -21,22 +21,21 @@ const windows = [];
 
 const safeCall = func => (typeof func === 'function') ? func() : undefined
 
-const saveQuery = obj => { // obj: { yes: (), no: (), cancel: () } (has 3 optional methods)
-  dialog.showMessageBox(mainWindow, {
+function saveQuery({ yes, no, cancel }) {
+  const response = dialog.showMessageBoxSync(mainWindow, { // must be sync
     type: 'question',
     buttons: ['Save', "Don't Save", 'Cancel'],
     title: appTitle,
     message: `Do you want to save your changes to ${projectName}?`
-  }).then(result => {
-    switch (result.response) {
-      case 0: safeCall(obj.yes); break // save
-      case 1: safeCall(obj.no); break // don't save
-      case 2: safeCall(obj.cancel); break // cancel
-    }
   })
+  switch (response) {
+    case 0: safeCall(yes); break // save
+    case 1: safeCall(no); break // don't save
+    case 2: safeCall(cancel); break // cancel
+  }
 }
 
-const saveDialog = (action) => {
+function saveDialog(action) {
   let filePath = savedFilePath || projectName; // filePath might not include extension
   dialog.showSaveDialog(mainWindow, {
     defaultPath: filePath,
