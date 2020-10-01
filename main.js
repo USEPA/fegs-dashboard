@@ -1,21 +1,124 @@
 const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-const Menu = electron.Menu;
 const path = require('path');
 const url = require('url');
-const {ipcMain} = require('electron');
+// Module to control application life.
+const { app } = electron;
+// Module to create native browser window.
+const { BrowserWindow } = electron;
+const { Menu } = electron;
+const { ipcMain } = electron;
+const { dialog } = electron;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let saved = true;
-let savedFileName = "New Project";
-let projectName = "New Project";
+let savedFilePath = '';
+let projectName = 'New Project';
+const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
+const windows = [];
 
-function createWindow () {
+
+const safeCall = func => (typeof func === 'function') ? func() : undefined
+
+function saveQuery({ yes, no, cancel }) {
+  const response = dialog.showMessageBoxSync(mainWindow, { // must be sync
+    type: 'question',
+    buttons: ['Save', "Don't Save", 'Cancel'],
+    title: appTitle,
+    message: `Do you want to save your changes to ${projectName}?`
+  })
+  switch (response) {
+    case 0: safeCall(yes); break // save
+    case 1: safeCall(no); break // don't save
+    case 2: safeCall(cancel); break // cancel
+  }
+}
+
+function saveDialog(action) {
+  let filePath = savedFilePath || projectName; // filePath might not include extension
+  dialog.showSaveDialog(mainWindow, {
+    defaultPath: filePath,
+    filters: [{
+      name: 'Custom File Type',
+      extensions: ['fegs']
+    }]
+  }).then(result => {
+    if (!result.canceled) {
+      filePath = result.filePath
+      if (!filePath.endsWith('.fegs')) {
+        filePath += '.fegs'
+      }
+      mainWindow.webContents.send(action, filePath)
+    }
+  }).catch(err => {
+    console.error(err)
+  })
+}
+
+// Use a dialog menu to specify a file to open
+function openFile() {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: 'Custom File Type',
+      extensions: ['fegs']
+    }],
+    properties: ['openFile']
+  }).then(result => {
+    if (!result.canceled) {
+      const filePath = result.filePaths[0]
+      if (!saved) {
+        saveQuery({
+          yes: () => mainWindow.webContents.send('save-and-open', filePath),
+          no: () => {
+            mainWindow.webContents.send('open-file', filePath)
+            savedFilePath = filePath
+            saved = true
+          }
+        })
+      } else {
+        mainWindow.webContents.send('open-file', filePath)
+        savedFilePath = filePath
+        saved = true
+      }
+    }
+  }).catch(err => {
+    console.error(err)
+  })
+}
+
+// Send a message to the render thread to save the file
+function saveFile() {
+  mainWindow.webContents.send('save');
+}
+
+// Use a dialog menu to save the file and then send the message to the render thread
+function saveFileAs() {
+  saveDialog('save-as')
+}
+
+// Saves the file using a dialog and then refreshes the applcation to fresh state
+function saveFileAsAndRefresh() {
+  saveDialog('save-as-and-refresh')
+}
+
+// Save the file and then open the specified project
+function saveFileAsAndOpen(saveName, openName) {
+  saveDialog('save-as-and-open')
+}
+
+// Save and then quit the application
+function saveFileAsAndQuit() {
+  saveDialog('save-as-and-quit')
+}
+
+// Quit the application
+function quit() { // File > Quit, Alt+F4, or Cmd+Q
+  app.quit()
+}
+
+// Creates the main window of the application
+function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -23,116 +126,133 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true
-    }
+    },
+    title: appTitle
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
 
-  //**
+  // Create the file menu at the top of the application
+  const newProject = () => {
+    savedFilePath = ''
+    projectName = 'New Project'
+    saved = true
+    mainWindow.webContents.reloadIgnoringCache()
+    mainWindow.setTitle(appTitle)
+  }
+  const cmd = (process.platform === 'darwin') ? 'Cmd' : 'Ctrl'
   const menuTemplate = [
     {
       label: 'File',
       submenu: [
         {
-          label: 'New Project',
+          label: 'New',
+          accelerator: `${cmd}+N`,
           click: () => {
-            if (!saved) { // Check if unsaved
-              const {dialog} = require('electron');
-              dialog.showMessageBox(mainWindow,
-              {
-                type: 'question',
-                buttons: ["Save", "Don't Save", "Cancel"],
-                title: 'FEGS Scoping Tool',
-                message: 'Do you want to save your changes to ' + savedFileName + '?'
-              },
-              function (response) {
-                if (response == 0) {
-                  mainWindow.webContents.send('save-and-refresh');
-                } else if (response == 1) {
-                  mainWindow.webContents.reloadIgnoringCache();
-                  savedFileName = "New Project";
-                  projectName = "New Project";
-                  saved = true;
-                }
-              });
+            if (!saved) {
+              saveQuery({
+                yes: () => mainWindow.webContents.send('save-and-refresh'),
+                no: () => newProject()
+              })
             } else {
-              mainWindow.webContents.reloadIgnoringCache();
-              savedFileName = "New Project";
-              projectName = "New Project";
-              saved = true;
+              newProject()
             }
           }
         },
         {
-          label: 'Open Project...',
-          click: () => {
-            openFile();
-          }
-        }, {
-          label: 'Save Project',
-          click: () => {
-            saveFile();
-          }
-        }, {
-          label: 'Save Project As...',
-          click: () => {
-            saveFileAs();
-          }
-        }, {
+          label: 'Open...',
+          accelerator: `${cmd}+O`,
+          click: openFile,
+        },
+        {
           type: 'separator'
-        }, {
+        },
+        {
+          label: 'Save',
+          accelerator: `${cmd}+S`,
+          click: saveFile,
+        },
+        {
+          label: 'Save As... ',
+          accelerator: `${cmd}+Shift+S`,
+          click: saveFileAs,
+        },
+        {
           type: 'separator'
-        }, {
+        },
+        {
           label: 'Quit',
-          click: () => {
-            quit();
-          }
+          accelerator: (process.platform === 'darwin') ? 'Cmd+Q' : 'Alt+F4',
+          click: quit,
         }
       ]
-    }, {
-      label: 'Toggle DevTools',
-      accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-      click: () => {
-        mainWindow.webContents.toggleDevTools();
-      }
-    }, {
+    },
+    {
       label: 'About',
       submenu: [
         {
           label: 'Tool Purpose',
           click: () => {
-            const {dialog} = require('electron');
             dialog.showMessageBox(mainWindow, {
-              title: "FEGS Scoping Tool",
-              message: "Tool Purpose",
-              detail: "The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives."
+              title: appTitle,
+              message: 'Tool Purpose',
+              detail:
+                'The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives.'
             });
           }
         },
         {
           label: 'Tool Methods',
           click: () => {
-            const {BrowserWindow} = require('electron')
-            let win = new BrowserWindow({width: 800, height: 600, frame: true})
+            const id = windows.length;
+            let win = new BrowserWindow({
+              width: 800,
+              height: 600,
+              frame: true,
+              title: `Tool Methods - ${appTitle}`
+            });
             win.setMenu(null);
-            win.show()
+            windows[id] = win;
+            win.show();
             // and load the index.html of the app.
-            win.loadURL(url.format({
-              pathname: path.join(__dirname, 'methods.html'),
-              protocol: 'file:',
-              slashes: true,
-              autoHideMenuBar: true
-            }));
+            win.loadURL(
+              url.format({
+                pathname: path.join(__dirname, 'methods.html'),
+                protocol: 'file:',
+                slashes: true,
+                autoHideMenuBar: true
+              })
+            );
+
+            // garbage collection handle
+            win.on('closed', () => {
+              win = null;
+              windows[id] = null;
+            });
           }
         }
       ]
-    },
+    }
   ];
+
+  // add dev tools item if not in production
+  if (process.env.node_env && process.env.node_env.trim() === 'dev') {
+    menuTemplate.push({
+      label: 'Toggle DevTools',
+      accelerator: process.platform === 'darwin' ? 'Command+I' : 'CTRL+I',
+      click(item, focusedWindow) {
+        focusedWindow.toggleDevTools();
+      }
+    });
+  }
+
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
@@ -140,257 +260,92 @@ function createWindow () {
   // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('close', function(e) {
+  mainWindow.on('close', e => {
     if (saved) {
-      var choice = require('electron').dialog.showMessageBox(this,
-        {
+      if (process.platform !== 'darwin') { // will quit after close
+        const choice = electron.dialog.showMessageBoxSync(mainWindow, {
           type: 'question',
           buttons: ['Yes', 'No'],
-          title: 'FEGS Scoping Tool',
+          title: appTitle,
           message: 'Are you sure you want to quit?'
         });
-      if (choice == 1) {
-        e.preventDefault();
-      }
-    } else {
-      const {dialog} = require('electron');
-      var choice = dialog.showMessageBox(this,
-        {
-          type: 'question',
-          buttons: ["Save", "Don't Save", "Cancel"],
-          title: 'FEGS Scoping Tool',
-          message: 'Do you want to save your changes to ' + savedFileName + '?'
-        });
-        console.log(choice);
-        if (choice == 0) {
-          console.log("Save and Quit");
+        if (choice === 1) {
           e.preventDefault();
-          mainWindow.webContents.send('save-and-quit');
-        } else if (choice == 2) {
-          console.log("Cancel quit");
-          e.preventDefault();
-          return;
-        } else {
-          console.log("just quit")
         }
       }
-  });
-}
-
-function openFile() {
-  console.log("open file")
-  const {dialog} = require('electron');
-  dialog.showOpenDialog({filters: [
-    {name: 'Custom File Type', extensions: ['fegs']}
-  ]},
-  function (fileNames) {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      console.log("No file selected");
     } else {
-      if (!saved) { // Check if unsaved
-        console.log("not saved")
-        const {dialog} = require('electron');
-        dialog.showMessageBox(mainWindow,
-        {
-          type: 'question',
-          buttons: ["Save", "Don't Save", "Cancel"],
-          title: 'FEGS Scoping Tool',
-          message: 'Do you want to save your changes to ' + savedFileName + '?'
+      saveQuery({
+        yes: () => {
+          e.preventDefault()
+          mainWindow.webContents.send('save-and-quit')
         },
-        function (response) {
-          console.log(response);
-          if (response == 0) {
-            console.log("Save and Open");
-            mainWindow.webContents.send('save-and-open', fileNames);
-          } else if (response == 2) {
-            console.log("Cancel");
-            return;
-          } else {
-            console.log("Just open");
-            mainWindow.webContents.send('open-file', fileNames);
-            savedFileName = fileNames;
-            saved = true;
-          }
-        });
-      } else {
-        console.log("saved")
-        mainWindow.webContents.send('open-file', fileNames);
-        savedFileName = fileNames;
-        saved = true;
-      }
+        no: () => console.log('Quit'),
+        cancel: () => e.preventDefault()
+      })
     }
+    windows.forEach(win => {
+      if (win) {
+        win.close();
+      }
+    });
   });
-}
 
-function saveFile() {
-  mainWindow.webContents.send('save');
-}
-
-function saveFileAs() {
-  var nameToUse = savedFileName;
-  console.log(projectName)
-  console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === "New Project") {
-    nameToUse = projectName;
-  }
-  const {dialog} = require('electron');
-  dialog.showSaveDialog(
-  {
-    defaultPath: nameToUse,
-    filters: [
-      {
-        name: 'Custom File Type',
-        extensions: ['fegs']
-      }
-    ]
-  },
-  function (fileNames) {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      console.log("No file selected");
-    } else {
-      if(!fileNames.endsWith(".fegs")) {
-        fileNames += ".fegs";
-      }
-      mainWindow.webContents.send('save-as', fileNames);
-    }
+  mainWindow.webContents.on('crashed', () => {
+    console.error('Crashed');
   });
-}
 
-function saveFileAsAndRefresh() {
-  var nameToUse = savedFileName;
-  console.log(projectName)
-  console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === "New Project") {
-    nameToUse = projectName;
-  }
-  const {dialog} = require('electron');
-  dialog.showSaveDialog(
-  {
-    defaultPath: nameToUse,
-    filters: [
-      {
-        name: 'Custom File Type',
-        extensions: ['fegs']
-      }
-    ]
-  },
-  function (fileNames) {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      console.log("No file selected");
-    } else {
-      if(!fileNames.endsWith(".fegs")) {
-        fileNames += ".fegs";
-      }
-      mainWindow.webContents.send('save-as-and-refresh', fileNames);
-    }
-  });
-}
-
-function saveFileAsAndOpen(saveName, openName) {
-  var nameToUse = savedFileName;
-  console.log(projectName)
-  console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === "New Project") {
-    nameToUse = projectName;
-  }
-  const {dialog} = require('electron');
-  dialog.showSaveDialog(
-  {
-    defaultPath: nameToUse,
-    filters: [
-      {
-        name: 'Custom File Type',
-        extensions: ['fegs']
-      }
-    ]
-  },
-  function (fileNames) {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      console.log("No file selected");
-    } else {
-      if(!fileNames.endsWith(".fegs")) {
-        fileNames += ".fegs";
-      }
-      mainWindow.webContents.send('save-as-and-open', fileNames, openName);
-    }
-  });
-}
-
-function saveFileAsAndQuit() {
-  var nameToUse = savedFileName;
-  console.log(projectName)
-  console.log(savedFileName)
-  if (projectName !== 'New Project' && savedFileName === "New Project") {
-    nameToUse = projectName;
-  }
-  const {dialog} = require('electron');
-  dialog.showSaveDialog(
-  {
-    defaultPath: nameToUse,
-    filters: [
-      {
-        name: 'Custom File Type',
-        extensions: ['fegs']
-      }
-    ]
-  },
-  function (fileNames) {
-    if (fileNames === undefined) { // fileNames is an array that contains all the selected files
-      console.log("No file selected");
-    } else {
-      if(!fileNames.endsWith(".fegs")) {
-        fileNames += ".fegs";
-      }
-      mainWindow.webContents.send('save-as-and-quit', fileNames);
-    }
+  mainWindow.on('unresponsive', () => {
+    console.warn('Unresponsive...');
   });
 }
 
 // Saves the file when the renderer returns the data
-ipcMain.on('save-as', function(event, arg) {
+ipcMain.on('save-as', (event, arg) => {
   saveFileAs(arg);
 });
 
 // Saves the file then refresh when the renderer returns the data
-ipcMain.on('save-as-and-refresh', function(event, arg) {
+ipcMain.on('save-as-and-refresh', (event, arg) => {
   saveFileAsAndRefresh(arg);
 });
 
 // Saves the file then open when the renderer returns the data
-ipcMain.on('save-as-and-open', function(event, saveName, openName) {
+ipcMain.on('save-as-and-open', (event, saveName, openName) => {
   saveFileAsAndOpen(saveName, openName);
 });
 
 // Saves the file then quit when the renderer returns the data
-ipcMain.on('save-as-and-quit', function(event, saveName) {
+ipcMain.on('save-as-and-quit', (event, saveName) => {
   saveFileAsAndQuit(saveName);
 });
 
 // Saves the file then refreshes when the renderer returns the data
-ipcMain.on('save-and-refresh', function(event, arg) {
+ipcMain.on('save-and-refresh', (event, arg) => {
   saveFileAs(arg);
 });
 
 // Updates the project name when the renderer tells us to.
-ipcMain.on('update-project-name', function(event, arg) {
-  console.log('update-project-name')
-  console.log(arg)
+ipcMain.on('update-project-name', (event, arg) => {
+  // console.log('update-project-name')
+  // console.log(arg)
   projectName = arg;
 });
 
-ipcMain.on('has-been-saved', function(event, arg) {
-  console.log("has-been-saved");
-  console.log(arg);
-  savedFileName = arg;
+// When the render thread sends a message update these variables
+ipcMain.on('has-been-saved', (event, arg) => {
+  // console.log("has-been-saved");
+  // console.log(arg);
+  savedFilePath = arg;
   saved = true;
 });
 
-ipcMain.on('has-been-changed', function(event, arg) {
-  console.log("has-been-changed");
+// When the render thread sends a message update this variable
+ipcMain.on('has-been-changed', () => {
+  // console.log("has-been-changed");
   saved = false;
 });
 
-ipcMain.on('quit', function(event, arg) {
+ipcMain.on('quit', () => {
   quit();
 });
 
@@ -399,50 +354,24 @@ ipcMain.on('quit', function(event, arg) {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
-//
-function verifyIntention(action) {
-  console.log("verifyIntention");
-  const {dialog} = require('electron');
-  dialog.showMessageBox(mainWindow,
-   {
-     type: 'question',
-     buttons: ["Save", "Don't Save", "Cancel"],
-     title: 'FEGS Scoping Tool',
-     message: 'Do you want to save your changes to ' + savedFileName + '?'
-   },
-  function (response) {
-    console.log(response);
-    if (response == 0) {
-      console.log("Save and Quit");
-      mainWindow.webContents.send('save-and-refresh');
-    } else if (response == 2) {
-      console.log("Cancel");
-      return;
-    }
-    action();
-  });
-}
-
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  console.log("window-all-closed");
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  quit();
-});
-
-function quit() {
+app.on('window-all-closed', () => {
+  // console.log("window-all-closed");
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit();
+    quit()
   }
-}
+});
 
-app.on('activate', function () {
+app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+process.on('uncaughtException', () => {
+  console.error('uncaughtException');
 });

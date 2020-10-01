@@ -14,12 +14,42 @@ body {
   box-sizing: border-box;
 }
 
+th {
+  background-color: #f1f3f4;
+  border: 1px solid #DDD;
+  font-weight: 500;
+}
+
+td {
+  border: 1px solid #DDD;
+}
+
 section {
   display: block;
 }
 
 body {
   line-height: 1;
+}
+
+svg * {
+  transition: none; /* managed with d3 */
+}
+
+hr {
+  margin: 2rem 0 1rem 0;
+}
+
+.wrapper {
+  padding-bottom: 5rem; /* signify end of page with extra space */
+  position: relative;
+  background-color: #fff;
+}
+
+.wrapper > .inner {
+  width: 75em;
+  max-width: 100%;
+  padding: 1em 0em 0em 1em;
 }
 
 @media screen and (max-width: 1680px) {
@@ -32,6 +62,9 @@ body {
   body {
     font-size: 12pt;
   }
+  .wrapper > .inner {
+    padding: 0.5em 0em 0em 0.5em;
+  }
 }
 
 @media screen and (max-width: 360px) {
@@ -40,313 +73,33 @@ body {
   }
 }
 
-.wrapper {
-  position: relative
-}
-
-.wrapper > .inner {
-  padding: 5em 5em 3em 5em;
-  max-width: 100%;
-  width: 75em;
-}
-
-@media screen and (max-width: 1680px) {
-  .wrapper > .inner {
-    padding: 4em 4em 2em 4em;
-  }
-}
-
-@media screen and (max-width: 1280px) {
-  .wrapper > .inner {
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 736px) {
-  .wrapper > .inner {
-    padding: 3em 2em 1em 2em;
-  }
-}
-
 #page-zoom-indicator {
   display: inline-block;
   width: 3em;
 }
 
-[aria-hidden="true"] {
-  display: none;
-}
-
-.magnitude {
-  background: #4f81bd;
-}
-
-.influence {
-  background: #c0504d;
-}
-
-.interest {
-  background: #9bbb59;
-}
-
-.urgency {
-  background: #8064a2;
-}
-
-.proximity {
-  background: #4bacc6;
-}
-
-.economic-interest {
-  background: #f79646;
-}
-
-.rights {
-  background: #2c4d75;
-}
-
-.fairness {
-  background: #772c2a;
-}
-
-.representation {
-  background: #5f7530;
-}
-
-.agricultural {
-  background: #DDD9C4;
-}
-
-.commercial {
-  background: #C5D9F1;
-}
-
-.governmental {
-  background: #E4DFEC;
-}
-
-.transportation {
-  background: #F2DCDB;
-}
-
-.subsistence {
-  background: #F9FDD1;
-}
-
-.recreational {
-  background: #DAEEF3;
-}
-
-.inspirational {
-  background: #EBF1DE;
-}
-
-.learning {
-  background: #FDE9D9;
-}
-
-.nonuse {
-  background: #F2F2F2;
-}
-
-.irrigators {
-  background: #DDD9C3;
-}
-
-.cafo-operators {
-  background: #C4BD97;
-}
-
-.livestock-grazers {
-  background: #948A54;
-}
-
-.agricultural-processors {
-  background: #948A54;
-}
-
-.aquaculturalists {
-  background: #4A452A;
-}
-
-.farmers {
-  background: #1E1C11;
-}
-
-.foresters {
-  background: #050503;
-}
-
-.food-extractors {
-  background: #DCE6F2;
-}
-
-.timber-fiber-ornamental-extractors {
-  background: #C6D9F1;
-}
-
-.industrial-processors {
-  background: #8EB4E3;
-}
-
-.industrial-dischargers {
-  background: #558ED5;
-}
-
-.energy-generators {
-  background: #376092;
-}
-
-.resource-dependent-businesses {
-  background: #1F497D;
-}
-
-.pharmaceutical-food-supplement-suppliers {
-  background: #254061;
-}
-
-.fur-hide-trappers-hunters {
-  background: #10253F;
-}
-
-.municipal-drinking-water-plant-operators {
-  background: #CCC1DA;
-}
-
-.wastewater-treatment-plant-operators {
-  background: #B3A2C7;
-}
-
-.residential-property-owners {
-  background: #604A7B;
-}
-
-.military-coast-guard {
-  background: #403152;
-}
-
-.transporters-of-goods {
-  background: #D99694;
-}
-
-.transporters-of-people {
-  background: #953735;
-}
-
-.water-subsisters {
-  background: #F9FDD1;
-}
-
-.food-subsisters {
-  background: #F9F383;
-}
-
-.timber-fiber-fur-hide-subsisters {
-  background: #F5F018;
-}
-
-.building-material-subsisters {
-  background: #FFFF00;
-}
-
-.experiencers-viewers {
-  background: #DBEEF4;
-}
-
-.food-pickers-gatherers {
-  background: #B7DEE8;
-}
-
-.hunters {
-  background: #93CDDD;
-}
-
-.anglers {
-  background: #4BACC6;
-}
-
-.waders-swimmers-divers {
-  background: #31859C;
-}
-
-.boaters {
-  background: #215968;
-}
-
-.spiritual-and-ceremonial-participants {
-  background: #C3D69B;
-}
-
-.artists {
-  background: #77933C;
-}
-
-.students-and-educators {
-  background: #FAC090;
-}
-
-.researchers {
-  background: #E46C0A;
-}
-
-.people-who-care-existence {
-  background: #D9D9D9;
-}
-
-.people-who-care-option-bequest {
-  background: #A6A6A6;
-}
-
-.water {
-  background: #1f77b4;
-}
-.air {
-  background: #ff7f0e;
-}
-.weather {
-  background: #2ca02c;
-}
-.soil-substrate {
-  background: #d62728;
-}
-.natural-materials {
-  background: #9467bd;
-}
-.flora {
-  background: #8c564b;
-}
-.fauna {
-  background: #e377c2;
-}
-.fungi {
-  background: #7f7f7f;
-}
-.extreme-events {
-  background: #bcbd22;
-}
-.composite {
-  background: #17becf;
+[aria-hidden='true'] {
+  display: none !important;
 }
 
 .legend {
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
   height: 1em;
   width: 1em;
+  margin: 0.5em;
+}
+
+.legend-cell {
+  text-align: center;
 }
 
 .key {
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   display: inline-block;
   height: 1em;
   width: 1em;
   margin: 1em 1em 0 1em;
-}
-
-@media (min-width: 600px) {
-  .legend {
-    margin: 1em;
-  }
 }
 
 .scoring input {
@@ -354,15 +107,14 @@ body {
 }
 
 .dark {
-  background: rgba(128, 128, 128, .25);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .light-gray {
-  background-color: #f1f1f1;
-  border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, .2);
+  background-color: #f1f3f4;
+  border: 1px solid #DDD;
   padding: 1em 1em 1em 1em;
-  margin-bottom: .4em;
+  margin-bottom: 0.4em;
 }
 
 #stakeholder-list {
@@ -377,7 +129,13 @@ body {
 #table-stakeholders td,
 #table-stakeholders th {
   border: 1px solid #d6d7d9;
+  /* padding: 20px 4px; */
   padding: 8px;
+  text-align: center;
+}
+
+#table-stakeholders td input {
+  margin: .5em;
 }
 
 #stakeholder-table-container {
@@ -385,15 +143,14 @@ body {
 }
 
 #table-stakeholders tr:nth-child(even) {
-  background-color: #f1f1f1;
+  background-color: #fafafa;
 }
 
 #table-stakeholders th {
-  background-color: #0071bc;
-  color: white;
+  background-color: #f1f3f4;
   padding-top: 12px;
   padding-bottom: 12px;
-  text-align: left;
+  /* text-align: left; */
 }
 
 #table-stakeholders {
@@ -407,35 +164,27 @@ table input {
 
 table {
   border-collapse: collapse;
-  margin-bottom: 1em;
+  margin-bottom: 3rem;
 }
 
 table th {
-  text-align: center;
+  /* text-align: center; */
 }
 
-table td {
+table td input {
   text-align: center;
 }
 
 table th {
-  padding: .5em;
+  padding: 0.5em;
 }
 
 td {
-  padding: .3em;
+  padding: 0.3em;
 }
 
 .column-name-labels {
   border-bottom: 1px dashed darkgrey;
-}
-
-.column-names th {
-  border-bottom: 1px solid black;
-}
-
-.row-name {
-  border-right: 1px solid black;
 }
 
 .invalid-text-input {
@@ -479,8 +228,8 @@ td {
 .remove-stakeholder {
   background-color: #cd2026;
   color: #fff;
-  margin: .25em 0 0 10px;
-  padding: 0.25em .5em;
+  margin: 0.25em 0 0 10px;
+  padding: 0.25em 0.5em;
   cursor: pointer;
 }
 
@@ -505,20 +254,9 @@ td {
   text-rendering: optimizeLegibility;
 }
 
-.wrapper {
-  background-color: #fff;
-  position: relative;
-}
-
-.wrapper > .inner {
-  max-width: 100%;
-  padding: 0.25em 0em 0em 0.25em;
-  width: 75em;
-}
-
 #sidebar {
   padding: 0.25em 0em 0.5em 0.4em;
-  background: #5b616b;
+  background: #212121;
   color: #fff;
   cursor: default;
   height: 100vh;
@@ -562,16 +300,17 @@ td {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
 
 table input {
   width: 4em;
   text-align: right;
-  margin: .5em 1em;
-  padding: .2em;
+  margin: 0.5em 1em;
+  padding: 0.2em;
 }
 
-.scoring [data-th="Color"] {
+.scoring [data-th='Color'] {
   padding: 0;
 }
 .accessible-notification {
@@ -588,10 +327,10 @@ table input {
   display: inline-block;
 }
 .stakeholder-score-input {
-  margin: 0 0 .25em .25em;
+  margin: 0 0 0.25em 0.25em;
 }
 #table-stakeholders button {
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em;
 }
 .btn-no-margin {
   margin: 0;
@@ -622,6 +361,220 @@ table input {
   right: 0;
   top: 0;
 }
-#table-scores label{
+#table-scores label {
   cursor: help;
+}
+#table-scores {
+  width: 20em;
+}
+#table-scores th {
+  width: 1em;
+}
+
+#toggle-beneficiaries button,
+#toggle-attributes button {
+  margin-bottom: 0.5rem;
+  border: 2px solid #0071bc;
+  background: none;
+  color: #0071bc;
+}
+
+button[aria-pressed='true'] {
+  background-color: #112e51 !important;
+  border: none !important;
+  color: white !important;
+}
+
+#defs th {
+  vertical-align: top;
+}
+
+.nav-hr {
+  background: white;
+  margin: 1em 0 1em;
+}
+
+#go-to-top {
+  align-items: center;
+  background: #d8d8d8;
+  border-radius: 2px;
+  bottom: 15px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  position: fixed;
+  right: 15px;
+  transition-property: box-shadow, border-color, color, background, text-shadow, opacity;
+  transition: 400ms ease;
+  width: 40px;
+}
+
+/* tooltip */
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+}
+
+.tooltip span {
+  border-bottom: dotted 1px #8a8a8a;
+  line-height: 1.5em;
+  cursor: help;
+}
+
+.tooltipright {
+  top: -5px;
+  left: 105%;
+}
+
+.tooltipleft {
+  top: -5px;
+  right: 105%;
+}
+
+.tooltipbottom {
+  top: 100%;
+  left: 50%;
+  margin-left: -120px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  font-weight: normal;
+  visibility: collapse;
+  font-size: 16px;
+  padding: 10px;
+
+  width: 240px;
+  background-color: #616161;
+  color: #fff;
+  border-radius: 3px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltiptext ul {
+  padding-top: 1.5em;
+  padding-bottom: 0;
+}
+
+.tooltiptext img {
+  padding-top: 1.5em;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+#scoring-inputs {
+  justify-content: flex-start;
+}
+
+input[disabled] {
+  background: #eee;
+}
+
+/* Chart styles */
+.chart {
+  width: 100%; 
+  max-width: 1020px; 
+  margin: 0 auto;
+}
+.chart-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.chart-header h2 {
+  margin-left: 1em;
+}
+.chart-header i {
+  position: relative;
+  bottom: .1em;
+  font-size: 1.2rem;
+}
+
+
+/* Note styles */
+.note {
+  width: 100%;
+  margin-bottom: 1.5em;
+}
+.note:focus {
+  box-shadow: 0 0 3px #3e94cf, 0 0 7px #3e94cf;
+  outline: 0;
+}
+.note[contenteditable="true"] {
+  min-height: 4em;
+  max-height: unset;
+  padding: .4em .6em;
+  border: 1px solid #555;
+}
+.note-header {
+  margin-bottom: 0.5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.note-header h3 {
+  padding: 0;
+}
+.note-header .icon-btn {
+  margin: 0 0 .15em .5em;
+}
+
+/* Flexbox styles */
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Icon styles */
+.icon-btn {
+  margin: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  color: #0071bc;
+}
+.icon-btn[hidden] {
+  display: none;
+}
+.icon-btn:focus,
+.icon-btn:hover {
+  color: #205493;
+}
+.icon-btn:active {
+  color: #112e51
+}
+.icon-btn.green {
+  color: #28a745;
+}
+.icon-btn.green:focus,
+.icon-btn.green:hover {
+  color: #247F39;
+}
+.icon-btn.green:active {
+  color: #145222;
+}
+.icon-btn.red {
+  color: #DC3843;
+}
+.icon-btn.red:focus,
+.icon-btn.red:hover {
+  color: #AD1F28;
+}
+.icon-btn.red:active {
+  color: #691218;
 }
