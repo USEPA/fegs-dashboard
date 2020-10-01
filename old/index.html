@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link type="text/css" rel="stylesheet" href="./css/s.css" media="all" />
+  <link type="text/css" rel="stylesheet" href="./css/app.css" media="all" />
+  <link type="text/css" rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <div id="menu" class="inner">
+      Project name <a href="#" id="show-name" title="Change project name"><span id="menu-project-name"></span>
+        <span id="unsaved-indicator" hidden>*</span></a>
+      <input class="form-text" id="input-name" type="text" hidden>
+      <button id="save-name" hidden>Save Name</button>
+      <br />
+      <a href="#" id="show-description" title="Change project description">Edit project description</a>
+      <textarea class="form-text" id="input-description" hidden></textarea>
+      <button id="save-description" hidden>Save Description</button>
+      <button id="clear-description" hidden>Clear</button>
+      <button id="cancel-description" hidden>Cancel</button>
+      <hr class="nav-hr" />
+      <nav>
+        <ul>
+          <li id="nav-weighting">
+            <a href="#section-weighting">Weights</a>
+            <div id="weighting-progress" class="progress-menu"></div>
+          </li>
+          <li id="nav-stakeholders">
+            <a href="#section-stakeholders">Stakeholders</a>
+            <div id="stakeholder-progress" class="progress-menu"></div>
+          </li>
+          <li id="nav-beneficiaries">
+            <a href="#section-beneficiaries">Beneficiaries</a>
+            <div id="beneficiaries-progress" class="progress-menu"></div>
+          </li>
+          <li id="nav-attributes">
+            <a href="#section-attributes">Attributes</a>
+            <div id="attributes-progress" class="progress-menu"></div>
+          </li>
+        </ul>
+      </nav>
+      <hr class="nav-hr" />
+      <span id="zoomer" hidden><label for="page-zoom">Zoom</label> <span id="page-zoom-indicator">100%</span> <input
+          id="page-zoom" max="2" min="0.25" step="0.05" type="range" value="1.0"></span>
+    </div>
+  </section>
+
+  <div id="wrapper">
+    <section class="wrapper">
+      <div id="main-content" class="inner">
+        <div class="page" id="section-weighting">
+          <h2>Weights</h2>
+          <p>Look over the criteria below. Identify the criterion most relevant for distinguishing among stakeholder 
+            groups for this decision. Give that criterion a weight of 100. Weight all other criteria relative to that 
+            most valued criterion. Weights can be values between 0 and 100.</p>
+          <p>Once you enter the 9 criteria proceed to the Stakeholder page.</p>
+
+          <div id="note-criteria"></div>
+
+          <div id="scoring-inputs" class="flexrow">
+            <div>
+              <table class="scoring" id="table-scores"></table>
+            </div>
+            <div id="criteria-piechart" class="chart" style="max-width: 680px;"></div>
+          </div>
+        </div>
+        <div class="page" id="section-stakeholders">
+          <hr />
+          <h2>Stakeholders</h2>
+          <p>Identify your stakeholder groups. Enter the name of the group and press <strong>Add stakeholder
+              group</strong>.</p>
+
+          <div id="note-stakeholders"></div>
+
+          <div id="stakeholder-prioritization">
+            <div>
+              <div class="light-gray">
+                <label class="inline-block">Stakeholder group name <input class="form-text" type="text"
+                    id="stakeholder-group" /></label>
+                <button id="add-stakeholder" class="btn-no-margin">Add Stakeholder Group</button>
+                <ul id="stakeholder-list"></ul>
+              </div>
+            </div>
+            <br />
+            <br />
+            <div id="set-stakeholder-values">
+              <h3>Score Stakeholders</h3>
+              <p>Score each stakeholder group for each of the 9 criteria. When you have scored them all press
+                <strong>Add stakeholder scores</strong>.</p>
+              <p>Once you have entered your stakeholder data proceed to the Beneficiary page.</p>
+              <div>
+                <div class="light-gray">
+                  <h4>Magnitude & Probability of impact</h4>
+                  <p>If changes are made in this decision context what is the likelihood that this stakeholder group
+                    will be impacted? What is the potential magnitude of that impact?</p>
+                  <p>Please enter a number 0 to 100.</p>
+                  <img src="img/probabilitymagnitude.PNG" width="250" alt="Probability and magnitude matrix">
+                  <ul data-criterion="magnitude" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Level of influence</h4>
+                  <p>Does this stakeholder group have any formal or informal influence over the decision making process?
+                  </p>
+                  <p>Please enter a number 0 to 100.</p>
+                  <ul>
+                    <li>100 = This group has formal influence over the decision-making process (i.e. can have the
+                      project stopped, must be consulted with).</li>
+                    <li>50 = This group has informal influence over the decision-making process.</li>
+                    <li>0 = This group has no influence over the decision-making process.</li>
+                  </ul>
+                  <ul data-criterion="influence" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Level of interest</h4>
+                  <p>What is this stakeholder group's level of interest in this decision/action?</p>
+                  <p>Please enter a number 0 to 100.</p>
+                  <ul>
+                    <li>100 = High.</li>
+                    <li>75 = Moderate.</li>
+                    <li>50 = Low.</li>
+                    <li>0 = None.</li>
+                  </ul>
+                  <ul data-criterion="interest" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Urgency & Temporal immediacy</h4>
+                  <p>Does this stakeholder group want an immediate decision/action on this issue?</p>
+                  <ul>
+                    <li>100 = Yes, even if other actions/decisions must be postponed.</li>
+                    <li>80 = Yes, as long as it does not delay current commitments.</li>
+                    <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
+                    <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
+                    <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
+                    <li>0 = They do not care when an action/decision takes place.</li>
+                  </ul>
+                  <ul data-criterion="urgency" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Proximity</h4>
+                  <p>How frequently does this stakeholder group come into contact with the area subject to this
+                    decision?</p>
+                  <ul>
+                    <li>100 = They are constantly in direct contact with the area.</li>
+                    <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently in
+                      direct contact with the area.</li>
+                    <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently in
+                      direct contact with the area.</li>
+                    <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
+                    <li>10 = They interact with this area from a distance.</li>
+                    <li>0 = They are never in contact with the area.</li>
+                  </ul>
+                  <ul data-criterion="proximity" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Economic interest</h4>
+                  <p>Does this stakeholder group have an economic interest in the outcome of this decision?</p>
+                  <ul>
+                    <li>100 = Yes.</li>
+                    <li>0 = No.</li>
+                  </ul>
+                  <ul data-criterion="economic-interest" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Rights</h4>
+                  <p>Does this stakeholder group have any 1) legal right to be involved in this decision making process,
+                    2) property rights associated with the land that will be impacted by the decision, or 3)
+                    consumer/user rights associated with the services
+                    that will be impacted by the decision?</p>
+                  <ul>
+                    <li>100 = Yes, all 3.</li>
+                    <li>60 = Yes, 2 of the 3.</li>
+                    <li>20 = Yes, 1 of the 3.</li>
+                    <li>0 = No.</li>
+                  </ul>
+                  <ul data-criterion="rights" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Fairness</h4>
+                  <p>If this stakeholder group is not considered in decision-making, would the resulting decision be
+                    seen as unfair?</p>
+                  <ul>
+                    <li>100 = Yes.</li>
+                    <li>0 = No.</li>
+                  </ul>
+                  <ul data-criterion="fairness" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="light-gray">
+                  <h4>Underrepresented & Underserved representation</h4>
+                  <p>Does this stakeholder group represent underserved or underrepresented groups?</p>
+                  <ul>
+                    <li>100 = Yes.</li>
+                    <li>0 = No.</li>
+                  </ul>
+                  <ul data-criterion="representation" class="stakeholder-value-list"></ul>
+                </div>
+              </div>
+              <button id="add-stakeholder-scores">Add Stakeholder Scores</button>
+            </div>
+          </div>
+          <div id="stakeholder-table-container">
+            <table id="table-stakeholders">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Stakeholder Group</th>
+                  <th class="tooltip"><span>Magnitude & Probability of impact</span>
+                    <span class="tooltipbottom tooltiptext">If changes are made in this decision context what is the
+                      likelihood that this stakeholder group will be impacted? What is the potential magnitude of that
+                      impact?
+                      <img src="img/probabilitymagnitude.PNG" width="240" alt="Probability and magnitude matrix">
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Level of influence</span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have any formal or informal
+                      influence over the decision making process?
+                      <ul>
+                        <li>100 = This group has formal influence over the decision-making process (i.e. can have the
+                          project stopped, must be consulted with).</li>
+                        <li>50 = This group has informal influence over the decision-making process.</li>
+                        <li>0 = This group has no influence over the decision-making process.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Level of interest</span>
+                    <span class="tooltipbottom tooltiptext">What is this stakeholder group's level of interest in this
+                      decision/action?
+                      <ul>
+                        <li>100 = High.</li>
+                        <li>75 = Moderate.</li>
+                        <li>50 = Low.</li>
+                        <li>0 = None.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Urgency & Temporal immediacy</span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group want an immediate
+                      decision/action on this issue?
+                      <ul>
+                        <li>100 = Yes, even if other actions/decisions must be postponed.</li>
+                        <li>80 = Yes, as long as it does not delay current commitments.</li>
+                        <li>60 = They would like to see action/a decision within a relatively short timeframe.</li>
+                        <li>40 = They would like to see action/a decision within a medium range timeframe.</li>
+                        <li>20 = They would like to see action/a decision made, but have no timeframe for it.</li>
+                        <li>0 = They do not care when an action/decision takes place.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Proximity</span>
+                    <span class="tooltipbottom tooltiptext">How frequently does this stakeholder group come into contact
+                      with the area subject to this decision?
+                      <ul>
+                        <li>100 = They are constantly in direct contact with the area.</li>
+                        <li>75 = They are constantly in contact with areas adjacent to the area OR They are frequently
+                          in direct contact with the area.</li>
+                        <li>50 = They are frequently in contact with areas adjacent to the area OR They are infrequently
+                          in direct contact with the area.</li>
+                        <li>25 = They are infrequently in contact with areas adjacent to the area.</li>
+                        <li>10 = They interact with this area from a distance.</li>
+                        <li>0 = They are never in contact with the area.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Economic interest</span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have an economic interest in the
+                      outcome of this decision?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Rights</span>
+                    <span class="tooltipbottom tooltiptext">Does this stakeholder group have any 1) legal right to be
+                      involved in this decision making process, 2) property rights associated with the land that will be
+                      impacted by the decision, or 3) consumer/user rights associated with the services that will be
+                      impacted by the decision?
+
+                      <ul>
+                        <li>100 = Yes, all 3.</li>
+                        <li>60 = Yes, 2 of the 3.</li>
+                        <li>20 = Yes, 1 of the 3.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Fairness</span>
+                    <span class="tooltipbottom tooltiptext">If this stakeholder group is not considered in
+                      decision-making, would the resulting decision be seen as unfair?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
+                  </th>
+                  <th class="tooltip"><span>Underrepresented & Underserved representation</span>
+                    <span class="tooltipbottom tooltiptext">Underrepresented & Underserved representation: Does this
+                      stakeholder group represent underserved or underrepresented groups?
+                      <ul>
+                        <li>100 = Yes.</li>
+                        <li>0 = No.</li>
+                      </ul>
+                    </span>
+                  </th>
+                </tr>
+
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <div id="stakeholder-charts">
+              <div class="flexcol">
+                <div class="chart-header">
+                  <h2>Stakeholder Prioritization
+                    <i id="download-stakeholder-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                  </h2>  
+                </div>
+                <div id="stakeholder-barchart" class="chart"></div>
+              </div>
+              <div class="flexcol">
+                <div class="chart-header">
+                  <h2>Prioritization Criteria Relative Weights
+                    <i id="download-stakeholder-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                  </h2>
+                </div>
+                <div id="stakeholder-piechart" class="chart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page" id="section-beneficiaries">
+          <hr />
+          <h2>Beneficiaries</h2>
+
+          <label for="select-stakeholder">Identify the types of beneficiaries making up each stakeholder group by
+            percentage.</label>
+          <p>Select your stakeholder from the drop down and enter the percentages in the input boxes. Each stakeholder
+            must have beneficiary percentages which sum to 100.</p>
+          <p>Once you have entered your beneficiary data proceed to the Attribute page.</p>
+
+          <div id="note-beneficiaries"></div>
+
+          <label for="select-stakeholder">Select a Stakeholder Group</label>
+          <div class="flexrow">
+            <select class="form-select" id="select-stakeholder"></select>
+            <input id="check-stakeholder-benefits" type="checkbox">
+            <label for="check-stakeholder-benefits" style="margin-left: 1.5em;">This stakeholder group does not directly benefit from the ecosystem</label>
+          </div>
+          
+          <label style="padding-top: 1.5em">Select Beneficiaries</label>
+          <div id="toggle-beneficiaries"></div>
+          <table id="table-beneficiaries"></table>
+          <div id="beneficiary-charts" hidden>
+            <div class="flexcol">
+              <div class="chart-header">
+                <h2>Beneficiary Prioritization
+                  <i id="download-beneficiary-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
+              </div>
+              <div id="beneficiary-barchart" class="chart"></div>
+              <div class="chart-header">
+                <h2>Beneficiary Profile
+                  <i id="download-beneficiary-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
+              </div>
+              <div id="beneficiary-piechart" class="chart"></div>
+            </div>
+          </div>
+        </div>
+        <div class="page" id="section-attributes">
+          <hr />
+          <h2>Attributes</h2>
+
+          <label for="select-beneficiary">Identify the types of attributes making up each beneficiary group by
+            percentage.</label>
+          <p>Identify how much each beneficiary group cares about the listed environmental attributes by percentage.
+            Each beneficary group must have attributes which sum to 100.</p>
+
+          <div id="note-attributes"></div>
+
+          <label for="select-beneficiary">Select a Beneficiary Group</label>
+          <select class="form-select" id="select-beneficiary"></select>
+          <br />
+          <label style="padding-top: 1.5em">Select Attributes</label>
+          <div id="toggle-attributes"></div>
+          <table id="table-attributes"></table>
+          <div id="attribute-charts" hidden>
+            <div class="flexcol">
+              <div class="chart-header">
+                <h2>Environmental Attribute Prioritization
+                  <i id="download-attribute-barchart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
+              </div>
+              <div id="attribute-barchart" class="chart"></div>
+              <div class="chart-header">
+                <h2>Environmental Attributes Relative Priority
+                  <i id="download-attribute-piechart" class="fas fa-download icon-btn" title="Download Chart"></i>
+                </h2>
+              </div>
+              <div id="attribute-piechart" class="chart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <a id="go-to-top" class="show" onclick="window.scrollTo(0, 0);">↑</a>
+  <script>
+    //require('./js/render.js');
+  </script>
+  <script src="./js/render.js"></script>
+</body>
+
+</html>
