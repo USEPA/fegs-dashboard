@@ -58,6 +58,7 @@ The results of the build are the `dist/` directory named `FEGS Scoping Tool Setu
 | Weights     | none           | criteria results | stakeholders results | beneficiaries results |
 | Scores      | none           | [ user input ]   | [ user input ]       | [ user input ]        |
 | Results     | [ user input ] | weights × scores | weights × scores     | weights × scores      |
+
 \* Included from the FEGS Classification System (FEGS-CS)
 
 Notice that results from each step are used as weights in the next.
