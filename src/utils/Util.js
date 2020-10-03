@@ -1,0 +1,76 @@
+
+module.exports = class Util {
+  // creates a clone of a primitive object, optionally ignoring specified keys
+  static cloneObj(obj, ignore=[]) {
+    const ret = (Array.isArray(obj)) ? [] : {}
+    Object.entries(obj).forEach(([key, val]) => {
+      if (ignore.includes(key)) return
+      if (val && typeof val === 'object') {
+        ret[key] = this.cloneObj(val, ignore)
+      } else {
+        ret[key] = val
+      }
+    })
+    return ret
+  }
+
+  // renames a key in an object
+  static renameKey(obj, oldKey, newKey) {
+    const oldVal = obj[oldKey]
+    const newVal = (val && typeof oldVal === 'object') ? this.cloneObj(oldVal) : oldVal
+    delete obj[oldKey]
+    obj[newKey] = newVal
+  }
+
+  // recursively deletes specified keys from object
+  static filterObj(obj, remove=[]) {
+    Object.entries(obj).forEach(([key, val]) => {
+      if (remove.includes(key)) {
+        delete obj[key]
+      } else if (val && typeof val === 'object') {
+        this.filterObj(val, remove)
+      }
+    })
+  }
+
+  // get a value multiple keys deep in an object, returns undefined if keys are missing
+  static deepGet(obj, [key, ...rest]) {
+    const val = (typeof obj === 'object' && key in obj) ? obj[key] : undefined
+    return (rest.length > 0) ? this.deepGet(val, rest) : val
+  }
+
+  // set a value multiple keys deep in an object, creates objects as necessary
+  static deepSet(obj, [key, ...rest], val) {
+    if (rest.length > 0) {
+      if (!(key in obj && typeof obj[key] === 'object')) obj[key] = {}
+      this.deepSet(obj[key], rest, val)
+    } else {
+      obj[key] = val
+    }
+  }
+
+  // check if a value is a regular number (not null, undefined, NaN, object, etc)
+  static isNum(val) {
+    return (typeof val === 'number' && !Number.isNaN(val))
+  }
+
+  // round a number to the specified decimal place
+  static round(num, decimals=0) {
+    return Math.round(num*Math.pow(10, decimals))/Math.pow(10, decimals)
+  }
+
+  // call a potentially undefined function
+  static safeCall(func=undefined) {
+    return (typeof func === 'function') ? func() : undefined
+  }
+
+  // create an element specified by an object
+  static element({ tag, cls, text, childs, ...rest }) {
+    const ele = document.createElement(tag)
+    if (cls) ele.className = cls
+    if (text) ele.innerText = text
+    if (childs) childs.forEach(child => ele.appendChild(this.element(child))) // recursive
+    Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
+    return ele
+  }
+}

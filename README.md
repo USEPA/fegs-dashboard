@@ -1,7 +1,7 @@
 # FEGS Scoping Tool
 The FEGS Scoping Tool informs the early stage of decision making, when decision makers are aware of a decision that needs to be made, but before any actions are taken. The tool helps users identify and prioritize stakeholders, beneficiaries, and environmental attributes through a structured, transparent, and repeatable process. These relevant and meaningful environmental attributes can then be used to evaluate decision alternatives.'
 
-## Version 1.8 Goals
+## Version 2.0 Goals
 * Separation of concerns: data, view, components, etc.
 * Clean data management
 * Consistent language
@@ -34,6 +34,12 @@ $ npm start
 ```
 
 ### Build
+Build a development version of the app
+
+```
+$ npm run pack
+```
+
 Build a distributable version of the app
 
 ```
@@ -51,13 +57,13 @@ The results of the build are the `dist/` directory named `FEGS Scoping Tool Setu
 **Result** ﹘ value associated with an alternative across all metrics (see [result calculation](#result-calculation))<br>
 
 ### Sources
-| Name        | Criteria       | Stakeholders     | Beneficiaries        | Attributes            |
-|-------------|----------------|------------------|----------------------|-----------------------|
-| Alternative | criterion*     | [ user input ]   | beneficiary*         | attribute*            |
-| Metric      | none           | criteria         | stakeholders         | beneficiaries         |
-| Weights     | none           | criteria results | stakeholders results | beneficiaries results |
-| Scores      | none           | [ user input ]   | [ user input ]       | [ user input ]        |
-| Results     | [ user input ] | weights × scores | weights × scores     | weights × scores      |
+|                 | **0. Criteria** | **1. Stakeholders** | **2. Beneficiaries** | **3. Attributes**     |
+|-----------------|-----------------|---------------------|----------------------|-----------------------|
+| **Alternative** | criterion*      | [ user input ]      | beneficiary*         | attribute*            |
+| **Metric**      | none            | criteria            | stakeholders         | beneficiaries         |
+| **Weights**     | none            | criteria results    | stakeholders results | beneficiaries results |
+| **Scores**      | none            | [ user input ]      | [ user input ]       | [ user input ]        |
+| **Results**     | [ user input ]  | weights × scores    | weights × scores     | weights × scores      |
 
 \* Included from the FEGS Classification System (FEGS-CS)
 
