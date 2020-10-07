@@ -4,6 +4,8 @@ module.exports = class DataStore {
   constructor(data=null) {
     this.data = null // DO NOT WRITE DIRECTLY (use a setter), but do read directly
     this.autoCompute = true // compute results whenever an influencing value changes
+    this.modified = false // whether data has changed since last saved
+    
     if (data) {
       this.load(data)
     } else {
@@ -13,16 +15,27 @@ module.exports = class DataStore {
   new() {
     this.data = this._template() // provide default values
     this._registerAliases()
+    this.modified = false
     if (this.autoCompute) this._computeAll()
   }
   load(data) {
     // ...validate, check version, etc
+    const version = Util.deepGet(data, ['project', 'version'])
+    if (version !== '2.0.0') {
+      throw Error(`Unsupported file version "${version}"`)
+    }
+
     this.data = Util.cloneObj(data)
     this._registerAliases()
+    this.modified = false
     if (this.autoCompute) this._computeAll()
   }
   compute() { // only need to call this method if you set autoCompute to false
     this._computeAll()
+  }
+
+  onModified(func) { // call func when this.modified changes false -> true
+    this._onModifiedCallback = func
   }
 
   getSaveable() {
@@ -31,27 +44,34 @@ module.exports = class DataStore {
 
   setProjectName(name) { 
     this.data.project.name = name
+    this._modified()
   }
   setProjectDescription(desc) { 
     this.data.project.description = desc
+    this._modified()
   }
   setCriterionNotes(notes) {
     this.data.criterionSection.notes = notes
+    this._modified()
   }
   setStakeholderNotes(notes) {
     this.data.stakeholderSection.notes = notes
+    this._modified()
   }
   setBeneficiaryNotes(notes) {
     this.data.beneficiarySection.notes = notes
+    this._modified()
   }
   setAttributeNotes(notes) {
     this.data.attributeSection.notes = notes
+    this._modified()
   }
   setCriterionResult(criterionName, val) {
     if (!(criterionName in this.criteria)) {
       throw new Error(`Cannot find criterion "${criterionName}".`) // programmer error
     } else {
       this.criteria[criterionName].result = val
+      this._modified()
       if (this.autoCompute) this._computeCriterionSection()
     }
   }
@@ -62,6 +82,7 @@ module.exports = class DataStore {
       throw new Error(`Cannot find criterion "${criterionName}".`) // programmer error
     } else {
       this.stakeholders[stakeholderName].scores[criterionName] = val
+      this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
@@ -72,6 +93,7 @@ module.exports = class DataStore {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
     } else {
       this.beneficiaries[beneficiaryName].scores[stakeholderName] = val
+      this._modified()
       if (this.autoCompute) this._computeBeneficiarySection()
     }
   }
@@ -82,6 +104,7 @@ module.exports = class DataStore {
       throw new Error(`Cannot find beneficiary "${beneficiaryName}".`) // programmer error
     } else {
       this.attributes[attributeName].scores[beneficiaryName] = val
+      this._modified()
       if (this.autoCompute) this._computeAttributeSection()
     }
   }
@@ -95,6 +118,7 @@ module.exports = class DataStore {
       Object.values(this.beneficiaries).forEach(beneficiary => {
         Util.renameKey(beneficiary.scores, oldName, newName)
       })
+      this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
@@ -103,6 +127,7 @@ module.exports = class DataStore {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
     } else {
       this.stakeholders[stakeholderName].color.primary = color
+      this._modified()
       if (this.autoCompute) this._computeStakeholderColors()
     }
   }
@@ -128,6 +153,7 @@ module.exports = class DataStore {
         beneficiary.scores[stakeholderName] = null
       })
 
+      this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
@@ -144,6 +170,7 @@ module.exports = class DataStore {
         delete beneficiary.scores[stakeholderName]
       })
 
+      this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
@@ -172,6 +199,10 @@ module.exports = class DataStore {
     this.stakeholders = this.data.stakeholderSection.stakeholders
     this.beneficiaries = this.data.beneficiarySection.beneficiaries
     this.attributes = this.data.attributeSection.attributes
+  }
+  _modified() {
+    if (!this.modified) this._onModifiedCallback()
+    this.modified = true
   }
   _setComputed(obj, key, val) {
     Util.deepSet(obj, ['computed', key], val)
