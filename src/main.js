@@ -13,8 +13,8 @@ const defaultProjectName = 'New Project'
 const controller = {
   saved: true,
   currentProjectName: defaultProjectName,
-  currentFilename: null,
-  openingFilename: null,
+  currentFilepath: null,
+  openingFilepath: null,
   afterSaved: null,
   quitting: false,
 
@@ -44,8 +44,8 @@ const controller = {
   },
   save({ and }={}) {
     this.afterSaved = and || null
-    if (!this.saved || !this.currentFilename) {
-      if (!this.currentFilename) {
+    if (!this.saved || !this.currentFilepath) {
+      if (!this.currentFilepath) {
         this.saveAs()
       } else {
         this.requestData()
@@ -85,12 +85,16 @@ const controller = {
     // close all windows but don't quit on macOS
   },
 
+  unsaved() {
+    this.saved = false
+    this._title()
+  },
   requestData() {
     mainWindow.send({ action: 'save' })
   },
   writeData(data) { // call with data to save
     try {
-      fs.writeFileSync(this.currentFilename, JSON.stringify(data))
+      fs.writeFileSync(this.currentFilepath, JSON.stringify(data), 'utf8')
       this.currentProjectName = data.project.name
       mainWindow.send({ action: 'saved' })
       this.saved = true
@@ -132,7 +136,6 @@ const controller = {
   },
   _openDialog() {
     const result = dialog.showOpenDialogSync(mainWindow.ref, {
-      defaultPath: this.currentFilename || this.currentProjectName,
       properties: ['openFile'],
       filters: [{
         name: 'Custom File Type',
@@ -140,35 +143,38 @@ const controller = {
       }]
     })
     if (result) {
-      this.openingFilename = result[0]
+      this.openingFilepath = result[0]
     }
     return !!result // no result means cancel
   },
   _saveAsDialog() {
     const result = dialog.showSaveDialogSync(mainWindow.ref, {
-      defaultPath: this.currentFilename || this.currentProjectName,
+      defaultPath: this.currentFilepath || this.currentProjectName,
       filters: [{
         name: 'Custom File Type',
         extensions: ['fegs']
       }]
     })
     if (result) {
-      this.currentFilename = (!result.endsWith('.fegs')) ? `${result}.fegs` : result
+      this.currentFilepath = (!result.endsWith('.fegs')) ? `${result}.fegs` : result
     }
     return !!result // no result means cancel
   },
 
   _new() {
-    this.currentFilename = null
+    this.currentFilepath = null
+    this.currentProjectName = defaultProjectName
     mainWindow.send({ action: 'new' })
+    this._title()
   },
   _open() {
     try {
-      const data = fs.readFileSync(this.openingFilename)
+      const data = JSON.parse(fs.readFileSync(this.openingFilepath, 'utf8'))
       this.currentProjectName = Util.deepGet(data, ['project', 'name']) || defaultProjectName
-      this.currentFilename = this.openingFilename
-      this.openingFilename = null
+      this.currentFilepath = this.openingFilepath
+      this.openingFilepath = null
       mainWindow.send({ action: 'load', data })
+      this._title()
     } catch (error) {
       this._error('Unable to open project', error.message)
     }
@@ -189,6 +195,14 @@ const controller = {
       detail,
     })
   },
+  _title() {
+    if (this.currentProjectName) {
+      const saveIndicator = (this.saved) ? '' : '*'
+      mainWindow.title(`${this.currentProjectName}${saveIndicator} - ${appTitle}`)
+    } else {
+      mainWindow.title(appTitle)
+    }
+  }
 }
 
 const mainWindow = { // wrapper for main browser window
@@ -202,11 +216,14 @@ const mainWindow = { // wrapper for main browser window
   close() {
     this.ref.close()
   },
+  title(title) {
+    this.ref.setTitle(title)
+  },
   create() {
     this.ref = new BrowserWindow({
       width: 1280,
       height: 1024,
-      backgroundColor: '#eee', // enables sub-pixel anti-aliasing
+      backgroundColor: '#FFF', // enables sub-pixel anti-aliasing
       title: appTitle,
       webPreferences: {
         nodeIntegration: true,
@@ -220,7 +237,7 @@ const mainWindow = { // wrapper for main browser window
       })
     )
     this.ref.webContents.on('did-finish-load', () => {
-      this.ref.webContents.openDevTools()
+      if (isDev) this.ref.webContents.openDevTools()
     })
     this.ref.once('ready-to-show', () => {
       this.ref.show()
@@ -231,6 +248,8 @@ const mainWindow = { // wrapper for main browser window
     this.ref.on('closed', () => {
       this.ref = null
     })
+
+    controller.new()
 
     const menu = Menu.buildFromTemplate([
       {
@@ -273,8 +292,12 @@ const mainWindow = { // wrapper for main browser window
         label: 'About',
         submenu: [
           {
+            label: 'Tool Purpose',
+            click: () => purposeWindow.create(this.ref)
+          },
+          {
             label: 'Tool Methods',
-            click: () => methodsWindow.create()
+            click: () => methodsWindow.create(this.ref)
           }
         ]
       },
@@ -288,27 +311,33 @@ const mainWindow = { // wrapper for main browser window
   },
 }
 
-const methodsWindow = {
-  ref: null,
+class StaticWindow {
+  constructor({ width=800, height=600, title, filepath }) {
+    this.ref = null
+    this.width = width
+    this.height = height
+    this.title = title
+    this.filepath = filepath
+  }
   exists() {
     return (this.ref !== null)
-  },
+  }
   close() {
     this.ref.close()
-  },
-  create() {
+  }
+  create(parent) {
     this.ref = new BrowserWindow({
-      parent: mainWindow.ref,
-      width: 800,
-      height: 600,
+      parent,
+      width: this.width,
+      height: this.height,
       minimizable: false,
-      backgroundColor: '#eee', // enables sub-pixel anti-aliasing
-      title: `Tool Methods - ${appTitle}`,
+      backgroundColor: '#FFF', // enables sub-pixel anti-aliasing
+      title: this.title,
     })
     this.ref.setMenu(null)
     this.ref.loadURL(
       url.format({
-        pathname: path.join(__dirname, 'about/methods.html'),
+        pathname: path.join(__dirname, this.filepath),
         protocol: 'file:',
         slashes: true,
       })
@@ -319,10 +348,25 @@ const methodsWindow = {
     this.ref.on('closed', () => {
       this.ref = null
     })
-  },
+  }
 }
 
-const allWindows = { mainWindow, methodsWindow }
+const methodsWindow = new StaticWindow({
+  width: 900,
+  height: 600,
+  title: `Tool Methods - ${appTitle}`,
+  filepath: 'about/methods.html',
+})
+
+const purposeWindow = new StaticWindow({
+  width: 600,
+  height: 220,
+  title: `Tool Purpose - ${appTitle}`,
+  filepath: 'about/purpose.html',
+})
+
+
+const allWindows = { mainWindow, methodsWindow, purposeWindow }
 
 
 ipcMain.on('msg', (event, { action, data }) => {
@@ -332,14 +376,12 @@ ipcMain.on('msg', (event, { action, data }) => {
       controller.writeData(data)
       break
     case 'unsaved':
-      controller.saved = false
+      controller.unsaved()
       break
     default:
       throw Error(`Unsupported action "${action}"`) // programmer error
   }
 })
-
-
 
 
 app.whenReady().then(() => {

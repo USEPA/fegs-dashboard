@@ -17,6 +17,7 @@
   "keywords": [
     "FEGS"
   ],
+  "author": "United States Environmental Protection Agency",
   "contributors": [
     "Kyle Thomas",
     "Seth Jenkins",
@@ -25,6 +26,9 @@
   "build": {
     "appId": "FEGS-Scoping-Tool",
     "productName": "FEGS Scoping Tool",
+    "directories": {
+      "buildResources": "src/build"
+    },
     "nsis": {
       "oneClick": true
     },

@@ -13,13 +13,13 @@ ipcRenderer.on('msg', (event, { action, data }) => {
   switch (action) {
     case 'new':
       store.new()
-      store.setProjectName('wink')
       break
     case 'load':
+      console.log(data)
       try {
         store.load(data)
       } catch (error) {
-        console.error(`Error loading file: ${error.message}`)
+        console.error(`Error: ${error.message}`) // how to handle?
       }
       break
     case 'save':
@@ -41,4 +41,4 @@ let flag = true
 window.setInterval(() => {
   test.style.backgroundColor = (flag) ? 'yellow' : 'red'
   flag = !flag
-}, 1000)
+}, 500)
