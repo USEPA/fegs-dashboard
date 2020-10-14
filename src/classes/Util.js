@@ -1,6 +1,6 @@
 
-module.exports = class Util {
-  // creates a clone of a primitive object, optionally ignoring specified keys
+export default class Util {
+  // create a clone of a primitive object, optionally ignoring specified keys
   static cloneObj(obj, ignore=[]) {
     const ret = (Array.isArray(obj)) ? [] : {}
     Object.entries(obj).forEach(([key, val]) => {
@@ -14,7 +14,7 @@ module.exports = class Util {
     return ret
   }
 
-  // renames a key in an object
+  // rename a key in an object
   static renameKey(obj, oldKey, newKey) {
     const oldVal = obj[oldKey]
     const newVal = (val && typeof oldVal === 'object') ? this.cloneObj(oldVal) : oldVal
@@ -22,7 +22,7 @@ module.exports = class Util {
     obj[newKey] = newVal
   }
 
-  // recursively deletes specified keys from object
+  // recursively delete specified keys from object
   static filterObj(obj, remove=[]) {
     Object.entries(obj).forEach(([key, val]) => {
       if (remove.includes(key)) {
@@ -30,6 +30,16 @@ module.exports = class Util {
       } else if (val && typeof val === 'object') {
         this.filterObj(val, remove)
       }
+    })
+  }
+
+  // erase contents of dest object and replace with contents of src object
+  static replaceObj(dest, src) {
+    Object.keys(dest).forEach(key => {
+      delete dest[key]
+    })
+    Object.entries(src).forEach(([key, val]) => {
+      dest[key] = val
     })
   }
 
@@ -49,6 +59,10 @@ module.exports = class Util {
     }
   }
 
+  static printObj(obj) {
+    console.log(JSON.stringify(obj, null, 2))
+  }
+
   // check if a value is a regular number (not null, undefined, NaN, object, etc)
   static isNum(val) {
     return (typeof val === 'number' && !Number.isNaN(val))
@@ -60,8 +74,8 @@ module.exports = class Util {
   }
 
   // call a potentially undefined function
-  static safeCall(func=undefined) {
-    return (typeof func === 'function') ? func() : undefined
+  static safeCall(func=undefined, ...args) {
+    return (typeof func === 'function') ? func(...args) : undefined
   }
 
   // create an element specified by an object
@@ -72,5 +86,17 @@ module.exports = class Util {
     if (childs) childs.forEach(child => ele.appendChild(this.element(child))) // recursive
     Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
     return ele
+  }
+
+  // determine if running on macOS, Node only
+  static isMac() {
+    if (!process) throw Error('This method only works in a Node environment') // programmer error
+    return (process.platform === 'darwin')
+  }
+
+  // determine if running in development mode, Node only
+  static isDev() {
+    if (!process) throw Error('This method only works in a Node environment') // programmer error
+    return (process.env.NODE_ENV && process.env.NODE_ENV.slice(0, 3) === 'dev')
   }
 }

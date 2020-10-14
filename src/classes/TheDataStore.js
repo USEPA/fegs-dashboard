@@ -1,8 +1,8 @@
-const Util = require('../utils/Util.js')
+import Util from './Util.js'
 
-module.exports = class DataStore {
+export default class TheDataStore {
   constructor(data=null) {
-    this.data = null // DO NOT WRITE DIRECTLY (use a setter), but do read directly
+    this.data = {} // DO NOT WRITE DIRECTLY (use a setter), but do read directly
     this.autoCompute = true // compute results whenever an influencing value changes
     this.modified = false // whether data has changed since last saved
     
@@ -13,7 +13,7 @@ module.exports = class DataStore {
     }
   }
   new() {
-    this.data = this._template() // provide default values
+    Util.replaceObj(this.data, this._template()) // references to this.data still point at the same object (important for Vue)
     this._registerAliases()
     this.modified = false
     if (this.autoCompute) this._computeAll()
@@ -25,7 +25,7 @@ module.exports = class DataStore {
       throw Error(`Unsupported file version "${version}"`)
     }
 
-    this.data = Util.cloneObj(data)
+    Util.replaceObj(this.data, Util.cloneObj(data))
     this._registerAliases()
     this.modified = false
     if (this.autoCompute) this._computeAll()
@@ -193,7 +193,7 @@ module.exports = class DataStore {
     console.log(JSON.stringify(filter(this.data), null, 2))
   }
   
-  // the following methods are 'private'
+  // the following methods are private (please don't use them externally)
   _registerAliases() {
     this.criteria = this.data.criterionSection.criteria
     this.stakeholders = this.data.stakeholderSection.stakeholders

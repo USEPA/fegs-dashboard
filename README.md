@@ -30,20 +30,14 @@ $ npm install
 Run the app in development mode
 
 ```
-$ npm start
+$ npm run electron:serve
 ```
 
 ### Build
-Build a development version of the app
-
-```
-$ npm run pack
-```
-
 Build a distributable version of the app
 
 ```
-$ npm run dist
+$ npm run electron:build
 ```
 
 The results of the build are the `dist/` directory named `FEGS Scoping Tool Setup x.y.x.exe`, where `x` is the major version number, `y` is the minor version number, and `z` is the patch version number.
