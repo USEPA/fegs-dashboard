@@ -5,7 +5,7 @@ The FEGS Scoping Tool informs the early stage of decision making, when decision 
 * Separation of concerns: data, view, components, etc.
 * Clean data management
 * Consistent language
-* Responsive design using Vue.js (stretch goal)
+* Responsive design using Vue.js
 
 ## Development
 ### Prerequisites
@@ -16,7 +16,7 @@ The FEGS Scoping Tool informs the early stage of decision making, when decision 
 Clone
 
 ```
-$ git clone https://github.com/USEPA/fegs-dashboard
+$ git clone -b 2.0 https://github.com/USEPA/fegs-dashboard
 $ cd fegs-dashboard
 ```
 
@@ -27,20 +27,48 @@ $ npm install
 ```
 
 ### Usage
-Run the app in development mode
+Run the Electron app in development mode
 
 ```
 $ npm run electron:serve
 ```
 
 ### Build
-Build a distributable version of the app
+Build a distributable version of the Electron app
 
 ```
 $ npm run electron:build
 ```
 
-The results of the build are the `dist/` directory named `FEGS Scoping Tool Setup x.y.x.exe`, where `x` is the major version number, `y` is the minor version number, and `z` is the patch version number.
+The results of the build are the `dist_electron/` directory. There you will find the installer `FEGS Scoping Tool Setup x.y.x.exe` (where `x` is the major version number, `y` is the minor version number, and `z` is the patch version number). Also, the unpacked executable is in the `win-unpacked/` directory, if you want to run the app without installing.
+
+
+## Design
+### Technology
+The FEGS Scoping Tool is an [Electron](https://www.electronjs.org/) app (and maybe someday also a website). The user interface is written using the [Vue.js](https://vuejs.org/) library. To compile the `.vue` files we use the [Webpack](https://webpack.js.org/) bundler. Getting these technologies to work with Electron and especially [Electron Builder](https://www.electron.build/) proved very difficult, but thankfully the Vue CLI has a plugin for templating such a project called [Vue CLI Plugin Electron Builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/). This plugin dictates the general structure of the project and solves many problems, including setting up hot module reloading. It also paves the way for creating both a desktop app and a web app from the same codebase.
+
+### Directory Structure
+The following are the most important files and directories.
+* `dist_electron/` - auto generated to contain Webpack and Electron Builder output
+* `node_modules/` - run `npm install` to populate
+* `public/` - static content
+  * `index.html` - file where Webpack injects `main.js`
+* `src/` - content to be bundled
+  * `assets/` - static content to be bundled
+  * `build/` - resources for Electron Builder
+  * `classes/` - ES6 classes used in the app (might separate by process later)
+  * `components/` - all Vue component definitions
+  * `App.vue` - root component for Vue
+  * `background.js` - **entry** for Electron main process
+  * `main.js` - **entry** for app and Electron render process
+  * `preload.js` - runs before `main.js` to wrap specific Node imports
+  * `store.js` - data manager
+* `package.json` - specify dependencies and scripts
+* `README.md` - project description
+* `vue.config.js` - specify settigs and Electron Builder customizations
+
+### Security
+Although the application does not require stringent security right now, it has been designed to follow recommended security standards. This means features such as loading remote content can be easily added in the future. To this end, all the operating system APIs (such as file I/O, window management, etc.) can only be called from `background.js`. All other processes have no access to Node imports and may only communicate with `background.js` through the Inter-Process Control (IPC) system, which is configured in `preload.js`.
 
 ## Data
 ### Terminology
