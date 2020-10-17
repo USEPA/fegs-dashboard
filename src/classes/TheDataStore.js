@@ -1,22 +1,21 @@
 import Util from './Util.js'
 
+// NOTE: Adding or deleting object properties requires shinanigans so Vue can detect changes
+
 export default class TheDataStore {
-  constructor(data=null) {
+  constructor({ addProp=null, delProp=null }) {
+    this._addProp = addProp || ((obj, key, val) => obj[key] = val) // custom function to add property to object (Vue needs special help)
+    this._delProp = delProp || ((obj, key) => delete obj[key] ) // custom function to delete property from object
+
     this.data = {} // DO NOT WRITE DIRECTLY (use a setter), but do read directly
+    this.info = {} // application info from main process (app title)
     this.autoCompute = true // compute results whenever an influencing value changes
     this.modified = false // whether data has changed since last saved
-    
-    if (data) {
-      this.load(data)
-    } else {
-      this.new()
-    }
   }
   new() {
-    Util.replaceObj(this.data, this._template()) // references to this.data still point at the same object (important for Vue)
-    this._registerAliases()
+    this.data = this._template()
     this.modified = false
-    if (this.autoCompute) this._computeAll()
+    this._computeAll()
   }
   load(data) {
     // ...validate, check version, etc
@@ -25,10 +24,9 @@ export default class TheDataStore {
       throw Error(`Unsupported file version "${version}"`)
     }
 
-    Util.replaceObj(this.data, Util.cloneObj(data))
-    this._registerAliases()
+    this.data = Util.cloneObj(data)
     this.modified = false
-    if (this.autoCompute) this._computeAll()
+    this._computeAll()
   }
   compute() { // only need to call this method if you set autoCompute to false
     this._computeAll()
@@ -39,9 +37,12 @@ export default class TheDataStore {
   }
 
   getSaveable() {
-    return Util.cloneObj(this.data, ['computed']) // remove computed values   
+    return Util.cloneObj(this.data, ['computed']) // remove computed values  
   }
 
+  setInfo(info) {
+    this.info = info
+  }
   setProjectName(name) { 
     this.data.project.name = name
     this._modified()
@@ -67,55 +68,55 @@ export default class TheDataStore {
     this._modified()
   }
   setCriterionResult(criterionName, val) {
-    if (!(criterionName in this.criteria)) {
+    if (!(criterionName in this.data.criterionSection.criteria)) {
       throw new Error(`Cannot find criterion "${criterionName}".`) // programmer error
     } else {
-      this.criteria[criterionName].result = val
+      this.data.criterionSection.criteria[criterionName].result = val
       this._modified()
       if (this.autoCompute) this._computeCriterionSection()
     }
   }
   setStakeholderScore(stakeholderName, criterionName, val) {
-    if (!(stakeholderName in this.stakeholders)) {
+    if (!(stakeholderName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
-    } else if (!(criterionName in this.criteria)) {
+    } else if (!(criterionName in this.data.criterionSection.criteria)) {
       throw new Error(`Cannot find criterion "${criterionName}".`) // programmer error
     } else {
-      this.stakeholders[stakeholderName].scores[criterionName] = val
+      this.data.stakeholderSection.stakeholders[stakeholderName].scores[criterionName] = val
       this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
   setBeneficiaryScore(beneficiaryName, stakeholderName, val) {
-    if (!(beneficiaryName in this.beneficiaries)) {
+    if (!(beneficiaryName in this.data.beneficiarySection.beneficiaries)) {
       throw new Error(`Cannot find beneficiary "${beneficiaryName}".`) // programmer error
-    } else if (!(stakeholderName in this.stakeholders)) {
+    } else if (!(stakeholderName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
     } else {
-      this.beneficiaries[beneficiaryName].scores[stakeholderName] = val
+      this.data.beneficiarySection.beneficiaries[beneficiaryName].scores[stakeholderName] = val
       this._modified()
       if (this.autoCompute) this._computeBeneficiarySection()
     }
   }
   setAttributeScore(attributeName, beneficiaryName, val) {
-    if (!(attributeName in this.attributes)) {
+    if (!(attributeName in this.data.attributeSection.attributes)) {
       throw new Error(`Cannot find attribute "${attributeName}".`) // programmer error
-    } else if (!(beneficiaryName in this.beneficiaries)) {
+    } else if (!(beneficiaryName in this.data.beneficiarySection.beneficiaries)) {
       throw new Error(`Cannot find beneficiary "${beneficiaryName}".`) // programmer error
     } else {
-      this.attributes[attributeName].scores[beneficiaryName] = val
+      this.data.attributeSection.attributes[attributeName].scores[beneficiaryName] = val
       this._modified()
       if (this.autoCompute) this._computeAttributeSection()
     }
   }
   setStakeholderName(oldName, newName) {
-    if (!(oldName in this.stakeholders)) {
+    if (!(oldName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${oldName}".`) // programmer error
-    } else if (newName in this.stakeholders) {
+    } else if (newName in this.data.stakeholderSection.stakeholders) {
       throw new Error(`Stakeholder "${newName}" already exists.`) // programmer error
     } else {
-      Util.renameKey(this.stakeholders, oldName, newName)
-      Object.values(this.beneficiaries).forEach(beneficiary => {
+      Util.renameKey(this.data.stakeholderSection.stakeholders, oldName, newName)
+      Object.values(this.data.beneficiarySection.beneficiaries).forEach(beneficiary => {
         Util.renameKey(beneficiary.scores, oldName, newName)
       })
       this._modified()
@@ -123,34 +124,38 @@ export default class TheDataStore {
     }
   }
   setStakeholderColor(stakeholderName, color) {
-    if (!(stakeholderName in this.stakeholders)) {
+    if (!(stakeholderName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
     } else {
-      this.stakeholders[stakeholderName].color.primary = color
+      this.data.stakeholderSection.stakeholders[stakeholderName].color.primary = color
       this._modified()
       if (this.autoCompute) this._computeStakeholderColors()
     }
   }
 
   addStakeholder(stakeholderName, color=null) {
-    if (stakeholderName in this.stakeholders) {
+    if (stakeholderName in this.data.stakeholderSection.stakeholders) {
       throw new Error(`Stakeholder "${stakeholderName}" already exists.`) // programmer error
     } else {
-      // add stakeholder to stakeholders
-      const stakeholder = this.stakeholders[stakeholderName] = {
-        color: {},
+      // define stakeholder
+      const stakeholder = {
+        color: {
+          primary: color,
+        },
         scores: {},
       }
-      if (color) stakeholder.color.primary = color
       
       // add scores to stakeholder
-      Object.keys(this.criteria).forEach(criterionName => {
+      Object.keys(this.data.criterionSection.criteria).forEach(criterionName => {
         stakeholder.scores[criterionName] = null
       })
 
+      // add stakeholder to stakeholders
+      this._addProp(this.data.stakeholderSection.stakeholders, stakeholderName, stakeholder)
+
       // add stakeholder to beneficiary scores
-      Object.values(this.beneficiaries).forEach(beneficiary => {
-        beneficiary.scores[stakeholderName] = null
+      Object.values(this.data.beneficiarySection.beneficiaries).forEach(beneficiary => {
+        this._addProp(beneficiary.scores, stakeholderName, null)
       })
 
       this._modified()
@@ -159,15 +164,15 @@ export default class TheDataStore {
   }
 
   delStakeholder(stakeholderName) {
-    if (!(stakeholderName in this.stakeholders)) {
+    if (!(stakeholderName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${stakeholderName}".`) // programmer error
     } else {
       // delete stakeholder from stakeholders
-      delete this.stakeholders[stakeholderName]
+      this._delProp(this.data.stakeholderSection.stakeholders, stakeholderName)
 
       // delete stakeholder from beneficiary scores
-      Object.values(this.beneficiaries).forEach(beneficiary => {
-        delete beneficiary.scores[stakeholderName]
+      Object.values(this.data.beneficiarySection.beneficiaries).forEach(beneficiary => {
+        this._delProp(beneficiary.scores, stakeholderName)
       })
 
       this._modified()
@@ -194,18 +199,18 @@ export default class TheDataStore {
   }
   
   // the following methods are private (please don't use them externally)
-  _registerAliases() {
-    this.criteria = this.data.criterionSection.criteria
-    this.stakeholders = this.data.stakeholderSection.stakeholders
-    this.beneficiaries = this.data.beneficiarySection.beneficiaries
-    this.attributes = this.data.attributeSection.attributes
-  }
   _modified() {
     if (!this.modified) this._onModifiedCallback()
     this.modified = true
   }
   _setComputed(obj, key, val) {
-    Util.deepSet(obj, ['computed', key], val)
+    if (!('computed' in obj)) {
+      this._addProp(obj, 'computed', { [key]: val })
+    } else if (!(key in obj.computed)) {
+      this._addProp(obj.computed, key, val)
+    } else {
+      obj.computed[key] = val
+    }
   }
   _computeAll() {
     this._computeCriterionSection()
@@ -227,19 +232,19 @@ export default class TheDataStore {
   }
   _computeStakeholderColors() {
     const remain = new Set(this.data.stakeholderSection.colors)
-    Object.values(this.stakeholders).forEach(stakeholder => {
+    Object.values(this.data.stakeholderSection.stakeholders).forEach(stakeholder => {
       remain.delete(stakeholder.color.primary)
     })
     this._setComputed(this.data.stakeholderSection, 'colorsRemain', [...remain])
   }
   _computeStakeholderResults() {
-    this._computeResults(this.criteria, this.stakeholders)
+    this._computeResults(this.data.criterionSection.criteria, this.data.stakeholderSection.stakeholders, { doScoresWeighted: true })
   }
   _computeBeneficiaryResults() {
-    this._computeResults(this.stakeholders, this.beneficiaries, { doCategoriesWeighted: true })
+    this._computeResults(this.data.stakeholderSection.stakeholders, this.data.beneficiarySection.beneficiaries, { doScoresWeighted: true })
   }
   _computeAttributeResults() {
-    this._computeResults(this.beneficiaries, this.attributes, { doCategoriesWeighted: true })
+    this._computeResults(this.data.beneficiarySection.beneficiaries, this.data.attributeSection.attributes, { doCategoriesWeighted: true })
   }
   _computeResults(metrics, alternatives, { doCategoriesWeighted=false, doScoresWeighted=false }={}) {
     const cleanMetrics = {} // map: metric name -> non-null weight
@@ -294,7 +299,7 @@ export default class TheDataStore {
     const data = {
       project: {
         version: '2.0.0', // lowest compatible app version
-        name: 'My Project',
+        name: 'New Project',
         description: '',
       },
       criterionSection: {
@@ -980,6 +985,11 @@ export default class TheDataStore {
         },
       },
     }
+
+    // add results to criteria
+    Object.values(data.criterionSection.criteria).forEach(criterion => {
+      criterion.result = null
+    })
 
     // add scores to beneficiaries
     Object.values(data.beneficiarySection.beneficiaries).forEach(beneficiary => {

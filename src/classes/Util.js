@@ -59,8 +59,8 @@ export default class Util {
     }
   }
 
-  static printObj(obj) {
-    console.log(JSON.stringify(obj, null, 2))
+  static strObj(obj) {
+    return JSON.stringify(obj, null, 2)
   }
 
   // check if a value is a regular number (not null, undefined, NaN, object, etc)

@@ -12,7 +12,6 @@ import StaticWindow from './classes/StaticWindow.js'
 const isMac = Util.isMac()
 const isDev = Util.isDev()
 const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`
-const defaultProjectName = 'New Project'
 
 
 // Scheme must be registered before the app is ready.
@@ -21,7 +20,7 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
-// Wrappers manage each BrowserWindow.
+// Wrappers for each BrowserWindow.
 const mainWindow = new TheMainWindow({
   width: 1280,
   height: 1024,
@@ -50,11 +49,10 @@ const windows = {
 }
 
 
-// Controller handles menu and IPC actions.
+// Controller handles lifecycle, menu, and IPC actions.
 const controller = new TheController({
   windows,
   appTitle,
-  defaultProjectName,
 })
 
 
@@ -66,17 +64,28 @@ const mainMenu = new TheMainMenu({
 
 
 // Listen for messages from render process.
-ipcMain.on('msg', (event, { action, data }) => {
-  console.log(`IPC Action: ${action}`)
-  switch (action) {
+ipcMain.on('msg', (event, { cmd, data }) => {
+  console.log(`IPC Command: ${cmd}`)
+  switch (cmd) {
     case 'save':
       controller.writeData(data)
       break
-    case 'unsaved':
-      controller.unsaved()
+    case 'unsave':
+      controller.unsave()
+      break
+    case 'query':
+      event.sender.send('msg', {
+        cmd: 'answer',
+        data: {
+          appTitle,
+        }
+      })
+      break
+    case 'name':
+      controller.setName(data)
       break
     default:
-      throw Error(`Unsupported action "${action}"`) // programmer error
+      throw Error(`Unsupported command "${cmd}"`) // programmer error
   }
 })
 

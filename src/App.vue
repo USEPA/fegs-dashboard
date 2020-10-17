@@ -1,28 +1,66 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>FEGS Scoping Tool</h1>
+    <button v-on:click="add">Add Stakeholder</button>
+    <button v-on:click="del">Delete Stakeholder</button>
+    <h2>Info</h2>
+    <BaseCodeBlock v-bind:text="info"/>
+    <h2>Data</h2>
+    <BaseCodeBlock v-bind:text="projectData"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BaseCodeBlock from './components/BaseCodeBlock.vue'
+
+import Util from './classes/Util.js'
+import store from './store.js'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    BaseCodeBlock
+  },
+  computed: {
+    title() {
+      if (store.data.project) {
+        const name = store.data.project.name
+        const save = (store.modified) ? '*' : ''
+        return `${name}${save} - ${store.info.appTitle}`
+      } else {
+        return store.info.appTitle
+      }
+    },
+    info() {
+      return Util.strObj(store.info)
+    },
+    projectData() {
+      return Util.strObj(store.data)
+    },
+  },
+  watch: {
+    title: 'setDocumentTitle'
+  },
+  // created() {
+  //   this.setDocumentTitle() // not needed... set title after response from main process
+  // },
+  methods: {
+    setDocumentTitle() {
+      document.title = this.title
+    },
+    add() {
+      store.addStakeholder('TEST', '#4cb159')
+    },
+    del() {
+      store.delStakeholder('TEST')
+    },
+  },
 }
 </script>
 
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

@@ -1,20 +1,20 @@
-import { app, protocol, ipcMain, dialog, BrowserWindow, Menu } from 'electron'
+import { app, dialog } from 'electron'
 import fs from 'fs'
 
 import Util from './Util.js'
 
 export default class TheController {
-  constructor({ windows, appTitle, defaultProjectName }) {
+  constructor({ windows, appTitle }) {
     this.windows = windows
     this.mainWindow = windows.mainWindow
     this.appTitle = appTitle
-    this.defaultProjectName = defaultProjectName
-    this.currentProjectName = defaultProjectName
 
-    this.saved = true
     this.currentFilepath = null
     this.openingFilepath = null
+    this.currentProjectName = null
     this.afterSaved = null
+
+    this.saved = true
     this.quitting = false
 
     this.mainWindow.onClose(event => {
@@ -52,13 +52,13 @@ export default class TheController {
       if (!this.currentFilepath) {
         this.saveAs()
       } else {
-        this.requestData()
+        this._requestData()
       }
     }
   }
   saveAs() {
     if (this._saveAsDialog()) {
-      this.requestData()
+      this._requestData()
     }
   }
   quit(event=null) {
@@ -89,18 +89,11 @@ export default class TheController {
     // close all windows but don't quit on macOS
   }
 
-  unsaved() {
-    this.saved = false
-    this._title()
-  }
-  requestData() {
-    this.mainWindow.send({ action: 'save' })
-  }
   writeData(data) { // call with data to save
     try {
       fs.writeFileSync(this.currentFilepath, JSON.stringify(data), 'utf8')
-      this.currentProjectName = data.project.name
-      this.mainWindow.send({ action: 'saved' })
+      this.currentProjectName = Util.deepGet(data, ['project', 'name'])
+      this.mainWindow.send({ cmd: 'saved' })
       this.saved = true
       switch (this.afterSaved) {
         case 'new': this._new(); break
@@ -111,6 +104,16 @@ export default class TheController {
     } catch (error) {
       this._error('Unable to save project', error.message)
     }
+  }
+  unsave() {
+    this.saved = false
+  }
+  setName(name) {
+    this.currentProjectName = name
+  }
+
+  _requestData() {
+    this.mainWindow.send({ cmd: 'save' })
   }
 
   _saveQuery() {
@@ -153,7 +156,7 @@ export default class TheController {
   }
   _saveAsDialog() {
     const result = dialog.showSaveDialogSync(this.mainWindow.ref, {
-      defaultPath: this.currentFilepath || this.currentProjectName,
+      defaultPath: this.currentFilepath || this.currentProjectName || 'Project',
       filters: [{
         name: 'Custom File Type',
         extensions: ['fegs']
@@ -167,18 +170,16 @@ export default class TheController {
 
   _new() {
     this.currentFilepath = null
-    this.currentProjectName = this.defaultProjectName
-    this.mainWindow.send({ action: 'new' })
-    this._title()
+    this.currentProjectName = null // set with message from render process
+    this.mainWindow.send({ cmd: 'new' })
   }
   _open() {
     try {
       const data = JSON.parse(fs.readFileSync(this.openingFilepath, 'utf8'))
-      this.currentProjectName = Util.deepGet(data, ['project', 'name']) || this.defaultProjectName
       this.currentFilepath = this.openingFilepath
       this.openingFilepath = null
-      this.mainWindow.send({ action: 'load', data })
-      this._title()
+      this.currentProjectName = null // set with message from render process
+      this.mainWindow.send({ cmd: 'load', data }) 
     } catch (error) {
       this._error('Unable to open project', error.message)
     }
@@ -198,13 +199,5 @@ export default class TheController {
       message: msg,
       detail,
     })
-  }
-  _title() {
-    if (this.currentProjectName) {
-      const saveIndicator = (this.saved) ? '' : '*'
-      this.mainWindow.title(`${this.currentProjectName}${saveIndicator} - ${this.appTitle}`)
-    } else {
-      this.mainWindow.title(this.appTitle)
-    }
   }
 }

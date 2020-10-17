@@ -16,9 +16,6 @@ export default class TheMainWindow extends BaseWindow { // wrapper for main brow
   send(msg) {
     this.ref.webContents.send('msg', msg)
   }
-  title(title) {
-    this.ref.setTitle(title)
-  }
   onClose(func) { // closing behavior handled externally
     this.onCloseFunc = func
   }

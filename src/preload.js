@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-// Secure wrapper for ipcRenderer, no node modules in render process.
+// Provide ipcRenderer functionality (ex: window.ipc.send(...)).
 contextBridge.exposeInMainWorld('ipc', {
   send(channel, data) {
     ipcRenderer.send(channel, data)
