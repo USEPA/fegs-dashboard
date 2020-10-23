@@ -1,0 +1,84 @@
+/* 
+order {
+    width
+    height
+    margin
+    padding
+    position
+    display
+    font
+    color
+    background
+    border
+    transition
+}
+*/
+
+
+/* Constants */
+:root {
+  --color-text-black: #111111;
+  --color-text-white: #FFFFFF;
+  --color-header: #111111;
+  --color-disabled: #BBBBBB;
+  --color-primary: #0071BC;
+  --color-primary-hover: #205493;
+  --color-primary-active: #112e51;
+  --color-success: #28A745;
+  --color-success-hover: #247F39;
+  --color-success-active: #145222;
+  --color-danger: #DC3843;
+  --color-danger-hover: #AD1F28;
+  --color-danger-active: #691218;
+}
+
+
+/* Fonts */
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    url("../assets/fonts/sourcesanspro-regular-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-regular-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: italic;
+  font-weight: normal;
+  src:
+    url("../assets/fonts/sourcesanspro-italic-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-italic-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    url("../assets/fonts/sourcesanspro-bold-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-bold-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Merriweather";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    url("../assets/fonts/merriweather-bold-webfont.woff2") format("woff2"),
+    url("../assets/fonts/merriweather-bold-webfont.woff") format("woff");
+}
+
+
+/* Text */
+p, input, div {
+  font: 16px /1.5 "Source Sans Pro", Helvetica, Arial, sans-serif;
+  color: var(--color-text-black);
+}
+h1, h2, h3 {
+  font-family: "Merriweather", Cambria, serif;
+  font-weight: bold;
+  color: var(--color-header);
+}
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.7rem; }
+h3 { font-size: 1.2rem; }
+p { font-size: 1rem; }

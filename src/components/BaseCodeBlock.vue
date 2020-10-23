@@ -3,10 +3,21 @@
 </template>
 
 <script>
+import Util from '../classes/Util.js'
+
 export default {
   name: 'BaseCodeBlock',
   props: {
-    text: String,
+    content: [String, Object, Array],
+  },
+  computed: {
+    text() {
+      if (typeof this.content === 'object') {
+        return Util.strObj(this.content)
+      } else {
+        return this.content
+      }
+    }
   }
 }
 </script>

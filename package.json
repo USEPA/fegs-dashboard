@@ -26,6 +26,9 @@
   ],
   "main": "background.js",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/vue-fontawesome": "^2.0.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
   },
@@ -34,6 +37,8 @@
     "@vue/cli-service": "~4.5.0",
     "electron": "^9.0.0",
     "electron-devtools-installer": "^3.1.0",
+    "sass": "^1.27.0",
+    "sass-loader": "^10.0.3",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-template-compiler": "^2.6.11"
   }

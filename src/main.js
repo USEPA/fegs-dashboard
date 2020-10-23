@@ -1,10 +1,18 @@
 import Vue from 'vue'
-import App from './App.vue'
+import AppElectron from './AppElectron.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import Util from './classes/Util.js'
-import store from './store.js'
+import { project, misc } from './store.js'
 
 // IMPORTANT! Don't use any node modules in the render process, wrap them in preload.js instead.
+
+
+// Setup Font Awesome icons.
+library.add(faCheck) // add each icon here after importing
+Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 
 
 // Disable annoying console warning.
@@ -17,47 +25,47 @@ if (process.env.IS_ELECTRON) {
   }
 
   // Register data change listener.
-  store.onModified(() => send('unsave'))
+  project.onModified(() => send('unsave'))
 
   // Register main process message listener.
   window.ipc.on('msg', ({ cmd, data }) => {
     console.debug(`IPC Command: ${cmd}`)
     switch (cmd) {
       case 'new':
-        store.new()
-        send('name', store.data.project.name)
+        project.new()
+        send('name', project.data.meta.name)
         break
       case 'load':
         try {
-          store.load(data)
-          send('name', store.data.project.name)
+          project.load(data)
+          send('name', project.data.meta.name)
         } catch (error) {
           console.error(`Error: ${error.message}`) // TODO: handle elegantly?
         }
         break
       case 'save':
-        send('save', store.getSaveable())
+        send('save', project.getSaveable())
         break
       case 'saved':
-        store.modified = false
+        project.modified = false
         break
       case 'answer':
-        store.setInfo(data)
+        misc.appTitle = data.appTitle
         break
       default:
         throw Error(`Unknown command "${cmd}"`) // programmer error
     }
   })
 
-  // Query main process for information (app title)
+  // Query main process for information (app title).
   send('query')
 
-  // Create new project
-  store.new()
+  // Create new project.
+  project.new()
 
   // Mount the Vue app.
   new Vue({
-    render: h => h(App),
+    render: h => h(AppElectron),
   }).$mount('#app')
 
 } else { // website

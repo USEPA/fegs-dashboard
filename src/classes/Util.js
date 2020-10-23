@@ -59,6 +59,7 @@ export default class Util {
     }
   }
 
+  // get a nicely formatted JSON string from an object
   static strObj(obj) {
     return JSON.stringify(obj, null, 2)
   }

@@ -2,7 +2,7 @@ import Util from './Util.js'
 
 // NOTE: Adding or deleting object properties requires shinanigans so Vue can detect changes
 
-export default class TheDataStore {
+export default class TheProjectStore {
   constructor({ addProp=null, delProp=null }) {
     this._addProp = addProp || ((obj, key, val) => obj[key] = val) // custom function to add property to object (Vue needs special help)
     this._delProp = delProp || ((obj, key) => delete obj[key] ) // custom function to delete property from object
@@ -19,7 +19,7 @@ export default class TheDataStore {
   }
   load(data) {
     // ...validate, check version, etc
-    const version = Util.deepGet(data, ['project', 'version'])
+    const version = Util.deepGet(data, ['meta', 'version'])
     if (version !== '2.0.0') {
       throw Error(`Unsupported file version "${version}"`)
     }
@@ -40,15 +40,12 @@ export default class TheDataStore {
     return Util.cloneObj(this.data, ['computed']) // remove computed values  
   }
 
-  setInfo(info) {
-    this.info = info
-  }
   setProjectName(name) { 
-    this.data.project.name = name
+    this.data.meta.name = name
     this._modified()
   }
   setProjectDescription(desc) { 
-    this.data.project.description = desc
+    this.data.meta.description = desc
     this._modified()
   }
   setCriterionNotes(notes) {
@@ -297,7 +294,7 @@ export default class TheDataStore {
   }
   _template() {
     const data = {
-      project: {
+      meta: {
         version: '2.0.0', // lowest compatible app version
         name: 'New Project',
         description: '',

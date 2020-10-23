@@ -1,11 +1,22 @@
 import Vue from 'vue'
 
-import TheDataStore from './classes/TheDataStore.js'
+import TheProjectStore from './classes/TheProjectStore.js'
 
-// Vue components import this shared instance of "TheDataStore".
-const store = Vue.observable(new TheDataStore({
+// Common instance of "TheProjectStore".
+export const project = Vue.observable(new TheProjectStore({
   addProp: (obj, key, val) => Vue.set(obj, key, val),
   delProp: (obj, key) => Vue.delete(obj, key),
 }))
 
-export default store 
+// Miscellaneous shared data.
+export const misc = Vue.observable({
+  appTitle: '',
+})
+
+// Unique id generator.
+export const uid = {
+  next() {
+    return `id-${this.num++}`
+  },
+  num: 0,
+}
