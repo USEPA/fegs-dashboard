@@ -1,9 +1,9 @@
 <template>
-  <section>
+  <section :class="{disabled:!isShown}">
     <h2>{{ title }}</h2>
     <slot v-if="isShown"></slot>
     <div v-else>
-      <div class="msg">Enter some data in the {{ prevSection }} section to continue.</div>
+      <div class="msg">Enter data in the {{ prevSection }} section first.</div>
     </div>
   </section>
 </template>
@@ -32,11 +32,22 @@ export default {
 
 <style scoped>
   section {
-    border-top: 1px solid var(--color-text-black);
-    padding-bottom: 2rem;
+    padding: .8rem;
+    background-color: #FFF;
+    border-radius: 8px;
+  }
+  section:not(:last-child) {
+    margin-bottom: 8px;
+  }
+  section.disabled {
+    /* background-color: #EEE; */
   }
   h2 {
-    margin: 1rem 0;
+    margin: 0 0 .5rem 0;
+  }
+  section.disabled h2,
+  section.disabled div {
+    color: #888;
   }
   .msg {
     font-style: italic;

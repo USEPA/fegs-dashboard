@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>FEGS Scoping Tool</h1>
+    <!-- <h1>FEGS Scoping Tool</h1> -->
     <TheProject/>
   </div>
 </template>
@@ -46,5 +46,6 @@ export default {
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   color: #2c3e50;
+  background-color: #DDD;
 }
 </style>

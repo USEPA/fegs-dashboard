@@ -4,7 +4,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import Util from './classes/Util.js'
 import { project, misc } from './store.js'
 
 // IMPORTANT! Don't use any node modules in the render process, wrap them in preload.js instead.
@@ -18,6 +17,8 @@ Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 // Disable annoying console warning.
 Vue.config.productionTip = false
 
+
+// Electron application entry.
 if (process.env.IS_ELECTRON) {
 
   function send(cmd, data=null) {
@@ -68,7 +69,9 @@ if (process.env.IS_ELECTRON) {
     render: h => h(AppElectron),
   }).$mount('#app')
 
-} else { // website
+
+// Web application entry.
+} else {
   // TODO different top level Vue app to handle new/load/save/title etc
   
 }

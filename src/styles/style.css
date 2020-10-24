@@ -10,6 +10,7 @@ order {
     color
     background
     border
+    shadow
     transition
 }
 */
@@ -68,9 +69,17 @@ order {
 }
 
 
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+}
+
+
 /* Text */
 p, input, div {
-  font: 16px /1.5 "Source Sans Pro", Helvetica, Arial, sans-serif;
+  font: 16px "Source Sans Pro", Helvetica, Arial, sans-serif;
   color: var(--color-text-black);
 }
 h1, h2, h3 {

@@ -117,11 +117,13 @@ export default class TheController {
   }
 
   _saveQuery() {
+    const primaryMessage = `Do you want to save your changes to ${this.currentProjectName}?`
+    const fallbackMessage = 'Do you want to save your changes?'
     const response = dialog.showMessageBoxSync(this.mainWindow.ref, { // must be sync
       type: 'question',
       buttons: ['Save', "Don't Save", 'Cancel'],
       title: this.appTitle,
-      message: `Do you want to save your changes to ${this.currentProjectName}?`
+      message: (this.currentProjectName) ? primaryMessage : fallbackMessage,
     })
     switch (response) {
       case 0: return 'yes' // save

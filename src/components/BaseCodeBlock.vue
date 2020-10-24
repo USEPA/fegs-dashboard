@@ -29,7 +29,7 @@ export default {
     font-family: monospace;
     font-size: 14px;
     white-space: pre-wrap;
-    background-color: #EEE;
+    background-color: #EEEAE0;
     color: #555;
     border-radius: 5px;
   }
