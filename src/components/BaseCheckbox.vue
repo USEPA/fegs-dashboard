@@ -71,7 +71,7 @@ label {
 }
 .container[disabled] label {
   cursor: default;
-  color: var(--color-disabled);
+  color: var(--color-text-disabled);
 }
 
 /* Unchecked checkbox */
@@ -85,22 +85,23 @@ label {
   box-sizing: border-box;
   font-size: 14px;
   color: var(--color-text-white);
-  border: 1px solid #888;
+  border: 1px solid var(--color-input);
   border-radius: 4px;
   transition: all .2s;
 }
 .container:hover .checkbox,
 .container input:focus ~ .checkbox {
-  border-color: #555;
+  border-color: var(--color-input-hover);
 }
 .container:active .checkbox {
-  border-color: var(--color-text-black);
+  border-color: var(--color-input-active);
 }
 .container[disabled] .checkbox,
 .container[disabled]:hover .checkbox,
 .container[disabled] input:focus ~ .checkbox,
 .container[disabled]:active .checkbox {
-  border-color: var(--color-disabled);
+  background-color:var(--color-input-disabled-back);
+  border-color: var(--color-input-disabled);
 }
 
 /* Checked checkbox */
@@ -121,8 +122,8 @@ label {
 .container.checked[disabled]:hover .checkbox,
 .container.checked[disabled] input:focus ~ .checkbox,
 .container.checked[disabled]:active .checkbox {
-  background-color:var(--color-disabled);
-  border-color:var(--color-disabled);
+  background-color:var(--color-input-disabled);
+  border-color:var(--color-input-disabled);
 }
 
 /* Show/hide check mark */

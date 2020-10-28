@@ -1,0 +1,66 @@
+<template>
+  <table>
+    <div>[ table ]</div>
+  </table>
+</template>
+
+<script>
+import Util from '../classes/Util.js'
+
+export default {
+  name: 'BaseTable',
+  props: {
+
+  },
+  data() {
+    return {
+
+    }
+  },
+  computed: {
+
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style scoped>
+  table,
+  th,
+  td {
+    border: 1px solid;
+  }
+  table {
+    width: 100%;
+    height: 240px;
+    /* margin: 0 auto; */
+    display: block;
+    overflow-x: auto;
+    border-spacing: 0;
+    background-color: #ADC;
+  }
+  tbody {
+    white-space: nowrap;
+  }
+  th,
+  td {
+    padding: 5px 10px;
+    border-top-width: 0;
+    border-left-width: 0;
+  }
+  th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    vertical-align: bottom;
+  }
+  th:last-child,
+  td:last-child {
+    border-right-width: 0;
+  }
+  tr:last-child td {
+    border-bottom-width: 0;
+  }
+</style>

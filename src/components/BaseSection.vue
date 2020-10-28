@@ -1,9 +1,9 @@
 <template>
-  <section :class="{disabled:!isShown}">
+  <section :class="{disabled:!isReady}">
     <h2>{{ title }}</h2>
-    <slot v-if="isShown"></slot>
+    <slot v-if="isReady"></slot>
     <div v-else>
-      <div class="msg">Enter data in the {{ prevSection }} section first.</div>
+      <div class="msg">Enter data in the {{ prevSection.toLowerCase() }} section first.</div>
     </div>
   </section>
 </template>
@@ -22,7 +22,7 @@ export default {
       type: String,
       default: 'previous',
     },
-    isShown: {
+    isReady: {
       type: Boolean,
       default: true,
     }
@@ -32,12 +32,11 @@ export default {
 
 <style scoped>
   section {
-    padding: .8rem;
+    padding: .5rem .5rem 2rem .5rem;
     background-color: #FFF;
-    border-radius: 8px;
   }
   section:not(:last-child) {
-    margin-bottom: 8px;
+    margin-bottom: 1px;
   }
   section.disabled {
     /* background-color: #EEE; */

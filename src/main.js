@@ -1,8 +1,18 @@
 import Vue from 'vue'
 import AppElectron from './AppElectron.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {
+  faCheck,
+  faEdit,
+  faTrash,
+  faDownload,
+  faCircle,
+  faExclamationCircle,
+  faChevronDown,
+  faChevronRight
+} from '@fortawesome/free-solid-svg-icons'
+import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 
 import { project, misc } from './store.js'
 
@@ -10,8 +20,19 @@ import { project, misc } from './store.js'
 
 
 // Setup Font Awesome icons.
-library.add(faCheck) // add each icon here after importing
+library.add( // add each icon here after importing
+  faCheck,
+  faEdit,
+  faTrash,
+  faDownload,
+  faCircle,
+  faExclamationCircle,
+  farCircle,
+  faChevronDown,
+  faChevronRight
+) 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
+Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
 
 // Disable annoying console warning.

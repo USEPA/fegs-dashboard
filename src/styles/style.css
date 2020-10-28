@@ -10,6 +10,7 @@ order {
     color
     background
     border
+    outline
     shadow
     transition
 }
@@ -18,16 +19,28 @@ order {
 
 /* Constants */
 :root {
-  --color-text-black: #111111;
-  --color-text-white: #FFFFFF;
-  --color-header: #111111;
-  --color-disabled: #BBBBBB;
+  --color-text-black: #111;
+  --color-text-white: #FFF;
+  --color-text-disabled: #888;
+  --color-header: #111;
+
+  --color-input: #888;
+  --color-input-hover: #555;
+  --color-input-active: #111;
+  --color-input-disabled: #BBB;
+  --color-input-disabled-back: #DDD;
+
+  --color-invalid-input:#F51D2B;
+  --color-invalid-icon: #f84a56;
+
   --color-primary: #0071BC;
   --color-primary-hover: #205493;
-  --color-primary-active: #112e51;
+  --color-primary-active: #112E51;
+
   --color-success: #28A745;
   --color-success-hover: #247F39;
   --color-success-active: #145222;
+
   --color-danger: #DC3843;
   --color-danger-hover: #AD1F28;
   --color-danger-active: #691218;
@@ -69,9 +82,6 @@ order {
 }
 
 
-html {
-  scroll-behavior: smooth;
-}
 body {
   margin: 0;
 }

@@ -1,12 +1,18 @@
 <template>
-  <input type="button" :style="styleObj" v-on:click="$emit('click')" :value="content">
+  <button :style="styleObj" v-on:click="$emit('click')" >
+    <FontAwesomeIcon :icon="icon"/>
+  </button>
 </template>
 
 <script>
 export default {
-  name: 'BaseButton',
+  name: 'BaseButtonIcon',
   props: {
     content: String,
+    icon: {
+      type: String,
+      required: true,
+    },
     color: {
       type: String,
       default: 'primary',
@@ -32,22 +38,23 @@ export default {
 </script>
 
 <style scoped>
-  input {
+  button {
     all: unset;
-    padding: .3em 1em;
+    width: 1.2em;
+    height: 1.2em;
+    padding: .2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    color: var(--color-text-white);
-    background-color: var(--color-button);
-    border-radius: 4px;
+    color: var(--color-button);
     transition: all .2s;
   }
-  input:hover,
-  input:focus {
-    background-color: var(--color-button-hover);
+  button:hover,
+  button:focus {
+    color: var(--color-button-hover);
   }
-  input:active {
-    background-color: var(--color-button-active);
+  button:active {
+    color: var(--color-button-active);
   }
 </style>

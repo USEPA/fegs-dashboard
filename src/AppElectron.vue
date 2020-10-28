@@ -44,8 +44,12 @@ export default {
 <style>
 @import './styles/style.css';
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #2c3e50;
-  background-color: #DDD;
+  background-color: #CCC;
+}
+*, *::after, *::before {
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-app-region: no-drag;
+	cursor: default;
 }
 </style>
