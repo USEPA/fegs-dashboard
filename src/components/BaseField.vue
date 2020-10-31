@@ -1,14 +1,15 @@
 <template>
   <input
-    v-model.trim="content"
-    v-on:input="onChange"
-    v-on:change="onCommit"
-    v-on:keyup.enter="onEnterKey"
+    @input="onInput"
+    @change="onCommit"
+    @keyup.enter="onKeyEnter"
+    @focus="onFocus"
+    :value="switchValue"
     :type="type"
     :class="{invalid:!!validationMsg}"
     :disabled="isDisabled"
     :placeholder="placeholder"
-    >
+  >
 </template>
 
 <script>
@@ -18,10 +19,6 @@ import Util from '../classes/Util.js'
 export default {
   name: 'BaseField',
   props: {
-    startContent: {
-      type: String,
-      default: '',
-    },
     type: {
       type: String,
       default: 'text',
@@ -32,9 +29,9 @@ export default {
         ].includes(val)
       }
     },
-    validator: {
-      type: Function,
-      default: val => '',
+    value: {
+      type: [String, Number],
+      default: '',
     },
     placeholder: {
       type: String,
@@ -44,40 +41,53 @@ export default {
       type: Boolean,
       default: false,
     },
+    validationMsg: {
+      type: String,
+      default: '', // empty string means valid
+    },
+    isWrapped: { // whether this component should update it's own value
+      type: Boolean,
+      default: false,
+    },
+    doSelectAll: { // whether to select all content when clicked
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
-      content: this.startContent,
-      validationMsg: this.validator(this.startContent),
+      localValue: this.value,
     }
   },
   computed: {
-
+    switchValue() {
+      return (this.isWrapped) ? this.value : this.localValue
+    },
   },
   methods: {
-    onChange(event) {
-      this.validationMsg = this.validator(this.content)
-      this.$emit('change', this.clean(this.content))
+    onInput(event) {
+      if (!this.isWrapped) this.localValue = event.target.value
+      this.$emit('input', event.target.value)
     },
     onCommit(event) {
-      this.validationMsg = this.validator(this.content)
-      this.$emit('commit', this.clean(this.content))
+      if (!this.isWrapped) this.localValue = event.target.value
+      this.$emit('commit', event.target.value)
     },
-    onEnterKey(event) {
-      this.validationMsg = this.validator(this.content)
-      this.$emit('enter', this.clean(this.content))
+    onKeyEnter(event) {
+      if (!this.isWrapped) this.localValue = event.target.value
+      this.$emit('keyEnter', event.target.value)
     },
-    clean(content) {
-      return (this.type === 'number') ? parseFloat(this.content) : this.content
+    onFocus(event) {
+      if (this.doSelectAll) event.target.select()
     },
-  }
+  },
 }
 </script>
 
 <style scoped>
   input {
-    width: 200px;
-    height: 1.2em;
+    width: 12em;
+    height: 1.3em;
     border: 1px solid var(--color-input);
     border-radius: 4px;
     outline: none;

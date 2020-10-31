@@ -8,9 +8,15 @@
     </div>
     <BaseCodeBlock :content="checkMsg"/>
     <h3>Buttons</h3>
-    <BaseButton color="primary" content="Sample Button"/>
-    <BaseButton color="success" v-on:click="add" content="Add Stakeholder"/>
-    <BaseButton color="danger" v-on:click="del" content="Delete Stakeholder"/>
+    <BaseButton color="primary">
+      Sample Button
+    </BaseButton>
+    <BaseButton color="success" v-on:click="add">
+      Add Stakeholder
+    </BaseButton>
+    <BaseButton color="danger" v-on:click="del">
+      Delete Stakeholder
+    </BaseButton>
     <h3>Icon Buttons</h3>
     <div style="margin-bottom: .5rem; display: flex; font-size: 1.5rem;">
       <BaseButtonIcon color="primary" icon="edit"/>
@@ -19,14 +25,14 @@
       <BaseButtonIcon color="danger" icon="trash"/>
     </div>
     <h3>Fields</h3>
-    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:change="onFieldChange" :validator="val => val.toLowerCase().includes('e')?'nope':''" startContent="Sample text" placeholder="Text"/>
-    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" :validator="val => val.toLowerCase().includes('e')?'nope':''" startContent="Sample text" placeholder="Disabled"/>
-    <BaseField style="margin: 0 .5rem .5rem 0;" type="number" :validator="val => val.toLowerCase().includes('3')?'nope':''" startContent="Sample text" placeholder="Number"/>
+    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:input="onFieldInput" content="Sample text" placeholder="Text"/>
+    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" content="Sample text" placeholder="Disabled"/>
+    <FieldNumber style="margin: 0 .5rem .5rem 0;" content="Sample text" placeholder="Number"/>
     <BaseCodeBlock :content="textMsg"/>
+    <h3>Select</h3>
+    <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" defaultOption="b"/>
     <h3>Tables</h3>
-    <BaseTable/>
-    <h3>Test</h3>
-    <BaseCodeBlock :content="test"/>
+    <!-- <BaseTable/> -->
     <h3>Miscellaneous Data</h3>
     <BaseCodeBlock :content="misc"/>
     <h3>Project Data</h3>
@@ -40,20 +46,24 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseCodeBlock from './BaseCodeBlock.vue'
 import BaseField from './BaseField.vue'
+import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
+import FieldNumber from './FieldNumber.vue'
 
 import Util from '../classes/Util.js'
 import { project, misc } from '../store.js'
 
 export default {
-  name: 'DeveloperSection',
+  name: 'SectionDeveloper',
   components: {
     BaseButton,
     BaseButtonIcon,
     BaseCheckbox,
     BaseCodeBlock,
     BaseField,
+    BaseSelect,
     BaseTable,
+    FieldNumber,
   },
   data() {
     return {
@@ -76,9 +86,6 @@ export default {
         content: this.text,
       })
     },
-    test() {
-      return project.data.stakeholderSection.stakeholders
-    },
     misc() {
       return Util.strObj(misc)
     },
@@ -97,9 +104,12 @@ export default {
       if (n === 1) this.disable2 = !this.disable2
       this[`check${n}`] = event
     },
-    onFieldChange(event) {
+    onFieldInput(event) {
       this.text = event
-    }
+    },
+    numValidator(val) {
+      return validator.percent(val)
+    },
   },
 }
 </script>

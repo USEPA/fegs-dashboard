@@ -1,12 +1,13 @@
 <template>
-  <input type="button" :style="styleObj" v-on:click="$emit('click')" :value="content">
+  <button :style="styleObj" v-on:click="$emit('click')">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
 export default {
   name: 'BaseButton',
   props: {
-    content: String,
     color: {
       type: String,
       default: 'primary',
@@ -32,7 +33,7 @@ export default {
 </script>
 
 <style scoped>
-  input {
+  button {
     all: unset;
     padding: .3em 1em;
     cursor: pointer;
@@ -43,11 +44,11 @@ export default {
     border-radius: 4px;
     transition: all .2s;
   }
-  input:hover,
-  input:focus {
+  button:hover,
+  button:focus {
     background-color: var(--color-button-hover);
   }
-  input:active {
+  button:active {
     background-color: var(--color-button-active);
   }
 </style>

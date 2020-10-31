@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; align-items: center;">
     <div style="margin-right: .5rem;">Title:</div>
-    <BaseField startContent="My Project" v-on:commit="setName"/>
+    <BaseField content="My Project" v-on:commit="setName"/>
   </div>
 </template>
 

@@ -15,15 +15,8 @@ export const misc = Vue.observable({
 
 // Unique id generator.
 export const uid = {
+  num: 0,
   next() {
     return `id-${this.num++}`
-  },
-  num: 0,
-}
-
-// Input validator.
-export const valid = {
-  percent(num) {
-    return (typeof num === 'number' && num >= 0 && num <= 100)
   },
 }

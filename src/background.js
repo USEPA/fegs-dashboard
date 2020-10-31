@@ -27,21 +27,18 @@ const mainWindow = new TheMainWindow({
   appTitle,
   devServer: process.env.WEBPACK_DEV_SERVER_URL,
 })
-
 const methodsWindow = new StaticWindow({
   width: 900,
   height: 600,
   title: `Tool Methods - ${appTitle}`,
   filename: 'methods.html',
 })
-
 const purposeWindow = new StaticWindow({
   width: 600,
   height: 220,
   title: `Tool Purpose - ${appTitle}`,
   filename: 'purpose.html',
 })
-
 const windows = {
   mainWindow,
   methodsWindow,

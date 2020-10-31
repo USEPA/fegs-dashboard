@@ -1,46 +1,50 @@
 <template>
   <div style="display: flex; align-items: center;">
-    <BaseField placeholder="Criterion" v-on:change="onCriterion"/>
-    <BaseField type="number" placeholder="Weight" v-on:change="onWeight"/>
-    <BaseButtonIcon v-if="isValidCriterion" color="success" icon="check" v-on:click="onApply"/>
+    <BaseSelect style="margin-right: .5rem;" :options="criteriaNames" v-on:commit="onCriterion"/>
+    <FieldNumber placeholder="Weight" :value="weight" :triggerOverwrite="triggerOverwrite" v-on:commit="onWeight"/>
   </div>
 </template>
 
 
 <script>
 import BaseField from './BaseField.vue'
+import BaseSelect from './BaseSelect.vue'
 import BaseButtonIcon from './BaseButtonIcon.vue'
+import FieldNumber from './FieldNumber.vue'
 
 import Util from '../classes/Util.js'
-import { project, valid } from '../store.js'
+import { project } from '../store.js'
 
 export default {
   name: 'SectionCriterion',
   components: {
     BaseField,
+    BaseSelect,
     BaseButtonIcon,
+    FieldNumber,
   },
   data() {
     return {
-      criterion: null,
-      weight: null,
+      criterion: Object.keys(project.data.criterionSection.criteria)[0],
+      weight: Object.values(project.data.criterionSection.criteria)[0].result,
+      triggerOverwrite: 0,
     }
   },
   computed: {
-    isValidCriterion() {
-      return this.criterion in project.data.criterionSection.criteria && valid.percent(this.weight)
-    }
+    criteriaNames() {
+      return Object.keys(project.data.criterionSection.criteria)
+    },
   },
   methods: {
     onCriterion(event) {
       this.criterion = event
+      this.weight = project.data.criterionSection.criteria[event].result
+      this.triggerOverwrite++
     },
     onWeight(event) {
       this.weight = event
+      project.setCriterionResult(this.criterion, this.weight)
     },
-    onApply(event) {
-      project.setCriterionResult(this.criterion, this.weight/100)
-    }
   },
 }
 </script>

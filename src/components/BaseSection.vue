@@ -42,7 +42,7 @@ export default {
     /* background-color: #EEE; */
   }
   h2 {
-    margin: 0 0 .5rem 0;
+    margin: 0 0 .5em 0;
   }
   section.disabled h2,
   section.disabled div {

@@ -5,7 +5,7 @@ import Util from './Util.js'
 export default class TheProjectStore {
   constructor({ addProp=null, delProp=null }) {
     this._addProp = addProp || ((obj, key, val) => obj[key] = val) // custom function to add property to object (Vue needs special help)
-    this._delProp = delProp || ((obj, key) => delete obj[key] ) // custom function to delete property from object
+    this._delProp = delProp || ((obj, key) => delete obj[key]) // custom function to delete property from object
 
     this.data = {} // DO NOT WRITE DIRECTLY (use a setter), but do read directly
     this.info = {} // application info from main process (app title)

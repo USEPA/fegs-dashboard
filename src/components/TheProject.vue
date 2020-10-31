@@ -2,38 +2,14 @@
   <div id="project">
     <nav>
       <ul>
-        <NavItem
-          :to="`#${sections[0].id}`"
-          :title="sections[0].title"
-          :isFocus="sections[0].focused"
+        <NavItem 
+          v-for="section in sections" 
+          :key="section.id"
+          :to="`#${section.id}`"
+          :title="section.title"
+          :isFocus="section.focused"
+          :isReady="section.ready"
           :isError="false"
-        />
-        <NavItem
-          :to="`#${sections[1].id}`"
-          :title="sections[1].title"
-          :isFocus="sections[1].focused"
-          :isError="false"
-        />
-        <NavItem
-          :to="`#${sections[2].id}`"
-          :title="sections[2].title"
-          :isFocus="sections[2].focused"
-          :isError="false"
-          :isReady="showStakeholders"
-        />
-        <NavItem
-          :to="`#${sections[3].id}`"
-          :title="sections[3].title"
-          :isFocus="sections[3].focused"
-          :isError="false"
-          :isReady="showBeneficiaries"
-        />
-        <NavItem
-          :to="`#${sections[4].id}`"
-          :title="sections[4].title"
-          :isFocus="sections[4].focused"
-          :isError="false"
-          :isReady="showAttributes"
         />
       </ul>
     </nav>
@@ -56,7 +32,7 @@
         :id="sections[2].id"
         :title="sections[2].title"
         :prevSection="sections[1].title"
-        :isReady="showStakeholders"
+        :isReady="sections[2].ready"
       >
         <div>[ stakeholder section content ]</div>
       </BaseSection>
@@ -64,7 +40,7 @@
         :id="sections[3].id"
         :title="sections[3].title"
         :prevSection="sections[2].title"
-        :isReady="showBeneficiaries"
+        :isReady="sections[3].ready"
       >
         <div>[ beneficiary section content ]</div>
       </BaseSection>
@@ -72,12 +48,12 @@
         :id="sections[4].id"
         :title="sections[4].title"
         :prevSection="sections[3].title"
-        :isReady="showAttributes"
+        :isReady="sections[4].ready"
       >
         <div>[ attribute section content ]</div>
       </BaseSection>
       <BaseSection title="Developer">
-        <DeveloperSection/>
+        <SectionDeveloper/>
       </BaseSection>
     </div>
   </div>
@@ -85,10 +61,10 @@
 
 <script>
 import NavItem from './NavItem.vue'
-import DeveloperSection from './DeveloperSection.vue'
 import BaseSection from './BaseSection.vue'
 import SectionProject from './SectionProject.vue'
 import SectionCriterion from './SectionCriterion.vue'
+import SectionDeveloper from './SectionDeveloper.vue'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -98,7 +74,7 @@ export default {
   name: 'TheProject',
   components: {
     NavItem,
-    DeveloperSection,
+    SectionDeveloper,
     BaseSection,
     SectionProject,
     SectionCriterion,
@@ -111,43 +87,55 @@ export default {
           id: 'project-section',
           title: 'Project',
           focused: false,
+          ready: true,
         },
         {
           id: 'criteria-section',
           title: 'Weights',
           focused: false,
+          ready: true,
         },
         {
           id: 'stakeholder-section',
           title: 'Stakeholders',
           focused: false,
+          ready: false,
         },
         {
           id: 'beneficiary-section',
           title: 'Beneficiaries',
           focused: false,
+          ready: false,
         },
         {
           id: 'attribute-section',
           title: 'Attributes',
           focused: false,
+          ready: false,
         },
       ]
     }
   },
   computed: {
-    showStakeholders() {
-      return this.hasCriteria()
+    sectionsReady() {
+      return {
+        stakeholder: this.hasCriteria(),
+        beneficiary: this.hasCriteria() && this.hasStakeholders(),
+        attribute: this.hasCriteria() && this.hasStakeholders() && this.hasBeneficiaries(),
+      }
     },
-    showBeneficiaries() {
-      return this.hasCriteria() && this.hasStakeholders()
-    },
-    showAttributes() {
-      return this.hasCriteria() && this.hasStakeholders() && this.hasBeneficiaries()
-    },
+  },
+  watch: {
+    sectionsReady(isReady) {
+      this.sections[2].ready = isReady.stakeholder
+      this.sections[3].ready = isReady.beneficiary
+      this.sections[4].ready = isReady.attribute
+    }
   },
   created() {
     document.addEventListener('scroll', () => this.onScroll())
+  },
+  mounted() {
     this.onScroll()
   },
   methods: {
@@ -166,7 +154,7 @@ export default {
     },
     onScroll() {
       const fromTop = window.scrollY
-      this.scrolled = fromTop !== 0
+      this.scrolled = (fromTop !== 0)
       let found = false
       this.sections.forEach(section => {
         const ele = document.getElementById(section.id)
@@ -189,7 +177,7 @@ export default {
   }
   
   #content {
-    
+    flex-grow: 1;
   }
   .shadow {
     width: 100%;
@@ -209,7 +197,6 @@ export default {
   nav ul {
     margin: 0;
     padding: .5rem 0;
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     display: flex;

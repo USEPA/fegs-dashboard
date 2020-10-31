@@ -8,7 +8,6 @@
 export default {
   name: 'BaseButtonIcon',
   props: {
-    content: String,
     icon: {
       type: String,
       required: true,
