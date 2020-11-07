@@ -1,8 +1,25 @@
 <template>
-  <div class="container" :class="{checked:isChecked}" v-on:click.prevent="onClick" :disabled="isDisabled">
-    <input ref="input" type="checkbox" :id="id" :disabled="isDisabled">
-    <div class="checkbox"><FontAwesomeIcon icon="check"/></div>
-    <label v-if="label" :for="id">{{ label }}</label>
+  <div
+    class="container"
+    @click.prevent="onClick"
+    :class="{checked:isChecked}"
+    :disabled="isDisabled"
+  >
+    <input
+      ref="input"
+      type="checkbox"
+      :id="id"
+      :disabled="isDisabled"
+    >
+    <div class="checkbox">
+      <FontAwesomeIcon icon="check"/>
+    </div>
+    <label
+      v-if="label"
+      :for="id"
+    >
+      {{ label }}
+    </label>
   </div>
 </template>
 
@@ -26,7 +43,7 @@ export default {
   data() {
     return {
       isChecked: this.startChecked,
-      id: uid.next()
+      id: uid.next(),
     }
   },
   methods: {
@@ -100,7 +117,7 @@ label {
 .container[disabled]:hover .checkbox,
 .container[disabled] input:focus ~ .checkbox,
 .container[disabled]:active .checkbox {
-  background-color:var(--color-input-disabled-back);
+  background-color:var(--color-input-back-disabled);
   border-color: var(--color-input-disabled);
 }
 

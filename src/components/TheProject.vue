@@ -34,7 +34,7 @@
         :prevSection="sections[1].title"
         :isReady="sections[2].ready"
       >
-        <div>[ stakeholder section content ]</div>
+        <SectionStakeholder/>
       </BaseSection>
       <BaseSection
         :id="sections[3].id"
@@ -42,7 +42,7 @@
         :prevSection="sections[2].title"
         :isReady="sections[3].ready"
       >
-        <div>[ beneficiary section content ]</div>
+        <SectionBeneficiary/>
       </BaseSection>
       <BaseSection
         :id="sections[4].id"
@@ -52,7 +52,11 @@
       >
         <div>[ attribute section content ]</div>
       </BaseSection>
-      <BaseSection title="Developer">
+      <BaseSection
+        :id="sections[5].id"
+        :title="sections[5].title"
+        :isReady="sections[5].ready"
+      >
         <SectionDeveloper/>
       </BaseSection>
     </div>
@@ -64,6 +68,8 @@ import NavItem from './NavItem.vue'
 import BaseSection from './BaseSection.vue'
 import SectionProject from './SectionProject.vue'
 import SectionCriterion from './SectionCriterion.vue'
+import SectionStakeholder from './SectionStakeholder.vue'
+import SectionBeneficiary from './SectionBeneficiary.vue'
 import SectionDeveloper from './SectionDeveloper.vue'
 
 import Util from '../classes/Util.js'
@@ -74,10 +80,12 @@ export default {
   name: 'TheProject',
   components: {
     NavItem,
-    SectionDeveloper,
     BaseSection,
     SectionProject,
     SectionCriterion,
+    SectionStakeholder,
+    SectionBeneficiary,
+    SectionDeveloper,
   },
   data() {
     return {
@@ -112,6 +120,12 @@ export default {
           title: 'Attributes',
           focused: false,
           ready: false,
+        },
+        {
+          id: 'developer-section',
+          title: 'Developer',
+          focused: false,
+          ready: true,
         },
       ]
     }
@@ -171,19 +185,21 @@ export default {
 
 <style scoped>
   #project {
+    width: 100%;
     display: flex;
     flex-flow: row;
     align-items: stretch;
   }
   
   #content {
+    overflow: hidden;
     flex-grow: 1;
   }
   .shadow {
     width: 100%;
     height: 0;
     position: fixed;
-    box-shadow: 0 0 5px 5px #0003;
+    box-shadow: 0 0 3px 3px #0003;
   }
   .shadow.hide {
     box-shadow: none;

@@ -1,16 +1,14 @@
 <template>
-  <div style="display: flex; align-items: center;">
-    <BaseSelect style="margin-right: .5rem;" :options="criteriaNames" v-on:commit="onCriterion"/>
-    <FieldNumber placeholder="Weight" :value="weight" :triggerOverwrite="triggerOverwrite" v-on:commit="onWeight"/>
+  <div>
+    <div class="full">
+      <TableCriterion/>
+    </div>
   </div>
 </template>
 
 
 <script>
-import BaseField from './BaseField.vue'
-import BaseSelect from './BaseSelect.vue'
-import BaseButtonIcon from './BaseButtonIcon.vue'
-import FieldNumber from './FieldNumber.vue'
+import TableCriterion from './TableCriterion.vue'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -18,10 +16,7 @@ import { project } from '../store.js'
 export default {
   name: 'SectionCriterion',
   components: {
-    BaseField,
-    BaseSelect,
-    BaseButtonIcon,
-    FieldNumber,
+    TableCriterion,
   },
   data() {
     return {
@@ -50,5 +45,5 @@ export default {
 </script>
 
 <style scoped>
-
+  
 </style>

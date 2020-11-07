@@ -32,14 +32,12 @@ export default {
 
 <style scoped>
   section {
-    padding: .5rem .5rem 2rem .5rem;
+    padding: var(--length-primary);
+    padding-bottom: 2rem;
     background-color: #FFF;
   }
   section:not(:last-child) {
     margin-bottom: 1px;
-  }
-  section.disabled {
-    /* background-color: #EEE; */
   }
   h2 {
     margin: 0 0 .5em 0;
@@ -50,5 +48,12 @@ export default {
   }
   .msg {
     font-style: italic;
+  }
+</style>
+
+<style>
+  div.full {
+    margin: 0 calc(-1 * var(--length-primary));
+    overflow: auto;
   }
 </style>

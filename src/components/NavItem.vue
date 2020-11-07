@@ -17,7 +17,6 @@ import { project } from '../store.js'
 
 // TODO link/button component
 // TODO icon
-// TODO arrow
 // TODO various states
 export default {
   name: 'NavItem',

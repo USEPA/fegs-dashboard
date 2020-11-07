@@ -1,7 +1,7 @@
 <template>
   <input
     @input="onInput"
-    @change="onCommit"
+    @change="onChange"
     @keyup.enter="onKeyEnter"
     @focus="onFocus"
     :value="switchValue"
@@ -69,13 +69,13 @@ export default {
       if (!this.isWrapped) this.localValue = event.target.value
       this.$emit('input', event.target.value)
     },
-    onCommit(event) {
+    onChange(event) {
       if (!this.isWrapped) this.localValue = event.target.value
-      this.$emit('commit', event.target.value)
+      this.$emit('change', event.target.value)
     },
     onKeyEnter(event) {
       if (!this.isWrapped) this.localValue = event.target.value
-      this.$emit('keyEnter', event.target.value)
+      this.$emit('key-enter', event.target.value)
     },
     onFocus(event) {
       if (this.doSelectAll) event.target.select()
@@ -87,7 +87,8 @@ export default {
 <style scoped>
   input {
     width: 12em;
-    height: 1.3em;
+    height: 1.5em;
+    padding-left: .2em;
     border: 1px solid var(--color-input);
     border-radius: 4px;
     outline: none;
@@ -118,7 +119,7 @@ export default {
   input:disabled:active {
     pointer-events: none;
     color: var(--color-text-disabled);
-    background-color: var(--color-input-disabled-back);
+    background-color: var(--color-input-back-disabled);
     border-color: var(--color-input-disabled);
     box-shadow: none;
   }

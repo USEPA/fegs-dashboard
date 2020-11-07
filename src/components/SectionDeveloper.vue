@@ -20,19 +20,66 @@
     <h3>Icon Buttons</h3>
     <div style="margin-bottom: .5rem; display: flex; font-size: 1.5rem;">
       <BaseButtonIcon color="primary" icon="edit"/>
-      <BaseButtonIcon color="primary" icon="download"/>
+      <BaseButtonIcon color="primary" icon="download" :doBlurOnClick="true"/>
       <BaseButtonIcon color="success" icon="check"/>
       <BaseButtonIcon color="danger" icon="trash"/>
     </div>
     <h3>Fields</h3>
-    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:input="onFieldInput" content="Sample text" placeholder="Text"/>
+    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:input="onFieldInput" content="Sample text" placeholder="Anything"/>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" content="Sample text" placeholder="Disabled"/>
-    <FieldNumber style="margin: 0 .5rem .5rem 0;" content="Sample text" placeholder="Number"/>
+    <FieldNumber style="margin: 0 .5rem .5rem 0;" placeholder="Number"/>
+    <FieldText style="margin: 0 .5rem .5rem 0;" placeholder="Text" :validator="val => isNaN(parseFloat(val)) ? '' : 'Haha no numbers'"/>
     <BaseCodeBlock :content="textMsg"/>
     <h3>Select</h3>
     <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" defaultOption="b"/>
+    <h3>Modal</h3>
+    <BaseButton @click="showModal = true">
+      Show Modal
+    </BaseButton>
+    <BaseModal v-if="showModal" title="Delete Stakeholder?" @close="showModal = false">
+      <div style="width: 20rem;">Delete stakeholder "stakeholderName" and all associated beneficiary scores?</div>
+      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+        <BaseButton style="margin-right: .5rem;" @click="showModal = false">Cancel</BaseButton>
+        <BaseButton color="danger" @click="showModal = false">Delete</BaseButton>
+      </div>
+    </BaseModal>
     <h3>Tables</h3>
-    <!-- <BaseTable/> -->
+    <BaseTable>
+      <template #head>
+        <BaseTableRow
+          colorEmphasis="#999"
+        >
+          <BaseTableCellHead
+            v-for="cat in ['category', 'subcategory', 'entry']"
+            :key="cat"
+          >
+            {{ cat }}
+          </BaseTableCellHead>
+        </BaseTableRow>
+      </template>
+      <template #body>
+        <BaseTableRow
+          v-for="num in [1, 2, 3, 4]"
+          :key="num"
+          :colorEmphasis="`#${8-num*2}6${num*2}`"
+          :darken="num%2 === 0"
+        >
+          <BaseTableCellHead
+            :rowspan="num === 1 ? 3 : 1"
+            :weak="true"
+            :isDummy="num !== 1 && num !== 4"
+          >
+            {{ `c${num}` }}
+          </BaseTableCellHead>
+          <BaseTableCellHead :weak="true">
+            {{ `s${num}` }}
+          </BaseTableCellHead>
+          <BaseTableCellData :value="8">
+            {{ `d${num}` }}
+          </BaseTableCellData>
+        </BaseTableRow>
+      </template>
+    </BaseTable>
     <h3>Miscellaneous Data</h3>
     <BaseCodeBlock :content="misc"/>
     <h3>Project Data</h3>
@@ -46,9 +93,14 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseCodeBlock from './BaseCodeBlock.vue'
 import BaseField from './BaseField.vue'
+import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
+import BaseTableRow from './BaseTableRow.vue'
+import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellData from './BaseTableCellData.vue'
 import FieldNumber from './FieldNumber.vue'
+import FieldText from './FieldText.vue'
 
 import Util from '../classes/Util.js'
 import { project, misc } from '../store.js'
@@ -61,9 +113,14 @@ export default {
     BaseCheckbox,
     BaseCodeBlock,
     BaseField,
+    BaseModal,
     BaseSelect,
     BaseTable,
+    BaseTableRow,
+    BaseTableCellHead,
+    BaseTableCellData,
     FieldNumber,
+    FieldText,
   },
   data() {
     return {
@@ -71,6 +128,7 @@ export default {
       check2: true,
       disable2: false,
       text: '',
+      showModal: false,
     }
   },
   computed: {

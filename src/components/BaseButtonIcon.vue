@@ -1,5 +1,5 @@
 <template>
-  <button :style="styleObj" v-on:click="$emit('click')" >
+  <button ref="btn" :style="styleObj" v-on:click="onClick" >
     <FontAwesomeIcon :icon="icon"/>
   </button>
 </template>
@@ -18,10 +18,15 @@ export default {
       validator(val) {
         return [
           'primary',
+          'neutral',
           'success',
           'danger',
         ].includes(val)
       },
+    },
+    doBlurOnClick: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -30,9 +35,16 @@ export default {
         '--color-button': `var(--color-${this.color})`,
         '--color-button-hover': `var(--color-${this.color}-hover)`,
         '--color-button-active': `var(--color-${this.color}-active)`,
+        '--color-button-light': `var(--color-${this.color}-light)`,
       }
     }
-  }
+  },
+  methods: {
+    onClick(event) {
+      if (this.doBlurOnClick) this.$refs.btn.blur()
+      this.$emit('click')
+    }
+  },
 }
 </script>
 
@@ -47,13 +59,19 @@ export default {
     justify-content: center;
     cursor: pointer;
     color: var(--color-button);
-    transition: all .2s;
+    border-radius: 1em;
+    transition: all .3s;
+  }
+  button * {
+    cursor: pointer;
   }
   button:hover,
   button:focus {
     color: var(--color-button-hover);
+    background-color: var(--color-button-light);
   }
   button:active {
     color: var(--color-button-active);
+    background-color: var(--color-button-light);
   }
 </style>

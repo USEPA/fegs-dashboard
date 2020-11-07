@@ -14,6 +14,7 @@ export default {
       validator(val) {
         return [
           'primary',
+          'neutral',
           'success',
           'danger',
         ].includes(val)
@@ -42,7 +43,7 @@ export default {
     color: var(--color-text-white);
     background-color: var(--color-button);
     border-radius: 4px;
-    transition: all .2s;
+    transition: all .3s;
   }
   button:hover,
   button:focus {

@@ -4,6 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faEdit,
+  faTimes,
   faTrash,
   faDownload,
   faCircle,
@@ -23,11 +24,12 @@ import { project, misc } from './store.js'
 library.add( // add each icon here after importing
   faCheck,
   faEdit,
+  faTimes,
   faTrash,
   faDownload,
   faCircle,
-  faExclamationCircle,
   farCircle,
+  faExclamationCircle,
   faChevronDown,
   faChevronRight
 ) 

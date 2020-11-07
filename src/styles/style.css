@@ -6,6 +6,7 @@ order {
     padding
     position
     display
+    overflow
     font
     color
     background
@@ -22,13 +23,21 @@ order {
   --color-text-black: #111;
   --color-text-white: #FFF;
   --color-text-disabled: #888;
-  --color-header: #111;
+  --color-text-header: #111;
+
+  --color-table-border: #0003;
+  --color-table-back: #FFF;
+  --color-table-head-back: #DDD;
+  --color-table-head-back-darken: #CCC;
+  --color-table-head-emphasis: #888;
+  --color-table-body-back: #0000;
+  --color-table-body-back-darken: #0001;
 
   --color-input: #888;
   --color-input-hover: #555;
   --color-input-active: #111;
   --color-input-disabled: #BBB;
-  --color-input-disabled-back: #DDD;
+  --color-input-back-disabled: #DDD;
 
   --color-invalid-input:#F51D2B;
   --color-invalid-icon: #f84a56;
@@ -36,14 +45,25 @@ order {
   --color-primary: #0071BC;
   --color-primary-hover: #205493;
   --color-primary-active: #112E51;
+  --color-primary-light: #0071BC44;
+
+  --color-neutral: #888;
+  --color-neutral-hover: #555;
+  --color-neutral-active: #333;
+  --color-neutral-light: #8884;
 
   --color-success: #28A745;
   --color-success-hover: #247F39;
   --color-success-active: #145222;
+  --color-success-light: #28A74544;
 
   --color-danger: #DC3843;
   --color-danger-hover: #AD1F28;
   --color-danger-active: #691218;
+  --color-danger-light: #DC384344;
+
+  --length-primary: 8px;
+  --length-secondary: 4px;
 }
 
 
@@ -96,7 +116,7 @@ h1, h2, h3 {
   margin: 1em 0 .5em 0;
   font-family: "Merriweather", Cambria, serif;
   font-weight: bold;
-  color: var(--color-header);
+  color: var(--color-text-header);
 }
 h1 {font-size: 2.2rem; }
 h2 {font-size: 1.7rem; }

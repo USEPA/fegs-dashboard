@@ -17,7 +17,7 @@ export default class Util {
   // rename a key in an object
   static renameKey(obj, oldKey, newKey) {
     const oldVal = obj[oldKey]
-    const newVal = (val && typeof oldVal === 'object') ? this.cloneObj(oldVal) : oldVal
+    const newVal = (oldVal && typeof oldVal === 'object') ? this.cloneObj(oldVal) : oldVal
     delete obj[oldKey]
     obj[newKey] = newVal
   }
@@ -62,6 +62,22 @@ export default class Util {
   // get a nicely formatted JSON string from an object
   static strObj(obj) {
     return JSON.stringify(obj, null, 2)
+  }
+
+  // remove specified item from an array, if possible
+  static remove(arr, item) {
+    const index = arr.indexOf(item);
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+  }
+
+  // replace item in array, if possible
+  static replace(arr, oldItem, newItem) {
+    const index = arr.indexOf(oldItem);
+    if (index > -1) {
+      arr[index] = newItem
+    }
   }
 
   // check if a value is a regular number (not null, undefined, NaN, object, etc)

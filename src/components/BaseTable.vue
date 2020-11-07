@@ -1,105 +1,13 @@
 <template>
   <table>
     <thead>
-      <tr>
-        <th colspan="4">th</th>
-      </tr>
-      <tr>
-        <th colspan="2">th</th>
-        <th colspan="2">th</th>
-      </tr>
-      <tr>
-        <th>th</th>
-        <th>th</th>
-        <th>th</th>
-        <th>th</th>
-      </tr>
+      <slot name="head"></slot>
     </thead>
     <tbody>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th rowspan="2">th</th>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
-      <tr>
-        <th>th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
+      <slot name="body"></slot>
     </tbody>
     <tfoot>
-      <tr>
-        <th colspan="2">th</th>
-        <td>td</td>
-        <td>td</td>
-      </tr>
+      <slot name="foot"></slot>
     </tfoot>
   </table>
 </template>
@@ -136,44 +44,9 @@ export default {
 </script>
 
 <style scoped>
-  table,
-  th,
-  td {
-    border: 1px solid black;
-  }
   table {
-    /* width: 100%; */
-    /* height: 200px; */
-    /* margin: 0 auto; */
-    margin-bottom: 100vh;
-    /* display: block; */
     overflow-x: auto;
     border-spacing: 0;
+    background-color: var(--color-table-back);
   }
-  th,
-  td {
-    padding: 40px;
-  }
-  thead th {
-    background-color: #C99;
-  }
-  thead tr:last-child th {
-    padding: 20px;
-  }
-  tbody th {
-    background-color: #9C9;
-  }
-  tbody th:first-child {
-    padding: 20px;
-  }
-  tbody td {
-    background-color: #AFA;
-  }
-  tfoot th {
-    background-color: #99C;
-  }
-  tfoot td {
-    background-color: #AAF;
-  }
-  
 </style>

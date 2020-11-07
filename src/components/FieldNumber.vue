@@ -78,9 +78,6 @@ export default {
       this.localValue = this.adjustIn(this.value)
     },
   },
-  created() {
-    this.onCommit(this.value) // clean initial value
-  },
   methods: {
     onInput(event) {
       const { val, err } = this.clean(event)
@@ -121,5 +118,8 @@ export default {
 <style scoped>
   input {
     width: 4em;
+  }
+  table input {
+    text-align: center;
   }
 </style>

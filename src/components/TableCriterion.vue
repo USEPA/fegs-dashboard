@@ -1,0 +1,98 @@
+<template>
+  <BaseTable>
+    <template #head>
+      <BaseTableRow>
+        <BaseTableCellHead>Criterion</BaseTableCellHead>
+        <BaseTableCellHead>Weight</BaseTableCellHead>
+      </BaseTableRow>
+    </template>
+    <template #body>
+      <BaseTableRow
+        v-for="(criterion, index) in criterionArray"
+        :key="criterion.name"
+        :colorEmphasis="criterion.color.primary"
+        :darken="index%2 === 1"
+      >
+        <BaseTableCellHead
+          style="width: 8rem;"
+        >
+          {{ criterion.name }}
+        </BaseTableCellHead>
+        <BaseTableCellData
+          @input="onDataInput(criterion.name, $event)"
+          @change="onDataChange(criterion.name, $event)"
+          @key-enter="onDataKeyEnter(index)"
+          :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
+          :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
+        />
+      </BaseTableRow>
+    </template>
+  </BaseTable>
+</template>
+
+<script>
+import BaseTable from './BaseTable.vue'
+import BaseTableRow from './BaseTableRow.vue'
+import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellData from './BaseTableCellData.vue'
+
+import Util from '../classes/Util.js'
+import { project, input } from '../store.js'
+
+export default {
+  name: 'TableCriterion',
+  components: {
+    BaseTable,
+    BaseTableRow,
+    BaseTableCellHead,
+    BaseTableCellData,
+  },
+  data() {
+    return {
+      localData: {},
+    }
+  },
+  computed: {
+    criterionArray() {
+      return project.getCriterionArray()
+    },
+  },
+  methods: {
+    onDataInput(criterionName, event) {
+      const { val, err } = input.validateNum(event)
+      this.$set(this.localData, criterionName, { val: event, err: this.getValidationMsg(err) })
+    },
+    onDataChange(criterionName, event) {
+      const { val, err } = input.validateNum(event)
+      project.setCriterionResult(criterionName, input.scaleDown(val))
+      this.$delete(this.localData, criterionName)
+    },
+    onDataKeyEnter(index) {
+      // TODO better method to focus next vertical cell?
+      // if (index < this.criterionArray.length - 1) {
+      //   // focus the next cell in the column
+      //   const cells = this.$refs.rows.children[index+1].children
+      //   cells[3].children[0].focus()
+      // }
+    },
+    getValidationMsg(err) {
+      // TODO locate somewhere for all tables?
+      switch (err) {
+        case '': return '' // no error
+        case 'num': return 'Must be a number'
+        case 'min': return 'Must be at least 0'
+        case 'max': return 'Must be at most 100'
+        default: return 'Enter a number between 0 and 100 (inclusive)'
+      }
+    },
+    scaleUp(val) {
+      // TODO I dont want to create an alias like this
+      return input.scaleUp(val)
+    },
+  },
+}
+</script>
+
+<style scoped>
+
+</style>
