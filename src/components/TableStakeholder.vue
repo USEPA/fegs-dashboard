@@ -1,62 +1,123 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th class="emphasis" :aria-hidden="true"></th>
-        <th></th>
-        <th>Stakeholder</th>
-        <template v-for="criterionName in criterionNames">
-          <th style="max-width: 10%;" :key="criterionName">{{ criterionName }}</th>
+  <BaseTable>
+    <template #head>
+      <BaseTableRow :doEmphasis="false">
+        <BaseTableCellHead
+          :barHorz="true"
+          :isSpace="true"
+        />
+        <BaseTableCellHead
+          :barHorz="true"
+          :isSpace="true"
+        />
+        <template>
+          <BaseTableCellHead
+            v-for="criterion in criterionArray"
+            :key="criterion.name"
+            :barHorz="true"
+            :isEmphasis="true"
+            :colorBack="criterion.color.primary"
+          />
         </template>
-      </tr>
-    </thead>
-    <tbody ref="rows">
-      <tr
-        v-for="(item, index) in stakeholderArray"
-        :key="item.name"
-        :class="{ darken: !!(index%2) }"
+      </BaseTableRow>
+      <BaseTableRow
+        colorEmphasis="var(--color-table-head-emphasis)"
       >
-        <th
-          class="emphasis"
-          :style="{ backgroundColor: `${item.color.primary}` }"
-          :aria-hidden="true"
-        >
-        </th>
-        <th>
+        <BaseTableCellHead></BaseTableCellHead>
+        <BaseTableCellHead>Stakeholder</BaseTableCellHead>
+        <template>
+          <BaseTableCellHead
+            v-for="criterion in criterionArray"
+            style="max-width: 8rem; font-weight: normal; text-align: center;"
+            :key="criterion.name"
+          >
+            {{ criterion.name }}
+          </BaseTableCellHead>
+        </template>
+      </BaseTableRow>
+    </template>
+    <template #body>
+      <BaseTableRow
+        v-for="(stakeholder, index) in stakeholderArray"
+        :key="stakeholder.name"
+        :colorEmphasis="stakeholder.color.primary"
+        :darken="index%2 === 1"
+      >
+        <BaseTableCellData>
           <BaseButtonIcon
             icon="trash"
             color="danger"
-            @click="onDelete(item.name)"
+            @click="onBeginDelete(stakeholder.name)"
           />
-        </th>
-        <th>
-          <FieldText
-            placeholder="Name"
-            @commit="onRename(item.name, $event)"
-            :value="item.name"
-            :triggerOverwrite="triggerOverwrite"
-            :validator="val => (val === item.name) ? '' : stakeholderNameValidator(val)"
+          <BaseModal
+            v-if="deleting === stakeholder.name"
+            title="Delete Stakeholder?"
+            @close="deleting = null"
+          >
+            <div
+              style="width: 20rem; text-align: left;"
+            >
+              Delete stakeholder "{{ deleting }}" and all associated beneficiary scores?
+            </div>
+            <div
+              style="margin-top: 1.5rem; display: flex; justify-content: flex-end;"
+            >
+              <BaseButton
+                style="margin-right: .5rem;"
+                @click="deleting = null"
+              >
+                Cancel
+              </BaseButton>
+              <BaseButton
+                color="danger"
+                @click="onConfirmDelete()"
+              >
+                Delete
+              </BaseButton>
+            </div>
+          </BaseModal>
+        </BaseTableCellData>
+        <BaseTableCellData
+          style="width: 8rem;"
+        >
+          <BaseField
+            style="text-align: left;"
+            @input="onNameInput(stakeholder.name, $event)"
+            @change="onNameChange(stakeholder.name, $event)"
+            @key-enter="onNameKeyEnter(index)"
+            :value="isEditing(stakeholder.name, 'name') ? editing.val : stakeholder.name"
+            :validationMsg="isEditing(stakeholder.name, 'name') ? editing.err : ''"
+            :doSelectAll="true"
           />
-        </th>
-        <template v-for="criterionName in criterionNames">
-          <td :key="criterionName">
-            <FieldNumber
-              @commit="onScore(item.name, criterionName, $event)"
-              @keyEnter="onKeyEnter(index)"
-              :value="item.scores[criterionName]"
-            />
-          </td>
+        </BaseTableCellData>
+        <template>
+          <BaseTableCellDataField
+            v-for="criterion in criterionArray"
+            @input="onDataInput(stakeholder.name, criterion.name, $event)"
+            @change="onDataChange(stakeholder.name, criterion.name, $event)"
+            @key-enter="onDataKeyEnter(index)"
+            :key="criterion.name"
+            :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
+            :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
+          />
         </template>
-      </tr>
-    </tbody>
-  </table>
+      </BaseTableRow>
+    </template>
+  </BaseTable>
 </template>
 
 <script>
-import BaseSelect from './BaseSelect.vue'
+import BaseButton from './BaseButton.vue'
 import BaseButtonIcon from './BaseButtonIcon.vue'
-import FieldNumber from './FieldNumber.vue'
-import FieldText from './FieldText.vue'
+import BaseField from './BaseField.vue'
+import BaseModal from './BaseModal.vue'
+import BaseTable from './BaseTable.vue'
+import BaseTableRow from './BaseTableRow.vue'
+import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellData from './BaseTableCellData.vue'
+import BaseTableCellDataField from './BaseTableCellDataField.vue'
+
+import input from './mixins/input.js'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -64,108 +125,92 @@ import { project } from '../store.js'
 export default {
   name: 'TableStakeholder',
   components: {
-    BaseSelect,
+    BaseButton,
     BaseButtonIcon,
-    FieldNumber,
-    FieldText,
+    BaseField,
+    BaseModal,
+    BaseTable,
+    BaseTableRow,
+    BaseTableCellHead,
+    BaseTableCellData,
+    BaseTableCellDataField,
   },
-  props: {
-    stakeholderNameValidator: Function,
-  },
+  mixins: [input],
   data() {
     return {
-      triggerOverwrite: 0,
+      editing: {
+        rowName: null, // stakeholderName
+        colName: null, // criterionName or 'name'
+        val: null,
+        err: null,
+      },
+      deleting: null,
     }
   },
   computed: {
-    criterionNames() {
-      return Object.keys(project.data.criterionSection.criteria)
+    criterionArray() {
+      return project.getCriterionArray()
     },
     stakeholderArray() {
-      this.triggerOverwrite++
       return project.getStakeholderArray()
     },
   },
   methods: {
-    log(val) {
-      console.log(val)
+    onBeginDelete(stakeholderName) {
+      this.deleting = stakeholderName
     },
-    onRename(originalName, event) {
-      if (originalName !== event) {
-        project.setStakeholderName(originalName, event)
-        this.triggerOverwrite++
+    onConfirmDelete() {
+      project.delStakeholder(this.deleting)
+      this.deleting = null
+    },
+    onNameInput(stakeholderName, event) {
+      const { val, err } = this.validateName(stakeholderName, event)
+      this.editing = {
+        rowName: stakeholderName,
+        colName: 'name',
+        val: event,
+        err,
       }
     },
-    onDelete(stakeholderName) {
-      // TODO confirmation modal
-      project.delStakeholder(stakeholderName)
+    onNameChange(stakeholderName, event) {
+      const { val, err } = this.validateName(stakeholderName, event)
+      if (stakeholderName !== val) project.setStakeholderName(stakeholderName, val)
+      Object.keys(this.editing).forEach(key => this.editing[key] = null)
     },
-    onScore(stakeholderName, criterionName, event) {
-      project.setStakeholderScore(stakeholderName, criterionName, event)
+    onNameKeyEnter(index) {
+      // TODO method to focus next vertical cell?
     },
-    onKeyEnter(index) {
-      if (index < this.stakeholderArray.length - 1) {
-        // focus the next cell in the column
-        const cells = this.$refs.rows.children[index+1].children
-        cells[3].children[0].focus()
+    onDataInput(stakeholderName, criterionName, event) {
+      const { val, err } = this.validateNumRange(event)
+      this.editing = {
+        rowName: stakeholderName,
+        colName: criterionName,
+        val: event,
+        err,
       }
     },
-  }
+    onDataChange(stakeholderName, criterionName, event) {
+      const { val, err } = this.validateNumRange(event)
+      project.setStakeholderScore(stakeholderName, criterionName, this.scaleDown(val))
+      Object.keys(this.editing).forEach(key => this.editing[key] = null)
+    },
+    onDataKeyEnter(index) {
+      // TODO method to focus next vertical cell?
+    },
+    validateName(oldName, newName) {
+      if (newName in project.data.stakeholderSection.stakeholders && newName !== oldName) {
+        return { val: oldName, err: 'Stakeholder already exists'}
+      } else {
+        return { val: newName, err: '' }
+      }
+    },
+    isEditing(rowName, colName) {
+      return (this.editing.rowName === rowName && this.editing.colName === colName)
+    },
+  },
 }
 </script>
 
 <style scoped>
-  table {
-    border-spacing: 0;
-  }
-  th {
-    text-align: left;
-  }
-  td {
-    text-align: center;
-  }
-  th,
-  td {
-    margin: 1px;
-    padding: .5rem;
-    box-sizing: border-box;
-    border-top: 1px solid var(--color-table-border);
-    border-right: 1px solid var(--color-table-border);
-  }
-  tr.darken th,
-  tr.darken td {
-    background-color: var(--color-table-body-back-darken);
-  }
-  th.emphasis {
-    padding: 0 0 0 var(--length-primary);
-    border: none;
-  }
-  thead th.emphasis {
-    background-color: var(--color-table-head-emphasis);
-  }
-  thead th {
-    background-color: var(--color-table-head-back);
-  }
-  tr.first th,
-  tr.first td {
-    margin-top: 3px;
-  }
-  tr th:first-child {
-    max-width: 6rem;
-  }
-  tbody tr:last-child th,
-  tbody tr:last-child td {
-    border-bottom: 1px solid var(--color-table-border);
-  }
-  thead th {
-    font-weight: bold;
-  }
-  /deep/ label {
-    font-weight: bold;
-  }
-  tbody th {
-    font-weight: normal;
-  }
-
 
 </style>

@@ -45,7 +45,6 @@ export default {
 
 <style scoped>
   table {
-    overflow-x: auto;
     border-spacing: 0;
     background-color: var(--color-table-back);
   }

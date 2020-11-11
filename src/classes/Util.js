@@ -76,7 +76,7 @@ export default class Util {
   static replace(arr, oldItem, newItem) {
     const index = arr.indexOf(oldItem);
     if (index > -1) {
-      arr[index] = newItem
+      arr.splice(index, 1, newItem) // detectable by Vue
     }
   }
 
@@ -103,6 +103,16 @@ export default class Util {
     if (childs) childs.forEach(child => ele.appendChild(this.element(child))) // recursive
     Object.entries(rest).forEach(([key, val]) => ele.setAttribute(key, val))
     return ele
+  }
+
+  // focus provided node or the first focusable descendant of the node (depth first)
+  static focusFirst(node) {
+    node.focus() // attempt to focus element
+    if (document.activeElement === node) return true // success, element focused
+    for (let i = 0; i < node.children.length; i++) {
+      if (this.focusFirst(node.children[i])) return true // success, descendant focused
+    }
+    return false // failure, no element focused
   }
 
   // determine if running on macOS, Node only

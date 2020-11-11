@@ -27,8 +27,6 @@
     <h3>Fields</h3>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:input="onFieldInput" content="Sample text" placeholder="Anything"/>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" content="Sample text" placeholder="Disabled"/>
-    <FieldNumber style="margin: 0 .5rem .5rem 0;" placeholder="Number"/>
-    <FieldText style="margin: 0 .5rem .5rem 0;" placeholder="Text" :validator="val => isNaN(parseFloat(val)) ? '' : 'Haha no numbers'"/>
     <BaseCodeBlock :content="textMsg"/>
     <h3>Select</h3>
     <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" defaultOption="b"/>
@@ -66,8 +64,6 @@
         >
           <BaseTableCellHead
             :rowspan="num === 1 ? 3 : 1"
-            :weak="true"
-            :isDummy="num !== 1 && num !== 4"
           >
             {{ `c${num}` }}
           </BaseTableCellHead>
@@ -99,8 +95,6 @@ import BaseTable from './BaseTable.vue'
 import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
 import BaseTableCellData from './BaseTableCellData.vue'
-import FieldNumber from './FieldNumber.vue'
-import FieldText from './FieldText.vue'
 
 import Util from '../classes/Util.js'
 import { project, misc } from '../store.js'
@@ -119,8 +113,6 @@ export default {
     BaseTableRow,
     BaseTableCellHead,
     BaseTableCellData,
-    FieldNumber,
-    FieldText,
   },
   data() {
     return {
@@ -164,9 +156,6 @@ export default {
     },
     onFieldInput(event) {
       this.text = event
-    },
-    numValidator(val) {
-      return validator.percent(val)
     },
   },
 }

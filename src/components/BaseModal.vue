@@ -34,8 +34,6 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 
 import Util from '../classes/Util.js'
 
-// TODO bunch of accessibility stuff: focus, escape, previous focus, etc...
-
 export default {
   name: 'BaseModal',
   components: {
@@ -62,9 +60,7 @@ export default {
     document.body.style.marginRight = '17px' // TODO determine scrollbar width programatically
   },
   mounted() {
-    const start = Date.now()
     this.intialFocus()
-    console.log(Date.now() - start)
   },
   destroyed() {
     document.body.style.overflow = 'auto'
@@ -79,20 +75,12 @@ export default {
     trapFocus(event) {
       if (!this.$refs.modal.contains(event.target)) {
         event.stopPropagation();
-        this.$refs.closeBtn.$el.focus()
+        this.$refs.closeBtn.$el.focus() // if an error happens here, it likely means you are trying to show multiple modals
       }
     },
     intialFocus() {
-      const success = this.focusFirst(this.$refs.content)
-      if (!success) this.$refs.closeBtn.$el.focus()
-    },
-    focusFirst(node) {
-      node.focus() // attempt to focus element
-      if (document.activeElement === node) return true // success, element focused
-      for (let i = 0; i < node.children.length; i++) {
-        if (this.focusFirst(node.children[i])) return true // success, descendant focused
-      }
-      return false // failure, no element focused
+      const success = Util.focusFirst(this.$refs.content)
+      if (!success) this.$refs.closeBtn.$el.focus() // fallback
     },
   }
 }
@@ -128,6 +116,7 @@ export default {
     font-size: 1.2rem;
   }
   h3 {
+    text-align: left;
     margin-top: 0;
   }
   .content {

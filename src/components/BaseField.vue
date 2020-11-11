@@ -1,34 +1,31 @@
 <template>
-  <input
-    @input="onInput"
-    @change="onChange"
-    @keyup.enter="onKeyEnter"
-    @focus="onFocus"
-    :value="switchValue"
-    :type="type"
-    :class="{invalid:!!validationMsg}"
-    :disabled="isDisabled"
-    :placeholder="placeholder"
-  >
+  <div class="container">
+    <input
+      type="text"
+      @input="onInput"
+      @change="onChange"
+      @keyup.enter="onKeyEnter"
+      @focus="onFocus"
+      :value="switchValue"
+      :class="{invalid:!!validationMsg}"
+      :disabled="isDisabled"
+      :placeholder="placeholder"
+    >
+    <div class="error-wrap">
+      <div class="error">{{ validationMsg }}</div>
+    </div>
+  </div>
 </template>
 
 <script>
 import Util from '../classes/Util.js'
 
-// TODO dismissable popup with reason for invalidity
+// TODO dismissable popup with validation error
+//    use before/after psuedo elements?
+//    use special info/error component?
 export default {
   name: 'BaseField',
   props: {
-    type: {
-      type: String,
-      default: 'text',
-      validator(val) {
-        return [
-          'text',
-          'number',
-        ].includes(val)
-      }
-    },
     value: {
       type: [String, Number],
       default: '',
@@ -45,9 +42,9 @@ export default {
       type: String,
       default: '', // empty string means valid
     },
-    isWrapped: { // whether this component should update it's own value
+    isWrapped: { // whether this component's value is managed externally
       type: Boolean,
-      default: false,
+      default: true,
     },
     doSelectAll: { // whether to select all content when clicked
       type: Boolean,
@@ -85,10 +82,26 @@ export default {
 </script>
 
 <style scoped>
-  input {
+  .container {
     width: 12em;
-    height: 1.5em;
+  }
+  .error-wrap {
+    width: 0;
+    height: 0;
+    position: relative;
+  }
+  .error {
+    width: 12em;
+    position: absolute;
+    text-align: left;
+    color: var(--color-invalid-input);
+  }
+  input {
+    width: 100%;
+    height: 1.7em;
     padding-left: .2em;
+    text-align: inherit;
+    box-sizing: border-box;
     border: 1px solid var(--color-input);
     border-radius: 4px;
     outline: none;

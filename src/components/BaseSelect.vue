@@ -7,7 +7,7 @@
       {{ label }}
     </label>
     <select
-      @change="$emit('commit', $event.target.value)"
+      @change="$emit('change', $event.target.value)"
       :id="id"
     >
       <option 

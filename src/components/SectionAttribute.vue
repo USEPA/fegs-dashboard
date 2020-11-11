@@ -7,7 +7,7 @@
       :startChecked="true"
     />
     <div class="table-wrap">
-      <TableBeneficiary :showDefinitions="showDefinitions"/>
+      <TableAttribute :showDefinitions="showDefinitions"/>
     </div>
   </div>
 </template>
@@ -15,16 +15,16 @@
 
 <script>
 import BaseCheckbox from './BaseCheckbox.vue'
-import TableBeneficiary from './TableBeneficiary.vue'
+import TableAttribute from './TableAttribute.vue'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
 
 export default {
-  name: 'SectionBeneficiary',
+  name: 'SectionAttribute',
   components: {
     BaseCheckbox,
-    TableBeneficiary,
+    TableAttribute,
   },
   data() {
     return {

@@ -9,7 +9,6 @@
     <div class="table-wrap">
       <TableStakeholder
         v-if="hasStakeholders"
-        :stakeholderNameValidator="stakeholderNameValidator"
       />
     </div>
   </div>
@@ -18,7 +17,6 @@
 
 <script>
 import BaseButton from './BaseButton.vue'
-import FieldText from './FieldText.vue'
 import TableStakeholder from './TableStakeholder.vue'
 
 import Util from '../classes/Util.js'
@@ -28,7 +26,6 @@ export default {
   name: 'SectionStakeholder',
   components: {
     BaseButton,
-    FieldText,
     TableStakeholder,
   },
   data() {
@@ -51,15 +48,6 @@ export default {
       const name = `stakeholder ${uid.next().substring(3)}`
       project.addStakeholder(name, color)
     },
-    stakeholderNameValidator(name) {
-      if (name === '') {
-        return 'Name cannot be empty'
-      } else if (name in project.data.stakeholderSection.stakeholders) {
-        return 'Stakeholder already exists'
-      } else {
-        return ''
-      }
-    },
   },
 }
 </script>
@@ -67,6 +55,6 @@ export default {
 <style scoped>
   .table-wrap {
     margin: 0 calc(-1 * var(--length-primary));
-    overflow: auto;
+    overflow-x: auto;
   }
 </style>

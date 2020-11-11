@@ -50,7 +50,7 @@
         :prevSection="sections[3].title"
         :isReady="sections[4].ready"
       >
-        <div>[ attribute section content ]</div>
+        <SectionAttribute/>
       </BaseSection>
       <BaseSection
         :id="sections[5].id"
@@ -70,6 +70,7 @@ import SectionProject from './SectionProject.vue'
 import SectionCriterion from './SectionCriterion.vue'
 import SectionStakeholder from './SectionStakeholder.vue'
 import SectionBeneficiary from './SectionBeneficiary.vue'
+import SectionAttribute from './SectionAttribute.vue'
 import SectionDeveloper from './SectionDeveloper.vue'
 
 import Util from '../classes/Util.js'
@@ -85,6 +86,7 @@ export default {
     SectionCriterion,
     SectionStakeholder,
     SectionBeneficiary,
+    SectionAttribute,
     SectionDeveloper,
   },
   data() {

@@ -123,10 +123,10 @@ export default class TheProjectStore {
     } else if (newName in this.data.stakeholderSection.stakeholders) {
       throw new Error(`Stakeholder "${newName}" already exists.`) // programmer error
     } else {
-      Util.renameKey(this.data.stakeholderSection.stakeholders, oldName, newName)
+      this._renameKey(this.data.stakeholderSection.stakeholders, oldName, newName)
       Util.replace(this.data.stakeholderSection.order, oldName, newName)
       Object.values(this.data.beneficiarySection.beneficiaries).forEach(beneficiary => {
-        Util.renameKey(beneficiary.scores, oldName, newName)
+        this._renameKey(beneficiary.scores, oldName, newName)
       })
       this._modified()
       if (this.autoCompute) this._computeStakeholderSection()
@@ -309,20 +309,29 @@ export default class TheProjectStore {
   }
   _computeCategories(categories, alternatives) {
     const counts = {}
-    const visited = new Set()
+    let even = true // alternate with each category
+    const visitedCategories = new Set()
     Object.values(alternatives).forEach(alternative => {
       const categoryName = alternative.categoryName
       if (categoryName in counts) {
         counts[categoryName]++
       } else {
         counts[categoryName] = 1
+        even = !even // this does assume alternatives are in order
       }
-      this._setComputed(alternative, 'firstOfCategory', !visited.has(categoryName))
-      visited.add(categoryName)
+      this._setComputed(alternative, 'evenCategory', even)
+      this._setComputed(alternative, 'firstOfCategory', !visitedCategories.has(categoryName))
+      visitedCategories.add(categoryName)
     })
     Object.entries(categories).forEach(([categoryName, category]) => {
       this._setComputed(category, 'members', counts[categoryName] || 0)
     })
+  }
+  _renameKey(obj, oldKey, newKey) {
+    const oldVal = obj[oldKey]
+    const newVal = (oldVal && typeof oldVal === 'object') ? Util.cloneObj(oldVal) : oldVal
+    this._delProp(obj, oldKey)
+    this._addProp(obj, newKey, newVal)
   }
   _template() {
     const data = {

@@ -1,71 +1,95 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th class="emphasis" :aria-hidden="true"></th>
-        <th>Category</th>
-        <th>Subcategory</th>
-        <th v-if="showDefinitions">Definition</th>
-        <th>
+  <BaseTable>
+    <template #head>
+      <BaseTableRow :doEmphasis="false">
+        <BaseTableCellHead
+          :barHorz="true"
+          :isSpace="true"
+        />
+        <BaseTableCellHead
+          :barHorz="true"
+          :isSpace="true"
+        />
+        <BaseTableCellHead
+          v-if="showDefinitions"
+          :barHorz="true"
+          :isSpace="true"
+        />
+        <BaseTableCellHead
+          :colorBack="currentStakeholder.color.primary"
+          :barHorz="true"
+          :isEmphasis="true"
+        />
+      </BaseTableRow>
+      <BaseTableRow
+        colorEmphasis="var(--color-table-head-emphasis)"
+      >
+        <BaseTableCellHead>Category</BaseTableCellHead>
+        <BaseTableCellHead>Subcategory</BaseTableCellHead>
+        <BaseTableCellHead v-if="showDefinitions">Definition</BaseTableCellHead>
+        <BaseTableCellHead>
           <BaseSelect
+            style="font-weight: bold;"
             label="Stakeholder"
-            @change="onStakeholder"
+            @change="onMetricChange"
             :options="stakeholderNames"
           />
-        </th>
-      </tr>
-    </thead>
-    <tbody ref="rows">
-      <tr
-        v-for="(item, index) in beneficiaryArray"
-        :key="item.name"
-        :class="{ first: item.computed.firstOfCategory }"
+        </BaseTableCellHead>
+      </BaseTableRow>
+    </template>
+    <template #body>
+      <BaseTableRow
+        v-for="(beneficiary, index) in beneficiaryArray"
+        :key="beneficiary.name"
+        :colorEmphasis="beneficiary.category.color.primary"
+        :darken="beneficiary.computed.evenCategory"
       >
-        <th
-          class="emphasis"
-          :style="{ backgroundColor: `${item.category.color.primary}` }"
-          :aria-hidden="true"
+        <BaseTableCellHead
+          v-if="beneficiary.computed.firstOfCategory"
+          style="max-width: 6rem;"
+          :colorBack="beneficiary.category.color.lighter"
+          :rowspan="beneficiary.category.computed.members"
         >
-        </th>
-        <th
-          v-if="item.computed.firstOfCategory"
-          :style="{ backgroundColor: item.category.color.lighter }"
-          :rowspan="item.category.computed.members"
+          {{ beneficiary.categoryName }}
+        </BaseTableCellHead>
+        <BaseTableCellHead
+          style="max-width: 16rem;"
+          :colorBack="beneficiary.category.color.lighter"
         >
-          {{ item.categoryName }}
-        </th>
-        <th v-else style="display: none"></th>
-        <th
-          :style="{
-            backgroundColor: item.category.color.lighter,  
-          }"
-        >
-          {{ item.name }}
-        </th>
-        <th
+          {{ beneficiary.name }}
+        </BaseTableCellHead>
+        <BaseTableCellHead
           v-if="showDefinitions"
-          :style="{
-            backgroundColor: item.category.color.lightest,  
-          }"
+          style="max-width: 20rem;"
+          :colorBack="beneficiary.category.color.lightest"
         >
-          {{ item.def }}
-        </th>
-        <td>
-          <FieldNumber
-            @commit="onScore(item.name, $event)"
-            @keyEnter="onKeyEnter(index)"
-            :value="item.scores[selectedStakeholder]"
-            :triggerOverwrite="triggerOverwrite"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          {{ beneficiary.def }}
+        </BaseTableCellHead>
+        <BaseTableCellDataField
+          @input="onDataInput(beneficiary.name, $event)"
+          @change="onDataChange(beneficiary.name, $event)"
+          @key-enter="onDataKeyEnter(index)"
+          :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[currentStakeholderName])"
+          :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
+        />
+      </BaseTableRow>
+    </template>
+  </BaseTable>
 </template>
 
 <script>
+import BaseButton from './BaseButton.vue'
+import BaseButtonIcon from './BaseButtonIcon.vue'
+import BaseField from './BaseField.vue'
+import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
-import FieldNumber from './FieldNumber.vue'
+import BaseTable from './BaseTable.vue'
+import BaseTableRow from './BaseTableRow.vue'
+import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellData from './BaseTableCellData.vue'
+import BaseTableCellDataField from './BaseTableCellDataField.vue'
+
+import input from './mixins/input.js'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -73,95 +97,70 @@ import { project } from '../store.js'
 export default {
   name: 'TableBeneficiary',
   components: {
+    BaseButton,
+    BaseButtonIcon,
+    BaseField,
+    BaseModal,
     BaseSelect,
-    FieldNumber,
+    BaseTable,
+    BaseTableRow,
+    BaseTableCellHead,
+    BaseTableCellData,
+    BaseTableCellDataField,
   },
+  mixins: [input],
   props: {
     showDefinitions: Boolean,
   },
   data() {
     return {
-      selectedStakeholder: Object.keys(project.data.stakeholderSection.stakeholders)[0],
-      triggerOverwrite: 0,
+      currentStakeholderName: Object.keys(project.data.stakeholderSection.stakeholders)[0],
+      editing: {
+        rowName: null,
+        val: null,
+        err: null,
+      }
     }
   },
   computed: {
     stakeholderNames() {
       return Object.keys(project.data.stakeholderSection.stakeholders)
     },
+    currentStakeholder() {
+      return project.data.stakeholderSection.stakeholders[this.currentStakeholderName]
+    },
     beneficiaryArray() {
       return project.getBeneficiaryArray()
     },
   },
   methods: {
-    onStakeholder(event) {
-      this.selectedStakeholder = event
-      this.triggerOverwrite++
+    onMetricChange(event) {
+      this.currentStakeholderName = event
+      Object.keys(this.editing).forEach(key => this.editing[key] = null)
     },
-    onScore(beneficiaryName, event) {
-      project.setBeneficiaryScore(beneficiaryName, this.selectedStakeholder, event)
-    },
-    onKeyEnter(index) {
-      if (index < this.beneficiaryArray.length - 1) {
-        // focus the next cell in the column
-        const cells = this.$refs.rows.children[index+1].children
-        cells[3].children[0].focus()
+    onDataInput(beneficiaryName, event) {
+      const { val, err } = this.validateNumRange(event)
+      this.editing = {
+        rowName: beneficiaryName,
+        val: event,
+        err,
       }
     },
+    onDataChange(beneficiaryName, event) {
+      const { val, err } = this.validateNumRange(event)
+      project.setBeneficiaryScore(beneficiaryName, this.currentStakeholderName, this.scaleDown(val))
+      Object.keys(this.editing).forEach(key => this.editing[key] = null)
+    },
+    onDataKeyEnter(index) {
+      // TODO method to focus next vertical cell?
+    },
+    isEditing(rowName) {
+      return (this.editing.rowName === rowName)
+    }
   }
 }
 </script>
 
 <style scoped>
-  table {
-    /* position: relative;
-    left: -8px; */
-    overflow-x: auto;
-    border-spacing: 0;
-  }
-  th {
-    text-align: left;
-  }
-  td {
-    text-align: center;
-  }
-  th,
-  td {
-    margin: 1px;
-    padding: .5rem;
-    border-top: 1px solid var(--color-table-border);
-    border-right: 1px solid var(--color-table-border);
-  }
-  th.emphasis {
-    padding: 0 0 0 var(--length-primary);
-    border: none;
-  }
-  thead th.emphasis {
-    background-color: var(--color-table-head-emphasis);
-  }
-  thead th {
-    background-color: var(--color-table-head-back);
-  }
-  tr.first th,
-  tr.first td {
-    margin-top: 3px;
-  }
-  tr th:nth-child(2) {
-    max-width: 6rem;
-  }
-  tbody tr:last-child th,
-  tbody tr:last-child td {
-    border-bottom: 1px solid var(--color-table-border);
-  }
-  thead th {
-    font-weight: bold;
-  }
-  /deep/ label {
-    font-weight: bold;
-  }
-  tbody th {
-    font-weight: normal;
-  }
-
 
 </style>
