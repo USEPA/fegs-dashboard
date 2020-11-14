@@ -46,6 +46,7 @@ export default {
 <style scoped>
   table {
     border-spacing: 0;
+    border-bottom: 1px solid var(--color-table-border);
     background-color: var(--color-table-back);
   }
 </style>

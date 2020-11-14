@@ -1,5 +1,9 @@
 <template>
-  <button :style="styleObj" v-on:click="$emit('click')">
+  <button
+    @click="isDisabled ? null : $emit('click')"
+    :class="{ disabled: isDisabled }"
+    :style="styleObj"
+  >
     <slot></slot>
   </button>
 </template>
@@ -20,6 +24,7 @@ export default {
         ].includes(val)
       },
     },
+    isDisabled: Boolean,
   },
   computed: {
     styleObj() {
@@ -51,5 +56,13 @@ export default {
   }
   button:active {
     background-color: var(--color-button-active);
+  }
+  button.disabled,
+  button.disabled:hover,
+  button.disabled:focus,
+  button.disabled:active {
+    cursor: initial;
+    color: var(--color-text-disabled);
+    background-color: var(--color-input-back-disabled);
   }
 </style>

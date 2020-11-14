@@ -355,13 +355,18 @@ export default class TheProjectStore {
 
           'Magnitude & Probability of Impact': {
             shortName: 'Impact',
+            min: 'no impact',
+            max: 'large and very likely impact',
             tip: 'If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?',
+            
             color: {
               primary: '#c0504d',
             },
           },
           'Level of Influence': {
             shortName: 'Influence',
+            min: 'no influence',
+            max: 'formal influence',
             tip: 'Does this stakeholder group have any formal or informal influence over the decision making process?',
             color: {
               primary: '#9bbb59',
@@ -369,6 +374,8 @@ export default class TheProjectStore {
           },
           'Level of Interest': {
             shortName: 'Interest',
+            min: 'no interest',
+            max: 'maximum interest',
             tip: 'What is this stakeholder group\'s level of interest in this decision/action?',
             color: {
               primary: '#8064a2',
@@ -376,12 +383,16 @@ export default class TheProjectStore {
           },
           'Urgency & Temporal Immediacy': {
             shortName: 'Urgency',
+            min: 'not urgent',
+            max: 'most urgent',
             tip: 'Does this stakeholder group want an immediate decision/action on this issue?',
             color: {
               primary: '#DDC436',
             },
           },
           'Proximity': {
+            min: 'never in contact',
+            max: 'always in contact',
             tip: 'How frequently does this stakeholder group come into contact with the area subject to this decision?',
             color: {
               primary: '#4bacc6',
@@ -389,18 +400,24 @@ export default class TheProjectStore {
           },
           'Economic Interest': {
             shortName: 'Economic',
+            min: 'no economic interest',
+            max: 'maximum economic interest',
             tip: 'Does this stakeholder group have an economic interest in the outcome of this decision?',
             color: {
               primary: '#2F7455',
             },
           },
           'Rights': {
+            min: 'no rights',
+            max: 'complete rights',
             tip: 'Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?',
             color: {
               primary: '#f79646',
             },
           },
           'Fairness': {
+            min: 'not seen as unfair',
+            max: 'seen as very unfair',
             tip: 'If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?',
             color: {
               primary: '#863758',
@@ -408,7 +425,9 @@ export default class TheProjectStore {
           },
           'Underrepresented & Underserved Representation': {
             shortName: 'Underrepresented',
-            tip: 'Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?',
+            min: 'not at all',
+            max: 'completely',
+            tip: 'Does this stakeholder group represent underserved or underrepresented groups?',
             color: {
               primary: '#2c4d75',
             },

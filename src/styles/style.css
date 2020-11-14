@@ -25,13 +25,13 @@ order {
   --color-text-disabled: #888;
   --color-text-header: #111;
 
-  --color-table-border: #0005;
+  --color-table-border: #0003;
   --color-table-back: #FFF;
   --color-table-head-back: #DDD;
-  --color-table-head-back-darken: #CCC;
+  --color-table-head2-back: #EEE;
   --color-table-head-emphasis: #888;
   --color-table-body-back: #0000;
-  --color-table-body-back-darken: #0001;
+  --color-table-body-back-darken: #00000016;
 
   --color-input: #888;
   --color-input-hover: #555;
@@ -112,13 +112,15 @@ p, input, div {
   font: 16px "Source Sans Pro", Helvetica, Arial, sans-serif;
   color: var(--color-text-black);
 }
-h1, h2, h3 {
+h1, h2, h3, h4, h5 {
   margin: 1em 0 .5em 0;
   font-family: "Merriweather", Cambria, serif;
   font-weight: bold;
   color: var(--color-text-header);
 }
-h1 {font-size: 2.2rem; }
-h2 {font-size: 1.7rem; }
-h3 {font-size: 1.2rem; }
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.7rem; }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1rem; }
+h5 { font: bold 1rem "Source Sans Pro", Helvetica, Arial, sans-serif; }
 p {font-size: 1rem; }

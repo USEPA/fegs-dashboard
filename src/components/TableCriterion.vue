@@ -13,6 +13,7 @@
         v-for="(criterion, index) in criterionArray"
         :key="criterion.name"
         :colorEmphasis="criterion.color.primary"
+        :darken="index%2 === 1"
       >
         <BaseTableCellHead
           style="width: 8rem;"

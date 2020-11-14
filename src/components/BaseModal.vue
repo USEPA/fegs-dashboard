@@ -118,6 +118,7 @@ export default {
   h3 {
     text-align: left;
     margin-top: 0;
+    margin-right: 1.5em;
   }
   .content {
     max-height: 80vh; /* must be explicit for scroll to work */

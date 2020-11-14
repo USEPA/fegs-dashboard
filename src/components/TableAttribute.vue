@@ -68,26 +68,26 @@
         v-for="(attribute, index) in attributeArray"
         :key="attribute.name"
         :colorEmphasis="attribute.category.color.primary"
-        :darken="attribute.computed.evenCategory"
+        :darken="index%2 === 1"
       >
         <BaseTableCellHead
           style="max-width: 6rem;"
           v-if="attribute.computed.firstOfCategory"
           :rowspan="attribute.category.computed.members"
-          :colorEmphasis="attribute.category.color.lighter"
+          :darken="true"
         >
           {{ attribute.categoryName }}
         </BaseTableCellHead>
         <BaseTableCellHead
           style="max-width: 16rem;"
-          :colorEmphasis="attribute.category.color.lighter"
+          colorBack="var(--color-table-head-back)"
         >
           {{ attribute.name }}
         </BaseTableCellHead>
         <BaseTableCellHead
           v-if="showDefinitions"
           style="max-width: 20rem;"
-          :colorEmphasis="attribute.category.color.lightest"
+          colorBack="var(--color-table-head2-back)"
         >
           {{ attribute.def }}
         </BaseTableCellHead>

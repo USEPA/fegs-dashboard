@@ -17,6 +17,9 @@
     <BaseButton color="danger" v-on:click="del">
       Delete Stakeholder
     </BaseButton>
+    <BaseButton color="primary" :isDisabled="true">
+      Disabled
+    </BaseButton>
     <h3>Icon Buttons</h3>
     <div style="margin-bottom: .5rem; display: flex; font-size: 1.5rem;">
       <BaseButtonIcon color="primary" icon="edit"/>
@@ -41,41 +44,6 @@
         <BaseButton color="danger" @click="showModal = false">Delete</BaseButton>
       </div>
     </BaseModal>
-    <h3>Tables</h3>
-    <BaseTable>
-      <template #head>
-        <BaseTableRow
-          colorEmphasis="#999"
-        >
-          <BaseTableCellHead
-            v-for="cat in ['category', 'subcategory', 'entry']"
-            :key="cat"
-          >
-            {{ cat }}
-          </BaseTableCellHead>
-        </BaseTableRow>
-      </template>
-      <template #body>
-        <BaseTableRow
-          v-for="num in [1, 2, 3, 4]"
-          :key="num"
-          :colorEmphasis="`#${8-num*2}6${num*2}`"
-          :darken="num%2 === 0"
-        >
-          <BaseTableCellHead
-            :rowspan="num === 1 ? 3 : 1"
-          >
-            {{ `c${num}` }}
-          </BaseTableCellHead>
-          <BaseTableCellHead :weak="true">
-            {{ `s${num}` }}
-          </BaseTableCellHead>
-          <BaseTableCellData :value="8">
-            {{ `d${num}` }}
-          </BaseTableCellData>
-        </BaseTableRow>
-      </template>
-    </BaseTable>
     <h3>Miscellaneous Data</h3>
     <BaseCodeBlock :content="misc"/>
     <h3>Project Data</h3>

@@ -1,7 +1,16 @@
 <template>
   <th
-    :style="colorBack ? { backgroundColor: `${colorBack}` } : {}"
-    :class="{ space: isSpace, emphasis: isEmphasis, vert: barVert, horz: barHorz }"
+    :style="colorBack ? {
+      backgroundColor: `${colorBack}`,
+    } : {}"
+    :class="{
+      space: isSpace,
+      emphasis: isEmphasis,
+      vert: barVert,
+      horz: barHorz,
+      mydark: darken,
+      nodark: darken === false, // explicit false, not null
+    }"
     :rowspan="rowspan"
     :colspan="colspan"
     :aria-hidden="isEmphasis || isSpace"
@@ -25,10 +34,14 @@ export default {
       type: Number,
       default: 1,
     },
-    barVert: Boolean,
-    barHorz: Boolean,
-    isSpace: Boolean,
-    isEmphasis: Boolean,
+    barVert: Boolean, // skinny vertical cell
+    barHorz: Boolean, // skinny horizontal cell
+    isSpace: Boolean, // invisible spacing cell
+    isEmphasis: Boolean, // no content color cell
+    darken: {
+      type: Boolean, // override row setting
+      default: null,
+    }
   },
 }
 </script>
@@ -49,10 +62,18 @@ export default {
     position: relative;
     text-align: left;
     font-weight: bold;
+    background-blend-mode: multiply;
+    background-color: var(--color-table-head-back);
+  }
+  thead th {
     border-bottom: 1px solid var(--color-table-border);
   }
   th:last-child:not(.emphasis) {
     border-right: 1px solid var(--color-table-border);
+  }
+  tr.darken th:not(.nodark),
+  tr th.mydark {
+    background-image: linear-gradient(90deg, var(--color-table-body-back-darken), var(--color-table-body-back-darken))
   }
   th.space {
     background: none;

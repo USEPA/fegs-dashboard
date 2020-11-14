@@ -10,30 +10,26 @@
           :barHorz="true"
           :isSpace="true"
         />
-        <template>
-          <BaseTableCellHead
-            v-for="criterion in criterionArray"
-            :key="criterion.name"
-            :barHorz="true"
-            :isEmphasis="true"
-            :colorBack="criterion.color.primary"
-          />
-        </template>
+        <BaseTableCellHead
+          v-for="criterion in criterionArray"
+          :key="criterion.name"
+          :barHorz="true"
+          :isEmphasis="true"
+          :colorBack="criterion.color.primary"
+        />
       </BaseTableRow>
       <BaseTableRow
         colorEmphasis="var(--color-table-head-emphasis)"
       >
         <BaseTableCellHead></BaseTableCellHead>
         <BaseTableCellHead>Stakeholder</BaseTableCellHead>
-        <template>
-          <BaseTableCellHead
-            v-for="criterion in criterionArray"
-            style="max-width: 8rem; font-weight: normal; text-align: center;"
-            :key="criterion.name"
-          >
-            {{ criterion.name }}
-          </BaseTableCellHead>
-        </template>
+        <BaseTableCellHead
+          v-for="criterion in criterionArray"
+          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          :key="criterion.name"
+        >
+          {{ criterion.name }}
+        </BaseTableCellHead>
       </BaseTableRow>
     </template>
     <template #body>
@@ -90,17 +86,15 @@
             :doSelectAll="true"
           />
         </BaseTableCellData>
-        <template>
-          <BaseTableCellDataField
-            v-for="criterion in criterionArray"
-            @input="onDataInput(stakeholder.name, criterion.name, $event)"
-            @change="onDataChange(stakeholder.name, criterion.name, $event)"
-            @key-enter="onDataKeyEnter(index)"
-            :key="criterion.name"
-            :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
-            :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
-          />
-        </template>
+        <BaseTableCellDataField
+          v-for="criterion in criterionArray"
+          @input="onDataInput(stakeholder.name, criterion.name, $event)"
+          @change="onDataChange(stakeholder.name, criterion.name, $event)"
+          @key-enter="onDataKeyEnter(index)"
+          :key="criterion.name"
+          :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
+          :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
+        />
       </BaseTableRow>
     </template>
   </BaseTable>

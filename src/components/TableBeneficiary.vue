@@ -42,13 +42,14 @@
         v-for="(beneficiary, index) in beneficiaryArray"
         :key="beneficiary.name"
         :colorEmphasis="beneficiary.category.color.primary"
-        :darken="beneficiary.computed.evenCategory"
+        :darken="index%2 === 1"
       >
         <BaseTableCellHead
           v-if="beneficiary.computed.firstOfCategory"
           style="max-width: 6rem;"
           :colorBack="beneficiary.category.color.lighter"
           :rowspan="beneficiary.category.computed.members"
+          :darken="false"
         >
           {{ beneficiary.categoryName }}
         </BaseTableCellHead>
@@ -127,6 +128,9 @@ export default {
       return Object.keys(project.data.stakeholderSection.stakeholders)
     },
     currentStakeholder() {
+      if (!(this.currentStakeholderName in project.data.stakeholderSection.stakeholders)) {
+        this.currentStakeholderName = Object.keys(project.data.stakeholderSection.stakeholders)[0]
+      }
       return project.data.stakeholderSection.stakeholders[this.currentStakeholderName]
     },
     beneficiaryArray() {
