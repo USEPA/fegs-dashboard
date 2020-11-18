@@ -6,6 +6,13 @@
     >
       New Stakeholder
     </BaseButton>
+    <BaseButton
+      style="margin-left: .5rem;"
+      v-if="isDev"
+      @click="createNewStakeholderDev"
+    >
+      Generate
+    </BaseButton>
     <BaseModal
       v-if="isCreatingNewStakeholder"
       title="New Stakeholder"
@@ -14,31 +21,35 @@
       <p>Enter the name of this stakeholder group</p>
       <BaseField
         style="margin-bottom: 1rem;"
+        :value="isEditing('name') ? editing.val : newStakeholderData.name"
+        :validationMsg="isEditing('name') ? editing.err : ''"
         @input="onNameInput"
         @change="onNameChange"
         @key-enter="onNameKeyEnter"
-        :value="isEditing('name') ? editing.val : newStakeholderData.name"
-        :validationMsg="isEditing('name') ? editing.err : ''"
       />
       <p>Score the stakeholder group for each of the 9 criteria, then click "Add Stakeholder"</p>
       <BaseTable
-        style="max-width: 50vw;"
+        style="max-width: 50vw; margin-right: .5rem;"
       >
         <template #head>
-          <BaseTableRow
-            colorEmphasis="var(--color-table-head-emphasis)"
-          >
-            <BaseTableCellHead>Criterion</BaseTableCellHead>
-            <BaseTableCellHead>Instruction</BaseTableCellHead>
-            <BaseTableCellHead>Score</BaseTableCellHead>
-          </BaseTableRow>
+          <tr>
+            <BaseTableCellEmphasis
+              colorBack="var(--color-table-head-emphasis)"
+              isLastOfGroup
+            />
+            <BaseTableCellHead isLastOfGroup doBorderTop>Criterion</BaseTableCellHead>
+            <BaseTableCellHead isLastOfGroup doBorderTop>Instruction</BaseTableCellHead>
+            <BaseTableCellHead isLastOfGroup doBorderTop>Score</BaseTableCellHead>
+          </tr>
         </template>
         <template #body>
-          <BaseTableRow
+          <tr
             v-for="criterion in criterionArray"
             :key="criterion.name"
-            :colorEmphasis="criterion.color.primary"
           >
+            <BaseTableCellEmphasis
+              :colorBack="criterion.color.primary"
+            />
             <BaseTableCellHead>{{ criterion.name }}</BaseTableCellHead>
             <BaseTableCellHead
               colorBack="var(--color-table-head2-back)"
@@ -52,35 +63,19 @@
               </span>
             </BaseTableCellHead>
             <BaseTableCellDataField
+              :value="isEditing(criterion.name) ? editing.val : scaleUp(newStakeholderData.scores[criterion.name])"
+              :validationMsg="isEditing(criterion.name) ? editing.err : ''"
               @input="onScoreInput(criterion.name, $event)"
               @change="onScoreChange(criterion.name, $event)"
               @key-enter="onScoreKeyEnter(criterion.name, $event)"
-              :value="isEditing(criterion.name) ? editing.val : scaleUp(newStakeholderData.scores[criterion.name])"
-              :validationMsg="isEditing(criterion.name) ? editing.err : ''"
             />
-          </BaseTableRow>
+          </tr>
         </template>
       </BaseTable>
-      <!-- <div
-        class="criterion"
-        v-for="criterion in criterionArray"
-        :key="criterion.name"
-      >
-        <h5>{{ criterion.name }}</h5>
-        <p style="max-width: 40rem;">{{ criterion.tip }}</p>
-        <BaseField
-          style="width: 4em;"
-          @input="onScoreInput(criterion.name, $event)"
-          @change="onScoreChange(criterion.name, $event)"
-          @key-enter="onScoreKeyEnter(criterion.name, $event)"
-          :value="isEditing(criterion.name) ? editing.val : scaleUp(newStakeholderData.scores[criterion.name])"
-          :validationMsg="isEditing(criterion.name) ? editing.err : ''"
-        />
-      </div> -->
       <div class="control">
         <BaseButton
-          @click="createNewStakeholder"
           :isDisabled="!isValidNewStakeholder"
+          @click="createNewStakeholder"
         >
           Add Stakeholder
         </BaseButton>
@@ -106,8 +101,8 @@ import BaseButton from './BaseButton.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
 import BaseTableCellData from './BaseTableCellData.vue'
 import BaseTableCellDataField from './BaseTableCellDataField.vue'
 import TableStakeholder from './TableStakeholder.vue'
@@ -124,8 +119,8 @@ export default {
     BaseField,
     BaseModal,
     BaseTable,
-    BaseTableRow,
     BaseTableCellHead,
+    BaseTableCellEmphasis,
     BaseTableCellData,
     BaseTableCellDataField,
     TableStakeholder,
@@ -156,6 +151,9 @@ export default {
     criterionArray() {
       return project.getCriterionArray()
     },
+    isDev() {
+      return Util.isDev()
+    }
   },
   methods: {
     onNameInput(event) {
@@ -198,8 +196,8 @@ export default {
     },
     createNewStakeholder() {
       this.isCreatingNewStakeholder = false
-      const color = project.data.stakeholderSection.computed.colorsRemain[0] || '#000'
       const name = this.newStakeholderData.name
+      const color = project.data.stakeholderSection.computed.colorsRemain[0] || '#000'
       project.addStakeholder(name, color)
       Object.entries(this.newStakeholderData.scores).forEach(([criterionName, score]) => {
         project.setStakeholderScore(name, criterionName, score)
@@ -216,6 +214,15 @@ export default {
     isEditing(rowName) {
       return (this.editing.rowName === rowName)
     },
+    createNewStakeholderDev() {
+      const name = `Test Stakeholder ${uid.next().substring(3)}`
+      const color = project.data.stakeholderSection.computed.colorsRemain[0] || '#000'
+      project.addStakeholder(name, color)
+      Object.keys(project.data.criterionSection.criteria).forEach(criterion => {
+        const score = Math.floor(Math.random()*100)/100
+        project.setStakeholderScore(name, criterion, score)
+      })
+    }
   },
 }
 </script>

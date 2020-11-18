@@ -1,31 +1,32 @@
 <template>
-  <tr :class="{ darken: darken }">
-    <BaseTableCellHead
-      :barVert="true"
-      :isEmphasis="doEmphasis"
-      :isSpace="!doEmphasis"
+  <tr :class="{ darken: darken, last: isLastOfGroup }">
+    <BaseTableCellEmphasis
+      v-if="doEmphasis"
       :colorBack="colorEmphasis"
-      :noDarken="true"
+      :doBorder="doEmphasisBorder"
     />
     <slot></slot>
   </tr>
 </template>
 
 <script>
-import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
 
 import Util from '../classes/Util.js'
+
+// TODO option to have thicker border after cell... but not by adding a prop to every single cell component
 
 export default {
   name: 'BaseTableRow',
   components: {
-    BaseTableCellHead,
+    BaseTableCellEmphasis,
   },
   props: {
     doEmphasis: {
       type: Boolean,
       default: true,
     },
+    doEmphasisBorder: Boolean, // whether to draw cell border on emphasis bar
     colorEmphasis: String,
     darken: Boolean,
   },
@@ -44,15 +45,17 @@ export default {
 </script>
 
 <style scoped>
-  tr td {
-    background-color: var(--color-table-body-back);
-  }
-  tr.darken td {
-    background-color: var(--color-table-body-back-darken);
-  }
   td {
     margin: 1px;
     padding: .5rem;
+  }
+  tr td {
+    background-color: var(--color-table-body-back);
+    border-bottom: var(--border-width) solid var(--color-table-border);
+  }
+  tr.darken td {
+    background-color: var(--color-table-body-back-darken);
+    border-bottom: var(--border-width) solid var(--color-table-border-darken);
   }
   td:last-child {
     border-right: 1px solid var(--color-table-border);

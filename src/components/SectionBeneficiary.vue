@@ -1,11 +1,13 @@
 <template>
   <div>
-    <BaseCheckbox
-      style="margin-bottom: .5rem;"
-      label="Show definitions"
-      @click="onClick"
-      :startChecked="true"
-    />
+    <div style="display: flex;">
+      <BaseCheckbox
+        style="margin-bottom: .5rem;"
+        label="Show definitions"
+        @click="onClick"
+        :startChecked="true"
+      />
+    </div>
     <div class="table-wrap">
       <TableBeneficiary :showDefinitions="showDefinitions"/>
     </div>

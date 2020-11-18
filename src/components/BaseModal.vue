@@ -105,7 +105,7 @@ export default {
     max-height: 90vh;
     padding: calc(2* var(--length-primary));
     position: relative;
-    background-color: #FFF;
+    background-color: var(--color-modal);
     border-radius: var(--length-primary);
     box-shadow: 0 .4rem 4rem 0 #0008;
   }

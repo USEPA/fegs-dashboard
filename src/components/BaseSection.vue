@@ -34,17 +34,17 @@ export default {
   section {
     padding: var(--length-primary);
     padding-bottom: 2rem;
-    background-color: #FFF;
+    background-color: var(--color-section);
   }
   section:not(:last-child) {
-    margin-bottom: 1px;
+    border-bottom: 1px solid var(--color-section-border);
   }
   h2 {
     margin: 0 0 .5em 0;
   }
   section.disabled h2,
   section.disabled div {
-    color: #888;
+    color: var(--color-text-disabled);
   }
   .msg {
     font-style: italic;

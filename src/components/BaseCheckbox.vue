@@ -80,14 +80,14 @@ input {
   height: 0;
   position: absolute;
   opacity: 0;
+  cursor: inherit;
 }
 
 /* Label */
 label {
-  cursor: pointer;
+  cursor: inherit;
 }
 .container[disabled] label {
-  cursor: default;
   color: var(--color-text-disabled);
 }
 
@@ -101,6 +101,7 @@ label {
   justify-content: center;
   box-sizing: border-box;
   font-size: 14px;
+  cursor: inherit;
   color: var(--color-text-white);
   border: 1px solid var(--color-input);
   border-radius: 4px;
@@ -146,6 +147,7 @@ label {
 /* Show/hide check mark */
 .container .checkbox * {
   display: none;
+  cursor: inherit;
 }
 .container.checked .checkbox * {
   display: block;

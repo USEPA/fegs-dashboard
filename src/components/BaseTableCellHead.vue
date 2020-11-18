@@ -1,20 +1,17 @@
 <template>
   <th
-    :style="colorBack ? {
-      backgroundColor: `${colorBack}`,
-    } : {}"
+    :style="{
+      backgroundColor: colorBack,
+    }"
     :class="{
+      bordtop: doBorderTop,
       space: isSpace,
-      emphasis: isEmphasis,
-      vert: barVert,
-      horz: barHorz,
-      mydark: darken,
-      nodark: darken === false, // explicit false, not null
+      last: isLastOfGroup,
+      dark: darken,
     }"
     :rowspan="rowspan"
     :colspan="colspan"
-    :aria-hidden="isEmphasis || isSpace"
-    
+    :aria-hidden="isSpace"
   >
     <slot></slot>
   </th>
@@ -34,28 +31,15 @@ export default {
       type: Number,
       default: 1,
     },
-    barVert: Boolean, // skinny vertical cell
-    barHorz: Boolean, // skinny horizontal cell
     isSpace: Boolean, // invisible spacing cell
-    isEmphasis: Boolean, // no content color cell
-    darken: {
-      type: Boolean, // override row setting
-      default: null,
-    }
+    darken: Boolean,
+    isLastOfGroup: Boolean,
+    doBorderTop: Boolean,
   },
 }
 </script>
 
 <style scoped>
-  thead tr:first-child th:not(.space):not(.emphasis) {
-    border-top: 1px solid var(--color-table-border)
-  }
-  thead th {
-    vertical-align: bottom;
-  }
-  tbody th {
-    font-weight: normal;
-  }
   th {
     margin: 1px;
     padding: .5rem;
@@ -63,31 +47,36 @@ export default {
     text-align: left;
     font-weight: bold;
     background-blend-mode: multiply;
-    background-color: var(--color-table-head-back);
-  }
-  thead th {
+    background-color: var(--color-table-head1-back);
     border-bottom: 1px solid var(--color-table-border);
   }
-  th:last-child:not(.emphasis) {
+  th.bordtop {
+    border-top: 1px solid var(--color-table-border);
+  }
+  thead th {
+    vertical-align: bottom;
+    background-color: var(--color-table-head0-back);
+  }
+  tbody th {
+    font-weight: normal;
+  }
+  thead th.last,
+  tbody tr:not(:last-child) th.last {
+    border-bottom: 2px solid var(--color-table-border);
+  }
+  th:last-child:not(.space) {
     border-right: 1px solid var(--color-table-border);
   }
-  tr.darken th:not(.nodark),
-  tr th.mydark {
-    background-image: linear-gradient(90deg, var(--color-table-body-back-darken), var(--color-table-body-back-darken))
+
+  /* darken */
+  th.dark {
+    background-image: linear-gradient(90deg, var(--color-table-body-back-darken), var(--color-table-body-back-darken));
+    border-color: var(--color-table-border-darken);
   }
+
   th.space {
-    background: none;
-    border-top: none;
-    border-right: none;
-  }
-  th.emphasis {
     padding: 0;
+    background: none;
     border: none;
-  }
-  th.vert {
-    padding: 0 0 0 var(--length-primary);
-  }
-  th.horz {
-    padding: 0 0 var(--length-primary) 0;
   }
 </style>

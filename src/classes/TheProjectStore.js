@@ -224,8 +224,8 @@ export default class TheProjectStore {
     this._computeCriterionSection()
   }
   _computeAllCategories() {
-    this._computeCategories(this.data.beneficiarySection.categories, this.data.beneficiarySection.beneficiaries)
-    this._computeCategories(this.data.attributeSection.categories, this.data.attributeSection.attributes)
+    this._computeCategories(this.data.beneficiarySection, 'beneficiaries')
+    this._computeCategories(this.data.attributeSection, 'attributes')
   }
   _computeCriterionSection() { // and dependent sections
     this._computeStakeholderSection()
@@ -307,24 +307,28 @@ export default class TheProjectStore {
       }
     })
   }
-  _computeCategories(categories, alternatives) {
+  _computeCategories(section, key) {
     const counts = {}
-    let even = true // alternate with each category
-    const visitedCategories = new Set()
-    Object.values(alternatives).forEach(alternative => {
-      const categoryName = alternative.categoryName
+    this._setComputed(section[key][section.order[0]], 'isFirstOfCategory', true)
+    for (let i = 0; i < section.order.length; i++) {
+      const name = section.order[i]
+      const item = section[key][name]
+      const categoryName = item.categoryName
       if (categoryName in counts) {
         counts[categoryName]++
       } else {
         counts[categoryName] = 1
-        even = !even // this does assume alternatives are in order
+        const prevItem = (i > 0) ? section[key][section.order[i-1]] : null
+        if (prevItem && categoryName !== prevItem.categoryName) { // different than previous or first item
+          this._setComputed(item, 'isFirstOfCategory', true)
+          this._setComputed(prevItem, 'isLastOfCategory', true)
+        }
       }
-      this._setComputed(alternative, 'evenCategory', even)
-      this._setComputed(alternative, 'firstOfCategory', !visitedCategories.has(categoryName))
-      visitedCategories.add(categoryName)
-    })
-    Object.entries(categories).forEach(([categoryName, category]) => {
-      this._setComputed(category, 'members', counts[categoryName] || 0)
+    }
+    this._setComputed(section[key][section.order[section.order.length-1]], 'isLastOfCategory', true)
+    Object.entries(counts).forEach(([categoryName, count]) => {
+      const category = section.categories[categoryName]
+      this._setComputed(category, 'members', count || 0)
     })
   }
   _renameKey(obj, oldKey, newKey) {

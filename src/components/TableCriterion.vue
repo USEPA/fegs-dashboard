@@ -1,41 +1,44 @@
 <template>
   <BaseTable>
     <template #head>
-      <BaseTableRow
-        colorEmphasis="var(--color-table-head-emphasis)"
-      >
-        <BaseTableCellHead>Criterion</BaseTableCellHead>
-        <BaseTableCellHead>Weight</BaseTableCellHead>
-      </BaseTableRow>
+      <tr>
+        <BaseTableCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseTableCellHead isLastOfGroup doBorderTop>Criterion</BaseTableCellHead>
+        <BaseTableCellHead isLastOfGroup doBorderTop>Weight</BaseTableCellHead>
+      </tr>
     </template>
     <template #body>
-      <BaseTableRow
+      <tr
         v-for="(criterion, index) in criterionArray"
         :key="criterion.name"
-        :colorEmphasis="criterion.color.primary"
-        :darken="index%2 === 1"
       >
+        <BaseTableCellEmphasis
+          :colorBack="criterion.color.primary"
+        />
         <BaseTableCellHead
           style="width: 8rem;"
         >
           {{ criterion.name }}
         </BaseTableCellHead>
         <BaseTableCellDataField
+          :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
+          :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
           @input="onDataInput(criterion.name, $event)"
           @change="onDataChange(criterion.name, $event)"
           @key-enter="onDataKeyEnter(index)"
-          :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
-          :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
         />
-      </BaseTableRow>
+      </tr>
     </template>
   </BaseTable>
 </template>
 
 <script>
 import BaseTable from './BaseTable.vue'
-import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
 import BaseTableCellDataField from './BaseTableCellDataField.vue'
 
 import input from './mixins/input.js'
@@ -47,8 +50,8 @@ export default {
   name: 'TableCriterion',
   components: {
     BaseTable,
-    BaseTableRow,
     BaseTableCellHead,
+    BaseTableCellEmphasis,
     BaseTableCellDataField,
   },
   mixins: [input],

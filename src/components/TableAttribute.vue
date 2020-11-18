@@ -1,37 +1,45 @@
 <template>
   <BaseTable>
     <template #head>
-      <BaseTableRow :doEmphasis="false">
-        <BaseTableCellHead
-          :barHorz="true"
-          :isSpace="true"
-        />
-        <BaseTableCellHead
-          :barHorz="true"
-          :isSpace="true"
-        />
+      <tr>
+        <BaseTableCellHead isSpace/>
+        <BaseTableCellHead isSpace/>
+        <BaseTableCellHead isSpace/>
         <BaseTableCellHead
           v-if="showDefinitions"
-          :barHorz="true"
-          :isSpace="true"
+          isSpace
         />
-        <template>
-          <BaseTableCellHead
-            v-for="beneficiary in currentBeneficiaryArray"
-            :key="beneficiary.name"
-            :colorBack="beneficiary.category.color.primary"
-            :barHorz="true"
-            :isEmphasis="true"
-          />
-        </template>
-      </BaseTableRow>
-      <BaseTableRow
-        colorEmphasis="var(--color-table-head-emphasis)"
-      >
-        <BaseTableCellHead :rowspan="2">Category</BaseTableCellHead>
-        <BaseTableCellHead :rowspan="2">Subcategory</BaseTableCellHead>
+        <BaseTableCellEmphasis
+          v-for="beneficiary in currentBeneficiaryArray"
+          noBorder
+          isHorz
+          :key="beneficiary.name"
+          :colorBack="beneficiary.category.color.primary"
+        />
+      </tr>
+      <tr>
+        <BaseTableCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          noBorder
+        />
+        <BaseTableCellHead
+          isLastOfGroup
+          doBorderTop
+          :rowspan="2"
+        >
+          Category
+        </BaseTableCellHead>
+        <BaseTableCellHead
+          isLastOfGroup
+          doBorderTop
+          :rowspan="2"
+        >
+          Subcategory
+        </BaseTableCellHead>
         <BaseTableCellHead
           v-if="showDefinitions"
+          isLastOfGroup
+          doBorderTop
           :rowspan="2"
         >
           Definition
@@ -43,44 +51,49 @@
           <BaseSelect
             style="font-weight: bold;"
             label="Beneficiary"
-            @change="onMetricChange"
             :options="beneficiaryCategories"
+            @change="onMetricChange"
           />
         </BaseTableCellHead>
-      </BaseTableRow>
-      <BaseTableRow
-        colorEmphasis="var(--color-table-head-emphasis)"
-      >
-        <template>
-          <BaseTableCellHead
-            style="max-width: 8rem; font-weight: normal; text-align: center;"
-            v-for="beneficiary in currentBeneficiaryArray"
-            :key="beneficiary.name"
-            :colorBack="beneficiary.category.color.lighter"
-          >
-            {{ beneficiary.name }}
-          </BaseTableCellHead>
-        </template>
-      </BaseTableRow>
+      </tr>
+      <tr>
+        <BaseTableCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseTableCellHead
+          v-for="beneficiary in currentBeneficiaryArray"
+          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          isLastOfGroup
+          :key="beneficiary.name"
+          :colorBack="beneficiary.category.color.lighter"
+        >
+          {{ beneficiary.name }}
+        </BaseTableCellHead>
+      </tr>
     </template>
     <template #body>
-      <BaseTableRow
+      <tr
         v-for="(attribute, index) in attributeArray"
         :key="attribute.name"
-        :colorEmphasis="attribute.category.color.primary"
-        :darken="index%2 === 1"
       >
+        <BaseTableCellEmphasis
+          :colorBack="attribute.category.color.primary"
+          :noBorder="!attribute.computed.isLastOfCategory"
+          :isLastOfGroup="attribute.computed.isLastOfCategory"
+        />
         <BaseTableCellHead
+          v-if="attribute.computed.isFirstOfCategory"
           style="max-width: 6rem;"
-          v-if="attribute.computed.firstOfCategory"
+          :isLastOfGroup="attribute.categoryName !== lastCategory"
           :rowspan="attribute.category.computed.members"
-          :darken="true"
         >
           {{ attribute.categoryName }}
         </BaseTableCellHead>
         <BaseTableCellHead
           style="max-width: 16rem;"
-          colorBack="var(--color-table-head-back)"
+          colorBack="var(--color-table-head1-back)"
+          :isLastOfGroup="attribute.computed.isLastOfCategory"
         >
           {{ attribute.name }}
         </BaseTableCellHead>
@@ -88,21 +101,21 @@
           v-if="showDefinitions"
           style="max-width: 20rem;"
           colorBack="var(--color-table-head2-back)"
+          :isLastOfGroup="attribute.computed.isLastOfCategory"
         >
           {{ attribute.def }}
         </BaseTableCellHead>
-        <template>
-          <BaseTableCellDataField
-            v-for="beneficiary in currentBeneficiaryArray"
-            @input="onDataInput(attribute.name, beneficiary.name, $event)"
-            @change="onDataChange(attribute.name, beneficiary.name, $event)"
-            @key-enter="onDataKeyEnter(index)"
-            :key="beneficiary.name"
-            :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[editing.colName])"
-            :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
-          />
-        </template>
-      </BaseTableRow>
+        <BaseTableCellDataField
+          v-for="beneficiary in currentBeneficiaryArray"
+          :key="beneficiary.name"
+          :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
+          :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
+          :isLastOfGroup="attribute.computed.isLastOfCategory"
+          @input="onDataInput(attribute.name, beneficiary.name, $event)"
+          @change="onDataChange(attribute.name, beneficiary.name, $event)"
+          @key-enter="onDataKeyEnter(index)"
+        />
+      </tr>
     </template>
   </BaseTable>
 </template>
@@ -114,8 +127,8 @@ import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
 import BaseTableCellData from './BaseTableCellData.vue'
 import BaseTableCellDataField from './BaseTableCellDataField.vue'
 
@@ -133,8 +146,8 @@ export default {
     BaseModal,
     BaseSelect,
     BaseTable,
-    BaseTableRow,
     BaseTableCellHead,
+    BaseTableCellEmphasis,
     BaseTableCellData,
     BaseTableCellDataField,
   },
@@ -171,6 +184,9 @@ export default {
     attributeArray() {
       return project.getAttributeArray()
     },
+    lastCategory() {
+      return this.attributeArray[this.attributeArray.length - 1].categoryName
+    }
   },
   methods: {
     onMetricChange(event) {

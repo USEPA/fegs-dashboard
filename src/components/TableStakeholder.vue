@@ -1,45 +1,46 @@
 <template>
   <BaseTable>
     <template #head>
-      <BaseTableRow :doEmphasis="false">
-        <BaseTableCellHead
-          :barHorz="true"
-          :isSpace="true"
-        />
-        <BaseTableCellHead
-          :barHorz="true"
-          :isSpace="true"
-        />
-        <BaseTableCellHead
+      <tr>
+        <BaseTableCellHead isSpace/>
+        <BaseTableCellHead isSpace/>
+        <BaseTableCellHead isSpace/>
+        <BaseTableCellEmphasis
           v-for="criterion in criterionArray"
+          noBorder
+          isHorz
           :key="criterion.name"
-          :barHorz="true"
-          :isEmphasis="true"
           :colorBack="criterion.color.primary"
         />
-      </BaseTableRow>
-      <BaseTableRow
-        colorEmphasis="var(--color-table-head-emphasis)"
-      >
-        <BaseTableCellHead></BaseTableCellHead>
-        <BaseTableCellHead>Stakeholder</BaseTableCellHead>
+      </tr>
+      <tr>
+        <BaseTableCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseTableCellHead isLastOfGroup doBorderTop/>
+        <BaseTableCellHead isLastOfGroup doBorderTop>Stakeholder</BaseTableCellHead>
         <BaseTableCellHead
           v-for="criterion in criterionArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
+          isLastOfGroup
           :key="criterion.name"
         >
           {{ criterion.name }}
         </BaseTableCellHead>
-      </BaseTableRow>
+      </tr>
     </template>
     <template #body>
-      <BaseTableRow
+      <tr
         v-for="(stakeholder, index) in stakeholderArray"
         :key="stakeholder.name"
-        :colorEmphasis="stakeholder.color.primary"
-        :darken="index%2 === 1"
       >
-        <BaseTableCellData>
+        <BaseTableCellEmphasis
+          :colorBack="stakeholder.color.primary"
+        />
+        <BaseTableCellData
+          :darken="index%2 === 1"
+        >
           <BaseButtonIcon
             icon="trash"
             color="danger"
@@ -75,27 +76,29 @@
         </BaseTableCellData>
         <BaseTableCellData
           style="width: 8rem;"
+          :darken="index%2 === 1"
         >
           <BaseField
             style="text-align: left;"
-            @input="onNameInput(stakeholder.name, $event)"
-            @change="onNameChange(stakeholder.name, $event)"
-            @key-enter="onNameKeyEnter(index)"
             :value="isEditing(stakeholder.name, 'name') ? editing.val : stakeholder.name"
             :validationMsg="isEditing(stakeholder.name, 'name') ? editing.err : ''"
             :doSelectAll="true"
+            @input="onNameInput(stakeholder.name, $event)"
+            @change="onNameChange(stakeholder.name, $event)"
+            @key-enter="onNameKeyEnter(index)"
           />
         </BaseTableCellData>
         <BaseTableCellDataField
           v-for="criterion in criterionArray"
-          @input="onDataInput(stakeholder.name, criterion.name, $event)"
-          @change="onDataChange(stakeholder.name, criterion.name, $event)"
-          @key-enter="onDataKeyEnter(index)"
           :key="criterion.name"
           :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
           :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
+          :darken="index%2 === 1"
+          @input="onDataInput(stakeholder.name, criterion.name, $event)"
+          @change="onDataChange(stakeholder.name, criterion.name, $event)"
+          @key-enter="onDataKeyEnter(index)"
         />
-      </BaseTableRow>
+      </tr>
     </template>
   </BaseTable>
 </template>
@@ -106,8 +109,8 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
+import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
 import BaseTableCellData from './BaseTableCellData.vue'
 import BaseTableCellDataField from './BaseTableCellDataField.vue'
 
@@ -124,8 +127,8 @@ export default {
     BaseField,
     BaseModal,
     BaseTable,
-    BaseTableRow,
     BaseTableCellHead,
+    BaseTableCellEmphasis,
     BaseTableCellData,
     BaseTableCellDataField,
   },

@@ -201,6 +201,7 @@ export default {
     width: 100%;
     height: 0;
     position: fixed;
+    z-index: 100;
     box-shadow: 0 0 3px 3px #0003;
   }
   .shadow.hide {
@@ -210,7 +211,7 @@ export default {
     z-index: 1;
     white-space: nowrap;
     color: var(--color-text-white);
-    background-color: #212121;
+    background-color: var(--color-nav);
   }
   nav ul {
     margin: 0;

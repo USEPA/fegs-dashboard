@@ -44,7 +44,7 @@ export default {
 <style>
 @import './styles/style.css';
 #app {
-  background-color: #CCC;
+  background-color: var(--color-main);
 }
 *, *::after, *::before {
 	-webkit-user-select: none;
