@@ -44,6 +44,7 @@
           <BaseButtonIcon
             icon="trash"
             color="danger"
+            hint="Delete Stakeholder"
             @click="onBeginDelete(stakeholder.name)"
           />
           <BaseModal

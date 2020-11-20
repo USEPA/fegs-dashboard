@@ -1,5 +1,10 @@
 <template>
-  <button ref="btn" :style="styleObj" v-on:click="onClick" >
+  <button
+    ref="btn"
+    :style="styleObj"
+    :title="hint"
+    @click="onClick"
+  >
     <FontAwesomeIcon :icon="icon"/>
   </button>
 </template>
@@ -24,6 +29,7 @@ export default {
         ].includes(val)
       },
     },
+    hint: String,
     doBlurOnClick: {
       type: Boolean,
       default: false,
@@ -54,9 +60,10 @@ export default {
     width: 1.2em;
     height: 1.2em;
     padding: .2em;
-    display: flex;
+    text-align: center;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
     cursor: pointer;
     color: var(--color-button);
     border-radius: 1em;

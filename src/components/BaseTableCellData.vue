@@ -45,7 +45,7 @@ export default {
     border-bottom: 1px solid var(--color-table-border);
   }
   tr:not(:last-child) td.last {
-    border-bottom: 2px solid var(--color-table-border);
+    border-bottom: 2px solid var(--color-table-border-thick);
   }
   td:last-child:not(.space) {
     border-right: 1px solid var(--color-table-border);

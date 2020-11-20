@@ -60,7 +60,6 @@ import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableRow from './BaseTableRow.vue'
 import BaseTableCellHead from './BaseTableCellHead.vue'
 import BaseTableCellData from './BaseTableCellData.vue'
 
@@ -78,7 +77,6 @@ export default {
     BaseModal,
     BaseSelect,
     BaseTable,
-    BaseTableRow,
     BaseTableCellHead,
     BaseTableCellData,
   },

@@ -38,6 +38,7 @@ export default class TheProjectStore {
   getSaveable() {
     return Util.cloneObj(this.data, ['computed']) // remove computed values  
   }
+
   getCriterionArray() {
     return this._getSectionArray(this.data.criterionSection, 'criteria')
   }
@@ -51,6 +52,37 @@ export default class TheProjectStore {
     return this._getSectionArray(this.data.attributeSection, 'attributes')
   }
 
+  getCriterionPieContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    this.getCriterionArray().forEach(criterion => {
+      const label = (short && criterion.shortName) ? criterion.shortName : criterion.name
+      data.push({ label, value: criterion.result })
+      colors[label] = criterion.color.primary
+    })
+    return { data, colors }
+  }
+  getBeneficiaryPieContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    Object.entries(this.data.beneficiarySection.categories).forEach(([categoryName, category]) => {
+      const label = (short && category.shortName) ? category.shortName : categoryName
+      data.push({ label, value: category.computed.result })
+      colors[label] = category.color.primary
+    })
+    return { data, colors }
+  }
+  getAttributePieContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    Object.entries(this.data.attributeSection.categories).forEach(([categoryName, category]) => {
+      const label = (short && category.shortName) ? category.shortName : categoryName
+      data.push({ label, value: category.computed.result })
+      colors[label] = category.color.primary
+    })
+    return { data, colors }
+  }
+
   setProjectName(name) { 
     this.data.meta.name = name
     this._modified()
@@ -59,6 +91,7 @@ export default class TheProjectStore {
     this.data.meta.description = desc
     this._modified()
   }
+
   setCriterionNotes(notes) {
     this.data.criterionSection.notes = notes
     this._modified()
@@ -75,6 +108,16 @@ export default class TheProjectStore {
     this.data.attributeSection.notes = notes
     this._modified()
   }
+
+  setBeneficiaryShowDefs(show) {
+    this.data.beneficiarySection.showDefs = show
+    this._modified()
+  }
+  setAttributeShowDefs(show) {
+    this.data.attributeSection.showDefs = show
+    this._modified()
+  }
+
   setCriterionResult(criterionName, val) {
     if (!(criterionName in this.data.criterionSection.criteria)) {
       throw new Error(`Cannot find criterion "${criterionName}".`) // programmer error
@@ -117,6 +160,7 @@ export default class TheProjectStore {
       if (this.autoCompute) this._computeAttributeSection()
     }
   }
+
   setStakeholderName(oldName, newName) {
     if (!(oldName in this.data.stakeholderSection.stakeholders)) {
       throw new Error(`Cannot find stakeholder "${oldName}".`) // programmer error
@@ -250,62 +294,77 @@ export default class TheProjectStore {
     this._setComputed(this.data.stakeholderSection, 'colorsRemain', [...remain])
   }
   _computeStakeholderResults() {
-    this._computeResults(this.data.criterionSection.criteria, this.data.stakeholderSection.stakeholders, { doScoresWeighted: true })
+    this._computeResults({
+      metricSection: this.data.criterionSection,
+      metricKey: 'criteria',
+      alternativeSection: this.data.stakeholderSection,
+      alternativeKey: 'stakeholders',
+      hasCategories: false,
+    })
   }
   _computeBeneficiaryResults() {
-    this._computeResults(this.data.stakeholderSection.stakeholders, this.data.beneficiarySection.beneficiaries, { doScoresWeighted: true })
+    this._computeResults({
+      metricSection: this.data.stakeholderSection,
+      metricKey: 'stakeholders',
+      alternativeSection: this.data.beneficiarySection,
+      alternativeKey: 'beneficiaries',
+      hasCategories: true,
+    })
   }
   _computeAttributeResults() {
-    this._computeResults(this.data.beneficiarySection.beneficiaries, this.data.attributeSection.attributes, { doCategoriesWeighted: true })
+    this._computeResults({
+      metricSection: this.data.beneficiarySection,
+      metricKey: 'beneficiaries',
+      alternativeSection: this.data.attributeSection,
+      alternativeKey: 'attributes',
+      hasCategories: true,
+    })
   }
-  _computeResults(metrics, alternatives, { doCategoriesWeighted=false, doScoresWeighted=false }={}) {
+  _computeResults({ metricSection, metricKey, alternativeSection, alternativeKey, hasCategories=false }={}) {
     const cleanMetrics = {} // map: metric name -> non-null weight
     let weightSum = 0
-    Object.entries(metrics).forEach(([metricName, val]) => {
+    Object.entries(metricSection[metricKey]).forEach(([metricName, val]) => {
       const weight = Util.deepGet(val, ['result']) || Util.deepGet(val, ['computed', 'result']) || 0
       weightSum += weight
       cleanMetrics[metricName] = weight
     })
 
-    Object.values(alternatives).forEach(alternative => {
-      const categoriesWeighted = {}
+    const categoryResults = {}
+    Object.values(alternativeSection[alternativeKey]).forEach(alternative => {
+      const categoryName = alternative.categoryName // may be undefined
       const scoresWeighted = {}
+      
       let hasScore = false
       let sum = 0
       Object.entries(alternative.scores).forEach(([metric, val]) => {
-        const categoryName = metrics[metric].categoryName // may be undefined
-        if (doCategoriesWeighted && !(categoryName in categoriesWeighted)) {
-          categoriesWeighted[categoryName] = null
-        }
-        if (doScoresWeighted) {
-          scoresWeighted[metric] = null
-        }
         if (Util.isNum(val)) {
           hasScore = true
           const scoreWeighted = cleanMetrics[metric]*val
           sum += scoreWeighted
-          if (doCategoriesWeighted) {
-            if (categoriesWeighted[categoryName] !== null) {
-              categoriesWeighted[categoryName] += scoreWeighted
-            } else {
-              categoriesWeighted[categoryName] = scoreWeighted
-            }
-          }
-          if (doScoresWeighted) {
-            scoresWeighted[metric] = scoreWeighted
-          }
+          scoresWeighted[metric] = scoreWeighted
         }
       })
+
       const result = sum/weightSum // normalize
       const cleanResult = (hasScore && Util.isNum(result)) ? result : null
+
+      if (hasCategories && hasScore) {
+        if (categoryName in categoryResults) {
+          categoryResults[categoryName] += result
+        } else {
+          categoryResults[categoryName] = result
+        }
+      }
+
       this._setComputed(alternative, 'result', cleanResult)
-      if (doCategoriesWeighted) {
-        this._setComputed(alternative, 'categoriesWeighted', categoriesWeighted)
-      }
-      if (doScoresWeighted) {
-        this._setComputed(alternative, 'scoresWeighted', scoresWeighted)
-      }
+      this._setComputed(alternative, 'scoresWeighted', scoresWeighted)
     })
+
+    if (hasCategories) {
+      Object.entries(alternativeSection.categories).forEach(([categoryName, category]) => {
+        this._setComputed(category, 'result', categoryResults[categoryName] || null)
+      })
+    }
   }
   _computeCategories(section, key) {
     const counts = {}
@@ -506,6 +565,7 @@ export default class TheProjectStore {
       },
       beneficiarySection: {
         notes: 'section notes',
+        showDefs: true,
         order: [],
         categories: {
           // 'category name': {
@@ -753,6 +813,7 @@ export default class TheProjectStore {
       },
       attributeSection: {
         notes: 'section notes',
+        showDefs: true,
         order: [],
         categories: {
           // 'category name': {

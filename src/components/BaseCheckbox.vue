@@ -1,9 +1,9 @@
 <template>
   <div
     class="container"
-    @click.prevent="onClick"
     :class="{checked:isChecked}"
     :disabled="isDisabled"
+    @click.prevent="onClick"
   >
     <input
       ref="input"

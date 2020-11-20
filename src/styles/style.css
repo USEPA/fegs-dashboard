@@ -18,6 +18,41 @@ order {
 */
 
 
+/* Fonts */
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    url("../assets/fonts/sourcesanspro-regular-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-regular-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: italic;
+  font-weight: normal;
+  src:
+    url("../assets/fonts/sourcesanspro-italic-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-italic-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    url("../assets/fonts/sourcesanspro-bold-webfont.woff2") format("woff2"),
+    url("../assets/fonts/sourcesanspro-bold-webfont.woff") format("woff");
+}
+@font-face {
+  font-family: "Merriweather";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    url("../assets/fonts/merriweather-bold-webfont.woff2") format("woff2"),
+    url("../assets/fonts/merriweather-bold-webfont.woff") format("woff");
+}
+
+
 /* Constants */
 :root {
   --color-main: #FFF;
@@ -32,8 +67,9 @@ order {
   --color-section: #0000;
   --color-section-border: #CCC;
 
-  --color-table-border: #0004;
-  --color-table-border-darken: #0003; /* should look the same when on darkened row */
+  --color-table-border: #0003;
+  --color-table-border-darken: #0002; /* should look the same when on darkened row */
+  --color-table-border-thick: #0004;
   --color-table-back: #FFF;
   --color-table-head0-back: #CCC;
   --color-table-head1-back: #EEE;
@@ -73,41 +109,9 @@ order {
 
   --length-primary: 8px;
   --length-secondary: 4px;
-}
 
-
-/* Fonts */
-@font-face {
-  font-family: "Source Sans Pro";
-  font-style: normal;
-  font-weight: normal;
-  src:
-    url("../assets/fonts/sourcesanspro-regular-webfont.woff2") format("woff2"),
-    url("../assets/fonts/sourcesanspro-regular-webfont.woff") format("woff");
-}
-@font-face {
-  font-family: "Source Sans Pro";
-  font-style: italic;
-  font-weight: normal;
-  src:
-    url("../assets/fonts/sourcesanspro-italic-webfont.woff2") format("woff2"),
-    url("../assets/fonts/sourcesanspro-italic-webfont.woff") format("woff");
-}
-@font-face {
-  font-family: "Source Sans Pro";
-  font-style: normal;
-  font-weight: bold;
-  src:
-    url("../assets/fonts/sourcesanspro-bold-webfont.woff2") format("woff2"),
-    url("../assets/fonts/sourcesanspro-bold-webfont.woff") format("woff");
-}
-@font-face {
-  font-family: "Merriweather";
-  font-style: normal;
-  font-weight: bold;
-  src:
-    url("../assets/fonts/merriweather-bold-webfont.woff2") format("woff2"),
-    url("../assets/fonts/merriweather-bold-webfont.woff") format("woff");
+  --font-family-text: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  --font-family-head: "Merriweather", Cambria, serif;
 }
 
 
@@ -118,12 +122,12 @@ body {
 
 /* Text */
 p, input, div {
-  font: 16px "Source Sans Pro", Helvetica, Arial, sans-serif;
+  font: 16px var(--font-family-text);
   color: var(--color-text-black);
 }
 h1, h2, h3, h4, h5 {
   margin: 1em 0 .5em 0;
-  font-family: "Merriweather", Cambria, serif;
+  font-family: var(--font-family-head);
   font-weight: bold;
   color: var(--color-text-header);
 }
@@ -131,5 +135,5 @@ h1 { font-size: 2.2rem; }
 h2 { font-size: 1.7rem; }
 h3 { font-size: 1.2rem; }
 h4 { font-size: 1rem; }
-h5 { font: bold 1rem "Source Sans Pro", Helvetica, Arial, sans-serif; }
+h5 { font: bold 1rem var(--font-family-text); }
 p {font-size: 1rem; }

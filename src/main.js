@@ -1,38 +1,17 @@
 import Vue from 'vue'
 import AppElectron from './AppElectron.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheck,
-  faEdit,
-  faTimes,
-  faTrash,
-  faDownload,
-  faCircle,
-  faExclamationCircle,
-  faChevronDown,
-  faChevronRight
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faEdit, faTimes, faTrash, faDownload, faCircle, faExclamationCircle, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 
 import { project, misc } from './store.js'
 
-// IMPORTANT! Don't use any node modules in the render process, wrap them in preload.js instead.
+// IMPORTANT! Don't use any node modules in the render process, use IPC if possible, otherwise wrap the module in preload.js.
 
 
 // Setup Font Awesome icons.
-library.add( // add each icon here after importing
-  faCheck,
-  faEdit,
-  faTimes,
-  faTrash,
-  faDownload,
-  faCircle,
-  farCircle,
-  faExclamationCircle,
-  faChevronDown,
-  faChevronRight
-) 
+library.add(faCheck, faEdit, faTimes, faTrash, faDownload, faCircle, farCircle, faExclamationCircle, faChevronDown, faChevronRight) // add each icon here after importing
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
@@ -58,11 +37,13 @@ if (process.env.IS_ELECTRON) {
       case 'new':
         project.new()
         send('name', project.data.meta.name)
+        window.scroll({ top: 0 })
         break
       case 'load':
         try {
           project.load(data)
           send('name', project.data.meta.name)
+          window.scroll({ top: 0 })
         } catch (error) {
           console.error(`Error: ${error.message}`) // TODO: handle elegantly?
         }

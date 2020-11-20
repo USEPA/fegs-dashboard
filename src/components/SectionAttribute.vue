@@ -5,17 +5,26 @@
         style="margin-bottom: .5rem;"
         label="Show definitions"
         @click="onClick"
-        :startChecked="true"
       />
     </div>
-    <div class="table-wrap">
+    <div class="full">
       <TableAttribute :showDefinitions="showDefinitions"/>
+    </div>
+    <div class="full">
+      <BaseChartPie
+        title="Environmental Attributes Relative Priority"
+        :width="1080"
+        :height="300"
+        :data="pieContent.data"
+        :colors="pieContent.colors"
+      />
     </div>
   </div>
 </template>
 
 
 <script>
+import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import TableAttribute from './TableAttribute.vue'
 
@@ -25,28 +34,27 @@ import { project } from '../store.js'
 export default {
   name: 'SectionAttribute',
   components: {
+    BaseChartPie,
     BaseCheckbox,
     TableAttribute,
   },
-  data() {
-    return {
-      showDefinitions: true,
-    }
-  },
   computed: {
-    
+    showDefinitions() {
+      console.log(project.data.attributeSection.showDefs)
+      return project.data.attributeSection.showDefs
+    },
+    pieContent() {
+      return project.getAttributePieContent()
+    },
   },
   methods: {
     onClick(event) {
-      this.showDefinitions = event
-    }
+      project.setAttributeShowDefs(event)
+    },
   },
 }
 </script>
 
 <style scoped>
-  .table-wrap {
-    margin: 0 calc(-1 * var(--length-primary));
-    overflow-x: auto;
-  }
+
 </style>

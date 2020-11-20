@@ -32,8 +32,7 @@ export default {
 
 <style scoped>
   section {
-    padding: var(--length-primary);
-    padding-bottom: 2rem;
+    padding: 1rem var(--length-primary) 2rem var(--length-primary);
     background-color: var(--color-section);
   }
   section:not(:last-child) {
@@ -54,6 +53,7 @@ export default {
 <style>
   div.full {
     margin: 0 calc(-1 * var(--length-primary));
-    overflow: auto;
+    display: block;
+    overflow-x: auto;
   }
 </style>

@@ -87,7 +87,8 @@ export default class Util {
 
   // round a number to the specified decimal place
   static round(num, decimals=0) {
-    return Math.round(num*Math.pow(10, decimals))/Math.pow(10, decimals)
+    const mult = Math.pow(10, decimals)
+    return Math.round(num * mult) / mult
   }
 
   // call a potentially undefined function

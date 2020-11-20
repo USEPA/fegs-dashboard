@@ -87,9 +87,18 @@
         </div>
       </div>
     </BaseModal>
-    <div class="table-wrap">
+    <div class="full">
       <TableStakeholder
         v-if="hasStakeholders"
+      />
+    </div>
+    <div class="full">
+      <BaseChartPie
+        title="Prioritization Criterion Relative Weights"
+        :width="1080"
+        :height="300"
+        :data="pieContent.data"
+        :colors="pieContent.colors"
       />
     </div>
   </div>
@@ -98,6 +107,7 @@
 
 <script>
 import BaseButton from './BaseButton.vue'
+import BaseChartPie from './BaseChartPie.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
@@ -116,6 +126,7 @@ export default {
   name: 'SectionStakeholder',
   components: {
     BaseButton,
+    BaseChartPie,
     BaseField,
     BaseModal,
     BaseTable,
@@ -153,7 +164,10 @@ export default {
     },
     isDev() {
       return Util.isDev()
-    }
+    },
+    pieContent() {
+      return project.getCriterionPieContent()
+    },
   },
   methods: {
     onNameInput(event) {
@@ -228,10 +242,6 @@ export default {
 </script>
 
 <style scoped>
-  .table-wrap {
-    margin: 0 calc(-1 * var(--length-primary));
-    overflow-x: auto;
-  }
   div.criterion {
     margin-bottom: 2rem;
   }

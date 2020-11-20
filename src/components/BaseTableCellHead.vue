@@ -62,7 +62,7 @@ export default {
   }
   thead th.last,
   tbody tr:not(:last-child) th.last {
-    border-bottom: 2px solid var(--color-table-border);
+    border-bottom: 2px solid var(--color-table-border-thick);
   }
   th:last-child:not(.space) {
     border-right: 1px solid var(--color-table-border);
