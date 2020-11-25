@@ -15,9 +15,7 @@
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
 
-// TODO link/button component
-// TODO icon
-// TODO various states
+// TODO various states?
 export default {
   name: 'NavItem',
   components: {

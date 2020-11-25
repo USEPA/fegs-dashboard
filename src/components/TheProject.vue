@@ -76,7 +76,6 @@ import SectionDeveloper from './SectionDeveloper.vue'
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
 
-// TODO page scroll nav state management
 export default {
   name: 'TheProject',
   components: {
@@ -188,6 +187,7 @@ export default {
 <style scoped>
   #project {
     width: 100%;
+    max-width: 2000px;
     display: flex;
     flex-flow: row;
     align-items: stretch;
@@ -202,7 +202,7 @@ export default {
     height: 0;
     position: fixed;
     z-index: 100;
-    box-shadow: 0 0 3px 3px #0003;
+    box-shadow: 0 0 6px 6px #0001;
   }
   .shadow.hide {
     box-shadow: none;

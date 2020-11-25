@@ -40,10 +40,6 @@
             {{ d.label }} ({{ d.percent }}%)
           </text>
         </g>
-        <!-- <path
-          style="fill: white"
-          :d="`M${radii.slice-20},0 A${radii.slice-20},${radii.slice-20},0,1,1,${radii.slice-20},0 Z`"
-        /> -->
       </g>
     </svg>
   </BaseChart>

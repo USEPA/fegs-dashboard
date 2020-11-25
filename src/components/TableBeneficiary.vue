@@ -56,8 +56,8 @@
         <BaseTableCellHead
           v-if="beneficiary.computed.isFirstOfCategory"
           style="max-width: 6rem;"
-          :isLastOfGroup="beneficiary.categoryName !== lastCategory"
-          :colorBack="beneficiary.category.color.lighter"
+          isLastOfGroup
+          :colorBack="beneficiary.category.color.light"
           :rowspan="beneficiary.category.computed.members"
         >
           {{ beneficiary.categoryName }}
@@ -65,7 +65,7 @@
         <BaseTableCellHead
           style="max-width: 16rem;"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :colorBack="beneficiary.category.color.lighter"
+          :colorBack="beneficiary.category.color.light"
         >
           {{ beneficiary.name }}
         </BaseTableCellHead>
@@ -73,7 +73,7 @@
           v-if="showDefinitions"
           style="max-width: 20rem;"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :colorBack="beneficiary.category.color.lightest"
+          :colorBack="beneficiary.category.color.lighter"
         >
           {{ beneficiary.def }}
         </BaseTableCellHead>

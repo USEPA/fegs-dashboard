@@ -44,16 +44,18 @@ export default {
     background-color: var(--color-table-body-back);
     border-bottom: 1px solid var(--color-table-border);
   }
-  tr:not(:last-child) td.last {
-    border-bottom: 2px solid var(--color-table-border-thick);
+  td.last {
+    border-bottom: var(--length-border-thick) solid var(--color-table-border-thick);
+  }
+  td.last.dark {
+    border-bottom: var(--length-border-thick) solid var(--color-table-border-thick-darken);
   }
   td:last-child:not(.space) {
     border-right: 1px solid var(--color-table-border);
   }
 
-  /* darken */
   td.dark {
-    background-image: linear-gradient(90deg, var(--color-table-body-back-darken), var(--color-table-body-back-darken));
+    background-image: linear-gradient(90deg, var(--color-table-back-darken), var(--color-table-back-darken));
     border-color: var(--color-table-border-darken);
   }
 

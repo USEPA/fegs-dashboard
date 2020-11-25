@@ -4,6 +4,7 @@
       <BaseCheckbox
         style="margin-bottom: .5rem;"
         label="Show definitions"
+        :isChecked="showDefinitions"
         @click="onClick"
       />
     </div>
@@ -40,7 +41,6 @@ export default {
   },
   computed: {
     showDefinitions() {
-      console.log(project.data.attributeSection.showDefs)
       return project.data.attributeSection.showDefs
     },
     pieContent() {

@@ -4,6 +4,7 @@
       <BaseCheckbox
         style="margin-bottom: .5rem;"
         label="Show definitions"
+        :isChecked="showDefinitions"
         @click="onClick"
       />
     </div>
@@ -30,8 +31,6 @@ import TableBeneficiary from './TableBeneficiary.vue'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
-
-// TODO add iswrapped flag to checkbox, same thing as field
 
 export default {
   name: 'SectionBeneficiary',

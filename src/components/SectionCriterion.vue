@@ -3,8 +3,8 @@
     <div style="display: flex;" class="full">
       <TableCriterion/>
       <BaseChartPie
-        style="margin-left: 1rem;"
-        :width="780"
+        style="margin-left: .5rem;"
+        :width="700"
         :height="340"
         :data="pieContent.data"
         :colors="pieContent.colors"

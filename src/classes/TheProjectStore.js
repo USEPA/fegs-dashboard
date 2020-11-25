@@ -19,11 +19,15 @@ export default class TheProjectStore {
   load(data) {
     // ...validate, check version, etc
     const version = Util.deepGet(data, ['meta', 'version'])
+    const [major, minor, patch] = version.split('.').map(str => parseInt(str))
     if (version !== '2.0.0') {
       throw Error(`Unsupported file version "${version}"`)
     }
+    
+    const dataCopy = Util.cloneObj(data)
 
-    this.data = Util.cloneObj(data)
+    // TODO make file validation robust
+    this.data = dataCopy
     this.modified = false
     this._computeAll()
   }
@@ -573,72 +577,72 @@ export default class TheProjectStore {
           //   def: 'category definition',
           //   color: {
           //     primary: '#777',
-          //     lighter: '#CCC',
-          //     lightest: '#EEE',
+          //     light: '#CCC',
+          //     lighter: '#EEE',
           //   },
           // },
 
           'Agricultural': {
             color: {
               primary: 'rgb(255,133,82)',
-              lighter: 'rgb(245,208,168)',
-              lightest: 'rgb(250,231,211)',
+              light: 'rgb(245,208,168)',
+              lighter: 'rgb(250,231,211)',
             },
           },
           'Commercial / Industrial': {
             color: {
               primary: 'rgb(219,58,52)',
-              lighter: 'rgb(242,145,141)',
-              lightest: 'rgb(248,200,198)',
+              light: 'rgb(242,145,141)',
+              lighter: 'rgb(248,200,198)',
             },
           },
           'Governmental / Municipal / Residential': {
             color: {
               primary: 'rgb(180,111,236)',
-              lighter: 'rgb(248,194,248)',
-              lightest: 'rgb(251,224,251)',
+              light: 'rgb(248,194,248)',
+              lighter: 'rgb(251,224,251)',
             },
           },
           'Transportation': {
             color: {
               primary: 'rgb(102,0,7)',
-              lighter: 'rgb(184,122,127)',
-              lightest: 'rgb(219,188,191)',
+              light: 'rgb(184,122,127)',
+              lighter: 'rgb(219,188,191)',
             },
           },
           'Subsistence': {
             color: {
               primary: 'rgb(115,194,190)',
-              lighter: 'rgb(176,235,232)',
-              lightest: 'rgb(215,245,243)',
+              light: 'rgb(176,235,232)',
+              lighter: 'rgb(215,245,243)',
             },
           },
           'Recreational': {
             color: {
               primary: 'rgb(144,39,83)',
-              lighter: 'rgb(234,153,187)',
-              lightest: 'rgb(224,204,221)',
+              light: 'rgb(234,153,187)',
+              lighter: 'rgb(224,204,221)',
             },
           },
           'Inspirational': {
             color: {
               primary: 'rgb(62,142,97)',
-              lighter: 'rgb(153,203,175)',
-              lightest: 'rgb(204,229,215)',
+              light: 'rgb(153,203,175)',
+              lighter: 'rgb(204,229,215)',
             },
           },
           'Learning': {
             color: {
               primary: 'rgb(233,215,88)',
-              lighter: 'rgb(243,243,151)',
-              lightest: 'rgb(249,249,203)',
+              light: 'rgb(243,243,151)',
+              lighter: 'rgb(249,249,203)',
             },
           },
           'Non-Use': {
             color: {
               primary: 'rgb(27,64,121)',
-              lighter: 'rgb(145,169,207)',
-              lightest: 'rgb(200,212,231)',
+              light: 'rgb(145,169,207)',
+              lighter: 'rgb(200,212,231)',
             },
           },
         },

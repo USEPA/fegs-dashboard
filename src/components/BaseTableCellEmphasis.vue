@@ -51,9 +51,8 @@ export default {
   th.bord {
     border-bottom: 1px solid var(--color-table-border);
   }
-  thead th.bord.last,
-  tbody tr:not(:last-child) th.bord.last {
-    border-bottom: 2px solid var(--color-table-border-thick);
+  th.last.bord {
+    border-bottom: var(--length-border-thick) solid var(--color-table-border-thick);
   }
   th.vert {
     padding: 0 0 0 var(--length-primary);

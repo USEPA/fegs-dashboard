@@ -19,7 +19,7 @@
           :colorBack="criterion.color.primary"
         />
         <BaseTableCellHead
-          style="width: 8rem;"
+          style="max-width: 20rem;"
         >
           {{ criterion.name }}
         </BaseTableCellHead>

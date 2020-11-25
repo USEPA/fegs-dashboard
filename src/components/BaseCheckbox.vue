@@ -1,7 +1,7 @@
 <template>
   <div
     class="container"
-    :class="{checked:isChecked}"
+    :class="{ checked: switchChecked}"
     :disabled="isDisabled"
     @click.prevent="onClick"
   >
@@ -30,7 +30,7 @@ import { uid } from '../store.js'
 export default {
   name: 'BaseCheckbox',
   props: {
-    startChecked: {
+    isChecked: {
       type: Boolean,
       default: false,
     },
@@ -39,18 +39,27 @@ export default {
       default: false,
     },
     label: String,
+    isWrapped: { // whether this component's value is managed externally
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
-      isChecked: this.startChecked,
+      localChecked: this.isChecked,
       id: uid.next(),
     }
+  },
+  computed: {
+    switchChecked() {
+      return (this.isWrapped) ? this.isChecked : this.localChecked
+    },
   },
   methods: {
     onClick(event) {
       if (!this.isDisabled) {
-        this.isChecked = !this.isChecked
-        this.$emit('click', this.isChecked)
+        if (!this.isWrapped) this.localChecked = !this.localChecked
+        this.$emit('click', !this.switchChecked)
         this.$refs.input.focus() // keyboard uses underlying element
       }
     },

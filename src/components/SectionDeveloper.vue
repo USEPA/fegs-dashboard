@@ -3,8 +3,8 @@
     <h3>Checkboxes</h3>
     <div style="margin-bottom: .5rem; display: flex;">
       <!-- <input id="id-01" type="checkbox"/> -->
-      <BaseCheckbox :startChecked="check1" v-on:click="check(1, $event)"/>
-      <BaseCheckbox :startChecked="check2" :isDisabled="disable2" label="Sample label" v-on:click="check(2, $event)"/>
+      <BaseCheckbox :isChecked="check1" v-on:click="check(1, $event)"/>
+      <BaseCheckbox :isChecked="check2" :isDisabled="disable2" label="Sample label" v-on:click="check(2, $event)"/>
     </div>
     <BaseCodeBlock :content="checkMsg"/>
     <h3>Buttons</h3>

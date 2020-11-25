@@ -46,7 +46,7 @@
         </BaseTableCellHead>
         <BaseTableCellHead
           :colspan="currentBeneficiaryCategory.computed.members"
-          :colorBack="currentBeneficiaryCategory.color.lighter"
+          :colorBack="currentBeneficiaryCategory.color.light"
         >
           <BaseSelect
             style="font-weight: bold;"
@@ -66,7 +66,7 @@
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
           :key="beneficiary.name"
-          :colorBack="beneficiary.category.color.lighter"
+          :colorBack="beneficiary.category.color.light"
         >
           {{ beneficiary.name }}
         </BaseTableCellHead>
@@ -85,7 +85,7 @@
         <BaseTableCellHead
           v-if="attribute.computed.isFirstOfCategory"
           style="max-width: 6rem;"
-          :isLastOfGroup="attribute.categoryName !== lastCategory"
+          isLastOfGroup
           :rowspan="attribute.category.computed.members"
         >
           {{ attribute.categoryName }}
