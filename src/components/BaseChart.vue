@@ -4,13 +4,14 @@
   >
     <h3 v-if="title">
       {{ title }}
-      <!-- <BaseButtonIcon
+      <BaseButtonIcon
+        v-if="downloadable"
         style="display: inline;"
         icon="download"
         hint="Download Chart"
         doBlurOnClick
         @click="beginDownload"
-      /> -->
+      />
     </h3>
     <div
       ref="chart"
@@ -33,6 +34,7 @@ export default {
   props: {
     title: String,
     width: String,
+    downloadable: Boolean,
   },
   methods: {
     beginDownload() {

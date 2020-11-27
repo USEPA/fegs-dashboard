@@ -94,6 +94,7 @@
     </div>
     <div class="full">
       <BaseChartPie
+        v-if="hasStakeholders"
         title="Prioritization Criterion Relative Weights"
         :width="1080"
         :height="300"

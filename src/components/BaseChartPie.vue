@@ -3,6 +3,7 @@
     ref="parent"
     :title="title"
     :width="`${width}px`"
+    :downloadable="hasData"
   >
     <svg
       width="100%"
@@ -10,7 +11,10 @@
       preserveAspectRatio="xMidYMid meet"
       :viewBox="`0 0 ${width} ${height}`" 
     >
-      <g :transform="`translate(${width/2}, ${height/2})`">
+      <g
+        v-if="hasData"
+        :transform="`translate(${width/2}, ${height/2})`"
+      >
         <g class="slices">
           <path
             v-for="d in drawableData"
@@ -41,6 +45,21 @@
           </text>
         </g>
       </g>
+      <g
+        v-else
+        :transform="`translate(${width/2}, ${height/2})`"
+      >
+        <path
+          :style="{ fill: 'var(--color-chart-placeholder)' }"
+          :d="`M${-radii.slice},0 A${radii.slice},${radii.slice},0,1,1,${-radii.slice},0.00001 Z`"
+        />
+        <text
+          dy=".35em"
+          :style="{ textAnchor: 'middle', fill: 'var(--color-text-disabled)' }"
+        >
+          No data
+        </text>
+      </g>
     </svg>
   </BaseChart>
 </template>
@@ -69,15 +88,22 @@ export default {
       const slice = bend - 10 // radius of pie slices
       return { total, bend, slice }
     },
+    hasData() {
+      if (!(this.data && this.data.length > 0)) return false
+      for (let d of this.data) {
+        if (d.value > 0) return true
+      }
+      return false
+    },
     drawableData() {
       const cleanData = this.data.filter(d => d.value > 0).sort((a, b) => b.value - a.value) // non-zero data ordered from large to small
-      const sum = this.data.reduce((acc, item) => acc + item.value, 0) // sum of data values
+      const sum = this.data.reduce((acc, d) => acc + d.value, 0) // sum of data values
 
       const ret = []
       let prevAngle = Math.PI
 
       cleanData.forEach(({ label, value }) => {
-        const nextAngle = (prevAngle + (value / sum) * Math.PI * 2) % (Math.PI * 2)
+        const nextAngle = (prevAngle + (value / sum) * Math.PI * 2 - 0.00001) % (Math.PI * 2)
         const midAngle = (prevAngle + (value / sum) * Math.PI) % (Math.PI * 2)
         const labelSign = (midAngle > Math.PI * 0.5 && midAngle < Math.PI * 1.5) ? -1 : 1
 

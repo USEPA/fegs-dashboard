@@ -17,7 +17,9 @@
 </template>
 
 <script>
+
 // TODO compute colors instead of hard-coding them... might still need "primary" and "light" at least
+
 export default {
   name: 'BaseTableCellHead',
   props: {

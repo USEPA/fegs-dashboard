@@ -77,6 +77,8 @@ order {
   --color-table-head2-back: #EEE;
   --color-table-head-emphasis: #777;
 
+  --color-chart-placeholder: #EEE;
+
   --color-input: #888;
   --color-input-hover: #555;
   --color-input-active: #111;
