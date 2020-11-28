@@ -2,45 +2,60 @@
   <BaseTable>
     <template #head>
       <tr>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellHead
           v-if="showDefinitions"
           isSpace
         />
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           noBorder
           isHorz
           :colorBack="currentStakeholder.color.primary"
         />
       </tr>
       <tr>
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           colorBack="var(--color-table-head-emphasis)"
           isLastOfGroup
+          :rowspan="2"
         />
-        <BaseTableCellHead isLastOfGroup doBorderTop>
+        <BaseCellHead 
+          isLastOfGroup
+          :rowspan="2"
+        >
           Category
-        </BaseTableCellHead>
-        <BaseTableCellHead isLastOfGroup doBorderTop>
+        </BaseCellHead>
+        <BaseCellHead 
+          isLastOfGroup
+          :rowspan="2"
+        >
           Subcategory
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           v-if="showDefinitions"
           isLastOfGroup
-          doBorderTop
+          :rowspan="2"
         >
           Definition
-        </BaseTableCellHead>
-        <BaseTableCellHead isLastOfGroup>
+        </BaseCellHead>
+        <BaseCellHead>
           <BaseSelect
             style="font-weight: bold;"
             label="Stakeholder"
             :options="stakeholderNames"
             @change="onMetricChange"
           />
-        </BaseTableCellHead>
+        </BaseCellHead>
+      </tr>
+      <tr>
+        <BaseCellHead
+          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          isLastOfGroup
+        >
+          {{ scaleUp(percentages[currentStakeholderName]) }}%
+        </BaseCellHead>
       </tr>
     </template>
     <template #body>
@@ -48,12 +63,12 @@
         v-for="(beneficiary, index) in beneficiaryArray"
         :key="beneficiary.name"
       >
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           :colorBack="beneficiary.category.color.primary"
           :noBorder="!beneficiary.computed.isLastOfCategory"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
         />
-        <BaseTableCellHead
+        <BaseCellHead
           v-if="beneficiary.computed.isFirstOfCategory"
           style="max-width: 6rem;"
           isLastOfGroup
@@ -61,23 +76,23 @@
           :rowspan="beneficiary.category.computed.members"
         >
           {{ beneficiary.categoryName }}
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           style="max-width: 16rem;"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
           :colorBack="beneficiary.category.color.light"
         >
           {{ beneficiary.name }}
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           v-if="showDefinitions"
           style="max-width: 20rem;"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
           :colorBack="beneficiary.category.color.lighter"
         >
           {{ beneficiary.def }}
-        </BaseTableCellHead>
-        <BaseTableCellDataField
+        </BaseCellHead>
+        <BaseCellDataField
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
           :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[currentStakeholderName])"
           :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
@@ -85,6 +100,27 @@
           @change="onDataChange(beneficiary.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+      </tr>
+    </template>
+    <template #foot>
+      <tr>
+        <BaseCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseCellHead
+          isLastOfGroup
+          style="text-align: right;"
+          :colspan="showDefinitions ? 3 : 2"
+        >
+          Total
+        </BaseCellHead>
+        <BaseCellData
+          style="font-weight: bold;"
+          isLastOfGroup
+        >
+          {{ scaleUp(scoreTotals[currentStakeholderName]) }}
+        </BaseCellData>
       </tr>
     </template>
   </BaseTable>
@@ -97,10 +133,10 @@ import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
-import BaseTableCellDataField from './BaseTableCellDataField.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 
 import input from './mixins/input.js'
 
@@ -116,10 +152,10 @@ export default {
     BaseModal,
     BaseSelect,
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellEmphasis,
-    BaseTableCellData,
-    BaseTableCellDataField,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
   },
   mixins: [input],
   props: {
@@ -145,12 +181,26 @@ export default {
       }
       return project.data.stakeholderSection.stakeholders[this.currentStakeholderName]
     },
+    stakeholderArray() {
+      return project.getStakeholderArray()
+    },
     beneficiaryArray() {
       return project.getBeneficiaryArray()
     },
     lastCategory() {
       return this.beneficiaryArray[this.beneficiaryArray.length - 1].categoryName
-    }
+    },
+    scoreTotals() {
+      return project.data.beneficiarySection.computed.scoreTotals
+    },
+    percentages() {
+      const ret = {}
+      const sum = project.data.stakeholderSection.computed.resultTotal
+      this.stakeholderArray.forEach(stakeholder => {
+        ret[stakeholder.name] = stakeholder.computed.result/sum
+      })
+      return ret
+    },
   },
   methods: {
     onMetricChange(event) {

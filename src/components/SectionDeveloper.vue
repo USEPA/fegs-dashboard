@@ -60,8 +60,8 @@ import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellData from './BaseCellData.vue'
 
 import Util from '../classes/Util.js'
 import { project, misc } from '../store.js'
@@ -77,8 +77,8 @@ export default {
     BaseModal,
     BaseSelect,
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellData,
+    BaseCellHead,
+    BaseCellData,
   },
   data() {
     return {

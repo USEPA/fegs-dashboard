@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'BaseTableCellData',
+  name: 'BaseCellData',
   props: {
     colorBack: String,
     rowspan: {
@@ -41,8 +41,11 @@ export default {
     position: relative;
     text-align: center;
     background-blend-mode: multiply;
-    background-color: var(--color-table-body-back);
+    background-color: var(--color-table-back);
     border-bottom: 1px solid var(--color-table-border);
+  }
+  tfoot td {
+    background-color: var(--color-table-head0-back);
   }
   td.last {
     border-bottom: var(--length-border-thick) solid var(--color-table-border-thick);

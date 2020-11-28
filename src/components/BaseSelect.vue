@@ -58,7 +58,6 @@ export default {
   select {
     min-width: 8rem;
     height: 1.75rem;
-    font-size: .9rem; /* appears to be 1rem... no idea why */
     border: 1px solid var(--color-input);
     border-radius: 4px;
     outline: none;

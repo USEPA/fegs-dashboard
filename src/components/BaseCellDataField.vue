@@ -1,5 +1,5 @@
 <template>
-  <BaseTableCellData
+  <BaseCellData
     v-bind="{ colorBack, rowspan, colspan, isSpace, darken, isLastOfGroup }"
   >
     <BaseField
@@ -12,18 +12,18 @@
       :isWrapped="true"
       :doSelectAll="true"
     />
-  </BaseTableCellData>
+  </BaseCellData>
 </template>
 
 <script>
 import BaseField from './BaseField.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
+import BaseCellData from './BaseCellData.vue'
 
 export default {
-  name: 'BaseTableCellDataField',
+  name: 'BaseCellDataField',
   components: {
     BaseField,
-    BaseTableCellData,
+    BaseCellData,
   },
   props: {
     value: [String, Number],

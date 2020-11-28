@@ -21,7 +21,7 @@
 // TODO compute colors instead of hard-coding them... might still need "primary" and "light" at least
 
 export default {
-  name: 'BaseTableCellHead',
+  name: 'BaseCellHead',
   props: {
     colorBack: String,
     rowspan: {
@@ -49,7 +49,8 @@ export default {
     background-color: var(--color-table-head1-back);
     border-bottom: 1px solid var(--color-table-border);
   }
-  thead th {
+  thead th,
+  tfoot th {
     vertical-align: bottom;
     background-color: var(--color-table-head0-back);
   }

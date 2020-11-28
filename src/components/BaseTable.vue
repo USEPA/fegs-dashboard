@@ -48,4 +48,8 @@ export default {
     border-spacing: 0;
     background-color: var(--color-table-back);
   }
+  tfoot tr:first-child th,
+  tfoot tr:first-child td {
+    border-top: var(--length-border-summation) solid var(--color-table-border-summation);
+  }
 </style>

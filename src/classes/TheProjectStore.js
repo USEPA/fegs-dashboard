@@ -239,10 +239,12 @@ export default class TheProjectStore {
     }
   }
   
-  // the following methods are private (please don't use them externally)
+  // the following methods are PRIVATE
   _modified() {
-    if (!this.modified) this._onModifiedCallback()
-    this.modified = true
+    if (!this.modified) {
+      this.modified = true
+      Util.safeCall(this._onModifiedCallback)
+    }
   }
   _getSectionArray(section, key) {
     const ret = []
@@ -267,6 +269,7 @@ export default class TheProjectStore {
       obj.computed[key] = val
     }
   }
+
   _computeAll() {
     this._computeAllCategories()
     this._computeCriterionSection()
@@ -276,6 +279,7 @@ export default class TheProjectStore {
     this._computeCategories(this.data.attributeSection, 'attributes')
   }
   _computeCriterionSection() { // and dependent sections
+    this._computeCriterionResultTotal()
     this._computeStakeholderSection()
   }
   _computeStakeholderSection() { // and dependent sections
@@ -289,6 +293,14 @@ export default class TheProjectStore {
   }
   _computeAttributeSection() {
     this._computeAttributeResults()
+  }
+
+  _computeCriterionResultTotal() {
+    let total = 0
+    Object.values(this.data.criterionSection.criteria).forEach(criterion => {
+      total += criterion.result || 0
+    })
+    this._setComputed(this.data.criterionSection, 'resultTotal', Util.round(total, 4))
   }
   _computeStakeholderColors() {
     const remain = new Set(this.data.stakeholderSection.colors)
@@ -324,33 +336,39 @@ export default class TheProjectStore {
       hasCategories: true,
     })
   }
+
   _computeResults({ metricSection, metricKey, alternativeSection, alternativeKey, hasCategories=false }={}) {
-    const cleanMetrics = {} // map: metric name -> non-null weight
+    const cleanMetrics = {} // { metricName: nonNullWeight }
+    const scoreTotals = {} // { metricName: scoreTotal }
     let weightSum = 0
     Object.entries(metricSection[metricKey]).forEach(([metricName, val]) => {
       const weight = Util.deepGet(val, ['result']) || Util.deepGet(val, ['computed', 'result']) || 0
       weightSum += weight
       cleanMetrics[metricName] = weight
+      scoreTotals[metricName] = 0
     })
 
     const categoryResults = {}
+    let resultTotal = 0
     Object.values(alternativeSection[alternativeKey]).forEach(alternative => {
       const categoryName = alternative.categoryName // may be undefined
       const scoresWeighted = {}
       
       let hasScore = false
       let sum = 0
-      Object.entries(alternative.scores).forEach(([metric, val]) => {
-        if (Util.isNum(val)) {
+      Object.entries(alternative.scores).forEach(([metricName, score]) => {
+        if (Util.isNum(score)) {
           hasScore = true
-          const scoreWeighted = cleanMetrics[metric]*val
+          const scoreWeighted = cleanMetrics[metricName]*score
           sum += scoreWeighted
-          scoresWeighted[metric] = scoreWeighted
+          scoresWeighted[metricName] = scoreWeighted
+          scoreTotals[metricName] += score
         }
       })
 
       const result = sum/weightSum // normalize
       const cleanResult = (hasScore && Util.isNum(result)) ? result : null
+      resultTotal += cleanResult || 0 // don't add null
 
       if (hasCategories && hasScore) {
         if (categoryName in categoryResults) {
@@ -363,6 +381,12 @@ export default class TheProjectStore {
       this._setComputed(alternative, 'result', cleanResult)
       this._setComputed(alternative, 'scoresWeighted', scoresWeighted)
     })
+
+    Object.entries(scoreTotals).forEach(([metricName, scoreTotal]) => {
+      scoreTotals[metricName] = Util.round(scoreTotal, 4)
+    })
+    this._setComputed(alternativeSection, 'scoreTotals', scoreTotals)
+    this._setComputed(alternativeSection, 'resultTotal', resultTotal)
 
     if (hasCategories) {
       Object.entries(alternativeSection.categories).forEach(([categoryName, category]) => {
@@ -400,6 +424,7 @@ export default class TheProjectStore {
     this._delProp(obj, oldKey)
     this._addProp(obj, newKey, newVal)
   }
+
   _template() {
     const data = {
       meta: {
@@ -411,15 +436,6 @@ export default class TheProjectStore {
         notes: 'section notes',
         order: [],
         criteria: {
-          // 'criteria name': {
-          //   shortName: 'short name',
-          //   def: 'criterion definition',
-          //   tip: 'criterion tooltip',
-          //   color: {
-          //     primary: '#777',
-          //   }
-          // },
-
           'Magnitude & Probability of Impact': {
             shortName: 'Impact',
             min: 'no impact',
@@ -548,40 +564,13 @@ export default class TheProjectStore {
           '#000000',
         ],
         order: [],
-        stakeholders: {
-          // 'stakeholder name': {
-          //   color: {
-          //     primary: '#777',
-          //   },
-          //   scores: {
-          //     'criterion name': 0.1,
-          //     ...etc
-          //   },
-          //   computed: {
-          //     result: 0.1,
-          //   },
-          // },
-          // ...etc
-        },
-        // computed: {
-        //   colorsRemain: []
-        // }
+        stakeholders: {},
       },
       beneficiarySection: {
         notes: 'section notes',
         showDefs: true,
         order: [],
         categories: {
-          // 'category name': {
-          //   shortName: 'shorter name',
-          //   def: 'category definition',
-          //   color: {
-          //     primary: '#777',
-          //     light: '#CCC',
-          //     lighter: '#EEE',
-          //   },
-          // },
-
           'Agricultural': {
             color: {
               primary: 'rgb(255,133,82)',
@@ -647,19 +636,6 @@ export default class TheProjectStore {
           },
         },
         beneficiaries: {
-          // 'beneficiary name': {
-          //   shortName: 'shorter name',
-          //   categoryName: 'category name',
-          //   def: 'beneficiary definition',
-          //   scores: {
-          //     'stakeholder name': 0.1,
-          //     ...etc
-          //   },
-          //   computed: {
-          //     result: 0.1,
-          //   },
-          // },
-
           // Agricultural
           'Livestock Grazers': {
             categoryName: 'Agricultural',
@@ -820,14 +796,6 @@ export default class TheProjectStore {
         showDefs: true,
         order: [],
         categories: {
-          // 'category name': {
-          //   shortName: 'shorter name',
-          //   def: 'category definition',
-          //   color: {
-          //     primary: '#777',
-          //   },
-          // },
-
           'Atmosphere': {
             color: {
               primary: 'rgb(34,181,195)',
@@ -870,19 +838,6 @@ export default class TheProjectStore {
           },
         },
         attributes: {
-          // 'attribute name': {
-          //   shortName: 'shorter name',
-          //   categoryName: 'category name',
-          //   def: 'attribute definition',
-          //   scores: {
-          //     'beneficiary name': 0.1,
-          //     ...etc
-          //   },
-          //   computed: {
-          //     result: 0.1,
-          //   },
-          // },
-          
           // Atmosphere
           'Air Quality': {
             categoryName: 'Atmosphere',

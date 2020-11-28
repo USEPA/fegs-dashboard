@@ -19,7 +19,7 @@
 <script>
 
 export default {
-  name: 'BaseTableCellEmphasis',
+  name: 'BaseCellEmphasis',
   props: {
     colorBack: String,
     rowspan: {

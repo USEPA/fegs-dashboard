@@ -2,14 +2,14 @@
   <BaseTable>
     <template #head>
       <tr>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellHead
           v-if="showDefinitions"
           isSpace
         />
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           v-for="beneficiary in currentBeneficiaryArray"
           noBorder
           isHorz
@@ -18,33 +18,34 @@
         />
       </tr>
       <tr>
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           colorBack="var(--color-table-head-emphasis)"
-          noBorder
+          isLastOfGroup
+          :rowspan="3"
         />
-        <BaseTableCellHead
+        <BaseCellHead
           isLastOfGroup
           doBorderTop
-          :rowspan="2"
+          :rowspan="3"
         >
           Category
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           isLastOfGroup
           doBorderTop
-          :rowspan="2"
+          :rowspan="3"
         >
           Subcategory
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           v-if="showDefinitions"
           isLastOfGroup
           doBorderTop
-          :rowspan="2"
+          :rowspan="3"
         >
           Definition
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           :colspan="currentBeneficiaryCategory.computed.members"
           :colorBack="currentBeneficiaryCategory.color.light"
         >
@@ -54,22 +55,28 @@
             :options="beneficiaryCategories"
             @change="onMetricChange"
           />
-        </BaseTableCellHead>
+        </BaseCellHead>
       </tr>
       <tr>
-        <BaseTableCellEmphasis
-          colorBack="var(--color-table-head-emphasis)"
-          isLastOfGroup
-        />
-        <BaseTableCellHead
+        <BaseCellHead
+          v-for="beneficiary in currentBeneficiaryArray"
+          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          :key="beneficiary.name"
+          :colorBack="currentBeneficiaryCategory.color.light"
+        >
+          {{ beneficiary.name }}
+        </BaseCellHead>
+      </tr>
+      <tr>
+        <BaseCellHead
           v-for="beneficiary in currentBeneficiaryArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
           :key="beneficiary.name"
-          :colorBack="beneficiary.category.color.light"
+          :colorBack="currentBeneficiaryCategory.color.light"
         >
-          {{ beneficiary.name }}
-        </BaseTableCellHead>
+          {{ scaleUp(percentages[beneficiary.name]) }}%
+        </BaseCellHead>
       </tr>
     </template>
     <template #body>
@@ -77,35 +84,35 @@
         v-for="(attribute, index) in attributeArray"
         :key="attribute.name"
       >
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           :colorBack="attribute.category.color.primary"
           :noBorder="!attribute.computed.isLastOfCategory"
           :isLastOfGroup="attribute.computed.isLastOfCategory"
         />
-        <BaseTableCellHead
+        <BaseCellHead
           v-if="attribute.computed.isFirstOfCategory"
           style="max-width: 6rem;"
           isLastOfGroup
           :rowspan="attribute.category.computed.members"
         >
           {{ attribute.categoryName }}
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           style="max-width: 16rem;"
           colorBack="var(--color-table-head1-back)"
           :isLastOfGroup="attribute.computed.isLastOfCategory"
         >
           {{ attribute.name }}
-        </BaseTableCellHead>
-        <BaseTableCellHead
+        </BaseCellHead>
+        <BaseCellHead
           v-if="showDefinitions"
           style="max-width: 20rem;"
           colorBack="var(--color-table-head2-back)"
           :isLastOfGroup="attribute.computed.isLastOfCategory"
         >
           {{ attribute.def }}
-        </BaseTableCellHead>
-        <BaseTableCellDataField
+        </BaseCellHead>
+        <BaseCellDataField
           v-for="beneficiary in currentBeneficiaryArray"
           :key="beneficiary.name"
           :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
@@ -115,6 +122,29 @@
           @change="onDataChange(attribute.name, beneficiary.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+      </tr>
+    </template>
+    <template #foot>
+      <tr>
+        <BaseCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseCellHead
+          isLastOfGroup
+          style="text-align: right;"
+          :colspan="showDefinitions ? 3 : 2"
+        >
+          Total
+        </BaseCellHead>
+        <BaseCellData
+          v-for="beneficiary in currentBeneficiaryArray"
+          style="font-weight: bold;"
+          isLastOfGroup
+          :key="beneficiary.name"
+        >
+          {{ scaleUp(scoreTotals[beneficiary.name]) }}
+        </BaseCellData>
       </tr>
     </template>
   </BaseTable>
@@ -127,10 +157,10 @@ import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
-import BaseTableCellDataField from './BaseTableCellDataField.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 
 import input from './mixins/input.js'
 
@@ -146,10 +176,10 @@ export default {
     BaseModal,
     BaseSelect,
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellEmphasis,
-    BaseTableCellData,
-    BaseTableCellDataField,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
   },
   mixins: [input],
   props: {
@@ -177,16 +207,30 @@ export default {
       return Object.keys(project.data.beneficiarySection.beneficiaries)
     },
     currentBeneficiaryArray() {
-      return project.getBeneficiaryArray().filter(beneficiary => {
+      return this.beneficiaryArray.filter(beneficiary => {
         return (beneficiary.categoryName === this.currentBeneficiaryCategoryName)
       })
+    },
+    beneficiaryArray() {
+      return project.getBeneficiaryArray()
     },
     attributeArray() {
       return project.getAttributeArray()
     },
     lastCategory() {
       return this.attributeArray[this.attributeArray.length - 1].categoryName
-    }
+    },
+    scoreTotals() {
+      return project.data.attributeSection.computed.scoreTotals
+    },
+    percentages() {
+      const ret = {}
+      const sum = project.data.beneficiarySection.computed.resultTotal
+      this.beneficiaryArray.forEach(beneficiary => {
+        ret[beneficiary.name] = beneficiary.computed.result/sum
+      })
+      return ret
+    },
   },
   methods: {
     onMetricChange(event) {

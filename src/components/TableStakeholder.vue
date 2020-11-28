@@ -2,10 +2,10 @@
   <BaseTable>
     <template #head>
       <tr>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellHead isSpace/>
-        <BaseTableCellEmphasis
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
+        <BaseCellEmphasis
           v-for="criterion in criterionArray"
           noBorder
           isHorz
@@ -14,20 +14,38 @@
         />
       </tr>
       <tr>
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           colorBack="var(--color-table-head-emphasis)"
           isLastOfGroup
+          :rowspan="2"
         />
-        <BaseTableCellHead isLastOfGroup doBorderTop/>
-        <BaseTableCellHead isLastOfGroup doBorderTop>Stakeholder</BaseTableCellHead>
-        <BaseTableCellHead
+        <BaseCellHead
+          isLastOfGroup
+          :rowspan="2"
+        />
+        <BaseCellHead
+          isLastOfGroup
+          :rowspan="2"
+        >
+          Stakeholder
+        </BaseCellHead>
+        <BaseCellHead
+          v-for="criterion in criterionArray"
+          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          :key="criterion.name"
+        >
+          {{ criterion.name }}
+        </BaseCellHead>
+      </tr>
+      <tr>
+        <BaseCellHead
           v-for="criterion in criterionArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
           :key="criterion.name"
         >
-          {{ criterion.name }}
-        </BaseTableCellHead>
+          {{ (resultTotal > 0) ? `${scaleUp(criterion.result/resultTotal)}%` : '—' }}
+        </BaseCellHead>
       </tr>
     </template>
     <template #body>
@@ -35,10 +53,10 @@
         v-for="(stakeholder, index) in stakeholderArray"
         :key="stakeholder.name"
       >
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           :colorBack="stakeholder.color.primary"
         />
-        <BaseTableCellData
+        <BaseCellData
           :darken="index%2 === 1"
         >
           <BaseButtonIcon
@@ -74,8 +92,8 @@
               </BaseButton>
             </div>
           </BaseModal>
-        </BaseTableCellData>
-        <BaseTableCellData
+        </BaseCellData>
+        <BaseCellData
           style="width: 8rem;"
           :darken="index%2 === 1"
         >
@@ -88,8 +106,8 @@
             @change="onNameChange(stakeholder.name, $event)"
             @key-enter="onNameKeyEnter(index)"
           />
-        </BaseTableCellData>
-        <BaseTableCellDataField
+        </BaseCellData>
+        <BaseCellDataField
           v-for="criterion in criterionArray"
           :key="criterion.name"
           :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
@@ -101,6 +119,29 @@
         />
       </tr>
     </template>
+    <!-- <template #foot>
+      <tr>
+        <BaseCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseCellHead
+          isLastOfGroup
+          style="text-align: right;"
+          :colspan="2"
+        >
+          Totals
+        </BaseCellHead>
+        <BaseCellData
+          v-for="criterion in criterionArray"
+          style="font-weight: bold;"
+          isLastOfGroup
+          :key="criterion.name"
+        >
+          {{ scaleUp(scoreTotals[criterion.name]) }}
+        </BaseCellData>
+      </tr>
+    </template> -->
   </BaseTable>
 </template>
 
@@ -110,10 +151,10 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
-import BaseTableCellDataField from './BaseTableCellDataField.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 
 import input from './mixins/input.js'
 
@@ -128,10 +169,10 @@ export default {
     BaseField,
     BaseModal,
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellEmphasis,
-    BaseTableCellData,
-    BaseTableCellDataField,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
   },
   mixins: [input],
   data() {
@@ -151,6 +192,12 @@ export default {
     },
     stakeholderArray() {
       return project.getStakeholderArray()
+    },
+    scoreTotals() {
+      return project.data.stakeholderSection.computed.scoreTotals
+    },
+    resultTotal() {
+      return project.data.criterionSection.computed.resultTotal
     },
   },
   methods: {

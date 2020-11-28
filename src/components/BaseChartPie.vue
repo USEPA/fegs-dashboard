@@ -107,7 +107,7 @@ export default {
         const midAngle = (prevAngle + (value / sum) * Math.PI) % (Math.PI * 2)
         const labelSign = (midAngle > Math.PI * 0.5 && midAngle < Math.PI * 1.5) ? -1 : 1
 
-        // console.log(`${midAngle} ... ${labelSign}`)
+        // TODO some sort of offset for very close labels
 
         ret.push({
           label,

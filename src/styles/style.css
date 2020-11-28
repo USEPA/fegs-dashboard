@@ -70,6 +70,8 @@ order {
   --color-table-border: #0003;
   --color-table-border-darken: #0002; /* should look the same when on darkened row */
   --color-table-border-thick: #0002;
+  --color-table-border-summation: #0003;
+
   --color-table-back: #FFF;
   --color-table-back-darken: #0001;
   --color-table-head0-back: #CCC;
@@ -111,6 +113,7 @@ order {
   --length-primary: 8px;
   --length-secondary: 4px;
   --length-border-thick: 4px;
+  --length-border-summation: 1px;
 
   --font-family-text: "Source Sans Pro", Helvetica, Arial, sans-serif;
   --font-family-head: "Merriweather", Cambria, serif;
@@ -123,7 +126,7 @@ body {
 
 
 /* Text */
-p, input, div {
+div, p, input, select {
   font: 16px var(--font-family-text);
   color: var(--color-text-black);
 }

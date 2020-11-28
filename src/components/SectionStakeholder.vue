@@ -33,13 +33,13 @@
       >
         <template #head>
           <tr>
-            <BaseTableCellEmphasis
+            <BaseCellEmphasis
               colorBack="var(--color-table-head-emphasis)"
               isLastOfGroup
             />
-            <BaseTableCellHead isLastOfGroup doBorderTop>Criterion</BaseTableCellHead>
-            <BaseTableCellHead isLastOfGroup doBorderTop>Instruction</BaseTableCellHead>
-            <BaseTableCellHead isLastOfGroup doBorderTop>Score</BaseTableCellHead>
+            <BaseCellHead isLastOfGroup doBorderTop>Criterion</BaseCellHead>
+            <BaseCellHead isLastOfGroup doBorderTop>Instruction</BaseCellHead>
+            <BaseCellHead isLastOfGroup doBorderTop>Score</BaseCellHead>
           </tr>
         </template>
         <template #body>
@@ -47,11 +47,11 @@
             v-for="criterion in criterionArray"
             :key="criterion.name"
           >
-            <BaseTableCellEmphasis
+            <BaseCellEmphasis
               :colorBack="criterion.color.primary"
             />
-            <BaseTableCellHead>{{ criterion.name }}</BaseTableCellHead>
-            <BaseTableCellHead
+            <BaseCellHead>{{ criterion.name }}</BaseCellHead>
+            <BaseCellHead
               colorBack="var(--color-table-head2-back)"
             >
               {{ criterion.tip }}
@@ -61,8 +61,8 @@
               </span> to 100 <span style="font-style: italic;">
                 ({{ criterion.max }})
               </span>
-            </BaseTableCellHead>
-            <BaseTableCellDataField
+            </BaseCellHead>
+            <BaseCellDataField
               :value="isEditing(criterion.name) ? editing.val : scaleUp(newStakeholderData.scores[criterion.name])"
               :validationMsg="isEditing(criterion.name) ? editing.err : ''"
               @input="onScoreInput(criterion.name, $event)"
@@ -95,7 +95,7 @@
     <div class="full">
       <BaseChartPie
         v-if="hasStakeholders"
-        title="Prioritization Criterion Relative Weights"
+        title="Prioritization Criteria Relative Weights"
         :width="1080"
         :height="300"
         :data="pieContent.data"
@@ -112,10 +112,10 @@ import BaseChartPie from './BaseChartPie.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
-import BaseTableCellData from './BaseTableCellData.vue'
-import BaseTableCellDataField from './BaseTableCellDataField.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 import TableStakeholder from './TableStakeholder.vue'
 
 import input from './mixins/input.js'
@@ -131,10 +131,10 @@ export default {
     BaseField,
     BaseModal,
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellEmphasis,
-    BaseTableCellData,
-    BaseTableCellDataField,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
     TableStakeholder,
   },
   mixins: [input],

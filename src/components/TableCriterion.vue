@@ -2,12 +2,13 @@
   <BaseTable>
     <template #head>
       <tr>
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           colorBack="var(--color-table-head-emphasis)"
           isLastOfGroup
         />
-        <BaseTableCellHead isLastOfGroup doBorderTop>Criterion</BaseTableCellHead>
-        <BaseTableCellHead isLastOfGroup doBorderTop>Weight</BaseTableCellHead>
+        <BaseCellHead isLastOfGroup>Criterion</BaseCellHead>
+        <BaseCellHead isLastOfGroup>Weight</BaseCellHead>
+        <BaseCellHead isLastOfGroup>Result</BaseCellHead>
       </tr>
     </template>
     <template #body>
@@ -15,33 +16,59 @@
         v-for="(criterion, index) in criterionArray"
         :key="criterion.name"
       >
-        <BaseTableCellEmphasis
+        <BaseCellEmphasis
           :colorBack="criterion.color.primary"
         />
-        <BaseTableCellHead
+        <BaseCellHead
           style="max-width: 20rem;"
         >
           {{ criterion.name }}
-        </BaseTableCellHead>
-        <BaseTableCellDataField
+        </BaseCellHead>
+        <BaseCellDataField
           :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
           :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
           @input="onDataInput(criterion.name, $event)"
           @change="onDataChange(criterion.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+        <BaseCellData>
+          {{ (resultTotal > 0) ? `${scaleUp(criterion.result/resultTotal)}%` : '—' }}
+        </BaseCellData>
       </tr>
     </template>
+    <!-- <template #foot>
+      <tr>
+        <BaseCellEmphasis
+          colorBack="var(--color-table-head-emphasis)"
+          isLastOfGroup
+        />
+        <BaseCellHead
+          isLastOfGroup
+          style="text-align: right;"
+        >
+          Total
+        </BaseCellHead>
+        <BaseCellData
+          isLastOfGroup
+          style="font-weight: bold;"
+        >
+          {{ scaleUp(resultTotal) }}
+        </BaseCellData>
+      </tr>
+    </template> -->
   </BaseTable>
 </template>
 
 <script>
 import BaseTable from './BaseTable.vue'
-import BaseTableCellHead from './BaseTableCellHead.vue'
-import BaseTableCellEmphasis from './BaseTableCellEmphasis.vue'
-import BaseTableCellDataField from './BaseTableCellDataField.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 
 import input from './mixins/input.js'
+
+// TODO add "show result" toggle, add result column to other 3 tables
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -50,9 +77,10 @@ export default {
   name: 'TableCriterion',
   components: {
     BaseTable,
-    BaseTableCellHead,
-    BaseTableCellEmphasis,
-    BaseTableCellDataField,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
   },
   mixins: [input],
   data() {
@@ -64,6 +92,9 @@ export default {
     criterionArray() {
       return project.getCriterionArray()
     },
+    resultTotal() {
+      return project.data.criterionSection.computed.resultTotal
+    }
   },
   methods: {
     onDataInput(criterionName, event) {

@@ -155,9 +155,7 @@ export default {
   },
   methods: {
     hasCriteria() {
-      return !Object.values(project.data.criterionSection.criteria).every(criterion => {
-        return (criterion.result === null)
-      })
+      return !Object.values(project.data.criterionSection.criteria).every(criterion => !criterion.result)
     },
     hasStakeholders() {
       return (Object.keys(project.data.stakeholderSection.stakeholders).length > 0)
