@@ -16,6 +16,11 @@
           :key="beneficiary.name"
           :colorBack="beneficiary.category.color.primary"
         />
+        <BaseCellHead
+          v-if="showResults"
+          isSpace
+          :colspan="2"
+        />
       </tr>
       <tr>
         <BaseCellEmphasis
@@ -56,11 +61,22 @@
             @change="onMetricChange"
           />
         </BaseCellHead>
+        <BaseCellHead
+          v-if="showResults"
+          style="text-align: center;"
+          isLastOfGroup
+          doBorderTop
+          :rowspan="3"
+          :colspan="2"
+        >
+          Result
+        </BaseCellHead>
       </tr>
       <tr>
         <BaseCellHead
           v-for="beneficiary in currentBeneficiaryArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
+          :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
           :colorBack="currentBeneficiaryCategory.color.light"
         >
@@ -72,10 +88,11 @@
           v-for="beneficiary in currentBeneficiaryArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
+          :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
           :colorBack="currentBeneficiaryCategory.color.light"
         >
-          {{ scaleUp(percentages[beneficiary.name]) }}%
+          {{ scaleUp(beneficiaryPercentages[beneficiary.name]) }}%
         </BaseCellHead>
       </tr>
     </template>
@@ -106,7 +123,7 @@
         </BaseCellHead>
         <BaseCellHead
           v-if="showDefinitions"
-          style="max-width: 20rem;"
+          style="max-width: 30rem;"
           colorBack="var(--color-table-head2-back)"
           :isLastOfGroup="attribute.computed.isLastOfCategory"
         >
@@ -122,6 +139,22 @@
           @change="onDataChange(attribute.name, beneficiary.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+        <BaseCellData
+          v-if="showResults"
+          colorBack="var(--color-table-head2-back)"
+          style="border-right: none;"
+          :isLastOfGroup="attribute.computed.isLastOfCategory"
+        >
+          {{ scaleUp(attribute.computed.result/resultTotal) }}%
+        </BaseCellData>
+        <BaseCellData
+          v-if="showResults && attribute.computed.isFirstOfCategory"
+          colorBack="var(--color-table-head2-back)"
+          isLastOfGroup
+          :rowspan="attribute.category.computed.members"
+        >
+          {{ scaleUp(attributeCategoryPercentages[attribute.categoryName]) }}%
+        </BaseCellData>
       </tr>
     </template>
     <template #foot>
@@ -145,6 +178,11 @@
         >
           {{ scaleUp(scoreTotals[beneficiary.name]) }}
         </BaseCellData>
+        <BaseCellData
+          v-if="showResults"
+          isLastOfGroup
+          :colspan="2"
+        />
       </tr>
     </template>
   </BaseTable>
@@ -184,6 +222,7 @@ export default {
   mixins: [input],
   props: {
     showDefinitions: Boolean,
+    showResults: Boolean,
   },
   data() {
     return {
@@ -223,11 +262,25 @@ export default {
     scoreTotals() {
       return project.data.attributeSection.computed.scoreTotals
     },
-    percentages() {
+    resultTotal() {
+      return project.data.attributeSection.computed.resultTotal
+    },
+    beneficiaryPercentages() {
       const ret = {}
       const sum = project.data.beneficiarySection.computed.resultTotal
       this.beneficiaryArray.forEach(beneficiary => {
         ret[beneficiary.name] = beneficiary.computed.result/sum
+      })
+      return ret
+    },
+    attributeCategoryPercentages() {
+      const ret = {}
+      const sum = project.data.attributeSection.computed.resultTotal
+      this.attributeArray.forEach(attribute => {
+        if (!(attribute.categoryName in ret)) {
+          ret[attribute.categoryName] = 0
+        }
+        ret[attribute.categoryName] += attribute.computed.result/sum
       })
       return ret
     },

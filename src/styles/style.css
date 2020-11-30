@@ -113,7 +113,7 @@ order {
   --length-primary: 8px;
   --length-secondary: 4px;
   --length-border-thick: 4px;
-  --length-border-summation: 1px;
+  --length-border-summation: 0;
 
   --font-family-text: "Source Sans Pro", Helvetica, Arial, sans-serif;
   --font-family-head: "Merriweather", Cambria, serif;

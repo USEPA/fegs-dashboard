@@ -12,6 +12,10 @@
           :key="criterion.name"
           :colorBack="criterion.color.primary"
         />
+        <BaseCellHead
+          v-if="showResults"
+          isSpace
+        />
       </tr>
       <tr>
         <BaseCellEmphasis
@@ -36,15 +40,23 @@
         >
           {{ criterion.name }}
         </BaseCellHead>
+        <BaseCellHead
+          v-if="showResults"
+          isLastOfGroup
+          :rowspan="2"
+        >
+          Result
+        </BaseCellHead>
       </tr>
       <tr>
         <BaseCellHead
           v-for="criterion in criterionArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
+          :style="{ borderRight: showResults ? 'none' : null }"
           :key="criterion.name"
         >
-          {{ (resultTotal > 0) ? `${scaleUp(criterion.result/resultTotal)}%` : '—' }}
+          {{ (criterionResultTotal > 0) ? `${scaleUp(criterion.result/criterionResultTotal)}%` : '—' }}
         </BaseCellHead>
       </tr>
     </template>
@@ -117,6 +129,12 @@
           @change="onDataChange(stakeholder.name, criterion.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+        <BaseCellData
+          v-if="showResults"
+          :darken="index%2 === 1"
+        >
+          {{ scaleUp(stakeholder.computed.result/stakeholderResultTotal) }}%
+        </BaseCellData>
       </tr>
     </template>
     <!-- <template #foot>
@@ -175,6 +193,9 @@ export default {
     BaseCellDataField,
   },
   mixins: [input],
+  props: {
+    showResults: Boolean,
+  },
   data() {
     return {
       editing: {
@@ -196,8 +217,11 @@ export default {
     scoreTotals() {
       return project.data.stakeholderSection.computed.scoreTotals
     },
-    resultTotal() {
+    criterionResultTotal() {
       return project.data.criterionSection.computed.resultTotal
+    },
+    stakeholderResultTotal() {
+      return project.data.stakeholderSection.computed.resultTotal
     },
   },
   methods: {

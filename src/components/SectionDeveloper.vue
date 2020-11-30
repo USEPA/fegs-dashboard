@@ -3,18 +3,18 @@
     <h3>Checkboxes</h3>
     <div style="margin-bottom: .5rem; display: flex;">
       <!-- <input id="id-01" type="checkbox"/> -->
-      <BaseCheckbox :isChecked="check1" v-on:click="check(1, $event)"/>
-      <BaseCheckbox :isChecked="check2" :isDisabled="disable2" label="Sample label" v-on:click="check(2, $event)"/>
+      <BaseCheckbox :isChecked="check1" @change="check(1, $event)"/>
+      <BaseCheckbox :isChecked="check2" :isDisabled="disable2" label="Sample label" @change="check(2, $event)"/>
     </div>
     <BaseCodeBlock :content="checkMsg"/>
     <h3>Buttons</h3>
     <BaseButton color="primary">
       Sample Button
     </BaseButton>
-    <BaseButton color="success" v-on:click="add">
+    <BaseButton color="success" @click="add">
       Add Stakeholder
     </BaseButton>
-    <BaseButton color="danger" v-on:click="del">
+    <BaseButton color="danger" @click="del">
       Delete Stakeholder
     </BaseButton>
     <BaseButton color="primary" :isDisabled="true">
@@ -28,7 +28,7 @@
       <BaseButtonIcon color="danger" icon="trash"/>
     </div>
     <h3>Fields</h3>
-    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" v-on:input="onFieldInput" content="Sample text" placeholder="Anything"/>
+    <BaseField style="margin: 0 .5rem .5rem 0;" type="text" @input="onFieldInput" content="Sample text" placeholder="Anything"/>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" content="Sample text" placeholder="Disabled"/>
     <BaseCodeBlock :content="textMsg"/>
     <h3>Select</h3>

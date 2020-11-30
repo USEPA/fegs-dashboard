@@ -93,6 +93,7 @@ export default {
   .error {
     width: 12em;
     position: absolute;
+    z-index: 99;
     text-align: left;
     color: var(--color-invalid-input);
   }

@@ -14,6 +14,11 @@
           isHorz
           :colorBack="currentStakeholder.color.primary"
         />
+        <BaseCellHead
+          v-if="showResults"
+          isSpace
+          :colspan="2"
+        />
       </tr>
       <tr>
         <BaseCellEmphasis
@@ -48,13 +53,23 @@
             @change="onMetricChange"
           />
         </BaseCellHead>
+        <BaseCellHead
+          v-if="showResults"
+          style="text-align: center;"
+          isLastOfGroup
+          :rowspan="2"
+          :colspan="2"
+        >
+          Result
+        </BaseCellHead>
       </tr>
       <tr>
         <BaseCellHead
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
+          :style="{ borderRight: showResults ? 'none' : null }"
         >
-          {{ scaleUp(percentages[currentStakeholderName]) }}%
+          {{ scaleUp(stakeholderPercentages[currentStakeholderName]) }}%
         </BaseCellHead>
       </tr>
     </template>
@@ -86,7 +101,7 @@
         </BaseCellHead>
         <BaseCellHead
           v-if="showDefinitions"
-          style="max-width: 20rem;"
+          style="max-width: 30rem;"
           :isLastOfGroup="beneficiary.computed.isLastOfCategory"
           :colorBack="beneficiary.category.color.lighter"
         >
@@ -100,6 +115,22 @@
           @change="onDataChange(beneficiary.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
+        <BaseCellData
+          v-if="showResults"
+          style="border-right: none;"
+          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
+          :colorBack="beneficiary.category.color.lighter"
+        >
+          {{ scaleUp(beneficiary.computed.result/resultTotal) }}%
+        </BaseCellData>
+        <BaseCellData
+          v-if="showResults && beneficiary.computed.isFirstOfCategory"
+          isLastOfGroup
+          :colorBack="beneficiary.category.color.lighter"
+          :rowspan="beneficiary.category.computed.members"
+        >
+          {{ scaleUp(beneficiaryCategoryPercentages[beneficiary.categoryName]) }}%
+        </BaseCellData>
       </tr>
     </template>
     <template #foot>
@@ -121,6 +152,11 @@
         >
           {{ scaleUp(scoreTotals[currentStakeholderName]) }}
         </BaseCellData>
+        <BaseCellData
+          v-if="showResults"
+          isLastOfGroup
+          :colspan="2"
+        />
       </tr>
     </template>
   </BaseTable>
@@ -160,6 +196,7 @@ export default {
   mixins: [input],
   props: {
     showDefinitions: Boolean,
+    showResults: Boolean,
   },
   data() {
     return {
@@ -193,11 +230,25 @@ export default {
     scoreTotals() {
       return project.data.beneficiarySection.computed.scoreTotals
     },
-    percentages() {
+    resultTotal() {
+      return project.data.beneficiarySection.computed.resultTotal
+    },
+    stakeholderPercentages() {
       const ret = {}
       const sum = project.data.stakeholderSection.computed.resultTotal
       this.stakeholderArray.forEach(stakeholder => {
         ret[stakeholder.name] = stakeholder.computed.result/sum
+      })
+      return ret
+    },
+    beneficiaryCategoryPercentages() {
+      const ret = {}
+      const sum = project.data.beneficiarySection.computed.resultTotal
+      this.beneficiaryArray.forEach(beneficiary => {
+        if (!(beneficiary.categoryName in ret)) {
+          ret[beneficiary.categoryName] = 0
+        }
+        ret[beneficiary.categoryName] += beneficiary.computed.result/sum
       })
       return ret
     },

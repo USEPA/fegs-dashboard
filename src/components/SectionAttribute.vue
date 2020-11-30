@@ -5,11 +5,20 @@
         style="margin-bottom: .5rem;"
         label="Show definitions"
         :isChecked="showDefinitions"
-        @click="onClick"
+        @change="onShowDefinitionChange"
+      />
+      <BaseCheckbox
+        style="margin-bottom: .5rem; margin-left: 1rem;"
+        label="Show results"
+        :isChecked="showResults"
+        @change="onShowResultChange"
       />
     </div>
     <div class="full">
-      <TableAttribute :showDefinitions="showDefinitions"/>
+      <TableAttribute
+        :showDefinitions="showDefinitions"
+        :showResults="showResults"
+      />
     </div>
     <div class="full">
       <BaseChartPie
@@ -43,13 +52,19 @@ export default {
     showDefinitions() {
       return project.data.attributeSection.showDefs
     },
+    showResults() {
+      return project.data.attributeSection.showResults
+    },
     pieContent() {
       return project.getAttributePieContent()
     },
   },
   methods: {
-    onClick(event) {
+    onShowDefinitionChange(event) {
       project.setAttributeShowDefs(event)
+    },
+    onShowResultChange(event) {
+      project.setAttributeShowResults(event)
     },
   },
 }

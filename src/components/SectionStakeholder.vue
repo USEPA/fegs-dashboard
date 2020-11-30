@@ -87,9 +87,18 @@
         </div>
       </div>
     </BaseModal>
+    <div style="display: flex;">
+      <BaseCheckbox
+        style="margin-bottom: .5rem;"
+        label="Show results"
+        :isChecked="showResults"
+        @change="onShowResultChange"
+      />
+    </div>
     <div class="full">
       <TableStakeholder
         v-if="hasStakeholders"
+        :showResults="showResults"
       />
     </div>
     <div class="full">
@@ -109,6 +118,7 @@
 <script>
 import BaseButton from './BaseButton.vue'
 import BaseChartPie from './BaseChartPie.vue'
+import BaseCheckbox from './BaseCheckbox.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseTable from './BaseTable.vue'
@@ -128,6 +138,7 @@ export default {
   components: {
     BaseButton,
     BaseChartPie,
+    BaseCheckbox,
     BaseField,
     BaseModal,
     BaseTable,
@@ -153,6 +164,9 @@ export default {
     }
   },
   computed: {
+    showResults() {
+      return project.data.stakeholderSection.showResults
+    },
     hasStakeholders() {
       return Object.keys(project.data.stakeholderSection.stakeholders).length > 0
     },
@@ -171,6 +185,9 @@ export default {
     },
   },
   methods: {
+    onShowResultChange(event) {
+      project.setStakeholderShowResults(event)
+    },
     onNameInput(event) {
       const { val, err } = this.validateName(event)
       this.editing = {

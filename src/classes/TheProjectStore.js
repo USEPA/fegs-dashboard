@@ -25,6 +25,8 @@ export default class TheProjectStore {
     }
     
     const dataCopy = Util.cloneObj(data)
+    const dataTemplate = this._template()
+    Util.mergeObj(dataCopy, dataTemplate) // add new keys to data
 
     // TODO make file validation robust
     this.data = dataCopy
@@ -119,6 +121,23 @@ export default class TheProjectStore {
   }
   setAttributeShowDefs(show) {
     this.data.attributeSection.showDefs = show
+    this._modified()
+  }
+
+  setCriterionShowResults(show) {
+    this.data.criterionSection.showResults = show
+    this._modified()
+  }
+  setStakeholderShowResults(show) {
+    this.data.stakeholderSection.showResults = show
+    this._modified()
+  }
+  setBeneficiaryShowResults(show) {
+    this.data.beneficiarySection.showResults = show
+    this._modified()
+  }
+  setAttributeShowResults(show) {
+    this.data.attributeSection.showResults = show
     this._modified()
   }
 
@@ -434,6 +453,7 @@ export default class TheProjectStore {
       },
       criterionSection: {
         notes: 'section notes',
+        showResults: false,
         order: [],
         criteria: {
           'Magnitude & Probability of Impact': {
@@ -519,6 +539,7 @@ export default class TheProjectStore {
       },
       stakeholderSection: {
         notes: 'section notes',
+        showResults: false,
         colors: [ // available colors for stakeholders
           '#4cb159',
           '#1287c5',
@@ -569,6 +590,7 @@ export default class TheProjectStore {
       beneficiarySection: {
         notes: 'section notes',
         showDefs: true,
+        showResults: false,
         order: [],
         categories: {
           'Agricultural': {
@@ -794,6 +816,7 @@ export default class TheProjectStore {
       attributeSection: {
         notes: 'section notes',
         showDefs: true,
+        showResults: false,
         order: [],
         categories: {
           'Atmosphere': {

@@ -59,7 +59,7 @@ export default {
     onClick(event) {
       if (!this.isDisabled) {
         if (!this.isWrapped) this.localChecked = !this.localChecked
-        this.$emit('click', !this.switchChecked)
+        this.$emit('change', !this.switchChecked)
         this.$refs.input.focus() // keyboard uses underlying element
       }
     },

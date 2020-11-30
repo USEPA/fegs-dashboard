@@ -8,7 +8,12 @@
         />
         <BaseCellHead isLastOfGroup>Criterion</BaseCellHead>
         <BaseCellHead isLastOfGroup>Weight</BaseCellHead>
-        <BaseCellHead isLastOfGroup>Result</BaseCellHead>
+        <BaseCellHead
+          v-if="showResults"
+          isLastOfGroup
+        >
+          Result
+        </BaseCellHead>
       </tr>
     </template>
     <template #body>
@@ -31,7 +36,10 @@
           @change="onDataChange(criterion.name, $event)"
           @key-enter="onDataKeyEnter(index)"
         />
-        <BaseCellData>
+        <BaseCellData
+          v-if="showResults"
+          colorBack="var(--color-table-head2-back)"
+        >
           {{ (resultTotal > 0) ? `${scaleUp(criterion.result/resultTotal)}%` : '—' }}
         </BaseCellData>
       </tr>
@@ -83,6 +91,9 @@ export default {
     BaseCellDataField,
   },
   mixins: [input],
+  props: {
+    showResults: Boolean,
+  },
   data() {
     return {
       localData: {},
@@ -94,7 +105,7 @@ export default {
     },
     resultTotal() {
       return project.data.criterionSection.computed.resultTotal
-    }
+    },
   },
   methods: {
     onDataInput(criterionName, event) {

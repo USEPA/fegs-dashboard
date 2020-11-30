@@ -43,6 +43,17 @@ export default class Util {
     })
   }
 
+  // add contents of src to dest, optionally overwriting existing values
+  static mergeObj(dest, src, { overwrite=false }={}) {
+    Object.entries(src).forEach(([key, val]) => {
+      if (val && typeof val === 'object' && key in dest) {
+        this.mergeObj(dest[key], val, { overwrite })
+      } else if (!(key in dest) || overwrite) {
+        dest[key] = val
+      }
+    })
+  }
+
   // get a value multiple keys deep in an object, returns undefined if keys are missing
   static deepGet(obj, [key, ...rest]) {
     const val = (typeof obj === 'object' && key in obj) ? obj[key] : undefined
