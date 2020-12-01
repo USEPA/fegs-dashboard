@@ -17,5 +17,11 @@ export default {
     scaleDown(val, { mult=100, decimals=5 }={}) { // val may be null
       return Util.isNum(val) ? Util.round(val/mult, decimals) : null
     },
+    percent(num, sum, { empty='—' }={}) {
+      return sum ? `${this.scaleUp(num/sum)}%` : empty
+    },
+    number(num, { empty='—' }={}) {
+      return Util.isNum(num) ? `${this.scaleUp(num)}` : empty
+    },
   }
 }

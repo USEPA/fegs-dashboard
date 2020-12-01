@@ -5,6 +5,7 @@
         <BaseCellHead isSpace/>
         <BaseCellHead isSpace/>
         <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
         <BaseCellHead
           v-if="showDefinitions"
           isSpace
@@ -26,13 +27,17 @@
           isLastOfGroup
           :rowspan="2"
         />
-        <BaseCellHead 
+        <BaseCellHead
+          isLastOfGroup
+          :rowspan="2"
+        />
+        <BaseCellHead
           isLastOfGroup
           :rowspan="2"
         >
           Category
         </BaseCellHead>
-        <BaseCellHead 
+        <BaseCellHead
           isLastOfGroup
           :rowspan="2"
         >
@@ -69,7 +74,7 @@
           isLastOfGroup
           :style="{ borderRight: showResults ? 'none' : null }"
         >
-          {{ scaleUp(stakeholderPercentages[currentStakeholderName]) }}%
+          {{ percent(currentStakeholder.computed.result, stakeholderResultTotal) }}
         </BaseCellHead>
       </tr>
     </template>
@@ -78,59 +83,132 @@
         v-for="(beneficiary, index) in beneficiaryArray"
         :key="beneficiary.name"
       >
-        <BaseCellEmphasis
-          :colorBack="beneficiary.category.color.primary"
-          :noBorder="!beneficiary.computed.isLastOfCategory"
-          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-        />
-        <BaseCellHead
-          v-if="beneficiary.computed.isFirstOfCategory"
-          style="max-width: 6rem;"
-          isLastOfGroup
-          :colorBack="beneficiary.category.color.light"
-          :rowspan="beneficiary.category.computed.members"
-        >
-          {{ beneficiary.categoryName }}
-        </BaseCellHead>
-        <BaseCellHead
-          style="max-width: 16rem;"
-          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :colorBack="beneficiary.category.color.light"
-        >
-          {{ beneficiary.name }}
-        </BaseCellHead>
-        <BaseCellHead
-          v-if="showDefinitions"
-          style="max-width: 30rem;"
-          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :colorBack="beneficiary.category.color.lighter"
-        >
-          {{ beneficiary.def }}
-        </BaseCellHead>
-        <BaseCellDataField
-          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[currentStakeholderName])"
-          :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
-          @input="onDataInput(beneficiary.name, $event)"
-          @change="onDataChange(beneficiary.name, $event)"
-          @key-enter="onDataKeyEnter(index)"
-        />
-        <BaseCellData
-          v-if="showResults"
-          style="border-right: none;"
-          :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-          :colorBack="beneficiary.category.color.lighter"
-        >
-          {{ scaleUp(beneficiary.computed.result/resultTotal) }}%
-        </BaseCellData>
-        <BaseCellData
-          v-if="showResults && beneficiary.computed.isFirstOfCategory"
-          isLastOfGroup
-          :colorBack="beneficiary.category.color.lighter"
-          :rowspan="beneficiary.category.computed.members"
-        >
-          {{ scaleUp(beneficiaryCategoryPercentages[beneficiary.categoryName]) }}%
-        </BaseCellData>
+        <template v-if="beneficiary.category.expanded">
+          <BaseCellEmphasis
+            v-if="beneficiary.computed.isFirstOfCategory"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.primary"
+            :rowspan="beneficiary.category.computed.members"
+          />
+          <BaseCellHead
+            v-if="beneficiary.computed.isFirstOfCategory"
+            style="padding-right: 0;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.light"
+            :rowspan="beneficiary.category.computed.members"
+          >
+            <BaseButtonIcon
+              icon="chevron-up"
+              color="neutral"
+              hint="Collapse category"
+              doBlurOnClick
+              @click="onExpandChange(beneficiary.categoryName, false)"
+            />
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="beneficiary.computed.isFirstOfCategory"
+            style="max-width: 6rem;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.light"
+            :rowspan="beneficiary.category.computed.members"
+          >
+            {{ beneficiary.categoryName }}
+          </BaseCellHead>
+          <BaseCellHead
+            style="max-width: 16rem; min-width: 10rem;"
+            :isLastOfGroup="beneficiary.computed.isLastOfCategory"
+            :colorBack="beneficiary.category.color.light"
+          >
+            {{ beneficiary.name }}
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="showDefinitions"
+            style="max-width: 30rem; min-width: 16rem;"
+            :isLastOfGroup="beneficiary.computed.isLastOfCategory"
+            :colorBack="beneficiary.category.color.lighter"
+          >
+            {{ beneficiary.def }}
+          </BaseCellHead>
+          <BaseCellDataField
+            :isLastOfGroup="beneficiary.computed.isLastOfCategory"
+            :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[currentStakeholderName])"
+            :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
+            @input="onDataInput(beneficiary.name, $event)"
+            @change="onDataChange(beneficiary.name, $event)"
+            @key-enter="onDataKeyEnter(index)"
+          />
+          <BaseCellData
+            v-if="showResults"
+            style="border-right: none;"
+            :isLastOfGroup="beneficiary.computed.isLastOfCategory"
+            :colorBack="beneficiary.category.color.lighter"
+          >
+            {{ percent(beneficiary.computed.result, beneficiaryResultTotal) }}
+          </BaseCellData>
+          <BaseCellData
+            v-if="showResults && beneficiary.computed.isFirstOfCategory"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.lighter"
+            :rowspan="beneficiary.category.computed.members"
+          >
+            {{ percent(beneficiary.category.computed.result, beneficiaryResultTotal) }}
+          </BaseCellData>
+        </template>
+        <template v-else-if="beneficiary.computed.isFirstOfCategory">
+          <BaseCellEmphasis
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.primary"
+          />
+          <BaseCellHead
+            style="padding-right: 0;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.light"
+          >
+            <BaseButtonIcon
+              icon="chevron-down"
+              color="neutral"
+              hint="Expand category"
+              doBlurOnClick
+              @click="onExpandChange(beneficiary.categoryName, true)"
+            />
+          </BaseCellHead>
+          <BaseCellHead
+            style="max-width: 6rem;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.light"
+            :rowspan="beneficiary.category.computed.members"
+          >
+            {{ beneficiary.categoryName }}
+          </BaseCellHead>
+          <BaseCellHead
+            style="min-width: 10rem;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.light"
+          >
+            ...
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="showDefinitions"
+            style="min-width: 16rem;"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.lighter"
+          >
+            ...
+          </BaseCellHead>
+          <BaseCellData
+            isLastOfGroup
+          >
+            {{ number(beneficiary.category.computed.scoreTotals[currentStakeholderName]) }}
+          </BaseCellData>
+          <BaseCellData
+            v-if="showResults"
+            isLastOfGroup
+            :colorBack="beneficiary.category.color.lighter"
+            :colspan="2"
+          >
+            {{ percent(beneficiary.category.computed.result, beneficiaryResultTotal) }}
+          </BaseCellData>
+        </template>
       </tr>
     </template>
     <template #foot>
@@ -142,7 +220,7 @@
         <BaseCellHead
           isLastOfGroup
           style="text-align: right;"
-          :colspan="showDefinitions ? 3 : 2"
+          :colspan="showDefinitions ? 4 : 3"
         >
           Total
         </BaseCellHead>
@@ -230,27 +308,11 @@ export default {
     scoreTotals() {
       return project.data.beneficiarySection.computed.scoreTotals
     },
-    resultTotal() {
+    stakeholderResultTotal() {
+      return project.data.stakeholderSection.computed.resultTotal
+    },
+    beneficiaryResultTotal() {
       return project.data.beneficiarySection.computed.resultTotal
-    },
-    stakeholderPercentages() {
-      const ret = {}
-      const sum = project.data.stakeholderSection.computed.resultTotal
-      this.stakeholderArray.forEach(stakeholder => {
-        ret[stakeholder.name] = stakeholder.computed.result/sum
-      })
-      return ret
-    },
-    beneficiaryCategoryPercentages() {
-      const ret = {}
-      const sum = project.data.beneficiarySection.computed.resultTotal
-      this.beneficiaryArray.forEach(beneficiary => {
-        if (!(beneficiary.categoryName in ret)) {
-          ret[beneficiary.categoryName] = 0
-        }
-        ret[beneficiary.categoryName] += beneficiary.computed.result/sum
-      })
-      return ret
     },
   },
   methods: {
@@ -274,9 +336,12 @@ export default {
     onDataKeyEnter(index) {
       // TODO method to focus next vertical cell?
     },
+    onExpandChange(categoryName, event) {
+      project.setBeneficiaryCategoryExpanded(categoryName, event)
+    },
     isEditing(rowName) {
       return (this.editing.rowName === rowName)
-    }
+    },
   }
 }
 </script>

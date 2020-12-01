@@ -115,6 +115,15 @@ export default class TheProjectStore {
     this._modified()
   }
 
+  setBeneficiaryCategoryExpanded(categoryName, isExpanded) {
+    this.data.beneficiarySection.categories[categoryName].expanded = isExpanded
+    this._modified()
+  }
+  setAttributeCategoryExpanded(categoryName, isExpanded) {
+    this.data.attributeSection.categories[categoryName].expanded = isExpanded
+    this._modified()
+  }
+
   setBeneficiaryShowDefs(show) {
     this.data.beneficiarySection.showDefs = show
     this._modified()
@@ -368,20 +377,37 @@ export default class TheProjectStore {
     })
 
     const categoryResults = {}
+    const categoryScoreTotals = {}
     let resultTotal = 0
     Object.values(alternativeSection[alternativeKey]).forEach(alternative => {
       const categoryName = alternative.categoryName // may be undefined
       const scoresWeighted = {}
+
+      if (hasCategories && !(categoryName in categoryScoreTotals)) {
+        categoryScoreTotals[categoryName] = {}
+      }
       
       let hasScore = false
       let sum = 0
       Object.entries(alternative.scores).forEach(([metricName, score]) => {
+        if (hasCategories && !(metricName in categoryScoreTotals[categoryName])) {
+          categoryScoreTotals[categoryName][metricName] = null
+        }
+
         if (Util.isNum(score)) {
           hasScore = true
           const scoreWeighted = cleanMetrics[metricName]*score
           sum += scoreWeighted
           scoresWeighted[metricName] = scoreWeighted
           scoreTotals[metricName] += score
+
+          if (hasCategories) {
+            if (!categoryScoreTotals[categoryName][metricName]) {
+              categoryScoreTotals[categoryName][metricName] = score
+            } else {
+              categoryScoreTotals[categoryName][metricName] += score
+            }
+          }
         }
       })
 
@@ -410,6 +436,7 @@ export default class TheProjectStore {
     if (hasCategories) {
       Object.entries(alternativeSection.categories).forEach(([categoryName, category]) => {
         this._setComputed(category, 'result', categoryResults[categoryName] || null)
+        this._setComputed(category, 'scoreTotals', categoryScoreTotals[categoryName])
       })
     }
   }
@@ -1100,10 +1127,20 @@ export default class TheProjectStore {
       criterion.result = null
     })
 
+    // add beneficiary category expansion
+    Object.values(data.beneficiarySection.categories).forEach(category => {
+      category.expanded = false
+    })
+
     // add beneficiary order, add scores to beneficiaries
     Object.entries(data.beneficiarySection.beneficiaries).forEach(([beneficiaryName, beneficiary]) => {
       data.beneficiarySection.order.push(beneficiaryName)
       beneficiary.scores = {} // populated when stakeholder added
+    })
+
+    // add attribute category expansion
+    Object.values(data.attributeSection.categories).forEach(category => {
+      category.expanded = false
     })
 
     // add attribute order, add scores to attributes

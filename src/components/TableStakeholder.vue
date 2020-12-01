@@ -56,7 +56,7 @@
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="criterion.name"
         >
-          {{ (criterionResultTotal > 0) ? `${scaleUp(criterion.result/criterionResultTotal)}%` : '—' }}
+          {{ percent(criterion.result, criterionResultTotal) }}
         </BaseCellHead>
       </tr>
     </template>
@@ -69,6 +69,7 @@
           :colorBack="stakeholder.color.primary"
         />
         <BaseCellData
+          style="padding-right: 0;"
           :darken="index%2 === 1"
         >
           <BaseButtonIcon
@@ -133,7 +134,7 @@
           v-if="showResults"
           :darken="index%2 === 1"
         >
-          {{ scaleUp(stakeholder.computed.result/stakeholderResultTotal) }}%
+          {{ percent(stakeholder.computed.result, stakeholderResultTotal) }}
         </BaseCellData>
       </tr>
     </template>

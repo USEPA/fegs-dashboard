@@ -1,7 +1,16 @@
 <template>
-  <div style="display: flex; align-items: center;">
-    <div style="margin-right: .5rem;">Title:</div>
-    <BaseField content="My Project" v-on:commit="setName"/>
+  <div>
+    <div
+      for="project-name"
+      style="margin-bottom: .5rem;"
+    >
+      Title
+    </div>
+    <BaseField
+      id="project-name"
+      :value="projectName"
+      @change="setProjectName"
+    />
   </div>
 </template>
 
@@ -17,16 +26,13 @@ export default {
   components: {
     BaseField,
   },
-  // data() {
-  //   return {
-
-  //   }
-  // },
   computed: {
-
+    projectName() {
+      return project.data.meta.name
+    }
   },
   methods: {
-    setName(event) {
+    setProjectName(event) {
       project.setProjectName(event)
     }
   },

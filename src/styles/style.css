@@ -95,10 +95,10 @@ order {
   --color-primary-active: #112E51;
   --color-primary-light: #0071BC44;
 
-  --color-neutral: #888;
-  --color-neutral-hover: #555;
-  --color-neutral-active: #333;
-  --color-neutral-light: #8884;
+  --color-neutral: #0006;
+  --color-neutral-hover: #000A;
+  --color-neutral-active: #000C;
+  --color-neutral-light: #0003;
 
   --color-success: #28A745;
   --color-success-hover: #247F39;

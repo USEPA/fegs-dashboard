@@ -5,6 +5,7 @@
         <BaseCellHead isSpace/>
         <BaseCellHead isSpace/>
         <BaseCellHead isSpace/>
+        <BaseCellHead isSpace/>
         <BaseCellHead
           v-if="showDefinitions"
           isSpace
@@ -26,6 +27,11 @@
         <BaseCellEmphasis
           colorBack="var(--color-table-head-emphasis)"
           isLastOfGroup
+          :rowspan="3"
+        />
+        <BaseCellHead
+          isLastOfGroup
+          doBorderTop
           :rowspan="3"
         />
         <BaseCellHead
@@ -92,7 +98,7 @@
           :key="beneficiary.name"
           :colorBack="currentBeneficiaryCategory.color.light"
         >
-          {{ scaleUp(beneficiaryPercentages[beneficiary.name]) }}%
+          {{ percent(beneficiary.computed.result, beneficiaryResultTotal) }}
         </BaseCellHead>
       </tr>
     </template>
@@ -101,60 +107,132 @@
         v-for="(attribute, index) in attributeArray"
         :key="attribute.name"
       >
-        <BaseCellEmphasis
-          :colorBack="attribute.category.color.primary"
-          :noBorder="!attribute.computed.isLastOfCategory"
-          :isLastOfGroup="attribute.computed.isLastOfCategory"
-        />
-        <BaseCellHead
-          v-if="attribute.computed.isFirstOfCategory"
-          style="max-width: 6rem;"
-          isLastOfGroup
-          :rowspan="attribute.category.computed.members"
-        >
-          {{ attribute.categoryName }}
-        </BaseCellHead>
-        <BaseCellHead
-          style="max-width: 16rem;"
-          colorBack="var(--color-table-head1-back)"
-          :isLastOfGroup="attribute.computed.isLastOfCategory"
-        >
-          {{ attribute.name }}
-        </BaseCellHead>
-        <BaseCellHead
-          v-if="showDefinitions"
-          style="max-width: 30rem;"
-          colorBack="var(--color-table-head2-back)"
-          :isLastOfGroup="attribute.computed.isLastOfCategory"
-        >
-          {{ attribute.def }}
-        </BaseCellHead>
-        <BaseCellDataField
-          v-for="beneficiary in currentBeneficiaryArray"
-          :key="beneficiary.name"
-          :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
-          :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
-          :isLastOfGroup="attribute.computed.isLastOfCategory"
-          @input="onDataInput(attribute.name, beneficiary.name, $event)"
-          @change="onDataChange(attribute.name, beneficiary.name, $event)"
-          @key-enter="onDataKeyEnter(index)"
-        />
-        <BaseCellData
-          v-if="showResults"
-          colorBack="var(--color-table-head2-back)"
-          style="border-right: none;"
-          :isLastOfGroup="attribute.computed.isLastOfCategory"
-        >
-          {{ scaleUp(attribute.computed.result/resultTotal) }}%
-        </BaseCellData>
-        <BaseCellData
-          v-if="showResults && attribute.computed.isFirstOfCategory"
-          colorBack="var(--color-table-head2-back)"
-          isLastOfGroup
-          :rowspan="attribute.category.computed.members"
-        >
-          {{ scaleUp(attributeCategoryPercentages[attribute.categoryName]) }}%
-        </BaseCellData>
+        <template v-if="attribute.category.expanded">
+          <BaseCellEmphasis
+            v-if="attribute.computed.isFirstOfCategory"
+            isLastOfGroup
+            :colorBack="attribute.category.color.primary"
+            :rowspan="attribute.category.computed.members"
+          />
+          <BaseCellHead
+            v-if="attribute.computed.isFirstOfCategory"
+            style="padding-right: 0;"
+            isLastOfGroup
+            :rowspan="attribute.category.computed.members"
+          >
+            <BaseButtonIcon
+              icon="chevron-up"
+              color="neutral"
+              hint="Collapse category"
+              doBlurOnClick
+              @click="onExpandChange(attribute.categoryName, false)"
+            />
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="attribute.computed.isFirstOfCategory"
+            style="max-width: 6rem;"
+            isLastOfGroup
+            :rowspan="attribute.category.computed.members"
+          >
+            {{ attribute.categoryName }}
+          </BaseCellHead>
+          <BaseCellHead
+            style="max-width: 16rem; min-width; 10rem;"
+            colorBack="var(--color-table-head1-back)"
+            :isLastOfGroup="attribute.computed.isLastOfCategory"
+          >
+            {{ attribute.name }}
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="showDefinitions"
+            style="max-width: 30rem; min-width: 16rem;"
+            colorBack="var(--color-table-head2-back)"
+            :isLastOfGroup="attribute.computed.isLastOfCategory"
+          >
+            {{ attribute.def }}
+          </BaseCellHead>
+          <BaseCellDataField
+            v-for="beneficiary in currentBeneficiaryArray"
+            :key="beneficiary.name"
+            :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
+            :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
+            :isLastOfGroup="attribute.computed.isLastOfCategory"
+            @input="onDataInput(attribute.name, beneficiary.name, $event)"
+            @change="onDataChange(attribute.name, beneficiary.name, $event)"
+            @key-enter="onDataKeyEnter(index)"
+          />
+          <BaseCellData
+            v-if="showResults"
+            colorBack="var(--color-table-head2-back)"
+            style="border-right: none;"
+            :isLastOfGroup="attribute.computed.isLastOfCategory"
+          >
+            {{ percent(attribute.computed.result, attributeResultTotal) }}
+          </BaseCellData>
+          <BaseCellData
+            v-if="showResults && attribute.computed.isFirstOfCategory"
+            colorBack="var(--color-table-head2-back)"
+            isLastOfGroup
+            :rowspan="attribute.category.computed.members"
+          >
+            {{ percent(attribute.category.computed.result, attributeResultTotal) }}
+          </BaseCellData>
+        </template>
+        <template v-else-if="attribute.computed.isFirstOfCategory">
+          <BaseCellEmphasis
+            isLastOfGroup
+            :colorBack="attribute.category.color.primary"
+          />
+          <BaseCellHead
+            style="padding-right: 0;"
+            isLastOfGroup
+            :colorBack="attribute.category.color.light"
+          >
+            <BaseButtonIcon
+              icon="chevron-down"
+              color="neutral"
+              hint="Expand category"
+              doBlurOnClick
+              @click="onExpandChange(attribute.categoryName, true)"
+            />
+          </BaseCellHead>
+          <BaseCellHead
+            style="max-width: 6rem;"
+            isLastOfGroup
+          >
+            {{ attribute.categoryName }}
+          </BaseCellHead>
+          <BaseCellHead
+            style="min-width: 10rem;"
+            colorBack="var(--color-table-head1-back)"
+            isLastOfGroup
+          >
+            ...
+          </BaseCellHead>
+          <BaseCellHead
+            v-if="showDefinitions"
+            style="min-width: 16rem;"
+            colorBack="var(--color-table-head2-back)"
+            isLastOfGroup
+          >
+            ...
+          </BaseCellHead>
+          <BaseCellData
+            v-for="beneficiary in currentBeneficiaryArray"
+            isLastOfGroup
+            :key="beneficiary.name"
+          >
+            {{ number(attribute.category.computed.scoreTotals[beneficiary.name]) }}
+          </BaseCellData>
+          <BaseCellData
+            v-if="showResults"
+            isLastOfGroup
+            colorBack="var(--color-table-head2-back)"
+            :colspan="2"
+          >
+            {{ percent(attribute.category.computed.result, attributeResultTotal) }}
+          </BaseCellData>
+        </template>
       </tr>
     </template>
     <template #foot>
@@ -166,7 +244,7 @@
         <BaseCellHead
           isLastOfGroup
           style="text-align: right;"
-          :colspan="showDefinitions ? 3 : 2"
+          :colspan="showDefinitions ? 4 : 3"
         >
           Total
         </BaseCellHead>
@@ -262,27 +340,11 @@ export default {
     scoreTotals() {
       return project.data.attributeSection.computed.scoreTotals
     },
-    resultTotal() {
+    beneficiaryResultTotal() {
+      return project.data.beneficiarySection.computed.resultTotal
+    },
+    attributeResultTotal() {
       return project.data.attributeSection.computed.resultTotal
-    },
-    beneficiaryPercentages() {
-      const ret = {}
-      const sum = project.data.beneficiarySection.computed.resultTotal
-      this.beneficiaryArray.forEach(beneficiary => {
-        ret[beneficiary.name] = beneficiary.computed.result/sum
-      })
-      return ret
-    },
-    attributeCategoryPercentages() {
-      const ret = {}
-      const sum = project.data.attributeSection.computed.resultTotal
-      this.attributeArray.forEach(attribute => {
-        if (!(attribute.categoryName in ret)) {
-          ret[attribute.categoryName] = 0
-        }
-        ret[attribute.categoryName] += attribute.computed.result/sum
-      })
-      return ret
     },
   },
   methods: {
@@ -306,6 +368,9 @@ export default {
     },
     onDataKeyEnter(index) {
       // TODO method to focus next vertical cell?
+    },
+    onExpandChange(categoryName, event) {
+      project.setAttributeCategoryExpanded(categoryName, event)
     },
     isEditing(rowName, colName) {
       return (this.editing.rowName === rowName && this.editing.colName === colName)

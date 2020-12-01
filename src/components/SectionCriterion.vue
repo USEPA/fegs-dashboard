@@ -1,5 +1,11 @@
 <template>
   <div>
+    <p>
+      Look over the criteria below. Identify the criterion most relevant for distinguishing among stakeholder groups for this decision. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0 and 100.
+    </p>
+    <p>
+      Once you enter the 9 criteria proceed to the stakeholder section.
+    </p>
     <div style="display: flex;">
       <BaseCheckbox
         style="margin-bottom: .5rem;"

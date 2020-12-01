@@ -53,6 +53,7 @@
         <SectionAttribute/>
       </BaseSection>
       <BaseSection
+        v-if="isDev"
         :id="sections[5].id"
         :title="sections[5].title"
         :isReady="sections[5].ready"
@@ -122,12 +123,12 @@ export default {
           focused: false,
           ready: false,
         },
-        {
+        ...(Util.isDev() ? [{
           id: 'developer-section',
           title: 'Developer',
           focused: false,
           ready: true,
-        },
+        }] : []),
       ]
     }
   },
@@ -138,6 +139,9 @@ export default {
         beneficiary: this.hasCriteria() && this.hasStakeholders(),
         attribute: this.hasCriteria() && this.hasStakeholders() && this.hasBeneficiaries(),
       }
+    },
+    isDev() {
+      return Util.isDev()
     },
   },
   watch: {
@@ -186,6 +190,7 @@ export default {
   #project {
     width: 100%;
     max-width: 2000px;
+    min-height: 100vh;
     display: flex;
     flex-flow: row;
     align-items: stretch;

@@ -181,6 +181,7 @@ export default class TheController {
       this.currentFilepath = this.openingFilepath
       this.openingFilepath = null
       this.currentProjectName = null // set with message from render process
+      this.saved = true
       this.mainWindow.send({ cmd: 'load', data }) 
     } catch (error) {
       this._error('Unable to open project', error.message)

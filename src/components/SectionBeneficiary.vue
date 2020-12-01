@@ -1,5 +1,14 @@
 <template>
   <div>
+    <p>
+      Identify the types of beneficiaries making up each stakeholder group by percentage.
+    </p>
+    <p>
+      Select a stakeholder from the drop down, expand the relevant beneficiary categories, and enter the percentages in the input boxes.
+    </p>
+    <p>
+      Once you have entered your beneficiary data proceed to the attribute section.
+    </p>
     <div style="display: flex;">
       <BaseCheckbox
         style="margin-bottom: .5rem;"

@@ -40,7 +40,7 @@
           v-if="showResults"
           colorBack="var(--color-table-head2-back)"
         >
-          {{ (resultTotal > 0) ? `${scaleUp(criterion.result/resultTotal)}%` : '—' }}
+          {{ percent(criterion.result, resultTotal) }}
         </BaseCellData>
       </tr>
     </template>

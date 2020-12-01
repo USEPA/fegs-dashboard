@@ -1,5 +1,11 @@
 <template>
   <div>
+    <p>
+      Identify how much each beneficiary group cares about the listed environmental attributes by percentage.
+    </p>
+    <p>
+      Select a beneficiary category from the drop down, expand the relevant attribute categories, and enter the percentages in the input boxes.
+    </p>
     <div style="display: flex;">
       <BaseCheckbox
         style="margin-bottom: .5rem;"

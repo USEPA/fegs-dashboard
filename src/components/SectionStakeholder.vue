@@ -1,18 +1,34 @@
 <template>
   <div>
-    <BaseButton
-      style="margin-bottom: .5rem;"
-      @click="beginNewStakeholder"
-    >
-      New Stakeholder
-    </BaseButton>
-    <BaseButton
-      style="margin-left: .5rem;"
-      v-if="isDev"
-      @click="createNewStakeholderDev"
-    >
-      Generate
-    </BaseButton>
+    <p>
+      Identify your stakeholder groups.
+      Press <em>New Stakeholder</em> to open the stakeholder creation modal.
+    </p>
+    <p style="margin-bottom: 1rem;">
+      Once you have entered your stakeholder data proceed to the beneficiary section.
+    </p>
+    <div style="display: flex;">
+      <BaseButton
+        style="margin-bottom: .5rem;"
+        @click="beginNewStakeholder"
+      >
+        New Stakeholder
+      </BaseButton>
+      <BaseButton
+        style="margin-bottom: .5rem; margin-left: .5rem;"
+        v-if="isDev"
+        @click="createNewStakeholderDev"
+      >
+        Generate
+      </BaseButton>
+      <BaseCheckbox
+        v-if="hasStakeholders"
+        style="margin-bottom: .5rem; margin-left: .5rem;"
+        label="Show results"
+        :isChecked="showResults"
+        @change="onShowResultChange"
+      />
+    </div>
     <BaseModal
       v-if="isCreatingNewStakeholder"
       title="New Stakeholder"
@@ -87,14 +103,6 @@
         </div>
       </div>
     </BaseModal>
-    <div style="display: flex;">
-      <BaseCheckbox
-        style="margin-bottom: .5rem;"
-        label="Show results"
-        :isChecked="showResults"
-        @change="onShowResultChange"
-      />
-    </div>
     <div class="full">
       <TableStakeholder
         v-if="hasStakeholders"
