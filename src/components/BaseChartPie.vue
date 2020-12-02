@@ -3,7 +3,7 @@
     ref="parent"
     :title="title"
     :width="`${width}px`"
-    :downloadable="hasData"
+    :downloadable="hasData && false"
   >
     <svg
       width="100%"
@@ -38,7 +38,7 @@
             v-for="d in drawableData"
             dy=".35em"
             :key="d.label"
-            :style="{ textAnchor: (d.sign > 0) ? 'start' : 'end' }"
+            :style="{ textAnchor: (d.sign > 0) ? 'start' : 'end', fill: '#111' }"
             :transform="`translate(${d.points.label.x},${d.points.label.y})`"
           >
             {{ d.label }} ({{ d.percent }}%)
@@ -78,7 +78,7 @@ export default {
     title: String, // empty for no title nor download button
     width: Number, // should be greater than height so the labels will fit on the sides
     height: Number,
-    data: Array, // [{ label: str, value: num }, ...]
+    data: Array, // [{ 'label': str, 'value': num }, ...] (each element of the array defines a slice)
     colors: Object, // { label: color, ... } NOTE this is separate for consistency with the bar chart component
   },
   computed: {

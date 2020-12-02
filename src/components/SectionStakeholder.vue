@@ -110,6 +110,14 @@
       />
     </div>
     <div class="full">
+      <BaseChartBar
+        v-if="hasStakeholders"
+        title="Stakeholder Prioritization"
+        :width="1080"
+        :height="500"
+        :data="barContent.data"
+        :colors="barContent.colors"
+      />
       <BaseChartPie
         v-if="hasStakeholders"
         title="Prioritization Criteria Relative Weights"
@@ -125,6 +133,7 @@
 
 <script>
 import BaseButton from './BaseButton.vue'
+import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseField from './BaseField.vue'
@@ -145,6 +154,7 @@ export default {
   name: 'SectionStakeholder',
   components: {
     BaseButton,
+    BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
     BaseField,
@@ -190,6 +200,9 @@ export default {
     },
     pieContent() {
       return project.getCriterionPieContent()
+    },
+    barContent() {
+      return project.getStakeholderBarContent({ short: true })
     },
   },
   methods: {

@@ -30,6 +30,13 @@
       />
     </div>
     <div class="full">
+      <BaseChartBar
+        title="Beneficiary Prioritization"
+        :width="1080"
+        :height="500"
+        :data="barContent.data"
+        :colors="barContent.colors"
+      />
       <BaseChartPie
         title="Beneficiary Profile"
         :width="1080"
@@ -43,6 +50,7 @@
 
 
 <script>
+import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import TableBeneficiary from './TableBeneficiary.vue'
@@ -53,6 +61,7 @@ import { project } from '../store.js'
 export default {
   name: 'SectionBeneficiary',
   components: {
+    BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
     TableBeneficiary,
@@ -66,6 +75,9 @@ export default {
     },
     pieContent() {
       return project.getBeneficiaryPieContent()
+    },
+    barContent() {
+      return project.getBeneficiaryBarContent()
     },
   },
   methods: {

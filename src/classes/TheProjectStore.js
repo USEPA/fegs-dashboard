@@ -89,6 +89,75 @@ export default class TheProjectStore {
     return { data, colors }
   }
 
+  getStakeholderBarContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    Object.entries(this.data.stakeholderSection.stakeholders).forEach(([stakeholderName, stakeholder]) => {
+      const values = []
+      Object.entries(this.data.criterionSection.criteria).forEach(([criterionName, criterion]) => {
+        const score = stakeholder.computed.scoresWeighted[criterionName]
+        const label = (short && criterion.shortName) ? criterion.shortName : criterionName
+        if (score) {
+          values.push({ label, value: score * 100 })
+        }
+        if (!(label in colors)) {
+          colors[label] = criterion.color.primary
+        }
+      })
+      data.push({ key: stakeholderName, values })
+    })
+    return { data, colors }
+  }
+  getBeneficiaryBarContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    Object.entries(this.data.beneficiarySection.beneficiaries).forEach(([beneficiaryName, beneficiary]) => {
+      const values = []
+      Object.entries(this.data.stakeholderSection.stakeholders).forEach(([stakeholderName, stakeholder]) => {
+        const score = beneficiary.computed.scoresWeighted[stakeholderName]
+        const label = (short && stakeholder.shortName) ? stakeholder.shortName : stakeholderName
+        if (score) {
+          values.push({ label, value: score * 100 })
+        }
+        if (!(label in colors)) {
+          colors[label] = stakeholder.color.primary
+        }
+      })
+      const key = (short && beneficiary.shortName) ? beneficiary.shortName : beneficiaryName
+      data.push({ key, values })
+    })
+    return { data, colors }
+  }
+  getAttributeBarContent({ short=false }={}) {
+    const data = []
+    const colors = {}
+    Object.entries(this.data.attributeSection.attributes).forEach(([attributeName, attribute]) => {
+      const values = []
+      const categoryMap = {} // { category: score, ... }
+      this.getBeneficiaryArray().forEach(beneficiary => {
+        const categoryName = beneficiary.categoryName
+        const score = attribute.computed.scoresWeighted[beneficiary.name]
+        const label = (short && beneficiary.category.shortName) ? beneficiary.category.shortName : categoryName
+        if (score) {
+          if (categoryName in categoryMap) {
+            categoryMap[categoryName] += score
+          } else {
+            categoryMap[categoryName] = score
+          }
+        }
+        if (!(label in colors)) {
+          colors[label] = beneficiary.category.color.primary
+        }
+      })
+      Object.entries(categoryMap).forEach(([categoryName, score]) => {
+        values.push({ label: categoryName, value: score * 100 })
+      })
+      const key = (short && attribute.shortName) ? attribute.shortName : attributeName
+      data.push({ key, values })
+    })
+    return { data, colors }
+  }
+
   setProjectName(name) { 
     this.data.meta.name = name
     this._modified()
@@ -396,9 +465,9 @@ export default class TheProjectStore {
 
         if (Util.isNum(score)) {
           hasScore = true
-          const scoreWeighted = cleanMetrics[metricName]*score
+          const scoreWeighted = cleanMetrics[metricName] * score
           sum += scoreWeighted
-          scoresWeighted[metricName] = scoreWeighted
+          scoresWeighted[metricName] = scoreWeighted / weightSum // normalize
           scoreTotals[metricName] += score
 
           if (hasCategories) {
@@ -411,7 +480,7 @@ export default class TheProjectStore {
         }
       })
 
-      const result = sum/weightSum // normalize
+      const result = sum / weightSum // normalize
       const cleanResult = (hasScore && Util.isNum(result)) ? result : null
       resultTotal += cleanResult || 0 // don't add null
 

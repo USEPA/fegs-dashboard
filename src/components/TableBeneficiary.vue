@@ -102,6 +102,7 @@
               color="neutral"
               hint="Collapse category"
               doBlurOnClick
+              shiftY="-0.08em"
               @click="onExpandChange(beneficiary.categoryName, false)"
             />
           </BaseCellHead>
@@ -169,6 +170,7 @@
               color="neutral"
               hint="Expand category"
               doBlurOnClick
+              shiftY="0.05em"
               @click="onExpandChange(beneficiary.categoryName, true)"
             />
           </BaseCellHead>

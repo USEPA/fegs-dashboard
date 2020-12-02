@@ -27,6 +27,13 @@
       />
     </div>
     <div class="full">
+      <BaseChartBar
+        title="Environmental Attribute Prioritization"
+        :width="1080"
+        :height="500"
+        :data="barContent.data"
+        :colors="barContent.colors"
+      />
       <BaseChartPie
         title="Environmental Attributes Relative Priority"
         :width="1080"
@@ -40,6 +47,7 @@
 
 
 <script>
+import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import TableAttribute from './TableAttribute.vue'
@@ -50,6 +58,7 @@ import { project } from '../store.js'
 export default {
   name: 'SectionAttribute',
   components: {
+    BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
     TableAttribute,
@@ -63,6 +72,9 @@ export default {
     },
     pieContent() {
       return project.getAttributePieContent()
+    },
+    barContent() {
+      return project.getAttributeBarContent()
     },
   },
   methods: {

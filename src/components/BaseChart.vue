@@ -26,6 +26,8 @@
 <script>
 import BaseButtonIcon from './BaseButtonIcon.vue'
 
+// TODO downloadable
+
 export default {
   name: 'BaseChart',
   components: {

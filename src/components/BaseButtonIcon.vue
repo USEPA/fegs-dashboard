@@ -5,7 +5,14 @@
     :title="hint"
     @click="onClick"
   >
-    <FontAwesomeIcon :icon="icon"/>
+    <FontAwesomeIcon
+      :style="{
+        position: 'relative',
+        top: shiftY,
+        left: shiftX,
+      }"
+      :icon="icon"
+    />
   </button>
 </template>
 
@@ -33,6 +40,14 @@ export default {
     doBlurOnClick: {
       type: Boolean,
       default: false,
+    },
+    shiftX: {
+      type: String,
+      default: '0',
+    },
+    shiftY: {
+      type: String,
+      default: '0',
     },
   },
   computed: {
