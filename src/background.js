@@ -61,25 +61,42 @@ const mainMenu = new TheMainMenu({
 
 
 // Listen for messages from render process.
-ipcMain.on('msg', (event, { cmd, data }) => {
+ipcMain.on('project', (event, { cmd, data }) => {
   console.log(`IPC Command: ${cmd}`)
   switch (cmd) {
-    case 'save':
+    case 'write':
       controller.writeData(data)
       break
     case 'unsave':
       controller.unsave()
       break
-    case 'query':
-      event.sender.send('msg', {
-        cmd: 'answer',
+    case 'name':
+      controller.setName(data)
+      break
+    default:
+      throw Error(`Unsupported command "${cmd}"`) // programmer error
+  }
+})
+ipcMain.on('chart', (event, { cmd, data }) => {
+  console.log(`IPC Command: ${cmd}`)
+  switch (cmd) {
+    case 'save':
+      controller.saveAsChart(data)
+      break
+    default:
+      throw Error(`Unsupported command "${cmd}"`) // programmer error
+  }
+})
+ipcMain.on('info', (event, { cmd, data }) => {
+  console.log(`IPC Command: ${cmd}`)
+  switch (cmd) {
+    case 'title?':
+      event.sender.send('info', {
+        cmd: 'title',
         data: {
           appTitle,
         }
       })
-      break
-    case 'name':
-      controller.setName(data)
       break
     default:
       throw Error(`Unsupported command "${cmd}"`) // programmer error

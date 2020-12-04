@@ -61,6 +61,30 @@ export default class TheController {
       this._requestData()
     }
   }
+  saveAsChart({ title, png, jpg, svg }) {
+    const filePath = dialog.showSaveDialogSync(this.mainWindow.ref, {
+      defaultPath: title,
+      filters: [
+        { name: 'PNG',  extensions: ['png'] },
+        { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
+        { name: 'SVG',  extensions: ['svg'] },
+      ],
+    })
+    if (filePath) {
+      const ext = filePath.split('.').pop()
+      try {
+        if (ext === 'svg') {
+          fs.writeFileSync(filePath, svg, 'utf8')
+        } else if (ext === 'jpeg' || ext === 'jpg') {
+          fs.writeFileSync(filePath, jpg)
+        } else {
+          fs.writeFileSync(filePath, png)
+        }
+      } catch (error) {
+        this._error('Unable to save chart', error.message)
+      }
+    }
+  }
   quit(event=null) {
     const cancel = () => (event) ? event.preventDefault() : null
     if (!this.quitting) {
@@ -93,7 +117,7 @@ export default class TheController {
     try {
       fs.writeFileSync(this.currentFilepath, JSON.stringify(data), 'utf8')
       this.currentProjectName = Util.deepGet(data, ['project', 'name'])
-      this.mainWindow.send({ cmd: 'saved' })
+      this.mainWindow.send('project', { cmd: 'saved' })
       this.saved = true
       switch (this.afterSaved) {
         case 'new': this._new(); break
@@ -113,7 +137,7 @@ export default class TheController {
   }
 
   _requestData() {
-    this.mainWindow.send({ cmd: 'save' })
+    this.mainWindow.send('project', { cmd: 'save' })
   }
 
   _saveQuery() {
@@ -173,7 +197,7 @@ export default class TheController {
   _new() {
     this.currentFilepath = null
     this.currentProjectName = null // set with message from render process
-    this.mainWindow.send({ cmd: 'new' })
+    this.mainWindow.send('project', { cmd: 'new' })
   }
   _open() {
     try {
@@ -182,7 +206,7 @@ export default class TheController {
       this.openingFilepath = null
       this.currentProjectName = null // set with message from render process
       this.saved = true
-      this.mainWindow.send({ cmd: 'load', data }) 
+      this.mainWindow.send('project', { cmd: 'load', data }) 
     } catch (error) {
       this._error('Unable to open project', error.message)
     }

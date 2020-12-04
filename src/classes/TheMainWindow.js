@@ -13,8 +13,8 @@ export default class TheMainWindow extends BaseWindow { // wrapper for main brow
     this.devServer = devServer // webpack hot module reloading server
     this.ref = null
   }
-  send(msg) {
-    this.ref.webContents.send('msg', msg)
+  send(channel, msg) {
+    this.ref.webContents.send(channel, msg)
   }
   onClose(func) { // closing behavior handled externally
     this.onCloseFunc = func

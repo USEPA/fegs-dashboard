@@ -3,7 +3,7 @@
     ref="parent"
     :title="title"
     :width="`${width}px`"
-    :downloadable="hasData && false"
+    :downloadable="hasData"
   >
     <svg
       width="100%"

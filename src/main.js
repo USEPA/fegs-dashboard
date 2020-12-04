@@ -24,15 +24,15 @@ Vue.config.productionTip = false
 if (process.env.IS_ELECTRON) {
 
   function send(cmd, data=null) {
-    window.ipc.send('msg', { cmd, data })
+    window.ipc.send('project', { cmd, data })
   }
 
   // Register data change listener.
   project.onModified(() => send('unsave'))
 
-  // Register main process message listener.
-  window.ipc.on('msg', ({ cmd, data }) => {
-    console.debug(`IPC Command: ${cmd}`)
+  // Register main process message listeners.
+  window.ipc.on('project', ({ cmd, data }) => {
+    console.log(`IPC Command: ${cmd}`)
     switch (cmd) {
       case 'new':
         project.new()
@@ -49,21 +49,28 @@ if (process.env.IS_ELECTRON) {
         }
         break
       case 'save':
-        send('save', project.getSaveable())
+        send('write', project.getSaveable())
         break
       case 'saved':
         project.modified = false
         break
-      case 'answer':
+      default:
+        throw Error(`Unsupported command "${cmd}"`) // programmer error
+    }
+  })
+  window.ipc.on('info', ({ cmd, data }) => {
+    console.log(`IPC Command: ${cmd}`)
+    switch (cmd) {
+      case 'title':
         misc.appTitle = data.appTitle
         break
       default:
-        throw Error(`Unknown command "${cmd}"`) // programmer error
+        throw Error(`Unsupported command "${cmd}"`) // programmer error
     }
   })
 
   // Query main process for information (app title).
-  send('query')
+  window.ipc.send('info', { cmd: 'title?' })
 
   // Create new project.
   project.new()
