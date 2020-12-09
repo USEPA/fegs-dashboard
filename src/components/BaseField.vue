@@ -100,7 +100,7 @@ export default {
   input {
     width: 100%;
     height: 1.7em;
-    padding-left: .2em;
+    padding: .1em .2em;
     text-align: inherit;
     box-sizing: border-box;
     border: 1px solid var(--color-input);
@@ -115,6 +115,7 @@ export default {
   }
   input:focus,
   input:active {
+    border-width: var(--length-input-active);
     border-color: var(--color-input-active);
   }
 

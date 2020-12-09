@@ -6,15 +6,20 @@
     <p>
       Select a beneficiary category from the drop down, expand the relevant attribute categories, and enter the percentages in the input boxes.
     </p>
-    <div style="display: flex;">
+    <BaseNotes
+      :value="attributeNote.text"
+      :expanded="attributeNote.expanded"
+      @change-note="setAttributeNote"
+      @change-expanded="setAttributeNoteExpanded"
+    />
+    <div style="display: flex; margin-top: 1rem;">
       <BaseCheckbox
-        style="margin-bottom: .5rem;"
         label="Show definitions"
         :isChecked="showDefinitions"
         @change="onShowDefinitionChange"
       />
       <BaseCheckbox
-        style="margin-bottom: .5rem; margin-left: 1rem;"
+        style="margin-left: 1rem;"
         label="Show results"
         :isChecked="showResults"
         @change="onShowResultChange"
@@ -50,6 +55,7 @@
 import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
+import BaseNotes from './BaseNotes.vue'
 import TableAttribute from './TableAttribute.vue'
 
 import Util from '../classes/Util.js'
@@ -61,6 +67,7 @@ export default {
     BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
+    BaseNotes,
     TableAttribute,
   },
   computed: {
@@ -76,6 +83,9 @@ export default {
     barContent() {
       return project.getAttributeBarContent()
     },
+    attributeNote() {
+      return project.data.attributeSection.note
+    },
   },
   methods: {
     onShowDefinitionChange(event) {
@@ -83,6 +93,12 @@ export default {
     },
     onShowResultChange(event) {
       project.setAttributeShowResults(event)
+    },
+    setAttributeNote(event) {
+      project.setAttributeNote({ text: event })
+    },
+    setAttributeNoteExpanded(event) {
+      project.setAttributeNote({ expanded: event })
     },
   },
 }

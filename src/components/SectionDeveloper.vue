@@ -7,6 +7,7 @@
       <BaseCheckbox :isChecked="check2" :isDisabled="disable2" label="Sample label" @change="check(2, $event)"/>
     </div>
     <BaseCodeBlock :content="checkMsg"/>
+
     <h3>Buttons</h3>
     <BaseButton color="primary">
       Sample Button
@@ -20,6 +21,7 @@
     <BaseButton color="primary" :isDisabled="true">
       Disabled
     </BaseButton>
+
     <h3>Icon Buttons</h3>
     <div style="margin-bottom: .5rem; display: flex; font-size: 1.5rem;">
       <BaseButtonIcon color="primary" icon="edit"/>
@@ -27,12 +29,20 @@
       <BaseButtonIcon color="success" icon="check"/>
       <BaseButtonIcon color="danger" icon="trash"/>
     </div>
+
     <h3>Fields</h3>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" @input="onFieldInput" content="Sample text" placeholder="Anything"/>
     <BaseField style="margin: 0 .5rem .5rem 0;" type="text" :isDisabled="true" content="Sample text" placeholder="Disabled"/>
     <BaseCodeBlock :content="textMsg"/>
+
+    <h3>Textbox</h3>
+    <BaseTextbox />
+
+    <BaseNotes :value="note" :expanded="expanded" @change-note="note = $event" @change-expanded="expanded = $event"/>
+
     <h3>Select</h3>
     <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" defaultOption="b"/>
+
     <h3>Modal</h3>
     <BaseButton @click="showModal = true">
       Show Modal
@@ -44,8 +54,10 @@
         <BaseButton color="danger" @click="showModal = false">Delete</BaseButton>
       </div>
     </BaseModal>
+
     <h3>Miscellaneous Data</h3>
     <BaseCodeBlock :content="misc"/>
+
     <h3>Project Data</h3>
     <BaseCodeBlock :content="project"/>
   </div>
@@ -54,14 +66,16 @@
 <script>
 import BaseButton from './BaseButton.vue'
 import BaseButtonIcon from './BaseButtonIcon.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellData from './BaseCellData.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseCodeBlock from './BaseCodeBlock.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
+import BaseNotes from './BaseNotes.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
-import BaseCellHead from './BaseCellHead.vue'
-import BaseCellData from './BaseCellData.vue'
+import BaseTextbox from './BaseTextbox.vue'
 
 import Util from '../classes/Util.js'
 import { project, misc } from '../store.js'
@@ -71,14 +85,16 @@ export default {
   components: {
     BaseButton,
     BaseButtonIcon,
+    BaseCellHead,
+    BaseCellData,
     BaseCheckbox,
     BaseCodeBlock,
     BaseField,
     BaseModal,
+    BaseNotes,
     BaseSelect,
     BaseTable,
-    BaseCellHead,
-    BaseCellData,
+    BaseTextbox,
   },
   data() {
     return {
@@ -87,6 +103,8 @@ export default {
       disable2: false,
       text: '',
       showModal: false,
+      note: '',
+      expanded: false,
     }
   },
   computed: {

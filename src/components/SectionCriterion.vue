@@ -6,7 +6,13 @@
     <p>
       Once you enter the 9 criteria proceed to the stakeholder section.
     </p>
-    <div style="display: flex;">
+    <BaseNotes
+      :value="criterionNote.text"
+      :expanded="criterionNote.expanded"
+      @change-note="setCriterionNote"
+      @change-expanded="setCriterionNoteExpanded"
+    />
+    <div style="display: flex; margin-top: 1rem;">
       <BaseCheckbox
         style="margin-bottom: .5rem;"
         label="Show results"
@@ -31,6 +37,7 @@
 <script>
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
+import BaseNotes from './BaseNotes.vue'
 import TableCriterion from './TableCriterion.vue'
 
 import Util from '../classes/Util.js'
@@ -41,6 +48,7 @@ export default {
   components: {
     BaseChartPie,
     BaseCheckbox,
+    BaseNotes,
     TableCriterion,
   },
   computed: {
@@ -50,15 +58,26 @@ export default {
     pieContent() {
       return project.getCriterionPieContent({ short: true })
     },
+    criterionNote() {
+      return project.data.criterionSection.note
+    },
   },
   methods: {
     onShowResultChange(event) {
       project.setCriterionShowResults(event)
+    },
+    setCriterionNote(event) {
+      project.setCriterionNote({ text: event })
+    },
+    setCriterionNoteExpanded(event) {
+      project.setCriterionNote({ expanded: event })
     },
   },
 }
 </script>
 
 <style scoped>
-
+  .full {
+    overflow-x: hidden; /* override */
+  }
 </style>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import AppElectron from './AppElectron.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheck, faEdit, faTimes, faTrash, faDownload, faCircle, faExclamationCircle, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faEdit, faTimes, faTrash, faDownload, faThumbtack, faCircle, faExclamationCircle, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 
@@ -11,7 +11,7 @@ import { project, misc } from './store.js'
 
 
 // Setup Font Awesome icons.
-library.add(faCheck, faEdit, faTimes, faTrash, faDownload, faCircle, farCircle, faExclamationCircle, faChevronDown, faChevronUp) // add each icon here after importing
+library.add(faCheck, faEdit, faTimes, faTrash, faDownload, faThumbtack, faCircle, farCircle, faExclamationCircle, faChevronDown, faChevronUp) // add each icon here after importing
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 Vue.component('FontAwesomeLayers', FontAwesomeLayers)
 
@@ -31,6 +31,7 @@ if (process.env.IS_ELECTRON) {
   project.onModified(() => send('unsave'))
 
   // Register main process message listeners.
+  // TODO call and response before close to check if saved for in-edit notes???
   window.ipc.on('project', ({ cmd, data }) => {
     console.log(`IPC Command: ${cmd}`)
     switch (cmd) {

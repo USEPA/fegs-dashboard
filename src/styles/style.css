@@ -65,7 +65,7 @@ order {
   --color-text-header: #111;
 
   --color-section: #0000;
-  --color-section-border: #CCC;
+  --color-section-border: #0003;
 
   --color-table-border: #0003;
   --color-table-border-darken: #0002; /* should look the same when on darkened row */
@@ -114,6 +114,7 @@ order {
   --length-secondary: 4px;
   --length-border-thick: 4px;
   --length-border-summation: 0;
+  --length-input-active: 1px;
 
   --font-family-text: "Source Sans Pro", Helvetica, Arial, sans-serif;
   --font-family-head: "Merriweather", Cambria, serif;
@@ -131,7 +132,7 @@ div, p, input, select {
   color: var(--color-text-black);
 }
 h1, h2, h3, h4, h5 {
-  margin: 1em 0 .5em 0;
+  margin: 1em 0 .3em 0;
   font-family: var(--font-family-head);
   font-weight: bold;
   color: var(--color-text-header);
@@ -141,4 +142,4 @@ h2 { font-size: 1.7rem; }
 h3 { font-size: 1.2rem; }
 h4 { font-size: 1rem; }
 h5 { font: bold 1rem var(--font-family-text); }
-p {font-size: 1rem; }
+p { margin: .3em 0; font-size: 1rem; }

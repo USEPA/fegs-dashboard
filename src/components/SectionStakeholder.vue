@@ -7,7 +7,13 @@
     <p style="margin-bottom: 1rem;">
       Once you have entered your stakeholder data proceed to the beneficiary section.
     </p>
-    <div style="display: flex;">
+    <BaseNotes
+      :value="stakeholderNote.text"
+      :expanded="stakeholderNote.expanded"
+      @change-note="setStakeholderNote"
+      @change-expanded="setStakeholderNoteExpanded"
+    />
+    <div style="display: flex; margin-top: 1rem;">
       <BaseButton
         style="margin-bottom: .5rem;"
         @click="beginNewStakeholder"
@@ -138,6 +144,7 @@ import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
+import BaseNotes from './BaseNotes.vue'
 import BaseTable from './BaseTable.vue'
 import BaseCellHead from './BaseCellHead.vue'
 import BaseCellEmphasis from './BaseCellEmphasis.vue'
@@ -159,6 +166,7 @@ export default {
     BaseCheckbox,
     BaseField,
     BaseModal,
+    BaseNotes,
     BaseTable,
     BaseCellHead,
     BaseCellEmphasis,
@@ -203,6 +211,9 @@ export default {
     },
     barContent() {
       return project.getStakeholderBarContent({ short: true })
+    },
+    stakeholderNote() {
+      return project.data.stakeholderSection.note
     },
   },
   methods: {
@@ -275,7 +286,13 @@ export default {
         const score = Math.floor(Math.random()*100)/100
         project.setStakeholderScore(name, criterion, score)
       })
-    }
+    },
+    setStakeholderNote(event) {
+      project.setStakeholderNote({ text: event })
+    },
+    setStakeholderNoteExpanded(event) {
+      project.setStakeholderNote({ expanded: event })
+    },
   },
 }
 </script>

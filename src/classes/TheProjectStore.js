@@ -167,20 +167,29 @@ export default class TheProjectStore {
     this._modified()
   }
 
-  setCriterionNotes(notes) {
-    this.data.criterionSection.notes = notes
+  setProjectNote({ text=null, expanded=null }) {
+    if (text !== null) this.data.meta.note.text = text
+    if (expanded !== null) this.data.meta.note.expanded = expanded
     this._modified()
   }
-  setStakeholderNotes(notes) {
-    this.data.stakeholderSection.notes = notes
+  setCriterionNote({ text=null, expanded=null }) {
+    if (text !== null) this.data.criterionSection.note.text = text
+    if (expanded !== null) this.data.criterionSection.note.expanded = expanded
     this._modified()
   }
-  setBeneficiaryNotes(notes) {
-    this.data.beneficiarySection.notes = notes
+  setStakeholderNote({ text=null, expanded=null }) {
+    if (text !== null) this.data.stakeholderSection.note.text = text
+    if (expanded !== null) this.data.stakeholderSection.note.expanded = expanded
     this._modified()
   }
-  setAttributeNotes(notes) {
-    this.data.attributeSection.notes = notes
+  setBeneficiaryNote({ text=null, expanded=null }) {
+    if (text !== null) this.data.beneficiarySection.note.text = text
+    if (expanded !== null) this.data.beneficiarySection.note.expanded = expanded
+    this._modified()
+  }
+  setAttributeNote({ text=null, expanded=null }) {
+    if (text !== null) this.data.attributeSection.note.text = text
+    if (expanded !== null) this.data.attributeSection.note.expanded = expanded
     this._modified()
   }
 
@@ -545,10 +554,16 @@ export default class TheProjectStore {
       meta: {
         version: '2.0.0', // lowest compatible app version
         name: 'New Project',
-        description: '',
+        note: {
+          text: '',
+          expanded: true,
+        },
       },
       criterionSection: {
-        notes: 'section notes',
+        note: {
+          text: '',
+          expanded: true,
+        },
         showResults: false,
         order: [],
         criteria: {
@@ -634,7 +649,10 @@ export default class TheProjectStore {
         },
       },
       stakeholderSection: {
-        notes: 'section notes',
+        note: {
+          text: '',
+          expanded: true,
+        },
         showResults: false,
         colors: [ // available colors for stakeholders
           '#4cb159',
@@ -684,7 +702,10 @@ export default class TheProjectStore {
         stakeholders: {},
       },
       beneficiarySection: {
-        notes: 'section notes',
+        note: {
+          text: '',
+          expanded: true,
+        },
         showDefs: true,
         showResults: false,
         order: [],
@@ -910,7 +931,10 @@ export default class TheProjectStore {
         },
       },
       attributeSection: {
-        notes: 'section notes',
+        note: {
+          text: '',
+          expanded: true,
+        },
         showDefs: true,
         showResults: false,
         order: [],

@@ -67,6 +67,7 @@ export default {
   }
   select:active,
   select:focus {
+    border-width: var(--length-input-active);
     border-color: var(--color-input-active);
   }
   option {

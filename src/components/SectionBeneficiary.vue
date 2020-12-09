@@ -9,15 +9,20 @@
     <p>
       Once you have entered your beneficiary data proceed to the attribute section.
     </p>
-    <div style="display: flex;">
+    <BaseNotes
+      :value="beneficiaryNote.text"
+      :expanded="beneficiaryNote.expanded"
+      @change-note="setBeneficiaryNote"
+      @change-expanded="setBeneficiaryNoteExpanded"
+    />
+    <div style="display: flex; margin-top: 1rem;">
       <BaseCheckbox
-        style="margin-bottom: .5rem;"
         label="Show definitions"
         :isChecked="showDefinitions"
         @change="onShowDefinitionChange"
       />
       <BaseCheckbox
-        style="margin-bottom: .5rem; margin-left: 1rem;"
+        style="margin-left: 1rem;"
         label="Show results"
         :isChecked="showResults"
         @change="onShowResultChange"
@@ -53,6 +58,7 @@
 import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
+import BaseNotes from './BaseNotes.vue'
 import TableBeneficiary from './TableBeneficiary.vue'
 
 import Util from '../classes/Util.js'
@@ -64,6 +70,7 @@ export default {
     BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
+    BaseNotes,
     TableBeneficiary,
   },
   computed: {
@@ -79,6 +86,9 @@ export default {
     barContent() {
       return project.getBeneficiaryBarContent()
     },
+    beneficiaryNote() {
+      return project.data.beneficiarySection.note
+    },
   },
   methods: {
     onShowDefinitionChange(event) {
@@ -86,6 +96,12 @@ export default {
     },
     onShowResultChange(event) {
       project.setBeneficiaryShowResults(event)
+    },
+    setBeneficiaryNote(event) {
+      project.setBeneficiaryNote({ text: event })
+    },
+    setBeneficiaryNoteExpanded(event) {
+      project.setBeneficiaryNote({ expanded: event })
     },
   },
 }

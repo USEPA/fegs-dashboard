@@ -643,7 +643,7 @@ class Note {
       this.note = this.content.innerText
       if (this.saveFunc) this.saveFunc(this.note)
     }
-    this.editing = false
+    this.editing = false 
     this.content.setAttribute('contenteditable', false)
     this.editBtn.classList.remove(...this.saveIcon)
     this.editBtn.classList.add(...this.editIcon)
