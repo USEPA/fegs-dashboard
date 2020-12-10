@@ -200,6 +200,9 @@ const BENEFICIARIES = {
       'Military / Coast Guard': {
         def: 'Uses the environment for placement of infrastucture or training activities',
       },
+      'Public Sector Property Owners': {
+        def: 'Uses or benefits from the environment as an owner of property and in a way not specified in other government, municipal, and residential subclasses.',
+      },
     },
   },
   'Transportation': {
@@ -597,8 +600,8 @@ class Note {
 
     this.editIcon = 'fas fa-edit'.split(' ') // array of CSS classes
     this.saveIcon = 'fas fa-check green'.split(' ')
-    this.hideIcon = 'fas fa-chevron-down'.split(' ')
-    this.showIcon = 'fas fa-chevron-right'.split(' ')
+    this.hideIcon = 'fas fa-chevron-up'.split(' ')
+    this.showIcon = 'fas fa-chevron-down'.split(' ')
     this.editing = false
     this.visible = true
     this.note = ''
@@ -1455,7 +1458,7 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
   })
 
   this.fegsBeneficiaries = [] // [beneficiary, ...]
-  this.fegsBeneficiariesTier1 = {} // {beneficiary: tier, ...}
+  this.fegsBeneficiariesTier1 = {} // { beneficiary: tier, ... }
 
   Object.entries(beneficiaries).forEach(([key, value]) => {
     Object.keys(value.parts).forEach(key2 => {
@@ -1466,7 +1469,7 @@ const FEGSScopingData = function FEGSScopingData(criteria, beneficiaries, attrib
 
   this.tier1 = [] // [tier, ...]
   this.fegsAttributes = [] // [attribute, ...]
-  this.fegsAttributesTier1 = {} // {attribute: tier, ...}
+  this.fegsAttributesTier1 = {} // { attribute: tier, ... }
 
   Object.entries(attributes).forEach(([key, value]) => {
     this.tier1.push(key)
@@ -2821,7 +2824,7 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
     const { rows } = this.parentElement.parentElement.parentElement;
     let rowIndex;
     const { value } = this;
-    if (value < 1 || value > 100) {
+    if (value < 0 || value > 100) {
       // value is invalid after change
       for (let i = 0; i < rows.length; i += 1) {
         rows[i].cells[columnIndex].classList.remove('invalid-text-input');
@@ -2833,7 +2836,7 @@ const tableAttributesCreator = function tableAttributesCreator(tableId) {
         }" was set to ${value}% of ${
         document.getElementById('table-attributes').rows[1].cells[this.parentElement.cellIndex]
           .innerText
-        }. Percentages must be between 1 and 100.`
+        }. Percentages must be between 0 and 100.`
       );
     } else {
       // individual input is valid
