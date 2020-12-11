@@ -56,7 +56,9 @@
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="criterion.name"
         >
-          {{ percent(criterion.result, criterionResultTotal) }}
+          {{ number(criterion.result) }}
+        <br>
+          ({{ percent(criterion.result, criterionResultTotal) }})
         </BaseCellHead>
       </tr>
     </template>
@@ -125,6 +127,7 @@
           :key="criterion.name"
           :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
           :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
+          :isDisabled="!(criterion.result > 0)"
           :darken="index%2 === 1"
           @input="onDataInput(stakeholder.name, criterion.name, $event)"
           @change="onDataChange(stakeholder.name, criterion.name, $event)"
@@ -134,33 +137,10 @@
           v-if="showResults"
           :darken="index%2 === 1"
         >
-          {{ percent(stakeholder.computed.result, stakeholderResultTotal) }}
+          {{ number(stakeholder.computed.result) }}{{ '\xa0' }}({{ percent(stakeholder.computed.result, stakeholderResultTotal) }})
         </BaseCellData>
       </tr>
     </template>
-    <!-- <template #foot>
-      <tr>
-        <BaseCellEmphasis
-          colorBack="var(--color-table-head-emphasis)"
-          isLastOfGroup
-        />
-        <BaseCellHead
-          isLastOfGroup
-          style="text-align: right;"
-          :colspan="2"
-        >
-          Totals
-        </BaseCellHead>
-        <BaseCellData
-          v-for="criterion in criterionArray"
-          style="font-weight: bold;"
-          isLastOfGroup
-          :key="criterion.name"
-        >
-          {{ scaleUp(scoreTotals[criterion.name]) }}
-        </BaseCellData>
-      </tr>
-    </template> -->
   </BaseTable>
 </template>
 
@@ -214,9 +194,6 @@ export default {
     },
     stakeholderArray() {
       return project.getStakeholderArray()
-    },
-    scoreTotals() {
-      return project.data.stakeholderSection.computed.scoreTotals
     },
     criterionResultTotal() {
       return project.data.criterionSection.computed.resultTotal

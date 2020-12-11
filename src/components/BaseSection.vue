@@ -3,7 +3,7 @@
     <h2>{{ title }}</h2>
     <slot v-if="isReady"></slot>
     <div v-else>
-      <div class="msg">Enter data in the {{ prevSection.toLowerCase() }} section first.</div>
+      <p class="msg">Enter data in the {{ prevSection.toLowerCase() }} section first.</p>
     </div>
   </section>
 </template>
@@ -42,7 +42,7 @@ export default {
     margin: 0 0 .5em 0;
   }
   section.disabled h2,
-  section.disabled div {
+  section.disabled p {
     color: var(--color-text-disabled);
   }
   .msg {
@@ -55,5 +55,6 @@ export default {
     margin: 0 calc(-1 * var(--length-primary));
     display: block;
     overflow-x: auto;
+    overflow-y: hidden; /* necessary for some reason */
   }
 </style>

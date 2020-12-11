@@ -14,8 +14,11 @@
       </ul>
     </nav>
     <div id="content">
-      <div :class="{hide:!scrolled}" class="shadow" style="top:0"></div>
-      <!-- <div class="shadow" style="bottom:0"></div> -->
+      <div
+        class="shadow"
+        style="top:0"
+        :class="{hide:!scrolled}"
+      ></div>
       <BaseSection
         :id="sections[0].id"
         :title="sections[0].title"

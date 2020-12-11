@@ -85,7 +85,7 @@ order {
   --color-input-hover: #555;
   --color-input-active: #111;
   --color-input-disabled: #BBB;
-  --color-input-back-disabled: #DDD;
+  --color-input-back-disabled: #E3E3E3;
 
   --color-invalid-input:#F51D2B;
   --color-invalid-icon: #f84a56;

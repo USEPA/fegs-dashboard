@@ -11,7 +11,7 @@
           isSpace
         />
         <BaseCellEmphasis
-          v-for="beneficiary in currentBeneficiaryArray"
+          v-for="beneficiary in filteredBeneficiaryArray"
           noBorder
           isHorz
           :key="beneficiary.name"
@@ -56,14 +56,27 @@
         >
           Definition
         </BaseCellHead>
+        <template v-if="showAllColumns">
+          <BaseCellHead
+            v-for="category in beneficiaryCategoryArray"
+            style="max-width: 8rem; font-weight: normal; text-align: center;"
+            :key="category.name"
+            :colspan="category.computed.members"
+            :colorBack="category.color.light"
+          >
+            {{ category.name }}
+          </BaseCellHead>
+        </template>
         <BaseCellHead
-          :colspan="currentBeneficiaryCategory.computed.members"
+          v-else
+          :colspan="filteredBeneficiaryArray.length"
           :colorBack="currentBeneficiaryCategory.color.light"
         >
           <BaseSelect
             style="font-weight: bold;"
             label="Beneficiary"
-            :options="beneficiaryCategories"
+            :value="currentBeneficiaryCategoryName"
+            :options="filteredBeneficiaryCategoryNames"
             @change="onMetricChange"
           />
         </BaseCellHead>
@@ -80,23 +93,23 @@
       </tr>
       <tr>
         <BaseCellHead
-          v-for="beneficiary in currentBeneficiaryArray"
+          v-for="beneficiary in filteredBeneficiaryArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
-          :colorBack="currentBeneficiaryCategory.color.light"
+          :colorBack="beneficiary.category.color.light"
         >
           {{ beneficiary.name }}
         </BaseCellHead>
       </tr>
       <tr>
         <BaseCellHead
-          v-for="beneficiary in currentBeneficiaryArray"
+          v-for="beneficiary in filteredBeneficiaryArray"
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           isLastOfGroup
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
-          :colorBack="currentBeneficiaryCategory.color.light"
+          :colorBack="beneficiary.category.color.light"
         >
           {{ percent(beneficiary.computed.result, beneficiaryResultTotal) }}
         </BaseCellHead>
@@ -153,10 +166,11 @@
             {{ attribute.def }}
           </BaseCellHead>
           <BaseCellDataField
-            v-for="beneficiary in currentBeneficiaryArray"
+            v-for="beneficiary in filteredBeneficiaryArray"
             :key="beneficiary.name"
             :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
             :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
+            :isDisabled="!(beneficiary.computed.result > 0)"
             :isLastOfGroup="attribute.computed.isLastOfCategory"
             @input="onDataInput(attribute.name, beneficiary.name, $event)"
             @change="onDataChange(attribute.name, beneficiary.name, $event)"
@@ -220,7 +234,7 @@
             ...
           </BaseCellHead>
           <BaseCellData
-            v-for="beneficiary in currentBeneficiaryArray"
+            v-for="beneficiary in filteredBeneficiaryArray"
             isLastOfGroup
             :key="beneficiary.name"
           >
@@ -251,7 +265,7 @@
           Total
         </BaseCellHead>
         <BaseCellData
-          v-for="beneficiary in currentBeneficiaryArray"
+          v-for="beneficiary in filteredBeneficiaryArray"
           style="font-weight: bold;"
           isLastOfGroup
           :key="beneficiary.name"
@@ -303,6 +317,7 @@ export default {
   props: {
     showDefinitions: Boolean,
     showResults: Boolean,
+    showAllColumns: Boolean,
   },
   data() {
     return {
@@ -319,19 +334,34 @@ export default {
     currentBeneficiaryCategory() {
       return project.data.beneficiarySection.categories[this.currentBeneficiaryCategoryName]
     },
-    beneficiaryCategories() {
-      return Object.keys(project.data.beneficiarySection.categories)
+    beneficiaryCategoryArray() {
+      const ret = []
+      Object.entries(project.data.beneficiarySection.categories).forEach(([categoryName, category]) => {
+        ret.push({
+          name: categoryName,
+          ...category,
+        })
+      })
+      return ret
+    },
+    filteredBeneficiaryCategoryNames() {
+      const ret = []
+      Object.entries(project.data.beneficiarySection.categories).forEach(([categoryName, category]) => {
+        if (category.computed.result > 0) ret.push(categoryName)
+      })
+      return ret
     },
     beneficiaryNames() {
       return Object.keys(project.data.beneficiarySection.beneficiaries)
     },
-    currentBeneficiaryArray() {
-      return this.beneficiaryArray.filter(beneficiary => {
-        return (beneficiary.categoryName === this.currentBeneficiaryCategoryName)
-      })
-    },
     beneficiaryArray() {
       return project.getBeneficiaryArray()
+    },
+    filteredBeneficiaryArray() {
+      if (this.showAllColumns) return this.beneficiaryArray
+      return this.beneficiaryArray.filter(beneficiary => {
+        return (beneficiary.categoryName === this.currentBeneficiaryCategoryName && beneficiary.computed.result > 0)
+      })
     },
     attributeArray() {
       return project.getAttributeArray()

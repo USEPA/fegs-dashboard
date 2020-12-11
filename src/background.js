@@ -87,11 +87,11 @@ ipcMain.on('chart', (event, { cmd, data }) => {
       throw Error(`Unsupported command "${cmd}"`) // programmer error
   }
 })
-ipcMain.on('info', (event, { cmd, data }) => {
+ipcMain.on('meta', (event, { cmd, data }) => {
   console.log(`IPC Command: ${cmd}`)
   switch (cmd) {
     case 'title?':
-      event.sender.send('info', {
+      event.sender.send('meta', {
         cmd: 'title',
         data: {
           appTitle,

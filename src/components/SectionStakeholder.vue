@@ -31,7 +31,7 @@
         v-if="hasStakeholders"
         style="margin-bottom: .5rem; margin-left: .5rem;"
         label="Show results"
-        :isChecked="showResults"
+        :isChecked="stakeholderShow.results"
         @change="onShowResultChange"
       />
     </div>
@@ -112,7 +112,7 @@
     <div class="full">
       <TableStakeholder
         v-if="hasStakeholders"
-        :showResults="showResults"
+        :showResults="stakeholderShow.results"
       />
     </div>
     <div class="full">
@@ -154,6 +154,8 @@ import TableStakeholder from './TableStakeholder.vue'
 
 import input from './mixins/input.js'
 
+// TODO extract new stakeholder modal into a separate component file (hard code some things)
+
 import Util from '../classes/Util.js'
 import { project, uid } from '../store.js'
 
@@ -190,9 +192,6 @@ export default {
     }
   },
   computed: {
-    showResults() {
-      return project.data.stakeholderSection.showResults
-    },
     hasStakeholders() {
       return Object.keys(project.data.stakeholderSection.stakeholders).length > 0
     },
@@ -215,11 +214,11 @@ export default {
     stakeholderNote() {
       return project.data.stakeholderSection.note
     },
+    stakeholderShow() {
+      return project.data.stakeholderSection.show
+    },
   },
   methods: {
-    onShowResultChange(event) {
-      project.setStakeholderShowResults(event)
-    },
     onNameInput(event) {
       const { val, err } = this.validateName(event)
       this.editing = {
@@ -292,6 +291,9 @@ export default {
     },
     setStakeholderNoteExpanded(event) {
       project.setStakeholderNote({ expanded: event })
+    },
+    onShowResultChange(event) {
+      project.setStakeholderShow({ results: event })
     },
   },
 }

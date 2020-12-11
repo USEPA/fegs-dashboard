@@ -7,14 +7,14 @@
       {{ label }}
     </label>
     <select
-      @change="$emit('change', $event.target.value)"
+      @change="onChange"
       :id="id"
     >
       <option 
         v-for="option in options"
         :key="option"
         :value="option"
-        :selected="option === localDefaultOption"
+        :selected="option === switchValue"
       >
         {{ option }}
       </option>
@@ -28,21 +28,33 @@ import { uid } from '../store.js'
 export default {
   name: 'BaseSelect',
   props: {
+    value: String, // only needed if wrapped
+    options: Array,
     label: {
       type: String,
       default: '',
     },
-    options: Array,
-    defaultOption: '',
+    isWrapped: { // whether this component's value is managed externally
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
-      localDefaultOption: this.defaultOption || this.options[0],
+      localValue: this.value || this.options[0],
       id: uid.next(),
     }
   },
   computed: {
-
+    switchValue() {
+      return (this.isWrapped) ? this.value : this.localValue
+    },
+  },
+  methods: {
+    onChange(event) {
+      if (!this.isWrapped) this.localValue = event.target.value
+      this.$emit('change', event.target.value)
+    },
   },
 }
 </script>
@@ -57,7 +69,7 @@ export default {
   }
   select {
     min-width: 8rem;
-    height: 1.75rem;
+    padding: .2em .3em;
     border: 1px solid var(--color-input);
     border-radius: 4px;
     outline: none;

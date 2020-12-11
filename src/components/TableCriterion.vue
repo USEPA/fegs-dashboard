@@ -44,26 +44,6 @@
         </BaseCellData>
       </tr>
     </template>
-    <!-- <template #foot>
-      <tr>
-        <BaseCellEmphasis
-          colorBack="var(--color-table-head-emphasis)"
-          isLastOfGroup
-        />
-        <BaseCellHead
-          isLastOfGroup
-          style="text-align: right;"
-        >
-          Total
-        </BaseCellHead>
-        <BaseCellData
-          isLastOfGroup
-          style="font-weight: bold;"
-        >
-          {{ scaleUp(resultTotal) }}
-        </BaseCellData>
-      </tr>
-    </template> -->
   </BaseTable>
 </template>
 

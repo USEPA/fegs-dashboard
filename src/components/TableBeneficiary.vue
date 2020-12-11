@@ -11,9 +11,11 @@
           isSpace
         />
         <BaseCellEmphasis
+          v-for="stakeholder in filteredStakeholderArray"
           noBorder
           isHorz
-          :colorBack="currentStakeholder.color.primary"
+          :key="stakeholder.name"
+          :colorBack="stakeholder.color.primary"
         />
         <BaseCellHead
           v-if="showResults"
@@ -50,11 +52,21 @@
         >
           Definition
         </BaseCellHead>
-        <BaseCellHead>
+        <template v-if="showAllColumns">
+          <BaseCellHead
+            v-for="stakeholder in stakeholderArray"
+            style="min-width: 4rem; font-weight: normal; text-align: center;"
+            :key="stakeholder.name"
+          >
+            {{ stakeholder.name }}
+          </BaseCellHead>
+        </template>
+        <BaseCellHead v-else>
           <BaseSelect
             style="font-weight: bold;"
             label="Stakeholder"
-            :options="stakeholderNames"
+            :options="filteredStakeholderNames"
+            :value="currentStakeholderName"
             @change="onMetricChange"
           />
         </BaseCellHead>
@@ -70,11 +82,15 @@
       </tr>
       <tr>
         <BaseCellHead
-          style="max-width: 8rem; font-weight: normal; text-align: center;"
+          v-for="stakeholder in filteredStakeholderArray"
+          style="min-width: 4rem; font-weight: normal; text-align: center;"
           isLastOfGroup
+          :key="stakeholder.name"
           :style="{ borderRight: showResults ? 'none' : null }"
         >
-          {{ percent(currentStakeholder.computed.result, stakeholderResultTotal) }}
+          {{ number(stakeholder.computed.result) }}
+        <br v-if="showAllColumns">
+          ({{ percent(stakeholder.computed.result, stakeholderResultTotal) }})
         </BaseCellHead>
       </tr>
     </template>
@@ -131,9 +147,12 @@
             {{ beneficiary.def }}
           </BaseCellHead>
           <BaseCellDataField
+            v-for="stakeholder in filteredStakeholderArray"
+            :key="stakeholder.name"
             :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-            :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[currentStakeholderName])"
+            :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[stakeholder.name])"
             :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
+            :isDisabled="!(stakeholder.computed.result > 0)"
             @input="onDataInput(beneficiary.name, $event)"
             @change="onDataChange(beneficiary.name, $event)"
             @key-enter="onDataKeyEnter(index)"
@@ -198,9 +217,11 @@
             ...
           </BaseCellHead>
           <BaseCellData
+            v-for="stakeholder in filteredStakeholderArray"
             isLastOfGroup
+            :key="stakeholder.name"
           >
-            {{ number(beneficiary.category.computed.scoreTotals[currentStakeholderName]) }}
+            {{ number(beneficiary.category.computed.scoreTotals[stakeholder.name]) }}
           </BaseCellData>
           <BaseCellData
             v-if="showResults"
@@ -227,10 +248,12 @@
           Total
         </BaseCellHead>
         <BaseCellData
+          v-for="stakeholder in filteredStakeholderArray"
           style="font-weight: bold;"
           isLastOfGroup
+          :key="stakeholder.name"
         >
-          {{ scaleUp(scoreTotals[currentStakeholderName]) }}
+          {{ scaleUp(scoreTotals[stakeholder.name]) }}
         </BaseCellData>
         <BaseCellData
           v-if="showResults"
@@ -277,6 +300,7 @@ export default {
   props: {
     showDefinitions: Boolean,
     showResults: Boolean,
+    showAllColumns: Boolean,
   },
   data() {
     return {
@@ -292,6 +316,13 @@ export default {
     stakeholderNames() {
       return Object.keys(project.data.stakeholderSection.stakeholders)
     },
+    filteredStakeholderNames() {
+      const ret = []
+      Object.entries(project.data.stakeholderSection.stakeholders).forEach(([stakeholderName, stakeholder]) => {
+        if (stakeholder.computed.result > 0) ret.push(stakeholderName)
+      })
+      return ret
+    },
     currentStakeholder() {
       if (!(this.currentStakeholderName in project.data.stakeholderSection.stakeholders)) {
         this.currentStakeholderName = Object.keys(project.data.stakeholderSection.stakeholders)[0]
@@ -300,6 +331,12 @@ export default {
     },
     stakeholderArray() {
       return project.getStakeholderArray()
+    },
+    filteredStakeholderArray() {
+      if (this.showAllColumns) return this.stakeholderArray
+      return this.stakeholderArray.filter(stakeholder => {
+        return (stakeholder.name === this.currentStakeholderName && stakeholder.computed.result > 0)
+      })
     },
     beneficiaryArray() {
       return project.getBeneficiaryArray()

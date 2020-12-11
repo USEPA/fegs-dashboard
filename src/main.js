@@ -36,17 +36,19 @@ if (process.env.IS_ELECTRON) {
     console.log(`IPC Command: ${cmd}`)
     switch (cmd) {
       case 'new':
+        misc.state = 'loading'
         project.new()
         send('name', project.data.meta.name)
         window.scroll({ top: 0 })
         break
       case 'load':
         try {
+          misc.state = 'loading'
           project.load(data)
           send('name', project.data.meta.name)
           window.scroll({ top: 0 })
         } catch (error) {
-          console.error(`Error: ${error.message}`) // TODO: handle elegantly?
+          console.error(`Failed to load project. ${error.message}`) // TODO: handle elegantly?
         }
         break
       case 'save':
@@ -55,11 +57,15 @@ if (process.env.IS_ELECTRON) {
       case 'saved':
         project.modified = false
         break
+      case 'close':
+        misc.state = 'unloading'
+        document.activeElement.blur() // trigger saving of in-edit fields
+        break
       default:
         throw Error(`Unsupported command "${cmd}"`) // programmer error
     }
   })
-  window.ipc.on('info', ({ cmd, data }) => {
+  window.ipc.on('meta', ({ cmd, data }) => {
     console.log(`IPC Command: ${cmd}`)
     switch (cmd) {
       case 'title':
@@ -70,8 +76,8 @@ if (process.env.IS_ELECTRON) {
     }
   })
 
-  // Query main process for information (app title).
-  window.ipc.send('info', { cmd: 'title?' })
+  // Query main process for app title.
+  window.ipc.send('meta', { cmd: 'title?' })
 
   // Create new project.
   project.new()

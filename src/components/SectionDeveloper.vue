@@ -41,7 +41,7 @@
     <BaseNotes :value="note" :expanded="expanded" @change-note="note = $event" @change-expanded="expanded = $event"/>
 
     <h3>Select</h3>
-    <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" defaultOption="b"/>
+    <BaseSelect :options="['a', 'bb', 'ccc', 'dddd']" :isWrapped="false" value="bb"/>
 
     <h3>Modal</h3>
     <BaseButton @click="showModal = true">

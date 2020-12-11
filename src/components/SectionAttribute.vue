@@ -15,20 +15,27 @@
     <div style="display: flex; margin-top: 1rem;">
       <BaseCheckbox
         label="Show definitions"
-        :isChecked="showDefinitions"
-        @change="onShowDefinitionChange"
+        :isChecked="attributeShow.defs"
+        @change="onShowDefinitionsChange"
       />
       <BaseCheckbox
         style="margin-left: 1rem;"
         label="Show results"
-        :isChecked="showResults"
-        @change="onShowResultChange"
+        :isChecked="attributeShow.results"
+        @change="onShowResultsChange"
+      />
+      <BaseCheckbox
+        style="margin-left: 1rem;"
+        label="Show all beneficiaries"
+        :isChecked="attributeShow.allColumns"
+        @change="onShowAllColumnsChange"
       />
     </div>
     <div class="full">
       <TableAttribute
-        :showDefinitions="showDefinitions"
-        :showResults="showResults"
+        :showDefinitions="attributeShow.defs"
+        :showResults="attributeShow.results"
+        :showAllColumns="attributeShow.allColumns"
       />
     </div>
     <div class="full">
@@ -71,12 +78,6 @@ export default {
     TableAttribute,
   },
   computed: {
-    showDefinitions() {
-      return project.data.attributeSection.showDefs
-    },
-    showResults() {
-      return project.data.attributeSection.showResults
-    },
     pieContent() {
       return project.getAttributePieContent()
     },
@@ -86,19 +87,25 @@ export default {
     attributeNote() {
       return project.data.attributeSection.note
     },
+    attributeShow() {
+      return project.data.attributeSection.show
+    }
   },
   methods: {
-    onShowDefinitionChange(event) {
-      project.setAttributeShowDefs(event)
-    },
-    onShowResultChange(event) {
-      project.setAttributeShowResults(event)
-    },
     setAttributeNote(event) {
       project.setAttributeNote({ text: event })
     },
     setAttributeNoteExpanded(event) {
       project.setAttributeNote({ expanded: event })
+    },
+    onShowDefinitionsChange(event) {
+      project.setAttributeShow({ defs: event })
+    },
+    onShowResultsChange(event) {
+      project.setAttributeShow({ results: event })
+    },
+    onShowAllColumnsChange(event) {
+      project.setAttributeShow({ allColumns: event })
     },
   },
 }

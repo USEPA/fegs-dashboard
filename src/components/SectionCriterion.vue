@@ -16,12 +16,12 @@
       <BaseCheckbox
         style="margin-bottom: .5rem;"
         label="Show results"
-        :isChecked="showResults"
+        :isChecked="criterionShow.results"
         @change="onShowResultChange"
       />
     </div>
     <div style="display: flex;" class="full">
-      <TableCriterion :showResults="showResults"/>
+      <TableCriterion :showResults="criterionShow.results"/>
       <BaseChartPie
         style="margin-left: .5rem;"
         :width="700"
@@ -52,32 +52,30 @@ export default {
     TableCriterion,
   },
   computed: {
-    showResults() {
-      return project.data.criterionSection.showResults
-    },
     pieContent() {
       return project.getCriterionPieContent({ short: true })
     },
     criterionNote() {
       return project.data.criterionSection.note
     },
+    criterionShow() {
+      return project.data.criterionSection.show
+    },
   },
   methods: {
-    onShowResultChange(event) {
-      project.setCriterionShowResults(event)
-    },
     setCriterionNote(event) {
       project.setCriterionNote({ text: event })
     },
     setCriterionNoteExpanded(event) {
       project.setCriterionNote({ expanded: event })
     },
+    onShowResultChange(event) {
+      project.setCriterionShow({ results: event })
+    },
   },
 }
 </script>
 
 <style scoped>
-  .full {
-    overflow-x: hidden; /* override */
-  }
+  
 </style>

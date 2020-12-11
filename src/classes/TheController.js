@@ -18,33 +18,42 @@ export default class TheController {
     this.quitting = false
 
     this.mainWindow.onClose(event => {
-      this.quit(event) // event may be cancelled
+      if (!this.quitting) {
+        event.preventDefault()
+        this.quit()
+      }
     })
   }
 
   new() {
-    if (!this.saved) {
-      switch (this._saveQuery()) {
-        case 'yes': return this.save({ and: 'new' })
-        case 'no': return this._new()
-        case 'cancel': return // do nothing
-      }
-    } else {
-      this._new()
-    }
-  }
-  open() {
-    if (this._openDialog()) {
+    this.mainWindow.send('project', { cmd: 'close' })
+    setTimeout(() => {
       if (!this.saved) {
         switch (this._saveQuery()) {
-          case 'yes': return this.save({ and: 'open' })
-          case 'no': return this._open()
+          case 'yes': return this.save({ and: 'new' })
+          case 'no': return this._new()
           case 'cancel': return // do nothing
         }
       } else {
-        this._open()
+        this._new()
       }
-    }
+    }, 200) // allow time for client to save in-edit fields
+  }
+  open() {
+    this.mainWindow.send('project', { cmd: 'close' })
+    setTimeout(() => {
+      if (this._openDialog()) {
+        if (!this.saved) {
+          switch (this._saveQuery()) {
+            case 'yes': return this.save({ and: 'open' })
+            case 'no': return this._open()
+            case 'cancel': return // do nothing
+          }
+        } else {
+          this._open()
+        }
+      }
+    }, 200) // allow time for client to save in-edit fields
   }
   save({ and }={}) {
     this.afterSaved = and || null
@@ -85,28 +94,29 @@ export default class TheController {
       }
     }
   }
-  quit(event=null) {
-    const cancel = () => (event) ? event.preventDefault() : null
+  quit() {
     if (!this.quitting) {
-      if (this.saved) {
-        if (!Util.isMac()) {
-          switch (this._quitQuery()) {
-            case 'yes': return this._quit()
-            case 'no': return cancel()
+      this.mainWindow.send('project', { cmd: 'close' })
+      setTimeout(() => {
+        if (this.saved) {
+          if (!Util.isMac()) {
+            switch (this._quitQuery()) {
+              case 'yes': return this._quit()
+              case 'no': return // do nothing
+            }
+          } else {
+            this._quit()
           }
         } else {
-          this._quit()
+          switch (this._saveQuery()) {
+            case 'yes':
+              this.save({ and: 'quit' })
+              break
+            case 'no': return this._quit()
+            case 'cancel': return // do nothing
+          }
         }
-      } else {
-        switch (this._saveQuery()) {
-          case 'yes': 
-            cancel()
-            this.save({ and: 'quit' })
-            break
-          case 'no': return this._quit()
-          case 'cancel': return cancel()
-        }
-      }
+      }, 200) // allow time for client to save in-edit fields
     }
   }
   close() {
@@ -197,6 +207,7 @@ export default class TheController {
   _new() {
     this.currentFilepath = null
     this.currentProjectName = null // set with message from render process
+    this.saved = true
     this.mainWindow.send('project', { cmd: 'new' })
   }
   _open() {
@@ -213,6 +224,7 @@ export default class TheController {
   }
   _quit() {
     this.quitting = true
+    Object.values(this.windows).forEach(win => win.close())
     app.quit()
   }
   _close() {

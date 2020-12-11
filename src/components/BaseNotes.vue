@@ -17,18 +17,20 @@
         @click="onEdit"
       />
       <BaseButtonIcon
-        v-if="!editing && expanded"
+        v-if="hasNote && !editing && expanded"
         icon="chevron-up"
         color="neutral"
         hint="Collapse notes"
+        doBlurOnClick
         @click="onExpandedClick"
       />
       <BaseButtonIcon
-        v-if="!editing && !expanded"
+        v-if="hasNote && !editing && !expanded"
         icon="chevron-down"
         shiftY="0.05em"
         color="neutral"
         hint="Expand notes"
+        doBlurOnClick
         @click="onExpandedClick"
       />
     </h3>
@@ -38,12 +40,12 @@
       :value="value"
       @change="onNoteChange"
     />
-    <p v-else-if="expanded && value.trim()">{{ value }}</p>
-    <p v-else-if="!expanded" style="color: var(--color-text-disabled)">
-      <em>{{ title }} hidden</em>
-    </p>
-    <p v-else style="color: var(--color-text-disabled)">
+    <p v-else-if="!hasNote" style="color: var(--color-text-disabled)">
       <em>Your notes here...</em>
+    </p>
+    <p v-else-if="expanded">{{ value }}</p>
+    <p v-else style="color: var(--color-text-disabled)">
+      <em>{{ title }} hidden</em>
     </p>
   </div>
 </template>
@@ -53,7 +55,7 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseTextbox from './BaseTextbox.vue'
 
 import Util from '../classes/Util.js'
-import { project } from '../store.js'
+import { project, misc } from '../store.js'
 
 export default {
   name: 'BaseNotes',
@@ -84,16 +86,30 @@ export default {
       editing: false,
     }
   },
+  computed: {
+    hasNote() {
+      return !!this.value.trim()
+    },
+    appState() {
+      return misc.state
+    },
+  },
+  watch: {
+    appState(val) {
+      if (val === 'unloading') this.onDone()
+    },
+  },
   methods: {
     onEdit() {
       this.editing = true
       this.$nextTick(() => this.$refs.textbox.$el.focus()) // wait for textbox to exist
+      if (!this.hasNote && !this.expanded) this.$emit('change-expanded', true) // default expanded when note created
     },
-    onDone(event) {
+    onDone() {
       this.editing = false
     },
     onNoteChange(event) {
-      this.$emit('change-note', event)
+      if (this.value !== event) this.$emit('change-note', event)
     },
     onExpandedClick() {
       this.$emit('change-expanded', !this.expanded)

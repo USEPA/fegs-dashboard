@@ -9,7 +9,7 @@ export default class BaseWindow {
     return (this.ref !== null)
   }
   close() {
-    this.ref.close()
+    if (this.ref) this.ref.close()
   }
   create() { 
     // this.ref = new BrowserWindow()

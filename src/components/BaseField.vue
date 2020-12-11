@@ -99,8 +99,7 @@ export default {
   }
   input {
     width: 100%;
-    height: 1.7em;
-    padding: .1em .2em;
+    padding: .2em .3em;
     text-align: inherit;
     box-sizing: border-box;
     border: 1px solid var(--color-input);

@@ -9,6 +9,7 @@
       @key-enter="$emit('key-enter', $event)"
       :value="value"
       :validationMsg="validationMsg"
+      :isDisabled="isDisabled"
       :isWrapped="true"
       :doSelectAll="true"
     />
@@ -28,6 +29,7 @@ export default {
   props: {
     value: [String, Number],
     validationMsg: String,
+    isDisabled: Boolean,
     colorBack: String,
     rowspan: {
       type: Number,

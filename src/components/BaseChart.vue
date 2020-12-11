@@ -42,33 +42,32 @@ export default {
     }
   },
   methods: {
-    download() {
+    async download() {
       if (this.rasterizing) return // don't download again while still rasterizing
       if (process.env.IS_ELECTRON) {
-        this.rasterizing = true; // yeah... semicolon needed
-        (async () => {
-          try {
-            const svgNode = this.$refs.chart.firstChild
-            const svgString = this.serializeSVG(svgNode)
-            const jpgBuffer = await this.rasterizeSVG(svgNode, { mime: 'jpeg' })
-            const pngBuffer = await this.rasterizeSVG(svgNode, { mime: 'png' })
+        this.rasterizing = true
+        try {
+          const svgNode = this.$refs.chart.firstChild
+          const svgString = this.serializeSVG(svgNode) // 1ms
+          const jpgBuffer = await this.rasterizeSVG(svgNode, { mime: 'jpeg' }) // 100ms
+          const pngBuffer = await this.rasterizeSVG(svgNode, { mime: 'png' }) // 100ms
 
-            // send all 3 formats, much cleaner than sending a bunch of ipc messages to choose the right one
-            window.ipc.send('chart', {
-              cmd: 'save',
-              data: {
-                title: this.title,
-                svg: svgString,
-                jpg: jpgBuffer,
-                png: pngBuffer,
-              }
-            })
-          } catch (error) {
-            console.error(error.message) // TODO ui indication of failure
-          } finally {
-            this.rasterizing = false
-          }
-        })()
+          // send all 3 filetypes, much simpler than sending a bunch of ipc messages to choose filetype
+          // TODO do this properly with a call and response to get filetype
+          window.ipc.send('chart', {
+            cmd: 'save',
+            data: {
+              title: this.title,
+              svg: svgString,
+              jpg: jpgBuffer,
+              png: pngBuffer,
+            }
+          })
+        } catch (error) {
+          console.error(error.message) // TODO ui indication of failure
+        } finally {
+          this.rasterizing = false
+        }
       }
     },
     serializeSVG(svgNode) {

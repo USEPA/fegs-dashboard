@@ -162,10 +162,6 @@ export default class TheProjectStore {
     this.data.meta.name = name
     this._modified()
   }
-  setProjectDescription(desc) { 
-    this.data.meta.description = desc
-    this._modified()
-  }
 
   setProjectNote({ text=null, expanded=null }) {
     if (text !== null) this.data.meta.note.text = text
@@ -202,29 +198,24 @@ export default class TheProjectStore {
     this._modified()
   }
 
-  setBeneficiaryShowDefs(show) {
-    this.data.beneficiarySection.showDefs = show
+  setCriterionShow({ results }) {
+    this.data.criterionSection.show.results = results
     this._modified()
   }
-  setAttributeShowDefs(show) {
-    this.data.attributeSection.showDefs = show
+  setStakeholderShow({ results }) {
+    this.data.stakeholderSection.show.results = results
     this._modified()
   }
-
-  setCriterionShowResults(show) {
-    this.data.criterionSection.showResults = show
+  setBeneficiaryShow({ results=null, defs=null, allColumns=null }) {
+    if (results !== null) this.data.beneficiarySection.show.results = results
+    if (defs !== null) this.data.beneficiarySection.show.defs = defs
+    if (allColumns !== null) this.data.beneficiarySection.show.allColumns = allColumns
     this._modified()
   }
-  setStakeholderShowResults(show) {
-    this.data.stakeholderSection.showResults = show
-    this._modified()
-  }
-  setBeneficiaryShowResults(show) {
-    this.data.beneficiarySection.showResults = show
-    this._modified()
-  }
-  setAttributeShowResults(show) {
-    this.data.attributeSection.showResults = show
+  setAttributeShow({ results=null, defs=null, allColumns=null }) {
+    if (results !== null) this.data.attributeSection.show.results = results
+    if (defs !== null) this.data.attributeSection.show.defs = defs
+    if (allColumns !== null) this.data.attributeSection.show.allColumns = allColumns
     this._modified()
   }
 
@@ -350,6 +341,7 @@ export default class TheProjectStore {
     if (!this.modified) {
       this.modified = true
       Util.safeCall(this._onModifiedCallback)
+      // console.log('Store: modified')
     }
   }
   _getSectionArray(section, key) {
@@ -564,7 +556,9 @@ export default class TheProjectStore {
           text: '',
           expanded: true,
         },
-        showResults: false,
+        show: {
+          results: false,
+        },
         order: [],
         criteria: {
           'Magnitude & Probability of Impact': {
@@ -653,7 +647,9 @@ export default class TheProjectStore {
           text: '',
           expanded: true,
         },
-        showResults: false,
+        show: {
+          results: false,
+        },
         colors: [ // available colors for stakeholders
           '#4cb159',
           '#1287c5',
@@ -706,8 +702,11 @@ export default class TheProjectStore {
           text: '',
           expanded: true,
         },
-        showDefs: true,
-        showResults: false,
+        show: {
+          results: false,
+          defs: true,
+          allColumns: false,
+        },
         order: [],
         categories: {
           'Agricultural': {
@@ -935,8 +934,11 @@ export default class TheProjectStore {
           text: '',
           expanded: true,
         },
-        showDefs: true,
-        showResults: false,
+        show: {
+          results: false,
+          defs: true,
+          allColumns: false,
+        },
         order: [],
         categories: {
           'Atmosphere': {

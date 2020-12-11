@@ -4,6 +4,7 @@
     class="textbox"
     v-text="switchValue"
     ref="textbox"
+    :spellcheck="doSpellCheck ? 'true' : 'false'"
     @input="onInput"
     @focus="onFocus"
     @blur="onBlur"
@@ -29,6 +30,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    doSpellCheck: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -39,9 +44,6 @@ export default {
     switchValue() {
       return (this.isWrapped) ? this.value : this.localValue
     },
-  },
-  beforeDestroy() {
-    this.$emit('change', this.$refs.textbox.innerText)
   },
   methods: {
     onInput(event) {
@@ -63,7 +65,7 @@ export default {
   div.textbox {
     width: 100%;
     min-height: 4em;
-    padding: .1em .2em;
+    padding: .2em .3em;
     text-align: inherit;
     white-space: pre;
     box-sizing: border-box;

@@ -18,20 +18,27 @@
     <div style="display: flex; margin-top: 1rem;">
       <BaseCheckbox
         label="Show definitions"
-        :isChecked="showDefinitions"
-        @change="onShowDefinitionChange"
+        :isChecked="beneficiaryShow.defs"
+        @change="onShowDefinitionsChange"
       />
       <BaseCheckbox
         style="margin-left: 1rem;"
         label="Show results"
-        :isChecked="showResults"
-        @change="onShowResultChange"
+        :isChecked="beneficiaryShow.results"
+        @change="onShowResultsChange"
+      />
+      <BaseCheckbox
+        style="margin-left: 1rem;"
+        label="Show all stakeholders"
+        :isChecked="beneficiaryShow.allColumns"
+        @change="onShowAllColumnsChange"
       />
     </div>
     <div class="full">
       <TableBeneficiary
-        :showDefinitions="showDefinitions"
-        :showResults="showResults"  
+        :showDefinitions="beneficiaryShow.defs"
+        :showResults="beneficiaryShow.results"
+        :showAllColumns="beneficiaryShow.allColumns"
       />
     </div>
     <div class="full">
@@ -74,12 +81,6 @@ export default {
     TableBeneficiary,
   },
   computed: {
-    showDefinitions() {
-      return project.data.beneficiarySection.showDefs
-    },
-    showResults() {
-      return project.data.beneficiarySection.showResults
-    },
     pieContent() {
       return project.getBeneficiaryPieContent()
     },
@@ -89,19 +90,25 @@ export default {
     beneficiaryNote() {
       return project.data.beneficiarySection.note
     },
+    beneficiaryShow() {
+      return project.data.beneficiarySection.show
+    },
   },
   methods: {
-    onShowDefinitionChange(event) {
-      project.setBeneficiaryShowDefs(event)
-    },
-    onShowResultChange(event) {
-      project.setBeneficiaryShowResults(event)
-    },
     setBeneficiaryNote(event) {
       project.setBeneficiaryNote({ text: event })
     },
     setBeneficiaryNoteExpanded(event) {
       project.setBeneficiaryNote({ expanded: event })
+    },
+    onShowDefinitionsChange(event) {
+      project.setBeneficiaryShow({ defs: event })
+    },
+    onShowResultsChange(event) {
+      project.setBeneficiaryShow({ results: event })
+    },
+    onShowAllColumnsChange(event) {
+      project.setBeneficiaryShow({ allColumns: event })
     },
   },
 }
