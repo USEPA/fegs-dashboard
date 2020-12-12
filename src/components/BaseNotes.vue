@@ -13,14 +13,14 @@
         v-if="!editing"
         icon="edit"
         color="primary"
-        hint="Edit"
+        :hint="`Edit ${title.toLowerCase()}`"
         @click="onEdit"
       />
       <BaseButtonIcon
         v-if="hasNote && !editing && expanded"
         icon="chevron-up"
         color="neutral"
-        hint="Collapse notes"
+        :hint="`Collapse ${title.toLowerCase()}`"
         doBlurOnClick
         @click="onExpandedClick"
       />
@@ -29,7 +29,7 @@
         icon="chevron-down"
         shiftY="0.05em"
         color="neutral"
-        hint="Expand notes"
+        :hint="`Expand ${title.toLowerCase()}`"
         doBlurOnClick
         @click="onExpandedClick"
       />
@@ -126,6 +126,6 @@ export default {
     margin-bottom: 1rem;
   }
   p {
-    white-space: pre;
+    white-space: pre-line;
   }
 </style>

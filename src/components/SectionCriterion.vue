@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <BaseSection>
+    <h2>Weights</h2>
     <p>
       Look over the criteria below. Identify the criterion most relevant for distinguishing among stakeholder groups for this decision. Give that criterion a weight of 100. Weight all other criteria relative to that most valued criterion. Weights can be values between 0 and 100.
     </p>
@@ -30,7 +31,7 @@
         :colors="pieContent.colors"
       />
     </div>
-  </div>
+  </BaseSection>
 </template>
 
 
@@ -38,6 +39,7 @@
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 import TableCriterion from './TableCriterion.vue'
 
 import Util from '../classes/Util.js'
@@ -49,6 +51,7 @@ export default {
     BaseChartPie,
     BaseCheckbox,
     BaseNotes,
+    BaseSection,
     TableCriterion,
   },
   computed: {

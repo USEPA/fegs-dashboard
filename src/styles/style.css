@@ -132,7 +132,7 @@ div, p, input, select {
   color: var(--color-text-black);
 }
 h1, h2, h3, h4, h5 {
-  margin: 1em 0 .3em 0;
+  margin: .6em 0 .3em 0;
   font-family: var(--font-family-head);
   font-weight: bold;
   color: var(--color-text-header);

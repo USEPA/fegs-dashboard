@@ -67,7 +67,7 @@ export default {
     min-height: 4em;
     padding: .2em .3em;
     text-align: inherit;
-    white-space: pre;
+    white-space: pre-line;
     box-sizing: border-box;
     border: 1px solid var(--color-input);
     border-radius: 4px;

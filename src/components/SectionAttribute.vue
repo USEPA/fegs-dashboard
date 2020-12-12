@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <BaseSection
+    title="Attributes"
+    prevSection="Beneficiaries"
+    :isReady="isReady"
+  >
+    <h2>Attributes</h2>
     <p>
       Identify how much each beneficiary group cares about the listed environmental attributes by percentage.
     </p>
@@ -54,7 +59,7 @@
         :colors="pieContent.colors"
       />
     </div>
-  </div>
+  </BaseSection>
 </template>
 
 
@@ -63,6 +68,7 @@ import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 import TableAttribute from './TableAttribute.vue'
 
 import Util from '../classes/Util.js'
@@ -75,7 +81,14 @@ export default {
     BaseChartPie,
     BaseCheckbox,
     BaseNotes,
+    BaseSection,
     TableAttribute,
+  },
+  props: {
+    isReady: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     pieContent() {

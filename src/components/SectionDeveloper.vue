@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <BaseSection>
+    <h2>Developer</h2>
     <h3>Checkboxes</h3>
     <div style="margin-bottom: .5rem; display: flex;">
       <!-- <input id="id-01" type="checkbox"/> -->
@@ -60,7 +61,7 @@
 
     <h3>Project Data</h3>
     <BaseCodeBlock :content="project"/>
-  </div>
+  </BaseSection>
 </template>
 
 <script>
@@ -73,6 +74,7 @@ import BaseCodeBlock from './BaseCodeBlock.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
 import BaseTextbox from './BaseTextbox.vue'
@@ -92,6 +94,7 @@ export default {
     BaseField,
     BaseModal,
     BaseNotes,
+    BaseSection,
     BaseSelect,
     BaseTable,
     BaseTextbox,

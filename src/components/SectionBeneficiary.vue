@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <BaseSection
+    title="Beneficiaries"
+    prevSection="Stakeholders"
+    :isReady="isReady"
+  >
+    <h2>Beneficiaries</h2>
     <p>
       Identify the types of beneficiaries making up each stakeholder group by percentage.
     </p>
@@ -57,7 +62,7 @@
         :colors="pieContent.colors"
       />
     </div>
-  </div>
+  </BaseSection>
 </template>
 
 
@@ -66,6 +71,7 @@ import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 import TableBeneficiary from './TableBeneficiary.vue'
 
 import Util from '../classes/Util.js'
@@ -78,7 +84,14 @@ export default {
     BaseChartPie,
     BaseCheckbox,
     BaseNotes,
+    BaseSection,
     TableBeneficiary,
+  },
+  props: {
+    isReady: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     pieContent() {

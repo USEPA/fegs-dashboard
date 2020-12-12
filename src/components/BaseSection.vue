@@ -1,8 +1,8 @@
 <template>
   <section :class="{disabled:!isReady}">
-    <h2>{{ title }}</h2>
     <slot v-if="isReady"></slot>
     <div v-else>
+      <h2>{{ title }}</h2>
       <p class="msg">Enter data in the {{ prevSection.toLowerCase() }} section first.</p>
     </div>
   </section>
@@ -14,10 +14,7 @@ import Util from '../classes/Util.js'
 export default {
   name: 'BaseSection',
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
+    title: String, // shown when isReady=false
     prevSection: {
       type: String,
       default: 'previous',
@@ -25,7 +22,7 @@ export default {
     isReady: {
       type: Boolean,
       default: true,
-    }
+    },
   },
 }
 </script>
@@ -38,9 +35,6 @@ export default {
   section:not(:last-child) {
     border-bottom: 1px solid var(--color-section-border);
   }
-  h2 {
-    margin: 0 0 .5em 0;
-  }
   section.disabled h2,
   section.disabled p {
     color: var(--color-text-disabled);
@@ -51,6 +45,9 @@ export default {
 </style>
 
 <style>
+  section h2 {
+    margin: 0 0 .5em 0;
+  }
   div.full {
     margin: 0 calc(-1 * var(--length-primary));
     display: block;

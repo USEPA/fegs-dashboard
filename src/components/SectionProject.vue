@@ -1,13 +1,34 @@
 <template>
-  <div>
-    <h3 for="project-name">
-      Title
-    </h3>
-    <BaseField
-      id="project-name"
-      :value="projectName"
-      @change="setProjectName"
-    />
+  <BaseSection>
+    <h2>
+      Project — {{ projectName }}
+      <BaseButtonIcon
+        style="font-size: 1.5rem;"
+        icon="edit"
+        color="primary"
+        hint="Edit project title"
+        @click="onNameEdit"
+      />
+    </h2>
+    <BaseModal
+      v-if="isEditingName"
+      title="Project Title"
+      @close="isEditingName = false"
+    >
+      <BaseField
+        style="min-width: 20em; margin: .5rem .5em 0 0; display: inline-block;"
+        :isWrapped="false"
+        :value="projectName"
+        @change="onNameChange"
+        @key-enter="onNameSave"
+      />
+      <BaseButton
+        style="margin-top: .5em; float: right;"
+        @click="onNameSave"
+      >
+        Save
+      </BaseButton>
+    </BaseModal>
     <BaseNotes
       title="Description"
       :value="projectNote.text"
@@ -15,13 +36,17 @@
       @change-note="setProjectNote"
       @change-expanded="setProjectNoteExpanded"
     />
-  </div>
+  </BaseSection>
 </template>
 
 
 <script>
+import BaseButton from './BaseButton.vue'
+import BaseButtonIcon from './BaseButtonIcon.vue'
 import BaseField from './BaseField.vue'
+import BaseModal from './BaseModal.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 
 import Util from '../classes/Util.js'
 import { project } from '../store.js'
@@ -29,8 +54,18 @@ import { project } from '../store.js'
 export default {
   name: 'SectionProject',
   components: {
+    BaseButton,
+    BaseButtonIcon,
     BaseField,
+    BaseModal,
     BaseNotes,
+    BaseSection,
+  },
+  data() {
+    return {
+      isEditingName: false,
+      editingNameValue: null,
+    }
   },
   computed: {
     projectName() {
@@ -41,8 +76,16 @@ export default {
     },
   },
   methods: {
-    setProjectName(event) {
-      project.setProjectName(event)
+    onNameEdit() {
+      this.isEditingName = true
+      this.editingNameValue = this.projectName
+    },
+    onNameChange(event) {
+      this.editingNameValue = event
+    },
+    onNameSave() {
+      this.isEditingName = false
+      project.setProjectName(this.editingNameValue)
     },
     setProjectNote(event) {
       project.setProjectNote({ text: event })

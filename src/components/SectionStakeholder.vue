@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <BaseSection
+    title="Stakeholders"
+    prevSection="Weights"
+    :isReady="isReady"
+  >
+    <h2>Stakeholders</h2>
     <p>
       Identify your stakeholder groups.
       Press <em>New Stakeholder</em> to open the stakeholder creation modal.
@@ -133,23 +138,24 @@
         :colors="pieContent.colors"
       />
     </div>
-  </div>
+  </BaseSection>
 </template>
 
 
 <script>
 import BaseButton from './BaseButton.vue'
+import BaseCellHead from './BaseCellHead.vue'
+import BaseCellEmphasis from './BaseCellEmphasis.vue'
+import BaseCellData from './BaseCellData.vue'
+import BaseCellDataField from './BaseCellDataField.vue'
 import BaseChartBar from './BaseChartBar.vue'
 import BaseChartPie from './BaseChartPie.vue'
 import BaseCheckbox from './BaseCheckbox.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseNotes from './BaseNotes.vue'
+import BaseSection from './BaseSection.vue'
 import BaseTable from './BaseTable.vue'
-import BaseCellHead from './BaseCellHead.vue'
-import BaseCellEmphasis from './BaseCellEmphasis.vue'
-import BaseCellData from './BaseCellData.vue'
-import BaseCellDataField from './BaseCellDataField.vue'
 import TableStakeholder from './TableStakeholder.vue'
 
 import input from './mixins/input.js'
@@ -163,20 +169,27 @@ export default {
   name: 'SectionStakeholder',
   components: {
     BaseButton,
+    BaseCellHead,
+    BaseCellEmphasis,
+    BaseCellData,
+    BaseCellDataField,
     BaseChartBar,
     BaseChartPie,
     BaseCheckbox,
     BaseField,
     BaseModal,
     BaseNotes,
+    BaseSection,
     BaseTable,
-    BaseCellHead,
-    BaseCellEmphasis,
-    BaseCellData,
-    BaseCellDataField,
     TableStakeholder,
   },
   mixins: [input],
+  props: {
+    isReady: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       isCreatingNewStakeholder: false,

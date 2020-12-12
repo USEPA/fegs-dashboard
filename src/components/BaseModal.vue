@@ -34,6 +34,8 @@ import BaseButtonIcon from './BaseButtonIcon.vue'
 
 import Util from '../classes/Util.js'
 
+import { misc } from '../store.js'
+
 export default {
   name: 'BaseModal',
   components: {
@@ -51,7 +53,14 @@ export default {
     }
   },
   computed: {
-
+    appState() {
+      return misc.state
+    },
+  },
+  watch: {
+    appState(val) {
+      if (val === 'loading') this.close()
+    },
   },
   created() {
     this.lastFocus = document.activeElement

@@ -19,57 +19,34 @@
         style="top:0"
         :class="{hide:!scrolled}"
       ></div>
-      <BaseSection
+      <SectionProject
         :id="sections[0].id"
-        :title="sections[0].title"
-      >
-        <SectionProject/>
-      </BaseSection>
-      <BaseSection
+      />
+      <SectionCriterion
         :id="sections[1].id"
-        :title="sections[1].title"
-      >
-        <SectionCriterion/>
-      </BaseSection>
-      <BaseSection
+      />
+      <SectionStakeholder
         :id="sections[2].id"
-        :title="sections[2].title"
-        :prevSection="sections[1].title"
         :isReady="sections[2].ready"
-      >
-        <SectionStakeholder/>
-      </BaseSection>
-      <BaseSection
+      />
+      <SectionBeneficiary
         :id="sections[3].id"
-        :title="sections[3].title"
-        :prevSection="sections[2].title"
         :isReady="sections[3].ready"
-      >
-        <SectionBeneficiary/>
-      </BaseSection>
-      <BaseSection
+      />
+      <SectionAttribute
         :id="sections[4].id"
-        :title="sections[4].title"
-        :prevSection="sections[3].title"
         :isReady="sections[4].ready"
-      >
-        <SectionAttribute/>
-      </BaseSection>
-      <BaseSection
+      />
+      <SectionDeveloper
         v-if="isDev"
         :id="sections[5].id"
-        :title="sections[5].title"
-        :isReady="sections[5].ready"
-      >
-        <SectionDeveloper/>
-      </BaseSection>
+      />
     </div>
   </div>
 </template>
 
 <script>
 import NavItem from './NavItem.vue'
-import BaseSection from './BaseSection.vue'
 import SectionProject from './SectionProject.vue'
 import SectionCriterion from './SectionCriterion.vue'
 import SectionStakeholder from './SectionStakeholder.vue'
@@ -84,7 +61,6 @@ export default {
   name: 'TheProject',
   components: {
     NavItem,
-    BaseSection,
     SectionProject,
     SectionCriterion,
     SectionStakeholder,
