@@ -449,10 +449,10 @@ const ATTRIBUTES = {
         def: 'The amount of fuel present, could be measured in terms of volume, mass, and/or extent',
       },
       'Fiber Material Quality': {
-        def: 'The amount of fiber material present, could be measured in terms of volume, mass, and/or extent',
+        def: 'The suitability of material, based on physical, chemical, and/or biological characteristics, to be used in production of textiles',
       },
       'Fiber Material Quantity': {
-        def: 'The suitability of material, based on physical, chemical, and/or biological characteristics, to be used in production of textiles',
+        def: 'The amount of fiber material present, could be measured in terms of volume, mass, and/or extent',
       },
       'Mineral / Chemical Quality': {
         def: 'The suitability of material for use based on physical, chemical, and/or biological characteristics',
