@@ -15,6 +15,8 @@ let fegsScopingView;
 let fegsScopingController;
 let tableAttributes;
 
+let doAlternativeColors = false
+
 const charts = {} // object to namespace charts
 const notes = {} // object to namespace notes
 
@@ -38,6 +40,18 @@ const notes = {} // object to namespace notes
 //   },
 //   ...
 // }
+
+const GREYSCALE_COLORS = [
+  '#CCC',
+  '#AAA',
+  '#888',
+  '#666',
+  '#444',
+  '#333',
+  '#222',
+  '#111',
+  '#000',
+]
 
 const STAKEHOLDER_COLORS = [
   "rgb(76,177,89)",
@@ -111,19 +125,19 @@ const CRITERIA = {
   },
   'Economic Interest': {
     tip: 'Does this stakeholder group have an economic interest in the outcome of this decision?',
-    color: '#2F7455',
+    color: '#2F8465',
     short: 'Economic',
   },
   'Rights': {
     tip: 'Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?',
-    color: '#f79646',
+    color: '#d78636',
   },
   'Fairness': {
     tip: 'If this stakeholder group is not considered in decision-making, would the resulting decision be seen as unfair?',
     color: '#863758',
   },
-  'Underrepresented & Underserved Representation': {
-    tip: 'Underrepresented & Underserved representation: Does this stakeholder group represent underserved or underrepresented groups?',
+  'Underrepresented & Underserved Groups': {
+    tip: 'Underrepresented & Underserved groups: Does this stakeholder group represent underserved or underrepresented groups?',
     color: '#2c4d75',
     short: 'Underrepresented',
   },
@@ -733,13 +747,9 @@ class PieChart {
     this.labels = this.main.append('g')
       .attr('class', 'labels')
       .style('font', this.font)
-    
-    this.color = d3.scaleOrdinal()
-      .domain(Object.keys(this.colorMap))
-      .range(Object.values(this.colorMap).concat(this.colors))
   }
 
-  update(data) { // data: [{ label: str, value: num }, ...]
+  update(data, { colorless=false }={}) { // data: [{ label: str, value: num }, ...]
     data = data.filter(d => d.value > 0) // don't draw empty slices
     data = data.sort((a, b) => a.value - b.value) // slices in order by size
 
@@ -750,6 +760,10 @@ class PieChart {
     const percentStr = num => (this.doPercent) ? ` (${percent(num, sum)}%)` : ''
     const midAngle = d => (d.startAngle + (d.endAngle - d.startAngle)/2)
     const rightSide = d => midAngle(d) > Math.PI*0.5 && midAngle(d) < Math.PI*1.5
+
+    const colorModeDefault = d3.scaleOrdinal()
+      .domain(Object.keys(this.colorMap))
+      .range(Object.values(this.colorMap).concat(this.colors))
 
     const arcPie = d3.arc()
       .innerRadius(0)
@@ -769,7 +783,7 @@ class PieChart {
     const slice = this.slices.selectAll('path')
       .data(pie(data), d => d)
       .join(enter => enter.insert('path'))
-      .style('fill', d => this.color(d.data.key || d.data.label))
+      .style('fill', d => colorless ? GREYSCALE_COLORS[d.index%9] : colorModeDefault(d.data.key || d.data.label))
       .attr('d', d => arcPie(d))
 
     // if (!this.doLabels) return // don't show any labels (as implemented, old labels won't be removed if this flag is changed after construction)
@@ -840,7 +854,8 @@ class BarChart {
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${this.wTotal} ${this.hTotal}`)
       .attr('preserveAspectRatio', 'xMidYMid meet')
-      .style('shape-rendering', 'crispEdges')
+
+    this.defs = this.svg.append('defs')
 
     this.main = this.svg.append('g')
       .attr('transform', `translate(${this.wSide},0)`)
@@ -863,8 +878,8 @@ class BarChart {
       .style('font', this.font)
   }
 
-  update(data) { // data: [{ key: str, label1: num, label2: num, ... }, ...]
-    data = data.reverse() // y axis builds from bottom
+  update(data, { colorless=false }={}) { // data: [{ key: str, label1: num, label2: num, ... }, ...]
+    data = data.reverse() // y axis builds from bottom    
   
     const keys = data.map(d => d.key) // for y axis
     const largest = d3.max(data, d => {
@@ -880,10 +895,16 @@ class BarChart {
         }
       })
     })
+    const labelIndex = {}
+    labels.forEach((label, i) => labelIndex[label] = i)
 
-    const color = d3.scaleOrdinal()
+    const colorModeDefault = d3.scaleOrdinal()
       .domain(Object.keys(this.colorMap))
       .range(Object.values(this.colorMap).concat(this.colors))
+
+    const color = (label) => {
+      return colorless ? GREYSCALE_COLORS[labelIndex[label]%9] : colorModeDefault(label)
+    }
     
     const xScale = d3.scaleLinear()
       .domain([0, largest])
@@ -995,7 +1016,9 @@ function updateCriteriaPieChart() {
       height: 340,
     })
   }
-  charts.criteriaPie.update(criteriaPieData())
+  charts.criteriaPie.update(criteriaPieData(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 // Create or update the stakeholder pie chart
@@ -1008,7 +1031,9 @@ function updateStakeholderPieChart() {
       height: pieHeight,
     })
   }
-  charts.stakeholderPie.update(criteriaPieData(false)) // same data as criteria pie chart
+  charts.stakeholderPie.update(criteriaPieData(false), {
+    colorless: doAlternativeColors,
+  }) // same data as criteria pie chart
 }
 
 // Create or update the beneficiary pie chart
@@ -1021,7 +1046,9 @@ function updateBeneficiaryPieChart() {
       height: pieHeight,
     })
   }
-  charts.beneficiaryPie.update(getTier1BeneficiaryScoresForPieChart())
+  charts.beneficiaryPie.update(getTier1BeneficiaryScoresForPieChart(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 // Create or update the attribute pie chart
@@ -1034,7 +1061,9 @@ function updateAttributePieChart() {
       height: pieHeight,
     })
   }
-  charts.attributePie.update(getTier1AttributeScoresForPieChart())
+  charts.attributePie.update(getTier1AttributeScoresForPieChart(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 
@@ -1048,7 +1077,9 @@ function updateStakeholderBarChart() {
       height: barHeight,
     })
   }
-  charts.stakeholderBar.update(stakeholderBarData())
+  charts.stakeholderBar.update(stakeholderBarData(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 // Create or update the beneficiary bar chart
@@ -1061,7 +1092,9 @@ function updateBeneficiaryBarChart() {
       height: barHeight,
     })
   }
-  charts.beneficiaryBar.update(beneficiaryBarData())
+  charts.beneficiaryBar.update(beneficiaryBarData(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 // Create or update the attribute bar chart
@@ -1075,7 +1108,9 @@ function updateAttributeBarChart() {
       height: barHeight,
     })
   }
-  charts.attributeBar.update(attributeBarData())
+  charts.attributeBar.update(attributeBarData(), {
+    colorless: doAlternativeColors,
+  })
 }
 
 
@@ -4311,6 +4346,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('page-zoom').addEventListener('input', event => {
     indicatePageZoom(event);
   });
+
+  document.getElementById('check-chart-alternative').addEventListener('change', event => {
+    doAlternativeColors = event.target.checked
+    updateAllCharts()
+  })
 
   document.getElementById('select-stakeholder').addEventListener('change', () => {
     selectStakeholderToSlice();
