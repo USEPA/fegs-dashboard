@@ -8,7 +8,7 @@ const { color } = require('d3');
 const { time } = require('console');
 d3.tip = require('d3-tip');
 
-const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
+const appTitle = `FEGS Scoping Tool ${app.getVersion()} | US EPA`;
 
 let fegsScopingData;
 let fegsScopingView;

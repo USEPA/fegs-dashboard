@@ -15,7 +15,7 @@ let mainWindow;
 let saved = true;
 let savedFilePath = '';
 let projectName = 'New Project';
-const appTitle = `FEGS Scoping Tool ${app.getVersion()} | BETA | US EPA`;
+const appTitle = `FEGS Scoping Tool ${app.getVersion()} | US EPA`;
 const windows = [];
 
 
