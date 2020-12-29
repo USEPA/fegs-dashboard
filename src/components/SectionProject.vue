@@ -36,6 +36,12 @@
       @change-note="setProjectNote"
       @change-expanded="setProjectNoteExpanded"
     />
+    <h3>Options</h3>
+    <BaseCheckbox
+      label="Greyscale colors"
+      :isChecked="doGreyscale"
+      @change="setDoGreyscale"
+    />
   </BaseSection>
 </template>
 
@@ -43,6 +49,7 @@
 <script>
 import BaseButton from './BaseButton.vue'
 import BaseButtonIcon from './BaseButtonIcon.vue'
+import BaseCheckbox from './BaseCheckbox.vue'
 import BaseField from './BaseField.vue'
 import BaseModal from './BaseModal.vue'
 import BaseNotes from './BaseNotes.vue'
@@ -56,6 +63,7 @@ export default {
   components: {
     BaseButton,
     BaseButtonIcon,
+    BaseCheckbox,
     BaseField,
     BaseModal,
     BaseNotes,
@@ -73,6 +81,9 @@ export default {
     },
     projectNote() {
       return project.data.meta.note
+    },
+    doGreyscale() {
+      return project.data.meta.options.doGreyscale
     },
   },
   methods: {
@@ -92,6 +103,9 @@ export default {
     },
     setProjectNoteExpanded(event) {
       project.setProjectNote({ expanded: event })
+    },
+    setDoGreyscale(event) {
+      project.setProjectOption('doGreyscale', event)
     },
   },
 }

@@ -79,7 +79,7 @@ export default {
     width: Number, // should be greater than height so the labels will fit on the sides
     height: Number,
     data: Array, // [{ 'label': str, 'value': num }, ...] (each element of the array defines a slice)
-    colors: Object, // { label: color, ... } NOTE this is separate for consistency with the bar chart component
+    colors: Object, // { label: color, ... } NOTE this is separate from data for consistency with the bar chart component
   },
   computed: {
     radii() {

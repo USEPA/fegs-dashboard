@@ -29,6 +29,8 @@ export default class TheProjectStore {
     Util.mergeObj(dataCopy, dataTemplate) // add new keys to data
 
     // TODO make file validation robust
+    // TODO only save user entered data, insert into template
+
     this.data = dataCopy
     this.modified = false
     this._computeAll()
@@ -46,16 +48,42 @@ export default class TheProjectStore {
   }
 
   getCriterionArray() {
-    return this._getSectionArray(this.data.criterionSection, 'criteria')
+    return this._getSectionArray({
+      section: this.data.criterionSection,
+      key: 'criteria',
+    })
   }
   getStakeholderArray() {
-    return this._getSectionArray(this.data.stakeholderSection, 'stakeholders')
+    return this._getSectionArray({
+      section: this.data.stakeholderSection,
+      key: 'stakeholders',
+    })
   }
   getBeneficiaryArray() {
-    return this._getSectionArray(this.data.beneficiarySection, 'beneficiaries')
+    return this._getSectionArray({
+      section: this.data.beneficiarySection,
+      key: 'beneficiaries',
+    })
+  }
+  getBeneficiaryCategoryArray() {
+    return this._getSectionArray({
+      section: this.data.beneficiarySection,
+      key: 'beneficiaries',
+      categoriesOnly: true,
+    })
   }
   getAttributeArray() {
-    return this._getSectionArray(this.data.attributeSection, 'attributes')
+    return this._getSectionArray({
+      section: this.data.attributeSection,
+      key: 'attributes',
+    })
+  }
+  getAttributeCategoryArray() {
+    return this._getSectionArray({
+      section: this.data.attributeSection,
+      key: 'attributes',
+      categoriesOnly: true,
+    })
   }
 
   getCriterionPieContent({ short=false }={}) {
@@ -71,8 +99,8 @@ export default class TheProjectStore {
   getBeneficiaryPieContent({ short=false }={}) {
     const data = []
     const colors = {}
-    Object.entries(this.data.beneficiarySection.categories).forEach(([categoryName, category]) => {
-      const label = (short && category.shortName) ? category.shortName : categoryName
+    this.getBeneficiaryCategoryArray().forEach(category => {
+      const label = (short && category.shortName) ? category.shortName : category.name
       data.push({ label, value: category.computed.result })
       colors[label] = category.color.primary
     })
@@ -81,8 +109,8 @@ export default class TheProjectStore {
   getAttributePieContent({ short=false }={}) {
     const data = []
     const colors = {}
-    Object.entries(this.data.attributeSection.categories).forEach(([categoryName, category]) => {
-      const label = (short && category.shortName) ? category.shortName : categoryName
+    this.getAttributeCategoryArray().forEach(category => {
+      const label = (short && category.shortName) ? category.shortName : category.name
       data.push({ label, value: category.computed.result })
       colors[label] = category.color.primary
     })
@@ -92,11 +120,11 @@ export default class TheProjectStore {
   getStakeholderBarContent({ short=false }={}) {
     const data = []
     const colors = {}
-    Object.entries(this.data.stakeholderSection.stakeholders).forEach(([stakeholderName, stakeholder]) => {
+    this.getStakeholderArray().forEach(stakeholder => {
       const values = []
-      Object.entries(this.data.criterionSection.criteria).forEach(([criterionName, criterion]) => {
-        const score = stakeholder.computed.scoresWeighted[criterionName]
-        const label = (short && criterion.shortName) ? criterion.shortName : criterionName
+      this.getCriterionArray().forEach(criterion => {
+        const score = stakeholder.computed.scoresWeighted[criterion.name]
+        const label = (short && criterion.shortName) ? criterion.shortName : criterion.name
         if (score) {
           values.push({ label, value: score * 100 })
         }
@@ -104,18 +132,19 @@ export default class TheProjectStore {
           colors[label] = criterion.color.primary
         }
       })
-      data.push({ key: stakeholderName, values })
+      data.push({ key: stakeholder.name, values })
     })
     return { data, colors }
   }
   getBeneficiaryBarContent({ short=false }={}) {
     const data = []
     const colors = {}
-    Object.entries(this.data.beneficiarySection.beneficiaries).forEach(([beneficiaryName, beneficiary]) => {
+    const stakeholderArray = this.getStakeholderArray()
+    this.getBeneficiaryArray().forEach(beneficiary => {
       const values = []
-      Object.entries(this.data.stakeholderSection.stakeholders).forEach(([stakeholderName, stakeholder]) => {
-        const score = beneficiary.computed.scoresWeighted[stakeholderName]
-        const label = (short && stakeholder.shortName) ? stakeholder.shortName : stakeholderName
+      stakeholderArray.forEach(stakeholder => {
+        const score = beneficiary.computed.scoresWeighted[stakeholder.name]
+        const label = (short && stakeholder.shortName) ? stakeholder.shortName : stakeholder.name
         if (score) {
           values.push({ label, value: score * 100 })
         }
@@ -123,7 +152,7 @@ export default class TheProjectStore {
           colors[label] = stakeholder.color.primary
         }
       })
-      const key = (short && beneficiary.shortName) ? beneficiary.shortName : beneficiaryName
+      const key = (short && beneficiary.shortName) ? beneficiary.shortName : beneficiary.name
       data.push({ key, values })
     })
     return { data, colors }
@@ -131,10 +160,11 @@ export default class TheProjectStore {
   getAttributeBarContent({ short=false }={}) {
     const data = []
     const colors = {}
-    Object.entries(this.data.attributeSection.attributes).forEach(([attributeName, attribute]) => {
+    const beneficiaryArray = this.getBeneficiaryArray()
+    this.getAttributeArray().forEach(attribute => {
       const values = []
       const categoryMap = {} // { category: score, ... }
-      this.getBeneficiaryArray().forEach(beneficiary => {
+      beneficiaryArray.forEach(beneficiary => {
         const categoryName = beneficiary.categoryName
         const score = attribute.computed.scoresWeighted[beneficiary.name]
         const label = (short && beneficiary.category.shortName) ? beneficiary.category.shortName : categoryName
@@ -152,10 +182,19 @@ export default class TheProjectStore {
       Object.entries(categoryMap).forEach(([categoryName, score]) => {
         values.push({ label: categoryName, value: score * 100 })
       })
-      const key = (short && attribute.shortName) ? attribute.shortName : attributeName
+      const key = (short && attribute.shortName) ? attribute.shortName : attribute.name
       data.push({ key, values })
     })
     return { data, colors }
+  }
+
+  setProjectOption(optionName, value) {
+    if (!(optionName in this.data.meta.options)) {
+      throw new Error(`Cannot find option "${criterionName}".`) // programmer error
+    } else {
+      this.data.meta.options[optionName] = value
+      this._modified()
+    }
   }
 
   setProjectName(name) { 
@@ -344,18 +383,39 @@ export default class TheProjectStore {
       // console.log('Store: modified')
     }
   }
-  _getSectionArray(section, key) {
+  _getSectionArray({ section, key, categoriesOnly=false }) {
     const ret = []
-    section.order.forEach(name => {
-      const item = section[key][name]
-      ret.push({
-        name: name,
-        ...item,
-        ...((item.categoryName) ? {
-          category: { ...section.categories[item.categoryName] },
-        } : {}),
+    const visitedCategories = new Set()
+    if (categoriesOnly) {
+      section.order.forEach(name => {
+        const item = section[key][name]
+        if (!visitedCategories.has(item.categoryName)) {
+          visitedCategories.add(item.categoryName)
+          const arrItem = { name: item.categoryName, ...Util.cloneObj(section.categories[item.categoryName]) }
+          if (this.data.meta.options.doGreyscale) {
+            arrItem.color.primary = Util.moduloGet(this.data.meta.colors.greyscale, visitedCategories.size - 1)
+          }
+          ret.push(arrItem)
+        }
       })
-    })
+    } else {
+      section.order.forEach((name, i) => {
+        const item = section[key][name]
+        const arrItem = { name, ...Util.cloneObj(item) }
+        if (item.categoryName) {
+          visitedCategories.add(item.categoryName)
+          arrItem.category = Util.cloneObj(section.categories[item.categoryName])
+          if (this.data.meta.options.doGreyscale) {
+            arrItem.category.color.primary = Util.moduloGet(this.data.meta.colors.greyscale, visitedCategories.size - 1)
+          }
+        } else {
+          if (this.data.meta.options.doGreyscale) {
+            arrItem.color.primary = Util.moduloGet(this.data.meta.colors.greyscale, i)
+          }
+        }
+        ret.push(arrItem)
+      })
+    }
     return ret
   }
   _setComputed(obj, key, val) {
@@ -550,6 +610,22 @@ export default class TheProjectStore {
           text: '',
           expanded: true,
         },
+        options: {
+          doGreyscale: false,
+        },
+        colors: {
+          greyscale: [
+            '#C3C3C3',
+            '#A7A7A7',
+            '#888',
+            '#6A6A6A',
+            '#575757',
+            '#444',
+            '#2A2A2A',
+            '#171717',
+            '#000',
+          ],
+        },
       },
       criterionSection: {
         note: {
@@ -566,9 +642,8 @@ export default class TheProjectStore {
             min: 'no impact',
             max: 'large and very likely impact',
             tip: 'If changes are made in this decision context what is the likelihood that this stakeholder group will be impacted? What is the potential magnitude of that impact?',
-            
             color: {
-              primary: '#c0504d',
+              primary: '#C0504D',
             },
           },
           'Level of Influence': {
@@ -577,7 +652,7 @@ export default class TheProjectStore {
             max: 'formal influence',
             tip: 'Does this stakeholder group have any formal or informal influence over the decision making process?',
             color: {
-              primary: '#9bbb59',
+              primary: '#9BBB59',
             },
           },
           'Level of Interest': {
@@ -586,7 +661,7 @@ export default class TheProjectStore {
             max: 'maximum interest',
             tip: 'What is this stakeholder group\'s level of interest in this decision/action?',
             color: {
-              primary: '#8064a2',
+              primary: '#8064A2',
             },
           },
           'Urgency & Temporal Immediacy': {
@@ -603,7 +678,7 @@ export default class TheProjectStore {
             max: 'always in contact',
             tip: 'How frequently does this stakeholder group come into contact with the area subject to this decision?',
             color: {
-              primary: '#4bacc6',
+              primary: '#4BACC6',
             },
           },
           'Economic Interest': {
@@ -612,7 +687,7 @@ export default class TheProjectStore {
             max: 'maximum economic interest',
             tip: 'Does this stakeholder group have an economic interest in the outcome of this decision?',
             color: {
-              primary: '#2F7455',
+              primary: '#2F8465',
             },
           },
           'Rights': {
@@ -620,7 +695,7 @@ export default class TheProjectStore {
             max: 'complete rights',
             tip: 'Does this stakeholder group have any 1) legal right to be involved in this decision making process, 2) property rights associated with the land that will be impacted by the decision, or 3) consumer/user rights associated with the services that will be impacted by the decision?',
             color: {
-              primary: '#f79646',
+              primary: '#D78636',
             },
           },
           'Fairness': {
@@ -631,13 +706,13 @@ export default class TheProjectStore {
               primary: '#863758',
             },
           },
-          'Underrepresented & Underserved Representation': {
+          'Underrepresented & Underserved Groups': {
             shortName: 'Underrepresented',
             min: 'not at all',
             max: 'completely',
             tip: 'Does this stakeholder group represent underserved or underrepresented groups?',
             color: {
-              primary: '#2c4d75',
+              primary: '#2C4D75',
             },
           },
         },

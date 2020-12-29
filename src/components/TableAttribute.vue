@@ -62,7 +62,7 @@
             style="max-width: 8rem; font-weight: normal; text-align: center;"
             :key="category.name"
             :colspan="category.computed.members"
-            :colorBack="category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head0-back)' : category.color.light"
           >
             {{ category.name }}
           </BaseCellHead>
@@ -70,7 +70,7 @@
         <BaseCellHead
           v-else
           :colspan="filteredBeneficiaryArray.length"
-          :colorBack="currentBeneficiaryCategory.color.light"
+          :colorBack="doGreyscale ? 'var(--color-table-head0-back)' : currentBeneficiaryCategory.color.light"
         >
           <BaseSelect
             style="font-weight: bold;"
@@ -97,7 +97,7 @@
           style="max-width: 8rem; font-weight: normal; text-align: center;"
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
-          :colorBack="beneficiary.category.color.light"
+          :colorBack="doGreyscale ? 'var(--color-table-head0-back)' : beneficiary.category.color.light"
         >
           {{ beneficiary.name }}
         </BaseCellHead>
@@ -109,7 +109,7 @@
           isLastOfGroup
           :style="{ borderRight: showResults ? 'none' : null }"
           :key="beneficiary.name"
-          :colorBack="beneficiary.category.color.light"
+          :colorBack="doGreyscale ? 'var(--color-table-head0-back)' : beneficiary.category.color.light"
         >
           {{ percent(beneficiary.computed.result, beneficiaryResultTotal) }}
         </BaseCellHead>
@@ -201,7 +201,7 @@
           <BaseCellHead
             style="padding-right: 0;"
             isLastOfGroup
-            :colorBack="attribute.category.color.light"
+            colorBack="var(--color-table-head1-back)"
           >
             <BaseButtonIcon
               icon="chevron-down"
@@ -377,6 +377,9 @@ export default {
     },
     attributeResultTotal() {
       return project.data.attributeSection.computed.resultTotal
+    },
+    doGreyscale() {
+      return project.data.meta.options.doGreyscale
     },
   },
   methods: {

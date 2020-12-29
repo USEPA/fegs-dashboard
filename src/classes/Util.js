@@ -91,6 +91,11 @@ export default class Util {
     }
   }
 
+  // get item from array, wrapping around if index is beyond array length
+  static moduloGet(arr, index) {
+    return (arr && arr.length > 0) ? arr[index%arr.length] : undefined
+  }
+
   // check if a value is a regular number (not null, undefined, NaN, object, etc)
   static isNum(val) {
     return (typeof val === 'number' && !Number.isNaN(val))

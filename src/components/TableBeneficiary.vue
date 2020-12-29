@@ -110,7 +110,7 @@
             v-if="beneficiary.computed.isFirstOfCategory"
             style="padding-right: 0;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
             :rowspan="beneficiary.category.computed.members"
           >
             <BaseButtonIcon
@@ -126,7 +126,7 @@
             v-if="beneficiary.computed.isFirstOfCategory"
             style="max-width: 6rem;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
             :rowspan="beneficiary.category.computed.members"
           >
             {{ beneficiary.categoryName }}
@@ -134,7 +134,7 @@
           <BaseCellHead
             style="max-width: 16rem; min-width: 10rem;"
             :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
           >
             {{ beneficiary.name }}
           </BaseCellHead>
@@ -142,7 +142,7 @@
             v-if="showDefinitions"
             style="max-width: 30rem; min-width: 16rem;"
             :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-            :colorBack="beneficiary.category.color.lighter"
+            :colorBack="doGreyscale ? 'var(--color-table-head2-back)' : beneficiary.category.color.lighter"
           >
             {{ beneficiary.def }}
           </BaseCellHead>
@@ -161,14 +161,14 @@
             v-if="showResults"
             style="border-right: none;"
             :isLastOfGroup="beneficiary.computed.isLastOfCategory"
-            :colorBack="beneficiary.category.color.lighter"
+            :colorBack="doGreyscale ? 'var(--color-table-head2-back)' : beneficiary.category.color.lighter"
           >
             {{ percent(beneficiary.computed.result, beneficiaryResultTotal) }}
           </BaseCellData>
           <BaseCellData
             v-if="showResults && beneficiary.computed.isFirstOfCategory"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.lighter"
+            :colorBack="doGreyscale ? 'var(--color-table-head2-back)' : beneficiary.category.color.lighter"
             :rowspan="beneficiary.category.computed.members"
           >
             {{ percent(beneficiary.category.computed.result, beneficiaryResultTotal) }}
@@ -182,7 +182,7 @@
           <BaseCellHead
             style="padding-right: 0;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
           >
             <BaseButtonIcon
               icon="chevron-down"
@@ -196,7 +196,7 @@
           <BaseCellHead
             style="max-width: 6rem;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
             :rowspan="beneficiary.category.computed.members"
           >
             {{ beneficiary.categoryName }}
@@ -204,7 +204,7 @@
           <BaseCellHead
             style="min-width: 10rem;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.light"
+            :colorBack="doGreyscale ? 'var(--color-table-head1-back)' : beneficiary.category.color.light"
           >
             ...
           </BaseCellHead>
@@ -212,7 +212,7 @@
             v-if="showDefinitions"
             style="min-width: 16rem;"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.lighter"
+            :colorBack="doGreyscale ? 'var(--color-table-head2-back)' : beneficiary.category.color.lighter"
           >
             ...
           </BaseCellHead>
@@ -226,7 +226,7 @@
           <BaseCellData
             v-if="showResults"
             isLastOfGroup
-            :colorBack="beneficiary.category.color.lighter"
+            :colorBack="doGreyscale ? 'var(--color-table-head2-back)' : beneficiary.category.color.lighter"
             :colspan="2"
           >
             {{ percent(beneficiary.category.computed.result, beneficiaryResultTotal) }}
@@ -352,6 +352,9 @@ export default {
     },
     beneficiaryResultTotal() {
       return project.data.beneficiarySection.computed.resultTotal
+    },
+    doGreyscale() {
+      return project.data.meta.options.doGreyscale
     },
   },
   methods: {
