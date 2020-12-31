@@ -7,6 +7,7 @@
       @keyup.enter="onKeyEnter"
       @focus="onFocus"
       :value="switchValue"
+      :aria-label="ariaLabel"
       :class="{invalid:!!validationMsg}"
       :disabled="isDisabled"
       :placeholder="placeholder"
@@ -26,30 +27,16 @@ import Util from '../classes/Util.js'
 export default {
   name: 'BaseField',
   props: {
-    value: {
-      type: [String, Number],
-      default: '',
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    isDisabled: {
-      type: Boolean,
-      default: false,
-    },
-    validationMsg: {
-      type: String,
-      default: '', // empty string means valid
-    },
+    value: [String, Number],
+    placeholder: String,
+    ariaLabel: String,
+    isDisabled: Boolean,
+    validationMsg: String, // empty string means valid
     isWrapped: { // whether this component's value is managed externally
       type: Boolean,
       default: true,
     },
-    doSelectAll: { // whether to select all content when clicked
-      type: Boolean,
-      default: false,
-    }
+    doSelectAll: Boolean, // whether to select all content when clicked
   },
   data() {
     return {

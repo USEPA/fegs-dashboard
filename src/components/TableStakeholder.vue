@@ -114,6 +114,7 @@
         >
           <BaseField
             style="text-align: left;"
+            ariaLabel="Stakeholder name"
             :value="isEditing(stakeholder.name, 'name') ? editing.val : stakeholder.name"
             :validationMsg="isEditing(stakeholder.name, 'name') ? editing.err : ''"
             :doSelectAll="true"
@@ -127,6 +128,7 @@
           :key="criterion.name"
           :value="isEditing(stakeholder.name, criterion.name) ? editing.val : scaleUp(stakeholder.scores[criterion.name])"
           :validationMsg="isEditing(stakeholder.name, criterion.name) ? editing.err : ''"
+          :ariaLabel="`Stakeholder ${stakeholder.name}, ${criterion.name} score`"
           :isDisabled="!(criterion.result > 0)"
           :darken="index%2 === 1"
           @input="onDataInput(stakeholder.name, criterion.name, $event)"

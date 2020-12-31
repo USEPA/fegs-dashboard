@@ -1,5 +1,5 @@
 <template>
-  <th
+  <td
     :style="{ backgroundColor: colorBack }"
     :class="{
       bord: !noBorder,
@@ -13,7 +13,7 @@
     
   >
     <slot></slot>
-  </th>
+  </td>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
 </script>
 
 <style scoped>
-  th {
+  td {
     margin: 1px;
     padding: 0;
     position: relative;
@@ -48,16 +48,16 @@ export default {
     background-color: var(--color-table-head1-back);
     border: none;
   }
-  th.bord {
+  td.bord {
     border-bottom: 1px solid var(--color-table-border);
   }
-  th.last.bord {
+  td.last.bord {
     border-bottom: var(--length-border-thick) solid var(--color-table-border-thick);
   }
-  th.vert {
+  td.vert {
     padding: 0 0 0 var(--length-primary);
   }
-  th.horz {
+  td.horz {
     padding: 0 0 var(--length-primary) 0;
   }  
 </style>

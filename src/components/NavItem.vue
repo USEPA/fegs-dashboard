@@ -81,7 +81,7 @@ export default {
     background-color: #FFF3;
   }
   a.disabled {
-    color: var(--color-text-disabled2);
+    color: #FFF5;
   }
   a.error .icon {
     color: var(--color-invalid-icon);

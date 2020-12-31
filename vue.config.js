@@ -4,9 +4,7 @@ module.exports = {
     progress: false, // comes out busted on git bash for windows
     stats: 'errors-warnings' // only the important stuff
   },
-  configureWebpack: {
-    // entry: './src/background.js'
-  },
+  publicPath: './',
   pluginOptions: {
     electronBuilder: {
       preload: 'src/preload.js',

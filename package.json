@@ -2,6 +2,7 @@
   "name": "fegs-scoping-tool",
   "version": "2.0.0",
   "private": true,
+  "homepage": "./",
   "description": "Describe utilization of Final Ecosystem Goods and Services (FEGS).",
   "scripts": {
     "serve": "vue-cli-service serve",

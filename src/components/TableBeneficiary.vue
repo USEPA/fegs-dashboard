@@ -152,6 +152,7 @@
             :isLastOfGroup="beneficiary.computed.isLastOfCategory"
             :value="isEditing(beneficiary.name) ? editing.val : scaleUp(beneficiary.scores[stakeholder.name])"
             :validationMsg="isEditing(beneficiary.name) ? editing.err : ''"
+            :ariaLabel="`${beneficiary.name}, Stakeholder ${stakeholder.name} score`"
             :isDisabled="!(stakeholder.computed.result > 0)"
             @input="onDataInput(beneficiary.name, $event)"
             @change="onDataChange(beneficiary.name, $event)"

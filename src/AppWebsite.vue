@@ -49,6 +49,7 @@
       style="display: none;"
       type="file"
       accept=".fegs"
+      aria-label="select project to open"
       @change="onFileSelect"
     />
     <a

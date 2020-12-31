@@ -61,11 +61,15 @@ export default {
     background-image: linear-gradient(90deg, var(--color-table-back-darken), var(--color-table-back-darken));
     border-color: var(--color-table-border-darken);
   }
-
   td.space {
+    padding: 0;
+    background: none;
+    border: none;
+  }
+  /* td.space {
     padding: 0;
     background: none;
     border-top: none;
     border-right: none;
-  }
+  } */
 </style>

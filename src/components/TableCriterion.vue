@@ -32,6 +32,7 @@
         <BaseCellDataField
           :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
           :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
+          :ariaLabel="`${criterion.name} Weight`"
           @input="onDataInput(criterion.name, $event)"
           @change="onDataChange(criterion.name, $event)"
           @key-enter="onDataKeyEnter(index)"

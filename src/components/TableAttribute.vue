@@ -170,6 +170,7 @@
             :key="beneficiary.name"
             :value="isEditing(attribute.name, beneficiary.name) ? editing.val : scaleUp(attribute.scores[beneficiary.name])"
             :validationMsg="isEditing(attribute.name, beneficiary.name) ? editing.err : ''"
+            :ariaLabel="`${attribute.name}, ${beneficiary.name} score`"
             :isDisabled="!(beneficiary.computed.result > 0)"
             :isLastOfGroup="attribute.computed.isLastOfCategory"
             @input="onDataInput(attribute.name, beneficiary.name, $event)"

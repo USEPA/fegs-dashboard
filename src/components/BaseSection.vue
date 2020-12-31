@@ -35,7 +35,9 @@ export default {
   section:not(:last-child) {
     border-bottom: 1px solid var(--color-section-border);
   }
-  section.disabled h2,
+  section.disabled h2 {
+    color: var(--color-text-disabled-big);
+  }
   section.disabled p {
     color: var(--color-text-disabled);
   }

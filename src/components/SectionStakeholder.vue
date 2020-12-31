@@ -48,6 +48,7 @@
       <p>Enter the name of this stakeholder group</p>
       <BaseField
         style="margin-bottom: 1rem;"
+        aria-label="new stakeholder name"
         :value="isEditing('name') ? editing.val : newStakeholderData.name"
         :validationMsg="isEditing('name') ? editing.err : ''"
         @input="onNameInput"
@@ -92,6 +93,7 @@
             <BaseCellDataField
               :value="isEditing(criterion.name) ? editing.val : scaleUp(newStakeholderData.scores[criterion.name])"
               :validationMsg="isEditing(criterion.name) ? editing.err : ''"
+              :ariaLabel="`${criterion.name} score`"
               @input="onScoreInput(criterion.name, $event)"
               @change="onScoreChange(criterion.name, $event)"
               @key-enter="onScoreKeyEnter(criterion.name, $event)"
