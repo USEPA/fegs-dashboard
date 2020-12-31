@@ -55,6 +55,8 @@ order {
 
 /* Constants */
 :root {
+  --color-prelude: #FFF;
+  --color-actionbar: #111;
   --color-main: #FFF;
   --color-nav: #222;
   --color-modal: #FFF;
@@ -62,6 +64,7 @@ order {
   --color-text-black: #111;
   --color-text-white: #FFF;
   --color-text-disabled: #888;
+  --color-text-disabled2: #FFF5;
   --color-text-header: #111;
 
   --color-section: #0000;
@@ -115,6 +118,7 @@ order {
   --length-border-thick: 4px;
   --length-border-summation: 0;
   --length-input-active: 1px;
+  --length-actionbar-height: 2rem;
 
   --font-family-text: "Source Sans Pro", Helvetica, Arial, sans-serif;
   --font-family-head: "Merriweather", Cambria, serif;

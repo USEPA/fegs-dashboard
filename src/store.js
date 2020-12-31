@@ -11,7 +11,7 @@ export const project = Vue.observable(new TheProjectStore({
 
 // Miscellaneous shared data.
 export const misc = Vue.observable({
-  appTitle: '',
+  appTitle: 'FEGS Scoping Tool', // fallback name... this value is set with IPC in main.js
   state: null, // must be one of 'loading', 'loaded', 'unloading', or null
 })
 

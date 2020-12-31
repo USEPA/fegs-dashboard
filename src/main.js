@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import AppElectron from './AppElectron.vue'
+import AppWebsite from './AppWebsite.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheck, faEdit, faTimes, faTrash, faDownload, faThumbtack, faCircle, faExclamationCircle, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons'
@@ -90,6 +91,12 @@ if (process.env.IS_ELECTRON) {
 
 // Web application entry.
 } else {
-  // TODO different top level Vue app to handle new/load/save/title etc
+
+  // Create new project.
+  project.new()
   
+  // Mount the Vue app.
+  new Vue({
+    render: h => h(AppWebsite),
+  }).$mount('#app')  
 }

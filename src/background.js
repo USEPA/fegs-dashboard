@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, ipcMain } from 'electron'
+import { app, protocol, ipcMain, screen } from 'electron'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 
 import Util from './classes/Util.js'
@@ -20,10 +20,16 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
+// Query screen dimensions
+const { width, height } = screen.getPrimaryDisplay().workAreaSize
+
+
 // Wrappers for each BrowserWindow.
 const mainWindow = new TheMainWindow({
   width: 1280,
   height: 1024,
+  minWidth: Math.min(900, width),
+  minHeight: Math.min(300, height),
   appTitle,
   devServer: process.env.WEBPACK_DEV_SERVER_URL,
 })

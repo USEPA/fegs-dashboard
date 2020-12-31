@@ -199,7 +199,7 @@ export default {
     margin: 0;
     padding: .5rem 0;
     position: sticky;
-    top: 0;
+    top: calc(var(--length-actionbar-height) + 1rem);
     display: flex;
     flex-flow: column;
     list-style: none;

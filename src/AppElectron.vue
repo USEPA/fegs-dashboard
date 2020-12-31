@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <h1>FEGS Scoping Tool</h1> -->
     <TheProject/>
   </div>
 </template>
