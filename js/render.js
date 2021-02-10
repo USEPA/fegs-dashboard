@@ -141,7 +141,7 @@ const CRITERIA = {
     color: '#2c4d75',
     short: 'Underrepresented',
   },
-}
+} // NOTE the stakeholder table and initial scoring is still defined in HTML so you will need to change criteria there as well :(
 
 const BENEFICIARIES = {
   'Agricultural': {
@@ -835,7 +835,7 @@ class BarChart {
     this.colorMap = config.colorMap || {}   // map: label -> color
     this.colors =   config.colors || []     // colors to use after or in place of colorMap
     this.wTotal =   config.width || 1020    // svg width
-    this.hTotal =   config.height || 520    // svg height
+    this.hMin =     config.height || 520    // svg min height
     this.wPlot =    config.plotWidth || 420 // horizontal area where bars can be  
     this.labels =   config.labels || []     // labels to always include in legend
 
@@ -847,12 +847,12 @@ class BarChart {
   init() {
     this.wSide = (this.wTotal - this.wPlot)/2 // space on left and right for y axis labels or legend
     this.hSide = 50 // space on bottom for x axis labels
-    this.hPlot = this.hTotal - this.hSide // vertical area where bars can be
+    this.hPlot = this.hMin - this.hSide // vertical area where bars can be
 
     this.svg = d3.select(this.node).append('svg')
       .attr('width', '100%')
       .attr('height', '100%')
-      .attr('viewBox', `0 0 ${this.wTotal} ${this.hTotal}`)
+      .attr('viewBox', `0 0 ${this.wTotal} ${this.hMin}`)
       .attr('preserveAspectRatio', 'xMidYMid meet')
 
     this.defs = this.svg.append('defs')
@@ -878,6 +878,17 @@ class BarChart {
       .style('font', this.font)
   }
 
+  resize(height) {
+    this.hTotal = Math.max(height, this.hMin)
+
+    this.wSide = (this.wTotal - this.wPlot)/2 // space on left and right for y axis labels or legend
+    this.hSide = 50 // space on bottom for x axis labels
+    this.hPlot = this.hTotal - this.hSide // vertical area where bars can be
+
+    this.svg.attr('viewBox', `0 0 ${this.wTotal} ${this.hTotal}`)
+    this.xAxis.attr('transform', `translate(-1,${this.hPlot + 5})`)
+  }
+
   update(data, { colorless=false }={}) { // data: [{ key: str, label1: num, label2: num, ... }, ...]
     data = data.reverse() // y axis builds from bottom    
   
@@ -897,6 +908,8 @@ class BarChart {
     })
     const labelIndex = {}
     labels.forEach((label, i) => labelIndex[label] = i)
+
+    this.resize(Math.max(keys.length * 20, labels.length * 20)) // calculated minimum height of chart
 
     const colorModeDefault = d3.scaleOrdinal()
       .domain(Object.keys(this.colorMap))
@@ -1003,7 +1016,7 @@ const extractColorMap = obj => {
 }
 
 const chartWidth = 1020
-const barHeight = 520
+const barHeight = 300 // minimum, will grow with more data
 const pieHeight = 300
 
 // Create or update the criteria pie chart
@@ -1163,7 +1176,8 @@ function attributeBarData() {
   const data = [];
   Object.keys(fegsScopingData.calculateAttributeScores()).forEach(attribute => {
     const { attribute: key, ...item } = fegsScopingData.calculateAttributeScoresTier1(attribute)
-    item.key = key // rename 'attribute' property to 'key'
+    const short = ATTRIBUTES[fegsScopingData.fegsAttributesTier1[key]].parts[key].short // may be undefined
+    item.key = short || key // rename 'attribute' property to 'key'
     data.push(item);
   })
   return data;
