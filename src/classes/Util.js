@@ -143,4 +143,10 @@ export default class Util {
     if (!process) throw Error('This method only works in a Node environment') // programmer error
     return (process.env.NODE_ENV && process.env.NODE_ENV.slice(0, 3) === 'dev')
   }
+  
+  // determine if running in Electron, Node only
+  static isElectron() {
+    if (!process) throw Error('This method only works in a Node environment') // programmer error
+    return process.env.IS_ELECTRON
+  }
 }

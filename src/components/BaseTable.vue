@@ -45,8 +45,12 @@ export default {
 
 <style scoped>
   table {
+    border-collapse: separate;
     border-spacing: 0;
     background-color: var(--color-table-back);
+  }
+  th, td {
+    border: none;
   }
   tfoot tr:first-child th,
   tfoot tr:first-child td {

@@ -1,7 +1,7 @@
 <template>
   <div id="project">
     <nav>
-      <ul>
+      <ul :class="{bumped:!isElectron}">
         <NavItem 
           v-for="section in sections" 
           :key="section.id"
@@ -122,6 +122,9 @@ export default {
     isDev() {
       return Util.isDev()
     },
+    isElectron() {
+      return Util.isElectron()
+    },
   },
   watch: {
     sectionsReady(isReady) {
@@ -199,9 +202,11 @@ export default {
     margin: 0;
     padding: .5rem 0;
     position: sticky;
-    top: calc(var(--length-actionbar-height) + 1rem);
     display: flex;
     flex-flow: column;
     list-style: none;
+  }
+  nav ul.bumped {
+    top: calc(var(--length-actionbar-height) + 1rem);
   }
 </style>

@@ -7,6 +7,7 @@ import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 
 import { project, misc } from './store.js'
+import Util from './classes/Util'
 
 // IMPORTANT! Don't use any node modules in the render process, use IPC if possible, otherwise wrap the module in preload.js.
 
@@ -22,7 +23,7 @@ Vue.config.productionTip = false
 
 
 // Electron application entry.
-if (process.env.IS_ELECTRON) {
+if (Util.isElectron()) {
 
   function send(cmd, data=null) {
     window.ipc.send('project', { cmd, data })

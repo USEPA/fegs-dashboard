@@ -20,96 +20,6 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
-// Query screen dimensions
-const { width, height } = screen.getPrimaryDisplay().workAreaSize
-
-
-// Wrappers for each BrowserWindow.
-const mainWindow = new TheMainWindow({
-  width: 1280,
-  height: 1024,
-  minWidth: Math.min(900, width),
-  minHeight: Math.min(300, height),
-  appTitle,
-  devServer: process.env.WEBPACK_DEV_SERVER_URL,
-})
-const methodsWindow = new StaticWindow({
-  width: 900,
-  height: 600,
-  title: `Tool Methods - ${appTitle}`,
-  filename: 'methods.html',
-})
-const purposeWindow = new StaticWindow({
-  width: 600,
-  height: 220,
-  title: `Tool Purpose - ${appTitle}`,
-  filename: 'purpose.html',
-})
-const windows = {
-  mainWindow,
-  methodsWindow,
-  purposeWindow,
-}
-
-
-// Controller handles lifecycle, menu, and IPC actions.
-const controller = new TheController({
-  windows,
-  appTitle,
-})
-
-
-// Main menu for the app.
-const mainMenu = new TheMainMenu({
-  windows,
-  controller,
-})
-
-
-// Listen for messages from render process.
-ipcMain.on('project', (event, { cmd, data }) => {
-  console.log(`IPC Command: ${cmd}`)
-  switch (cmd) {
-    case 'write':
-      controller.writeData(data)
-      break
-    case 'unsave':
-      controller.unsave()
-      break
-    case 'name':
-      controller.setName(data)
-      break
-    default:
-      throw Error(`Unsupported command "${cmd}"`) // programmer error
-  }
-})
-ipcMain.on('chart', (event, { cmd, data }) => {
-  console.log(`IPC Command: ${cmd}`)
-  switch (cmd) {
-    case 'save':
-      controller.saveAsChart(data)
-      break
-    default:
-      throw Error(`Unsupported command "${cmd}"`) // programmer error
-  }
-})
-ipcMain.on('meta', (event, { cmd, data }) => {
-  console.log(`IPC Command: ${cmd}`)
-  switch (cmd) {
-    case 'title?':
-      event.sender.send('meta', {
-        cmd: 'title',
-        data: {
-          appTitle,
-        }
-      })
-      break
-    default:
-      throw Error(`Unsupported command "${cmd}"`) // programmer error
-  }
-})
-
-
 // Electron initialization finished, ready to create windows.
 app.on('ready', async () => {
   if (isDev && !process.env.IS_TEST) {
@@ -120,10 +30,101 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+
+  // Query screen dimensions
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize
+
+
+  // Wrappers for each BrowserWindow.
+  const mainWindow = new TheMainWindow({
+    width: 1280,
+    height: 1024,
+    minWidth: Math.min(900, width),
+    minHeight: Math.min(300, height),
+    appTitle,
+    devServer: process.env.WEBPACK_DEV_SERVER_URL,
+  })
+  const methodsWindow = new StaticWindow({
+    width: 900,
+    height: 600,
+    title: `Tool Methods - ${appTitle}`,
+    filename: 'methods.html',
+  })
+  const purposeWindow = new StaticWindow({
+    width: 600,
+    height: 220,
+    title: `Tool Purpose - ${appTitle}`,
+    filename: 'purpose.html',
+  })
+  const windows = {
+    mainWindow,
+    methodsWindow,
+    purposeWindow,
+  }
+
+
+  // Controller handles lifecycle, menu, and IPC actions.
+  const controller = new TheController({
+    windows,
+    appTitle,
+  })
+
+
+  // Main menu for the app.
+  const mainMenu = new TheMainMenu({
+    windows,
+    controller,
+  })
+
   
   mainMenu.create()
   mainWindow.create()
   controller.new()
+
+  
+  // Listen for messages from render process.
+  ipcMain.on('project', (event, { cmd, data }) => {
+    console.log(`IPC Command: ${cmd}`)
+    switch (cmd) {
+      case 'write':
+        controller.writeData(data)
+        break
+      case 'unsave':
+        controller.unsave()
+        break
+      case 'name':
+        controller.setName(data)
+        break
+      default:
+        throw Error(`Unsupported command "${cmd}"`) // programmer error
+    }
+  })
+  ipcMain.on('chart', (event, { cmd, data }) => {
+    console.log(`IPC Command: ${cmd}`)
+    switch (cmd) {
+      case 'save':
+        controller.saveAsChart(data)
+        break
+      default:
+        throw Error(`Unsupported command "${cmd}"`) // programmer error
+    }
+  })
+  ipcMain.on('meta', (event, { cmd, data }) => {
+    console.log(`IPC Command: ${cmd}`)
+    switch (cmd) {
+      case 'title?':
+        event.sender.send('meta', {
+          cmd: 'title',
+          data: {
+            appTitle,
+          }
+        })
+        break
+      default:
+        throw Error(`Unsupported command "${cmd}"`) // programmer error
+    }
+  })
+  
 
   // Only relevant on macOS
   app.on('activate', () => {

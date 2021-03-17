@@ -61,6 +61,8 @@
 </template>
 
 <script>
+// TODO rem won't work in Drupal, find another way
+
 import BaseButton from './components/BaseButton.vue'
 import BaseModal from './components/BaseModal.vue'
 import TheProject from './components/TheProject.vue'
@@ -190,6 +192,7 @@ export default {
 
 <style>
 @import './styles/style.css';
+
 #app {
   background-color: var(--color-main);
 }
@@ -214,10 +217,10 @@ export default {
 html {
   scroll-padding-top: calc(var(--length-actionbar-height) + 1rem - 2px);
 }
-*, *::after, *::before {
+/* *, *::after, *::before {
 	-webkit-user-select: none;
 	-webkit-user-drag: none;
 	-webkit-app-region: no-drag;
 	cursor: default;
-}
+} */
 </style>
