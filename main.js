@@ -1,6 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
+const fs = require('fs')
 // Module to control application life.
 const { app } = electron;
 // Module to create native browser window.
@@ -8,6 +9,7 @@ const { BrowserWindow } = electron;
 const { Menu } = electron;
 const { ipcMain } = electron;
 const { dialog } = electron;
+const { shell } = electron;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -197,6 +199,31 @@ function createWindow() {
     {
       label: 'About',
       submenu: [
+        {
+          label: 'User Manual',
+          click: () => {
+            if (fs.existsSync(path.join(__dirname, "/pdf/FEGS Scoping Tool User Manual.pdf"))) {
+              pdfPath = path.join(__dirname, "/pdf/FEGS Scoping Tool User Manual.pdf");
+            } else if (
+              fs.existsSync(path.join(process.resourcesPath, "/pdf/FEGS Scoping Tool User Manual.pdf"))
+            ) {
+              pdfPath = path.join(process.resourcesPath, "/pdf/FEGS Scoping Tool User Manual.pdf");
+            }
+          
+            if (!fs.existsSync(path.join(app.getPath("temp"), "/FEGS-ST"))) {
+              fs.mkdirSync(path.join(app.getPath("temp"), "/FEGS-ST"));
+            }
+          
+            fs.copyFileSync(
+              pdfPath,
+              path.join(app.getPath("temp"), "/FEGS-ST/FEGS Scoping Tool User Manual.pdf")
+            );
+          
+            shell.openExternal(
+              "file://" + path.join(app.getPath("temp"), "/FEGS-ST/FEGS Scoping Tool User Manual.pdf")
+            );
+          }
+        },
         {
           label: 'Tool Purpose',
           click: () => {
