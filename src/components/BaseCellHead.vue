@@ -13,6 +13,9 @@
     :colspan="colspan"
     :aria-hidden="isSpace"
   >
+    <div class="error-wrap">
+      <div class="error">{{ validationMsg }}</div>
+    </div>
     <slot></slot>
   </th>
   <td
@@ -54,6 +57,7 @@ export default {
     isSpace: Boolean, // invisible spacing cell
     darken: Boolean,
     isLastOfGroup: Boolean,
+    validationMsg: String,
   },
   computed: {
     hasContent() {
@@ -109,5 +113,20 @@ export default {
     padding: 0;
     background: none;
     border: none;
+  }
+
+  .error-wrap {
+    width: 0;
+    height: 0;
+    position: relative;
+    top: .9rem;
+  }
+
+  .error {
+    width: 12em;
+    position: absolute;
+    z-index: 99;
+    text-align: left;
+    color: var(--color-invalid-input);
   }
 </style>

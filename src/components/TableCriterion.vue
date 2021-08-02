@@ -7,7 +7,12 @@
           isLastOfGroup
         />
         <BaseCellHead isLastOfGroup>Criterion</BaseCellHead>
-        <BaseCellHead isLastOfGroup>Weight</BaseCellHead>
+        <BaseCellHead 
+          :validationMsg="resultTotal === 1.0 ? '' : 'Column must add up to 100'"
+          isLastOfGroup
+        >
+          Weight
+        </BaseCellHead>
         <BaseCellHead
           v-if="showResults"
           isLastOfGroup
@@ -30,6 +35,7 @@
           {{ criterion.name }}
         </BaseCellHead>
         <BaseCellDataField
+          :colorBack="resultTotal === 1.0 ? '' : 'red'"
           :value="(criterion.name in localData) ? localData[criterion.name].val : scaleUp(criterion.result)"
           :validationMsg="(criterion.name in localData) ? localData[criterion.name].err : ''"
           :ariaLabel="`${criterion.name} Weight`"
