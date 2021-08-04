@@ -374,6 +374,36 @@ export default class TheProjectStore {
       if (this.autoCompute) this._computeStakeholderSection()
     }
   }
+
+  normalizeBeneficiaryScores(stakeholderNames) {
+    stakeholderNames.forEach(stakeholderName => {
+      const sum = this.data.beneficiarySection.computed.scoreTotals[stakeholderName]
+      if (sum === null) return // no data entered in column
+      Object.values(this.data.beneficiarySection.beneficiaries).forEach(beneficiary => {
+        if (beneficiary.scores[stakeholderName] !== null) {
+          beneficiary.scores[stakeholderName] = beneficiary.scores[stakeholderName] / sum
+        }
+      })
+    })
+
+    this._modified()
+    if (this.autoCompute) this._computeAttributeSection()
+  }
+  
+  normalizeAttributeScores(beneficiaryNames) {
+    beneficiaryNames.forEach(beneficiaryName => {
+      const sum = this.data.attributeSection.computed.scoreTotals[beneficiaryName]
+      if (sum === null) return // no data entered in column
+      Object.values(this.data.attributeSection.attributes).forEach(attribute => {
+        if (attribute.scores[beneficiaryName] !== null) {
+          attribute.scores[beneficiaryName] = Math.min(100, Math.max(0, attribute.scores[beneficiaryName] / sum))
+        }
+      })
+    })
+
+    this._modified()
+    if (this.autoCompute) this._computeBeneficiarySection()
+  }
   
   // the following methods are PRIVATE
   _modified() {

@@ -14,28 +14,24 @@
 
 ### Setup
 Clone
-
 ```
 $ git clone -b 2.0 https://github.com/USEPA/fegs-dashboard
 $ cd fegs-dashboard
 ```
 
 Install dependencies
-
 ```
 $ npm install
 ```
 
 ### Usage (Electron)
 Run the Electron app in development mode
-
 ```
 $ npm run electron:serve
 ```
 
 ### Usage (Website)
 Run the web app in development mode
-
 ```
 $ npm run serve
 ```
@@ -44,7 +40,6 @@ The website is useful for testing with browser plugins such as WAVE. It also mig
 
 ### Build (Electron)
 Build a distributable version of the Electron app
-
 ```
 $ npm run electron:build
 ```
@@ -53,7 +48,6 @@ The results of the build are placed in the `dist_electron/` directory. There you
 
 ### Build (Website)
 Build a distributable version of the web app
-
 ```
 $ npm run build
 ```

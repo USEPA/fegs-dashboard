@@ -246,6 +246,13 @@
           style="text-align: right;"
           :colspan="showDefinitions ? 4 : 3"
         >
+          <BaseButton
+            @click="normalize"
+            title="Adjust all visible columns proportionally so they sum to 100"
+            style="margin-right: .5rem"
+          >
+            Normalize
+          </BaseButton>
           Total
         </BaseCellHead>
         <BaseCellData
@@ -384,6 +391,13 @@ export default {
     },
     isEditing(rowName) {
       return (this.editing.rowName === rowName)
+    },
+    normalize() {
+      if (this.showAllColumns) {
+        project.normalizeBeneficiaryScores(this.stakeholderNames)
+      } else {
+        project.normalizeBeneficiaryScores([this.currentStakeholderName])
+      }
     },
   }
 }
